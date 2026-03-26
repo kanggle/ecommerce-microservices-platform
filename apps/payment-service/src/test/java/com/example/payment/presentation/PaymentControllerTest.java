@@ -1,7 +1,7 @@
 package com.example.payment.presentation;
 
 import com.example.payment.application.service.PaymentQueryService;
-import com.example.payment.application.service.UnauthorizedPaymentAccessException;
+import com.example.payment.application.exception.UnauthorizedPaymentAccessException;
 import com.example.payment.domain.exception.InvalidPaymentException;
 import com.example.payment.domain.exception.PaymentNotFoundException;
 import com.example.payment.domain.model.Payment;
