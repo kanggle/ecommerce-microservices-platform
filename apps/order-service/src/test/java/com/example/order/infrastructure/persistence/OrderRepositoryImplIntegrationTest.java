@@ -215,6 +215,128 @@ class OrderRepositoryImplIntegrationTest {
         ).isInstanceOf(JpaOptimisticLockingFailureException.class);
     }
 
+    @Test
+    @DisplayName("saveAll — N건의 기존 주문 배치 업데이트 시 findAllById 1회 SELECT로 처리된다")
+    void saveAll_multipleExistingOrders_executesOneSelectAndBatchUpdate() {
+        // given: N건의 신규 주문을 먼저 저장
+        int orderCount = 5;
+        String userId = "withdrawal-user-" + UUID.randomUUID();
+
+        List<Order> savedOrders = transactionTemplate.execute(status -> {
+            List<Order> newOrders = new java.util.ArrayList<>();
+            for (int i = 0; i < orderCount; i++) {
+                Order order = createNewOrderForUser(userId);
+                newOrders.add(orderRepository.save(order));
+            }
+            return newOrders;
+        });
+
+        assertThat(savedOrders).hasSize(orderCount);
+        savedOrders.forEach(o -> assertThat(o.getVersion()).isNotNull());
+
+        // 도메인 모델에서 모든 주문을 CANCELLED로 변경 (회원 탈퇴 시나리오)
+        List<Order> ordersToCancel = savedOrders.stream()
+                .map(saved -> {
+                    Order order = Order.reconstitute(
+                            saved.getOrderId(), saved.getUserId(), saved.getItems(),
+                            saved.getStatus(), saved.getTotalPrice(), saved.getShippingAddress(),
+                            saved.getCreatedAt(), saved.getUpdatedAt(),
+                            saved.getPaymentId(), saved.getPaidAt(),
+                            saved.getRefundedAt(), saved.getVersion()
+                    );
+                    order.cancel(Clock.systemUTC());
+                    return order;
+                })
+                .toList();
+
+        // when: saveAll로 배치 업데이트 실행 및 Statistics 측정
+        List<Order> updatedOrders = transactionTemplate.execute(status -> {
+            statistics.clear();
+            List<Order> result = orderRepository.saveAll(ordersToCancel);
+            entityManager.flush();
+            return result;
+        });
+
+        // then: 모든 주문이 CANCELLED 상태로 업데이트됨
+        assertThat(updatedOrders).hasSize(orderCount);
+        updatedOrders.forEach(o ->
+                assertThat(o.getStatus()).isEqualTo(OrderStatus.CANCELLED));
+
+        // findAllById에 의한 SELECT가 주문 수(N)보다 적어야 한다 (N+1 방지 검증)
+        // entityLoadCount는 주문 엔티티 + 관련 아이템 엔티티 로드 수를 포함하므로
+        // 쿼리 준비 횟수(queryExecutionCount)로 검증: findAllById 1회 + saveAll flush
+        long queryExecutionCount = statistics.getQueryExecutionCount();
+        assertThat(queryExecutionCount)
+                .as("findAllById 1회 SELECT로 N건을 조회해야 한다 (N+1 방지)")
+                .isLessThan(orderCount);
+
+        // DB에서 다시 읽어 실제 상태 확인
+        for (Order updated : updatedOrders) {
+            Order fromDb = transactionTemplate.execute(status ->
+                    orderRepository.findById(updated.getOrderId()).orElseThrow());
+            assertThat(fromDb.getStatus()).isEqualTo(OrderStatus.CANCELLED);
+        }
+    }
+
+    @Test
+    @DisplayName("saveAll — 빈 리스트 입력 시 빈 리스트를 반환한다")
+    void saveAll_emptyList_returnsEmptyList() {
+        // when
+        List<Order> result = transactionTemplate.execute(status ->
+                orderRepository.saveAll(List.of()));
+
+        // then
+        assertThat(result).isEmpty();
+    }
+
+    @Test
+    @DisplayName("saveAll — 전부 신규 주문(version == null)인 경우 findAllById 호출 없이 INSERT만 실행된다")
+    void saveAll_allNewOrders_executesInsertOnly() {
+        // given
+        List<Order> newOrders = List.of(createNewOrder(), createNewOrder(), createNewOrder());
+
+        // when
+        List<Order> saved = transactionTemplate.execute(status -> {
+            statistics.clear();
+            List<Order> result = orderRepository.saveAll(newOrders);
+            entityManager.flush();
+            return result;
+        });
+
+        // then
+        assertThat(saved).hasSize(3);
+        saved.forEach(o -> {
+            assertThat(o.getVersion()).isNotNull();
+            assertThat(o.getStatus()).isEqualTo(OrderStatus.PENDING);
+        });
+
+        // 신규 주문만 있으므로 entity load(SELECT)가 발생하지 않아야 한다
+        long entityLoadCount = statistics.getEntityLoadCount();
+        assertThat(entityLoadCount)
+                .as("신규 주문만 있을 때 entity load(SELECT)가 발생하지 않아야 한다")
+                .isEqualTo(0);
+    }
+
+    @Test
+    @DisplayName("saveAll — DB에 존재하지 않는 주문 ID로 업데이트 시도 시 IllegalStateException이 발생한다")
+    void saveAll_nonExistentOrderId_throwsIllegalStateException() {
+        // given: version이 있지만 DB에 존재하지 않는 주문
+        Order nonExistent = Order.reconstitute(
+                "non-existent-" + UUID.randomUUID(), "user-1", List.of(),
+                OrderStatus.CANCELLED, 0L,
+                new ShippingAddress("홍길동", "010-1234-5678", "12345", "서울시 강남구", null),
+                java.time.Instant.now(), java.time.Instant.now(),
+                null, null, null, 0L
+        );
+
+        // when & then
+        assertThatThrownBy(() ->
+                transactionTemplate.executeWithoutResult(status ->
+                        orderRepository.saveAll(List.of(nonExistent)))
+        ).isInstanceOf(IllegalStateException.class)
+                .hasMessageContaining("Order not found for update");
+    }
+
     /**
      * 테스트용 신규 주문 생성 헬퍼.
      * 매 호출마다 고유한 userId와 orderId를 사용하여 테스트 격리를 보장한다.
@@ -226,6 +348,20 @@ class OrderRepositoryImplIntegrationTest {
         );
         List<OrderItemData> items = List.of(
                 new OrderItemData("product-1", "variant-1", "테스트 상품", "옵션A", 2, 10000)
+        );
+        return Order.create(userId, items, address, Clock.systemUTC());
+    }
+
+    /**
+     * 특정 userId로 신규 주문을 생성하는 헬퍼.
+     * 회원 탈퇴 배치 테스트에서 동일 사용자의 여러 주문을 생성할 때 사용한다.
+     */
+    private Order createNewOrderForUser(String userId) {
+        ShippingAddress address = new ShippingAddress(
+                "홍길동", "010-1234-5678", "12345", "서울시 강남구", null
+        );
+        List<OrderItemData> items = List.of(
+                new OrderItemData("product-1", "variant-1", "테스트 상품", "옵션A", 1, 15000)
         );
         return Order.create(userId, items, address, Clock.systemUTC());
     }

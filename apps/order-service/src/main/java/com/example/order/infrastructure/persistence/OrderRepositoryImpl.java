@@ -8,9 +8,12 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Repository;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Repository
 @RequiredArgsConstructor
@@ -36,15 +39,27 @@ public class OrderRepositoryImpl implements OrderRepository {
 
     @Override
     public List<Order> saveAll(List<Order> orders) {
-        // save()와 동일한 version 기반 신규/수정 분기 처리
-        List<OrderJpaEntity> entities = new java.util.ArrayList<>(orders.size());
+        // version이 있는 기존 주문 ID를 수집하여 findAllById로 한 번에 조회 (N+1 방지)
+        List<String> existingIds = orders.stream()
+                .filter(o -> o.getVersion() != null)
+                .map(Order::getOrderId)
+                .toList();
+
+        Map<String, OrderJpaEntity> existingMap = existingIds.isEmpty()
+                ? Map.of()
+                : jpaRepository.findAllById(existingIds).stream()
+                        .collect(Collectors.toMap(OrderJpaEntity::getOrderId, e -> e));
+
+        List<OrderJpaEntity> entities = new ArrayList<>(orders.size());
         for (Order order : orders) {
             if (order.getVersion() == null) {
                 entities.add(mapper.toEntity(order));
             } else {
-                OrderJpaEntity existing = jpaRepository.findById(order.getOrderId())
-                        .orElseThrow(() -> new IllegalStateException(
-                                "Order not found for update: " + order.getOrderId()));
+                OrderJpaEntity existing = existingMap.get(order.getOrderId());
+                if (existing == null) {
+                    throw new IllegalStateException(
+                            "Order not found for update: " + order.getOrderId());
+                }
                 existing.updateFrom(order);
                 entities.add(existing);
             }
