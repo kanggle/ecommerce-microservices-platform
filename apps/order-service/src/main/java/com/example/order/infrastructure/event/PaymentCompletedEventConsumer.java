@@ -10,8 +10,6 @@ import org.springframework.messaging.handler.annotation.Payload;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.time.Instant;
-
 @Slf4j
 @Component
 @RequiredArgsConstructor
@@ -49,18 +47,7 @@ public class PaymentCompletedEventConsumer {
             return;
         }
 
-        Instant paidAt = parsePaidAt(event.payload().paidAt());
-        paymentConfirmationService.markPaymentCompleted(orderId, paymentId, paidAt);
-    }
-
-    private Instant parsePaidAt(String paidAtStr) {
-        if (paidAtStr == null || paidAtStr.isBlank()) {
-            throw new IllegalArgumentException("paidAt is required but was null or blank");
-        }
-        try {
-            return Instant.parse(paidAtStr);
-        } catch (Exception e) {
-            throw new IllegalArgumentException("Failed to parse paidAt: " + paidAtStr, e);
-        }
+        paymentConfirmationService.markPaymentCompleted(
+                orderId, paymentId, EventFieldParser.parseInstant(event.payload().paidAt(), "paidAt"));
     }
 }

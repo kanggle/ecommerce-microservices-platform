@@ -10,8 +10,6 @@ import org.springframework.messaging.handler.annotation.Payload;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.time.Instant;
-
 @Slf4j
 @Component
 @RequiredArgsConstructor
@@ -43,18 +41,7 @@ public class PaymentRefundedEventConsumer {
             return;
         }
 
-        Instant refundedAt = parseRefundedAt(event.payload().refundedAt());
-        paymentRefundConfirmationService.markRefunded(orderId, refundedAt);
-    }
-
-    private Instant parseRefundedAt(String refundedAtStr) {
-        if (refundedAtStr == null || refundedAtStr.isBlank()) {
-            throw new IllegalArgumentException("refundedAt is required but was null or blank");
-        }
-        try {
-            return Instant.parse(refundedAtStr);
-        } catch (Exception e) {
-            throw new IllegalArgumentException("Failed to parse refundedAt: " + refundedAtStr, e);
-        }
+        paymentRefundConfirmationService.markRefunded(
+                orderId, EventFieldParser.parseInstant(event.payload().refundedAt(), "refundedAt"));
     }
 }
