@@ -13,6 +13,8 @@ public interface OrderRepository {
 
     Order save(Order order);
 
+    List<Order> saveAll(List<Order> orders);
+
     Optional<Order> findById(String orderId);
 
     Page<Order> findByUserId(String userId, Pageable pageable);

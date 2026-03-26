@@ -35,6 +35,27 @@ public class OrderRepositoryImpl implements OrderRepository {
     }
 
     @Override
+    public List<Order> saveAll(List<Order> orders) {
+        // save()와 동일한 version 기반 신규/수정 분기 처리
+        List<OrderJpaEntity> entities = new java.util.ArrayList<>(orders.size());
+        for (Order order : orders) {
+            if (order.getVersion() == null) {
+                entities.add(mapper.toEntity(order));
+            } else {
+                OrderJpaEntity existing = jpaRepository.findById(order.getOrderId())
+                        .orElseThrow(() -> new IllegalStateException(
+                                "Order not found for update: " + order.getOrderId()));
+                existing.updateFrom(order);
+                entities.add(existing);
+            }
+        }
+        List<OrderJpaEntity> savedEntities = jpaRepository.saveAll(entities);
+        return savedEntities.stream()
+                .map(mapper::toDomain)
+                .toList();
+    }
+
+    @Override
     public Optional<Order> findById(String orderId) {
         return jpaRepository.findById(orderId).map(mapper::toDomain);
     }

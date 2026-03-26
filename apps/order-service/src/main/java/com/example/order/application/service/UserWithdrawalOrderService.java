@@ -12,6 +12,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.Clock;
+import java.util.ArrayList;
 import java.util.List;
 
 @Slf4j
@@ -35,12 +36,18 @@ public class UserWithdrawalOrderService {
             return;
         }
 
+        List<String> previousStatuses = new ArrayList<>(activeOrders.size());
         for (Order order : activeOrders) {
-            String previousStatus = order.getStatus().name();
+            previousStatuses.add(order.getStatus().name());
             order.cancel(clock);
-            orderRepository.save(order);
+        }
+
+        orderRepository.saveAll(activeOrders);
+
+        for (int i = 0; i < activeOrders.size(); i++) {
+            Order order = activeOrders.get(i);
             orderMetrics.recordOrderCancelled("user_withdrawn");
-            orderMetrics.recordStatusTransition(previousStatus, order.getStatus().name());
+            orderMetrics.recordStatusTransition(previousStatuses.get(i), order.getStatus().name());
 
             orderEventPublisher.publishOrderCancelled(
                     OrderCancelledEvent.of(order.getOrderId(), order.getUserId(),

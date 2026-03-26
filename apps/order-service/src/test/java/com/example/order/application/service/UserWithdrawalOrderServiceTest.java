@@ -67,7 +67,7 @@ class UserWithdrawalOrderServiceTest {
         Order order2 = createOrder(userId);
 
         given(orderRepository.findByUserIdAndStatusIn(eq(userId), any())).willReturn(List.of(order1, order2));
-        given(orderRepository.save(any())).willAnswer(inv -> inv.getArgument(0));
+        given(orderRepository.saveAll(any())).willAnswer(inv -> inv.getArgument(0));
         given(clock.instant()).willReturn(FIXED_NOW);
 
         userWithdrawalOrderService.cancelOrdersForWithdrawnUser(userId);
@@ -75,7 +75,8 @@ class UserWithdrawalOrderServiceTest {
         assertThat(order1.getStatus()).isEqualTo(OrderStatus.CANCELLED);
         assertThat(order2.getStatus()).isEqualTo(OrderStatus.CANCELLED);
 
-        verify(orderRepository, times(2)).save(any());
+        verify(orderRepository, times(1)).saveAll(any());
+        verify(orderRepository, never()).save(any());
 
         ArgumentCaptor<OrderCancelledEvent> eventCaptor = ArgumentCaptor.forClass(OrderCancelledEvent.class);
         verify(orderEventPublisher, times(2)).publishOrderCancelled(eventCaptor.capture());
@@ -94,7 +95,7 @@ class UserWithdrawalOrderServiceTest {
 
         userWithdrawalOrderService.cancelOrdersForWithdrawnUser(userId);
 
-        verify(orderRepository, never()).save(any());
+        verify(orderRepository, never()).saveAll(any());
         verify(orderEventPublisher, never()).publishOrderCancelled(any(OrderCancelledEvent.class));
     }
 
@@ -107,14 +108,14 @@ class UserWithdrawalOrderServiceTest {
         given(orderRepository.findByUserIdAndStatusIn(eq(userId), any()))
                 .willReturn(List.of(order))
                 .willReturn(Collections.emptyList());
-        given(orderRepository.save(any())).willAnswer(inv -> inv.getArgument(0));
+        given(orderRepository.saveAll(any())).willAnswer(inv -> inv.getArgument(0));
         given(clock.instant()).willReturn(FIXED_NOW);
 
         userWithdrawalOrderService.cancelOrdersForWithdrawnUser(userId);
         userWithdrawalOrderService.cancelOrdersForWithdrawnUser(userId);
 
         assertThat(order.getStatus()).isEqualTo(OrderStatus.CANCELLED);
-        verify(orderRepository, times(1)).save(any());
+        verify(orderRepository, times(1)).saveAll(any());
         verify(orderEventPublisher, times(1)).publishOrderCancelled(any(OrderCancelledEvent.class));
     }
 
@@ -125,12 +126,55 @@ class UserWithdrawalOrderServiceTest {
         Order order = createOrder(userId);
 
         given(orderRepository.findByUserIdAndStatusIn(eq(userId), any())).willReturn(List.of(order));
-        given(orderRepository.save(any())).willAnswer(inv -> inv.getArgument(0));
+        given(orderRepository.saveAll(any())).willAnswer(inv -> inv.getArgument(0));
         given(clock.instant()).willReturn(FIXED_NOW);
 
         userWithdrawalOrderService.cancelOrdersForWithdrawnUser(userId);
 
         verify(orderMetrics).recordOrderCancelled("user_withdrawn");
         verify(orderMetrics).recordStatusTransition("PENDING", "CANCELLED");
+    }
+
+    @SuppressWarnings("unchecked")
+    @Test
+    @DisplayName("다수 주문이 saveAll()로 한 번에 배치 저장된다")
+    void cancelOrdersForWithdrawnUser_multipleOrders_batchSaved() {
+        String userId = "user-1";
+        Order order1 = createOrder(userId);
+        Order order2 = createOrder(userId);
+        Order order3 = createOrder(userId);
+
+        given(orderRepository.findByUserIdAndStatusIn(eq(userId), any()))
+                .willReturn(List.of(order1, order2, order3));
+        given(orderRepository.saveAll(any())).willAnswer(inv -> inv.getArgument(0));
+        given(clock.instant()).willReturn(FIXED_NOW);
+
+        userWithdrawalOrderService.cancelOrdersForWithdrawnUser(userId);
+
+        ArgumentCaptor<List<Order>> saveCaptor = ArgumentCaptor.forClass(List.class);
+        verify(orderRepository, times(1)).saveAll(saveCaptor.capture());
+
+        List<Order> savedOrders = saveCaptor.getValue();
+        assertThat(savedOrders).hasSize(3);
+        assertThat(savedOrders).allMatch(o -> o.getStatus() == OrderStatus.CANCELLED);
+    }
+
+    @Test
+    @DisplayName("이벤트는 배치 저장 완료 후 일괄 발행된다")
+    void cancelOrdersForWithdrawnUser_eventsPublishedAfterBatchSave() {
+        String userId = "user-1";
+        Order order1 = createOrder(userId);
+        Order order2 = createOrder(userId);
+
+        given(orderRepository.findByUserIdAndStatusIn(eq(userId), any()))
+                .willReturn(List.of(order1, order2));
+        given(orderRepository.saveAll(any())).willAnswer(inv -> inv.getArgument(0));
+        given(clock.instant()).willReturn(FIXED_NOW);
+
+        userWithdrawalOrderService.cancelOrdersForWithdrawnUser(userId);
+
+        var inOrder = inOrder(orderRepository, orderEventPublisher);
+        inOrder.verify(orderRepository).saveAll(any());
+        inOrder.verify(orderEventPublisher, times(2)).publishOrderCancelled(any());
     }
 }
