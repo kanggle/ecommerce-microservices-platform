@@ -9,6 +9,7 @@ import com.example.order.application.service.OrderCancellationService;
 import com.example.order.application.service.OrderPlacementService;
 import com.example.order.application.service.OrderQueryService;
 import com.example.order.domain.model.OrderStatus;
+import com.example.order.presentation.exception.InvalidOrderStatusException;
 import com.example.order.presentation.dto.CancelOrderResponse;
 import com.example.order.presentation.dto.OrderDetailResponse;
 import com.example.order.presentation.dto.OrderListResponse;

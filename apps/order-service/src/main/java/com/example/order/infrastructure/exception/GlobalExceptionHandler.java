@@ -1,10 +1,10 @@
 package com.example.order.infrastructure.exception;
 
-import com.example.order.application.service.UnauthorizedOrderAccessException;
+import com.example.order.application.exception.UnauthorizedOrderAccessException;
 import com.example.order.domain.exception.InvalidOrderException;
 import com.example.order.domain.exception.OrderCannotBeCancelledException;
 import com.example.order.domain.exception.OrderNotFoundException;
-import com.example.order.presentation.InvalidOrderStatusException;
+import com.example.order.presentation.exception.InvalidOrderStatusException;
 import jakarta.validation.ConstraintViolationException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.dao.OptimisticLockingFailureException;

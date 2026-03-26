@@ -2,6 +2,7 @@ package com.example.order.application.service;
 
 import com.example.order.application.dto.CancelOrderResult;
 import com.example.order.application.event.OrderCancelledEvent;
+import com.example.order.application.exception.UnauthorizedOrderAccessException;
 import com.example.order.application.port.OrderEventPublisher;
 import com.example.order.application.port.OrderMetricsPort;
 import com.example.order.domain.exception.OrderNotFoundException;
