@@ -8,7 +8,7 @@ order-service 예외 클래스 패키지 위치 정리
 
 # Status
 
-in-progress
+done
 
 # Owner
 
