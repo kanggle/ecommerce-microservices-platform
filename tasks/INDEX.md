@@ -91,6 +91,7 @@ Tasks must not be implemented from `backlog/`, `in-progress/`, `review/`, `done/
 | TASK-BE-106 | order-service OrderCancelledEvent cancelledAt 시각 불일치 수정 — 도메인 취소 시각 사용 | order-service | code, event, test |
 | TASK-BE-107 | order-service OrderController 페이지 사이즈 상한 제한 추가 — 과도한 size 파라미터에 의한 DB 과부하 방지 | order-service | code, api, test |
 | TASK-BE-108 | 전 서비스 컨트랙트 준수 자동 검증 테스트 추가 — API 응답 스키마 및 이벤트 페이로드 스펙 일치 검증 | order-service, auth-service, user-service, product-service, payment-service, search-service | code, api, event, test |
+| TASK-BE-113-fix-001 | TASK-BE-113 리뷰 수정 — order-service 회원 탈퇴 시 주문 취소 배치 저장 실제 구현 | order-service | code, event, test |
 
 ## in-progress
 
@@ -110,6 +111,7 @@ _(없음)_
 
 | ID | Title | Service | Tags |
 |---|---|---|---|
+| TASK-BE-113 | order-service 회원 탈퇴 시 주문 취소 배치 저장 최적화 | order-service | code, event |
 | TASK-BE-109 | order-service 이벤트 발행 Transactional Outbox 패턴 적용 | order-service | code, event |
 | TASK-BE-110 | order-service 이벤트 컨슈머 event_id 기반 중복 처리 구현 | order-service | code, event |
 | TASK-BE-103 | order-service OrderMetrics 취소 reason 매핑 누락 수정 — user_withdrawn 카운터 추가 | order-service | code, test |
