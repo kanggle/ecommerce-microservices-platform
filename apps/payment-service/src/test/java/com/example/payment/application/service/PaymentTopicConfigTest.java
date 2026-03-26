@@ -1,41 +1,41 @@
 package com.example.payment.application.service;
 
+import com.example.payment.application.port.out.PaymentEventPublisher;
 import com.example.payment.domain.model.Payment;
 import com.example.payment.domain.repository.PaymentRepository;
 import com.example.payment.infrastructure.metrics.PaymentMetrics;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.ArgumentCaptor;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.springframework.kafka.core.KafkaTemplate;
 
 import java.util.Optional;
 
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.verify;
 
 @ExtendWith(MockitoExtension.class)
-@DisplayName("토픽명 설정 주입 테스트")
+@DisplayName("이벤트 발행 위임 테스트")
 class PaymentTopicConfigTest {
 
     @Mock
     private PaymentRepository paymentRepository;
 
     @Mock
-    private KafkaTemplate<String, Object> kafkaTemplate;
+    private PaymentEventPublisher paymentEventPublisher;
 
     @Mock
     private PaymentMetrics paymentMetrics;
 
     @Test
-    @DisplayName("PaymentProcessingService에 주입된 토픽명으로 이벤트가 발행된다")
-    void processPayment_usesInjectedTopic() {
-        String customTopic = "custom.payment.completed";
+    @DisplayName("PaymentProcessingService는 PaymentEventPublisher.publishPaymentCompleted를 호출한다")
+    void processPayment_delegatesToEventPublisher() {
         PaymentProcessingService service = new PaymentProcessingService(
-                customTopic, paymentRepository, kafkaTemplate, paymentMetrics
+                paymentRepository, paymentEventPublisher, paymentMetrics
         );
 
         given(paymentRepository.findByOrderId("order-1")).willReturn(Optional.empty());
@@ -43,15 +43,17 @@ class PaymentTopicConfigTest {
 
         service.processPayment("order-1", "user-1", 10000L);
 
-        verify(kafkaTemplate).send(eq(customTopic), any(), any());
+        ArgumentCaptor<com.example.payment.application.event.PaymentCompletedEvent> captor =
+                ArgumentCaptor.forClass(com.example.payment.application.event.PaymentCompletedEvent.class);
+        verify(paymentEventPublisher).publishPaymentCompleted(captor.capture());
+        assertThat(captor.getValue().payload().orderId()).isEqualTo("order-1");
     }
 
     @Test
-    @DisplayName("PaymentRefundService에 주입된 토픽명으로 이벤트가 발행된다")
-    void refundPayment_usesInjectedTopic() {
-        String customTopic = "custom.payment.refunded";
+    @DisplayName("PaymentRefundService는 PaymentEventPublisher.publishPaymentRefunded를 호출한다")
+    void refundPayment_delegatesToEventPublisher() {
         PaymentRefundService service = new PaymentRefundService(
-                customTopic, paymentRepository, kafkaTemplate, paymentMetrics
+                paymentRepository, paymentEventPublisher, paymentMetrics
         );
 
         Payment payment = Payment.create("order-1", "user-1", 10000L);
@@ -61,6 +63,9 @@ class PaymentTopicConfigTest {
 
         service.refundPayment("order-1");
 
-        verify(kafkaTemplate).send(eq(customTopic), any(), any());
+        ArgumentCaptor<com.example.payment.application.event.PaymentRefundedEvent> captor =
+                ArgumentCaptor.forClass(com.example.payment.application.event.PaymentRefundedEvent.class);
+        verify(paymentEventPublisher).publishPaymentRefunded(captor.capture());
+        assertThat(captor.getValue().payload().orderId()).isEqualTo("order-1");
     }
 }

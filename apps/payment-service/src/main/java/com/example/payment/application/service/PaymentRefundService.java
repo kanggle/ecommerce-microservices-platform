@@ -1,14 +1,12 @@
 package com.example.payment.application.service;
 
 import com.example.payment.application.event.PaymentRefundedEvent;
+import com.example.payment.application.port.out.PaymentEventPublisher;
 import com.example.payment.domain.model.Payment;
 import com.example.payment.domain.model.PaymentStatus;
 import com.example.payment.domain.repository.PaymentRepository;
 import com.example.payment.infrastructure.metrics.PaymentMetrics;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.kafka.KafkaException;
-import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -18,20 +16,17 @@ import java.util.Optional;
 @Service
 public class PaymentRefundService {
 
-    private final String topicPaymentRefunded;
     private final PaymentRepository paymentRepository;
-    private final KafkaTemplate<String, Object> kafkaTemplate;
+    private final PaymentEventPublisher paymentEventPublisher;
     private final PaymentMetrics paymentMetrics;
 
     public PaymentRefundService(
-            @Value("${app.kafka.topics.payment-refunded}") String topicPaymentRefunded,
             PaymentRepository paymentRepository,
-            KafkaTemplate<String, Object> kafkaTemplate,
+            PaymentEventPublisher paymentEventPublisher,
             PaymentMetrics paymentMetrics
     ) {
-        this.topicPaymentRefunded = topicPaymentRefunded;
         this.paymentRepository = paymentRepository;
-        this.kafkaTemplate = kafkaTemplate;
+        this.paymentEventPublisher = paymentEventPublisher;
         this.paymentMetrics = paymentMetrics;
     }
 
@@ -53,12 +48,7 @@ public class PaymentRefundService {
         paymentRepository.save(payment);
         paymentMetrics.incrementPaymentRefunded();
 
-        try {
-            kafkaTemplate.send(topicPaymentRefunded, payment.getPaymentId(), PaymentRefundedEvent.from(payment));
-        } catch (KafkaException e) {
-            log.error("Event publishing failed: eventType={}, topic={}, orderId={}", "PaymentRefunded", topicPaymentRefunded, orderId, e);
-            paymentMetrics.incrementEventPublishFailure("PaymentRefunded");
-        }
+        paymentEventPublisher.publishPaymentRefunded(PaymentRefundedEvent.from(payment));
 
         log.info("Payment refunded: paymentId={}, orderId={}", payment.getPaymentId(), orderId);
     }
