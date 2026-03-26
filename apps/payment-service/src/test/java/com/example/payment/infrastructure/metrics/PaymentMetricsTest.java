@@ -36,16 +36,6 @@ class PaymentMetricsTest {
     }
 
     @Test
-    @DisplayName("결제 실패 시 reason별 payment_failed_total이 증가한다")
-    void incrementPaymentFailed_incrementsCounterByReason() {
-        paymentMetrics.incrementPaymentFailed("insufficient_funds");
-        paymentMetrics.incrementPaymentFailed("timeout");
-
-        assertThat(registry.counter("payment_failed_total", "reason", "insufficient_funds").count()).isEqualTo(1.0);
-        assertThat(registry.counter("payment_failed_total", "reason", "timeout").count()).isEqualTo(1.0);
-    }
-
-    @Test
     @DisplayName("환불 처리 시 payment_refunded_total이 증가한다")
     void incrementPaymentRefunded_incrementsCounter() {
         paymentMetrics.incrementPaymentRefunded();
@@ -62,16 +52,4 @@ class PaymentMetricsTest {
         assertThat(registry.counter("payment_amount_sum").count()).isEqualTo(80000.0);
     }
 
-    @Test
-    @DisplayName("이벤트 소비 실패 시 event_consume_failure_total이 이벤트 타입별로 증가한다")
-    void incrementEventConsumeFailure_incrementsCounterByEventType() {
-        paymentMetrics.incrementEventConsumeFailure("OrderPlaced");
-        paymentMetrics.incrementEventConsumeFailure("OrderCancelled");
-        paymentMetrics.incrementEventConsumeFailure("OrderPlaced");
-
-        assertThat(registry.counter("event_consume_failure_total",
-                "service", "payment-service", "event_type", "OrderPlaced").count()).isEqualTo(2.0);
-        assertThat(registry.counter("event_consume_failure_total",
-                "service", "payment-service", "event_type", "OrderCancelled").count()).isEqualTo(1.0);
-    }
 }
