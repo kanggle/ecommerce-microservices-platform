@@ -17,8 +17,6 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.springframework.data.domain.PageImpl;
-import org.springframework.data.domain.PageRequest;
 
 import java.util.List;
 import java.util.Optional;
@@ -27,6 +25,7 @@ import java.util.UUID;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyInt;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.BDDMockito.given;
 
@@ -48,8 +47,8 @@ class QueryProductServiceTest {
     void findAll_success_returnsPaginatedList() {
         UUID id = UUID.randomUUID();
         ProductSummary summary = new ProductSummary(id, "테스트 상품", ProductStatus.ON_SALE, 10000L, null);
-        given(productQueryPort.findSummaries(any(), any(), any()))
-                .willReturn(new PageImpl<>(List.of(summary), PageRequest.of(0, 20), 1));
+        given(productQueryPort.findSummaries(any(), any(), anyInt(), anyInt()))
+                .willReturn(new ProductListResult(List.of(summary), 0, 20, 1));
 
         ProductListResult result = queryProductService.findAll(null, null, 0, 20);
 
@@ -64,8 +63,8 @@ class QueryProductServiceTest {
     @DisplayName("목록 조회 - categoryId 필터 적용")
     void findAll_withCategoryFilter_passesFilterToPort() {
         UUID categoryId = UUID.randomUUID();
-        given(productQueryPort.findSummaries(eq(categoryId), any(), any()))
-                .willReturn(new PageImpl<>(List.of(), PageRequest.of(0, 20), 0));
+        given(productQueryPort.findSummaries(eq(categoryId), any(), anyInt(), anyInt()))
+                .willReturn(new ProductListResult(List.of(), 0, 20, 0));
 
         ProductListResult result = queryProductService.findAll(categoryId, null, 0, 20);
 

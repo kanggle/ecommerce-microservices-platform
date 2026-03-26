@@ -1,5 +1,6 @@
 package com.example.product.infrastructure.persistence;
 
+import com.example.product.application.dto.ProductListResult;
 import com.example.product.application.dto.ProductSummary;
 import com.example.product.application.port.ProductQueryPort;
 import com.example.product.domain.model.Product;
@@ -7,7 +8,7 @@ import com.example.product.domain.model.ProductStatus;
 import com.example.product.domain.repository.ProductRepository;
 import com.example.product.infrastructure.persistence.entity.ProductJpaEntity;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Repository;
 
 import java.time.Instant;
@@ -56,13 +57,19 @@ class ProductRepositoryAdapter implements ProductRepository, ProductQueryPort {
     }
 
     @Override
-    public Page<ProductSummary> findSummaries(UUID categoryId, ProductStatus status, Pageable pageable) {
-        return jpaRepository.findByFilters(categoryId, status, pageable)
+    public ProductListResult findSummaries(UUID categoryId, ProductStatus status, int page, int size) {
+        Page<ProductSummary> result = jpaRepository.findByFilters(categoryId, status, PageRequest.of(page, size))
                 .map(entity -> new ProductSummary(
                         entity.getId(),
                         entity.getName(),
                         entity.getStatus(),
                         entity.getPrice(),
                         entity.getCategoryId()));
+
+        return new ProductListResult(
+                result.getContent(),
+                result.getNumber(),
+                result.getSize(),
+                result.getTotalElements());
     }
 }
