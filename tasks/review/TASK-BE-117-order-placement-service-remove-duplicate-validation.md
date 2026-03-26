@@ -8,7 +8,7 @@ order-service OrderPlacementService 중복 검증 제거
 
 # Status
 
-ready
+review
 
 # Owner
 

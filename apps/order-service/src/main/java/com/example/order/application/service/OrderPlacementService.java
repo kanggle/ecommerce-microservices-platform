@@ -5,7 +5,6 @@ import com.example.order.application.dto.PlaceOrderResult;
 import com.example.order.application.event.OrderPlacedEvent;
 import com.example.order.application.port.OrderEventPublisher;
 import com.example.order.application.port.OrderMetricsPort;
-import com.example.order.domain.exception.InvalidOrderException;
 import com.example.order.domain.model.Order;
 import com.example.order.domain.model.ShippingAddress;
 import com.example.order.domain.repository.OrderRepository;
@@ -29,13 +28,6 @@ public class OrderPlacementService {
 
     @Transactional
     public PlaceOrderResult placeOrder(PlaceOrderCommand command) {
-        if (command.userId() == null || command.userId().isBlank()) {
-            throw new InvalidOrderException("userId is required");
-        }
-        if (command.items() == null || command.items().isEmpty()) {
-            throw new InvalidOrderException("Order items must not be empty");
-        }
-
         List<Order.OrderItemData> itemDataList = command.items().stream()
                 .map(i -> new Order.OrderItemData(
                         i.productId(), i.variantId(),
