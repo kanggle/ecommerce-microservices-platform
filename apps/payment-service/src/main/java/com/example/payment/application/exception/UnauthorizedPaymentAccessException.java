@@ -1,4 +1,4 @@
-package com.example.payment.application.service;
+package com.example.payment.application.exception;
 
 public class UnauthorizedPaymentAccessException extends RuntimeException {
     public UnauthorizedPaymentAccessException() {

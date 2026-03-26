@@ -1,6 +1,6 @@
 package com.example.payment.infrastructure.exception;
 
-import com.example.payment.application.service.UnauthorizedPaymentAccessException;
+import com.example.payment.application.exception.UnauthorizedPaymentAccessException;
 import com.example.payment.domain.exception.InvalidPaymentException;
 import com.example.payment.domain.exception.PaymentNotFoundException;
 import lombok.extern.slf4j.Slf4j;
