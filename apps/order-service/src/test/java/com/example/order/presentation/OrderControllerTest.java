@@ -7,7 +7,7 @@ import com.example.order.application.dto.PlaceOrderResult;
 import com.example.order.application.service.OrderCancellationService;
 import com.example.order.application.service.OrderPlacementService;
 import com.example.order.application.service.OrderQueryService;
-import com.example.order.application.service.UnauthorizedOrderAccessException;
+import com.example.order.application.exception.UnauthorizedOrderAccessException;
 import com.example.order.domain.exception.OrderCannotBeCancelledException;
 import com.example.order.domain.exception.OrderNotFoundException;
 import com.example.order.domain.model.OrderStatus;

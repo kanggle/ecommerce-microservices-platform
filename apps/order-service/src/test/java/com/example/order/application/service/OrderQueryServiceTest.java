@@ -2,6 +2,7 @@ package com.example.order.application.service;
 
 import com.example.order.application.dto.OrderDetail;
 import com.example.order.application.dto.OrderSummary;
+import com.example.order.application.exception.UnauthorizedOrderAccessException;
 import com.example.order.domain.exception.OrderNotFoundException;
 import com.example.order.domain.model.Order;
 import com.example.order.domain.model.OrderStatus;

@@ -1,4 +1,4 @@
-package com.example.order.application.service;
+package com.example.order.application.exception;
 
 public class UnauthorizedOrderAccessException extends RuntimeException {
 

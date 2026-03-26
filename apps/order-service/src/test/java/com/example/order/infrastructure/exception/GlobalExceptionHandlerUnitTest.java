@@ -70,7 +70,7 @@ class GlobalExceptionHandlerUnitTest {
     @Test
     @DisplayName("UnauthorizedOrderAccessException 핸들러가 ErrorResponse 형식으로 응답한다")
     void handleUnauthorized_returnsErrorResponseFormat() {
-        var ex = new com.example.order.application.service.UnauthorizedOrderAccessException();
+        var ex = new com.example.order.application.exception.UnauthorizedOrderAccessException();
 
         ResponseEntity<ErrorResponse> result = handler.handleUnauthorized(ex);
 
