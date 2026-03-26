@@ -2,9 +2,9 @@ package com.example.payment.application.service;
 
 import com.example.payment.application.event.PaymentCompletedEvent;
 import com.example.payment.application.port.out.PaymentEventPublisher;
+import com.example.payment.application.port.out.PaymentMetricRecorder;
 import com.example.payment.domain.model.Payment;
 import com.example.payment.domain.repository.PaymentRepository;
-import com.example.payment.infrastructure.metrics.PaymentMetrics;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -15,16 +15,16 @@ public class PaymentProcessingService {
 
     private final PaymentRepository paymentRepository;
     private final PaymentEventPublisher paymentEventPublisher;
-    private final PaymentMetrics paymentMetrics;
+    private final PaymentMetricRecorder paymentMetricRecorder;
 
     public PaymentProcessingService(
             PaymentRepository paymentRepository,
             PaymentEventPublisher paymentEventPublisher,
-            PaymentMetrics paymentMetrics
+            PaymentMetricRecorder paymentMetricRecorder
     ) {
         this.paymentRepository = paymentRepository;
         this.paymentEventPublisher = paymentEventPublisher;
-        this.paymentMetrics = paymentMetrics;
+        this.paymentMetricRecorder = paymentMetricRecorder;
     }
 
     @Transactional
@@ -35,11 +35,11 @@ public class PaymentProcessingService {
         }
 
         Payment payment = Payment.create(orderId, userId, amount);
-        paymentMetrics.incrementPaymentCreated();
+        paymentMetricRecorder.incrementPaymentCreated();
         payment.complete(); // 시뮬레이션: 항상 성공
         paymentRepository.save(payment);
-        paymentMetrics.incrementPaymentCompleted();
-        paymentMetrics.addPaymentAmount(amount);
+        paymentMetricRecorder.incrementPaymentCompleted();
+        paymentMetricRecorder.addPaymentAmount(amount);
 
         paymentEventPublisher.publishPaymentCompleted(PaymentCompletedEvent.from(payment));
 
