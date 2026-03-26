@@ -1,7 +1,7 @@
 package com.example.payment;
 
 import com.example.payment.domain.model.PaymentStatus;
-import com.example.payment.domain.repository.PaymentRepository;
+import com.example.payment.application.port.out.PaymentRepository;
 import com.example.payment.infrastructure.event.OrderPlacedEventConsumer;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.DisplayName;

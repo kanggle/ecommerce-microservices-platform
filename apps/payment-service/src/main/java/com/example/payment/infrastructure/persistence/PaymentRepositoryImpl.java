@@ -1,7 +1,7 @@
 package com.example.payment.infrastructure.persistence;
 
 import com.example.payment.domain.model.Payment;
-import com.example.payment.domain.repository.PaymentRepository;
+import com.example.payment.application.port.out.PaymentRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
 

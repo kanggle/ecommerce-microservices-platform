@@ -3,7 +3,7 @@ package com.example.payment.application.service;
 import com.example.payment.application.exception.UnauthorizedPaymentAccessException;
 import com.example.payment.domain.exception.PaymentNotFoundException;
 import com.example.payment.domain.model.Payment;
-import com.example.payment.domain.repository.PaymentRepository;
+import com.example.payment.application.port.out.PaymentRepository;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;

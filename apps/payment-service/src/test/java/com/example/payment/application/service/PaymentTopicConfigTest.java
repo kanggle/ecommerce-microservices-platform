@@ -2,7 +2,7 @@ package com.example.payment.application.service;
 
 import com.example.payment.application.port.out.PaymentEventPublisher;
 import com.example.payment.domain.model.Payment;
-import com.example.payment.domain.repository.PaymentRepository;
+import com.example.payment.application.port.out.PaymentRepository;
 import com.example.payment.infrastructure.metrics.PaymentMetrics;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;

@@ -1,4 +1,4 @@
-package com.example.payment.domain.repository;
+package com.example.payment.application.port.out;
 
 import com.example.payment.domain.model.Payment;
 

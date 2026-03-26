@@ -3,7 +3,7 @@ package com.example.payment.application.service;
 import com.example.payment.application.exception.UnauthorizedPaymentAccessException;
 import com.example.payment.domain.exception.PaymentNotFoundException;
 import com.example.payment.domain.model.Payment;
-import com.example.payment.domain.repository.PaymentRepository;
+import com.example.payment.application.port.out.PaymentRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
