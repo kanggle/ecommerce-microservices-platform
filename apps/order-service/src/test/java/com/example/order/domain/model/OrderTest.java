@@ -52,6 +52,42 @@ class OrderTest {
     }
 
     @Test
+    @DisplayName("userId가 null이면 주문 생성 시 예외가 발생한다")
+    void create_nullUserId_throwsInvalidOrderException() {
+        List<Order.OrderItemData> items = List.of(
+                new Order.OrderItemData("p1", "v1", "노트북", "블랙", 1, 1000000L)
+        );
+
+        assertThatThrownBy(() -> Order.create(null, items, ADDRESS, FIXED_CLOCK))
+                .isInstanceOf(InvalidOrderException.class)
+                .hasMessageContaining("User ID");
+    }
+
+    @Test
+    @DisplayName("userId가 blank이면 주문 생성 시 예외가 발생한다")
+    void create_blankUserId_throwsInvalidOrderException() {
+        List<Order.OrderItemData> items = List.of(
+                new Order.OrderItemData("p1", "v1", "노트북", "블랙", 1, 1000000L)
+        );
+
+        assertThatThrownBy(() -> Order.create("   ", items, ADDRESS, FIXED_CLOCK))
+                .isInstanceOf(InvalidOrderException.class)
+                .hasMessageContaining("User ID");
+    }
+
+    @Test
+    @DisplayName("shippingAddress가 null이면 주문 생성 시 예외가 발생한다")
+    void create_nullShippingAddress_throwsInvalidOrderException() {
+        List<Order.OrderItemData> items = List.of(
+                new Order.OrderItemData("p1", "v1", "노트북", "블랙", 1, 1000000L)
+        );
+
+        assertThatThrownBy(() -> Order.create("user1", items, null, FIXED_CLOCK))
+                .isInstanceOf(InvalidOrderException.class)
+                .hasMessageContaining("Shipping address");
+    }
+
+    @Test
     @DisplayName("items가 비어있으면 주문 생성 시 예외가 발생한다")
     void create_emptyItems_throwsInvalidOrderException() {
         assertThatThrownBy(() -> Order.create("user1", List.of(), ADDRESS, FIXED_CLOCK))

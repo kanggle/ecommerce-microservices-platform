@@ -32,8 +32,14 @@ public class Order {
 
     public static Order create(String userId, List<OrderItemData> itemDataList,
                                 ShippingAddress shippingAddress, Clock clock) {
+        if (userId == null || userId.isBlank()) {
+            throw new InvalidOrderException("User ID must not be null or blank");
+        }
         if (itemDataList == null || itemDataList.isEmpty()) {
             throw new InvalidOrderException("Order items must not be empty");
+        }
+        if (shippingAddress == null) {
+            throw new InvalidOrderException("Shipping address must not be null");
         }
 
         Order order = new Order();

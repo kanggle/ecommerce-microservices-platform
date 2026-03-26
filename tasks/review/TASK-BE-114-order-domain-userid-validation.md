@@ -8,7 +8,7 @@ order-service Order 도메인 모델 userId 검증 추가
 
 # Status
 
-ready
+review
 
 # Owner
 
