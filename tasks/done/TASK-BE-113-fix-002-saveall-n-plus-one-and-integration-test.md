@@ -8,7 +8,7 @@ TASK-BE-113-fix-001 리뷰 수정 — saveAll() N+1 쿼리 제거 및 회원 탈
 
 # Status
 
-review
+done
 
 # Owner
 
