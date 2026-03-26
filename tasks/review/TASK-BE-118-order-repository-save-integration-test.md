@@ -8,7 +8,7 @@ order-service OrderRepositoryImpl save() 최적화 통합 테스트 추가
 
 # Status
 
-ready
+review
 
 # Owner
 
