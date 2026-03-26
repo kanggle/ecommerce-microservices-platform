@@ -28,19 +28,8 @@ public class OrderPlacementService {
 
     @Transactional
     public PlaceOrderResult placeOrder(PlaceOrderCommand command) {
-        List<Order.OrderItemData> itemDataList = command.items().stream()
-                .map(i -> new Order.OrderItemData(
-                        i.productId(), i.variantId(),
-                        i.productName(), i.optionName(),
-                        i.quantity(), i.unitPrice()
-                ))
-                .toList();
-
-        PlaceOrderCommand.ShippingAddressCommand addr = command.shippingAddress();
-        ShippingAddress shippingAddress = new ShippingAddress(
-                addr.recipient(), addr.phone(), addr.zipCode(),
-                addr.address1(), addr.address2()
-        );
+        List<Order.OrderItemData> itemDataList = toItemDataList(command.items());
+        ShippingAddress shippingAddress = toShippingAddress(command.shippingAddress());
 
         Order order = Order.create(command.userId(), itemDataList, shippingAddress, clock);
         orderRepository.save(order);
@@ -49,6 +38,30 @@ public class OrderPlacementService {
         orderMetrics.recordOrderPlaced();
         orderMetrics.recordOrderAmount(order.getTotalPrice());
 
+        orderEventPublisher.publishOrderPlaced(
+                buildOrderPlacedEvent(order, command.shippingAddress()));
+
+        return new PlaceOrderResult(order.getOrderId());
+    }
+
+    private List<Order.OrderItemData> toItemDataList(List<PlaceOrderCommand.OrderItemCommand> items) {
+        return items.stream()
+                .map(i -> new Order.OrderItemData(
+                        i.productId(), i.variantId(),
+                        i.productName(), i.optionName(),
+                        i.quantity(), i.unitPrice()
+                ))
+                .toList();
+    }
+
+    private ShippingAddress toShippingAddress(PlaceOrderCommand.ShippingAddressCommand addr) {
+        return new ShippingAddress(
+                addr.recipient(), addr.phone(), addr.zipCode(),
+                addr.address1(), addr.address2()
+        );
+    }
+
+    private OrderPlacedEvent buildOrderPlacedEvent(Order order, PlaceOrderCommand.ShippingAddressCommand addr) {
         List<OrderPlacedEvent.Item> eventItems = order.getItems().stream()
                 .map(i -> new OrderPlacedEvent.Item(
                         i.getProductId(), i.getVariantId(), i.getQuantity(), i.getUnitPrice()
@@ -59,10 +72,7 @@ public class OrderPlacementService {
                 addr.recipient(), addr.phone(), addr.zipCode(), addr.address1(), addr.address2()
         );
 
-        orderEventPublisher.publishOrderPlaced(
-                OrderPlacedEvent.of(order.getOrderId(), order.getUserId(),
-                        order.getTotalPrice(), eventItems, eventAddr, clock));
-
-        return new PlaceOrderResult(order.getOrderId());
+        return OrderPlacedEvent.of(order.getOrderId(), order.getUserId(),
+                order.getTotalPrice(), eventItems, eventAddr, clock);
     }
 }
