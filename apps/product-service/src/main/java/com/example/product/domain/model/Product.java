@@ -116,6 +116,28 @@ public class Product {
         this.updatedAt = Instant.now();
     }
 
+    /**
+     * 재고 수량에 따라 상품 상태를 전환한다.
+     * 재고가 0이면 SOLD_OUT, 재고가 0 초과이면 SOLD_OUT 상태에서 ON_SALE로 복구한다.
+     * 상태가 실제로 변경된 경우 true를 반환한다.
+     *
+     * @param currentStock 현재 재고 수량
+     * @return 상태가 변경된 경우 true, 변경 없으면 false
+     */
+    public boolean adjustStatusByStock(int currentStock) {
+        if (currentStock == 0 && this.status != ProductStatus.SOLD_OUT) {
+            this.status = ProductStatus.SOLD_OUT;
+            this.updatedAt = Instant.now();
+            return true;
+        }
+        if (currentStock > 0 && this.status == ProductStatus.SOLD_OUT) {
+            this.status = ProductStatus.ON_SALE;
+            this.updatedAt = Instant.now();
+            return true;
+        }
+        return false;
+    }
+
     public List<ProductVariant> getVariants() {
         return Collections.unmodifiableList(variants);
     }
