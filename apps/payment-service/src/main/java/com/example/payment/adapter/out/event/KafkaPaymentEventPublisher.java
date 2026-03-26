@@ -1,4 +1,4 @@
-package com.example.payment.infrastructure.event;
+package com.example.payment.adapter.out.event;
 
 import com.example.payment.application.event.PaymentCompletedEvent;
 import com.example.payment.application.event.PaymentRefundedEvent;

@@ -1,4 +1,4 @@
-package com.example.payment.infrastructure.event;
+package com.example.payment.adapter.out.event;
 
 import ch.qos.logback.classic.Level;
 import ch.qos.logback.classic.Logger;
