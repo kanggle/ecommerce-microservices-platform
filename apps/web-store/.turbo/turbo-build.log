@@ -1,0 +1,51 @@
+
+> web-store@0.0.0 build C:\Users\kangdow\dev\project\ai-project\first-project\apps\web-store
+> next build
+
+   ▲ Next.js 15.5.14
+
+   Creating an optimized production build ...
+ ✓ Compiled successfully in 3.1s
+   Linting and checking validity of types ...
+
+./src/app/(store)/orders/[id]/page.tsx
+43:6  Warning: React Hook useEffect has a missing dependency: 'loadOrder'. Either include it or remove the dependency array.  react-hooks/exhaustive-deps
+
+./src/entities/product/ui/ProductCard.tsx
+26:11  Warning: Using `<img>` could result in slower LCP and higher bandwidth. Consider using `<Image />` from `next/image` or a custom image loader to automatically optimize images. This may incur additional usage or cost from your provider. See: https://nextjs.org/docs/messages/no-img-element  @next/next/no-img-element
+
+./src/entities/product/ui/ProductImage.tsx
+9:7  Warning: Using `<img>` could result in slower LCP and higher bandwidth. Consider using `<Image />` from `next/image` or a custom image loader to automatically optimize images. This may incur additional usage or cost from your provider. See: https://nextjs.org/docs/messages/no-img-element  @next/next/no-img-element
+
+info  - Need to disable some ESLint rules? Learn more here: https://nextjs.org/docs/app/api-reference/config/eslint#disabling-rules
+   Collecting page data ...
+   Generating static pages (0/10) ...
+(node:1172) [DEP0169] DeprecationWarning: `url.parse()` behavior is not standardized and prone to errors that have security implications. Use the WHATWG URL API instead. CVEs are not issued for `url.parse()` vulnerabilities.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+   Generating static pages (2/10) 
+   Generating static pages (4/10) 
+   Generating static pages (7/10) 
+ ✓ Generating static pages (10/10)
+   Finalizing page optimization ...
+   Collecting build traces ...
+
+Route (app)                                 Size  First Load JS
+┌ ○ /                                    1.58 kB         107 kB
+├ ○ /_not-found                            993 B         103 kB
+├ ○ /cart                                1.92 kB         108 kB
+├ ○ /checkout                            3.18 kB         133 kB
+├ ○ /login                               2.87 kB         129 kB
+├ ○ /orders                              1.73 kB         132 kB
+├ ƒ /orders/[id]                         2.47 kB         132 kB
+├ ƒ /products                            1.58 kB         107 kB
+├ ƒ /products/[id]                       2.55 kB         108 kB
+└ ○ /signup                              2.87 kB         129 kB
++ First Load JS shared by all             102 kB
+  ├ chunks/1ff282bf-ba680fa8e8838208.js  54.2 kB
+  ├ chunks/937-37567281693ec530.js         46 kB
+  └ other shared chunks (total)          1.97 kB
+
+
+○  (Static)   prerendered as static content
+ƒ  (Dynamic)  server-rendered on demand
+

@@ -1,0 +1,24 @@
+# Environment variables (secrets)
+.env
+
+# Dependencies
+node_modules/
+
+# Build outputs
+build/
+dist/
+.gradle/
+.next/
+*.class
+
+# IDE
+.idea/
+*.iml
+.vscode/
+
+# OS
+Thumbs.db
+Desktop.ini
+
+# Claude Code local settings
+.claude/settings.local.json

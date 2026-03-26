@@ -1,0 +1,18 @@
+rootProject.name = 'first-project'
+
+include(
+    'apps:auth-service',
+    'apps:batch-worker',
+    'apps:gateway-service',
+    'apps:order-service',
+    'apps:payment-service',
+    'apps:product-service',
+    'apps:search-service',
+    'apps:user-service',
+    'libs:java-common',
+    'libs:java-messaging',
+    'libs:java-observability',
+    'libs:java-security',
+    'libs:java-test-support',
+    'libs:java-web'
+)

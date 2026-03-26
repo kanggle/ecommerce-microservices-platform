@@ -1,0 +1,143 @@
+package com.example.product.domain.model;
+
+import lombok.AccessLevel;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+
+import java.time.Instant;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+import java.util.UUID;
+
+@Getter
+@NoArgsConstructor(access = AccessLevel.PRIVATE)
+public class Product {
+
+    private UUID id;
+    private String name;
+    private String description;
+    private Price price;
+    private ProductStatus status;
+    private UUID categoryId;
+    private Instant createdAt;
+    private Instant updatedAt;
+    private List<ProductVariant> variants = new ArrayList<>();
+    private transient boolean isNew;
+
+    public static Product create(String name, String description, Price price, UUID categoryId,
+                                 List<ProductVariant> variants) {
+        validateName(name);
+        if (price == null) {
+            throw new IllegalArgumentException("Price must not be null");
+        }
+        if (variants == null || variants.isEmpty()) {
+            throw new IllegalArgumentException("Product must have at least one variant");
+        }
+
+        Product product = new Product();
+        product.id = UUID.randomUUID();
+        product.isNew = true;
+        product.name = name.trim();
+        product.description = description;
+        product.price = price;
+        product.status = ProductStatus.ON_SALE;
+        product.categoryId = categoryId;
+        Instant now = Instant.now();
+        product.createdAt = now;
+        product.updatedAt = now;
+
+        for (ProductVariant variant : variants) {
+            if (variant == null) {
+                throw new IllegalArgumentException("Variant must not be null");
+            }
+            variant.assignProduct(product.id);
+            product.variants.add(variant);
+        }
+
+        return product;
+    }
+
+    public static Product reconstitute(UUID id, String name, String description, Price price,
+                                       ProductStatus status, UUID categoryId,
+                                       Instant createdAt, Instant updatedAt,
+                                       List<ProductVariant> variants) {
+        if (id == null) throw new IllegalArgumentException("id must not be null");
+        if (name == null || name.isBlank()) throw new IllegalArgumentException("Product name must not be blank");
+        if (price == null) throw new IllegalArgumentException("Price must not be null");
+        if (status == null) throw new IllegalArgumentException("Status must not be null");
+        if (variants == null) throw new IllegalArgumentException("Variants must not be null");
+        Product product = new Product();
+        product.id = id;
+        product.name = name;
+        product.description = description;
+        product.price = price;
+        product.status = status;
+        product.categoryId = categoryId;
+        product.createdAt = createdAt;
+        product.updatedAt = updatedAt;
+        product.variants = new ArrayList<>(variants);
+        return product;
+    }
+
+    public void addVariant(ProductVariant variant) {
+        if (variant == null) {
+            throw new IllegalArgumentException("Variant must not be null");
+        }
+        variant.assignProduct(this.id);
+        this.variants.add(variant);
+        this.updatedAt = Instant.now();
+    }
+
+    public void updateName(String name) {
+        validateName(name);
+        this.name = name.trim();
+        this.updatedAt = Instant.now();
+    }
+
+    public void updateDescription(String description) {
+        this.description = (description != null && description.isBlank()) ? null : description;
+        this.updatedAt = Instant.now();
+    }
+
+    public void updatePrice(Price price) {
+        if (price == null) {
+            throw new IllegalArgumentException("Price must not be null");
+        }
+        this.price = price;
+        this.updatedAt = Instant.now();
+    }
+
+    public void changeStatus(ProductStatus status) {
+        if (status == null) {
+            throw new IllegalArgumentException("Status must not be null");
+        }
+        this.status = status;
+        this.updatedAt = Instant.now();
+    }
+
+    public List<ProductVariant> getVariants() {
+        return Collections.unmodifiableList(variants);
+    }
+
+    private static void validateName(String name) {
+        if (name == null || name.isBlank()) {
+            throw new IllegalArgumentException("Product name must not be blank");
+        }
+        if (name.trim().length() > 255) {
+            throw new IllegalArgumentException("Product name must not exceed 255 characters");
+        }
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof Product p)) return false;
+        return id != null && id.equals(p.id);
+    }
+
+    @Override
+    public int hashCode() {
+        return getClass().hashCode();
+    }
+}

@@ -1,0 +1,134 @@
+import { describe, it, expect, vi, beforeEach } from 'vitest';
+import { render } from '@testing-library/react';
+
+const mockReplace = vi.fn();
+vi.mock('next/navigation', () => ({
+  useRouter: () => ({ replace: mockReplace, push: vi.fn() }),
+}));
+
+vi.mock('@/features/auth', () => ({
+  useAuth: vi.fn(),
+}));
+
+vi.mock('@/features/cart', () => ({
+  useCart: vi.fn(),
+}));
+
+vi.mock('@/features/checkout', () => ({
+  CheckoutForm: (props: Record<string, unknown>) => (
+    <div data-testid="checkout-form" data-items={JSON.stringify(props.items)} />
+  ),
+}));
+
+import { useAuth } from '@/features/auth';
+import { useCart } from '@/features/cart';
+import CheckoutPage from '@/app/(store)/checkout/page';
+
+const mockUseAuth = vi.mocked(useAuth);
+const mockUseCart = vi.mocked(useCart);
+
+const CART_ITEMS = [
+  { productId: 'p1', variantId: 'v1', productName: '노트북', optionName: '실버', price: 1500000, quantity: 1 },
+];
+
+describe('CheckoutPage', () => {
+  beforeEach(() => {
+    vi.clearAllMocks();
+  });
+
+  it('미인증 상태에서 로그인 페이지로 리다이렉트한다', () => {
+    mockUseAuth.mockReturnValue({
+      isAuthenticated: false,
+      isLoading: false,
+      user: null,
+      login: vi.fn(),
+      signup: vi.fn(),
+      logout: vi.fn(),
+    });
+    mockUseCart.mockReturnValue({
+      items: CART_ITEMS,
+      totalAmount: 1500000,
+      itemCount: 1,
+      addItem: vi.fn(),
+      removeItem: vi.fn(),
+      updateQuantity: vi.fn(),
+      clearCart: vi.fn(),
+    });
+
+    render(<CheckoutPage />);
+
+    expect(mockReplace).toHaveBeenCalledWith('/login');
+  });
+
+  it('장바구니가 비어있으면 장바구니 페이지로 리다이렉트한다', () => {
+    mockUseAuth.mockReturnValue({
+      isAuthenticated: true,
+      isLoading: false,
+      user: null,
+      login: vi.fn(),
+      signup: vi.fn(),
+      logout: vi.fn(),
+    });
+    mockUseCart.mockReturnValue({
+      items: [],
+      totalAmount: 0,
+      itemCount: 0,
+      addItem: vi.fn(),
+      removeItem: vi.fn(),
+      updateQuantity: vi.fn(),
+      clearCart: vi.fn(),
+    });
+
+    render(<CheckoutPage />);
+
+    expect(mockReplace).toHaveBeenCalledWith('/cart');
+  });
+
+  it('인증 완료 + 장바구니에 상품이 있으면 CheckoutForm을 렌더링한다', () => {
+    mockUseAuth.mockReturnValue({
+      isAuthenticated: true,
+      isLoading: false,
+      user: null,
+      login: vi.fn(),
+      signup: vi.fn(),
+      logout: vi.fn(),
+    });
+    mockUseCart.mockReturnValue({
+      items: CART_ITEMS,
+      totalAmount: 1500000,
+      itemCount: 1,
+      addItem: vi.fn(),
+      removeItem: vi.fn(),
+      updateQuantity: vi.fn(),
+      clearCart: vi.fn(),
+    });
+
+    const { getByTestId } = render(<CheckoutPage />);
+
+    expect(getByTestId('checkout-form')).toBeInTheDocument();
+  });
+
+  it('인증 로딩 중이면 아무것도 렌더링하지 않는다', () => {
+    mockUseAuth.mockReturnValue({
+      isAuthenticated: false,
+      isLoading: true,
+      user: null,
+      login: vi.fn(),
+      signup: vi.fn(),
+      logout: vi.fn(),
+    });
+    mockUseCart.mockReturnValue({
+      items: CART_ITEMS,
+      totalAmount: 1500000,
+      itemCount: 1,
+      addItem: vi.fn(),
+      removeItem: vi.fn(),
+      updateQuantity: vi.fn(),
+      clearCart: vi.fn(),
+    });
+
+    const { container } = render(<CheckoutPage />);
+
+    expect(container.querySelector('main')).not.toBeInTheDocument();
+  });
+});

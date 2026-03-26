@@ -1,0 +1,55 @@
+package com.example.search.infrastructure.exception;
+
+import jakarta.validation.ConstraintViolationException;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.HttpStatus;
+import org.springframework.web.bind.MissingServletRequestParameterException;
+import org.springframework.web.bind.annotation.ExceptionHandler;
+import org.springframework.web.bind.annotation.ResponseStatus;
+import org.springframework.web.bind.annotation.RestControllerAdvice;
+
+@Slf4j
+@RestControllerAdvice
+public class GlobalExceptionHandler {
+
+    @ExceptionHandler(InvalidSearchRequestException.class)
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    public ErrorResponse handleInvalidSearchRequest(InvalidSearchRequestException ex) {
+        return ErrorResponse.of("INVALID_SEARCH_REQUEST", ex.getMessage());
+    }
+
+    @ExceptionHandler(ConstraintViolationException.class)
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    public ErrorResponse handleConstraintViolation(ConstraintViolationException ex) {
+        String message = ex.getConstraintViolations().stream()
+                .map(v -> v.getMessage())
+                .collect(java.util.stream.Collectors.joining(", "));
+        return ErrorResponse.of("INVALID_SEARCH_REQUEST", message);
+    }
+
+    @ExceptionHandler(MissingServletRequestParameterException.class)
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    public ErrorResponse handleMissingParam(MissingServletRequestParameterException ex) {
+        return ErrorResponse.of("INVALID_SEARCH_REQUEST", ex.getMessage());
+    }
+
+    @ExceptionHandler(IllegalArgumentException.class)
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    public ErrorResponse handleIllegalArgument(IllegalArgumentException ex) {
+        return ErrorResponse.of("INVALID_SEARCH_REQUEST", ex.getMessage());
+    }
+
+    @ExceptionHandler(SearchException.class)
+    @ResponseStatus(HttpStatus.SERVICE_UNAVAILABLE)
+    public ErrorResponse handleSearchException(SearchException ex) {
+        log.error("Search infrastructure error", ex);
+        return ErrorResponse.of("SEARCH_UNAVAILABLE", "Search service is temporarily unavailable");
+    }
+
+    @ExceptionHandler(Exception.class)
+    @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
+    public ErrorResponse handleUnexpected(Exception ex) {
+        log.error("Unexpected error", ex);
+        return ErrorResponse.of("INTERNAL_ERROR", "An unexpected error occurred");
+    }
+}

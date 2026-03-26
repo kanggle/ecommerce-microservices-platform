@@ -1,0 +1,55 @@
+package com.example.payment.infrastructure.persistence;
+
+import com.example.payment.domain.model.PaymentStatus;
+import jakarta.persistence.*;
+import lombok.AccessLevel;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+
+import java.time.LocalDateTime;
+
+@Entity
+@Table(name = "payments")
+@Getter
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
+class PaymentJpaEntity {
+
+    @Id
+    @Column(name = "payment_id")
+    private String paymentId;
+
+    @Column(name = "order_id", nullable = false, unique = true)
+    private String orderId;
+
+    @Column(name = "user_id", nullable = false)
+    private String userId;
+
+    @Column(name = "amount", nullable = false)
+    private long amount;
+
+    @Enumerated(EnumType.STRING)
+    @Column(name = "status", nullable = false)
+    private PaymentStatus status;
+
+    @Column(name = "created_at", nullable = false)
+    private LocalDateTime createdAt;
+
+    @Column(name = "paid_at")
+    private LocalDateTime paidAt;
+
+    @Column(name = "refunded_at")
+    private LocalDateTime refundedAt;
+
+    static PaymentJpaEntity fromDomain(com.example.payment.domain.model.Payment payment) {
+        PaymentJpaEntity entity = new PaymentJpaEntity();
+        entity.paymentId = payment.getPaymentId();
+        entity.orderId = payment.getOrderId();
+        entity.userId = payment.getUserId();
+        entity.amount = payment.getAmount();
+        entity.status = payment.getStatus();
+        entity.createdAt = payment.getCreatedAt();
+        entity.paidAt = payment.getPaidAt();
+        entity.refundedAt = payment.getRefundedAt();
+        return entity;
+    }
+}

@@ -1,0 +1,40 @@
+
+> admin-dashboard@0.0.0 build C:\Users\kangdow\dev\project\ai-project\first-project\apps\admin-dashboard
+> next build
+
+   ▲ Next.js 15.5.14
+
+   Creating an optimized production build ...
+ ✓ Compiled successfully in 2.4s
+   Linting and checking validity of types ...
+   Collecting page data ...
+   Generating static pages (0/10) ...
+   Generating static pages (2/10) 
+   Generating static pages (4/10) 
+   Generating static pages (7/10) 
+ ✓ Generating static pages (10/10)
+   Finalizing page optimization ...
+   Collecting build traces ...
+
+Route (app)                                 Size  First Load JS
+┌ ○ /                                    1.92 kB         125 kB
+├ ○ /_not-found                            993 B         103 kB
+├ ○ /dashboard                             456 B         109 kB
+├ ○ /login                               2.91 kB         126 kB
+├ ○ /orders                                310 B         142 kB
+├ ƒ /orders/[id]                           289 B         142 kB
+├ ○ /products                              384 B         144 kB
+├ ƒ /products/[id]                         291 B         144 kB
+├ ƒ /products/[id]/edit                    505 B         144 kB
+├ ○ /products/new                          306 B         144 kB
+├ ○ /users                                 450 B         109 kB
+└ ƒ /users/[id]                            490 B         109 kB
++ First Load JS shared by all             102 kB
+  ├ chunks/1ff282bf-ba680fa8e8838208.js  54.2 kB
+  ├ chunks/937-37567281693ec530.js         46 kB
+  └ other shared chunks (total)          1.97 kB
+
+
+○  (Static)   prerendered as static content
+ƒ  (Dynamic)  server-rendered on demand
+

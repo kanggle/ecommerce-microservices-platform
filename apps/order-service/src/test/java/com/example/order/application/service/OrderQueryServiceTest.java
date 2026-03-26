@@ -1,0 +1,124 @@
+package com.example.order.application.service;
+
+import com.example.order.application.dto.OrderDetail;
+import com.example.order.application.dto.OrderSummary;
+import com.example.order.domain.exception.OrderNotFoundException;
+import com.example.order.domain.model.Order;
+import com.example.order.domain.model.OrderStatus;
+import com.example.order.domain.model.ShippingAddress;
+import com.example.order.domain.repository.OrderRepository;
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.PageRequest;
+
+import java.time.Clock;
+import java.time.Instant;
+import java.time.ZoneOffset;
+import java.util.List;
+import java.util.Optional;
+
+import static org.assertj.core.api.Assertions.*;
+import static org.mockito.BDDMockito.given;
+
+@ExtendWith(MockitoExtension.class)
+@DisplayName("OrderQueryService 단위 테스트")
+class OrderQueryServiceTest {
+
+    @InjectMocks
+    private OrderQueryService orderQueryService;
+
+    @Mock
+    private OrderRepository orderRepository;
+
+    private static final Clock FIXED_CLOCK = Clock.fixed(Instant.parse("2026-03-25T10:00:00Z"), ZoneOffset.UTC);
+
+    private static final ShippingAddress ADDRESS = new ShippingAddress(
+            "홍길동", "010-1234-5678", "12345", "서울시 강남구", "101호"
+    );
+
+    @Test
+    @DisplayName("status 미지정 시 전체 주문 목록이 반환된다")
+    void getOrders_noStatus_returnsSummaries() {
+        Order order = Order.create("user1",
+                List.of(new Order.OrderItemData("p1", "v1", "노트북", null, 1, 1000L)),
+                ADDRESS, FIXED_CLOCK);
+        Page<Order> orderPage = new PageImpl<>(List.of(order));
+        given(orderRepository.findByUserId("user1", PageRequest.of(0, 20))).willReturn(orderPage);
+
+        Page<OrderSummary> result = orderQueryService.getOrders("user1", null, PageRequest.of(0, 20));
+
+        assertThat(result.getContent()).hasSize(1);
+        assertThat(result.getContent().get(0).status()).isEqualTo(OrderStatus.PENDING.name());
+    }
+
+    @Test
+    @DisplayName("status 지정 시 해당 상태의 주문만 반환된다")
+    void getOrders_withStatus_returnsFilteredSummaries() {
+        Order order = Order.create("user1",
+                List.of(new Order.OrderItemData("p1", "v1", "노트북", null, 1, 1000L)),
+                ADDRESS, FIXED_CLOCK);
+        Page<Order> orderPage = new PageImpl<>(List.of(order));
+        given(orderRepository.findByUserIdAndStatus("user1", OrderStatus.PENDING, PageRequest.of(0, 20)))
+                .willReturn(orderPage);
+
+        Page<OrderSummary> result = orderQueryService.getOrders("user1", OrderStatus.PENDING, PageRequest.of(0, 20));
+
+        assertThat(result.getContent()).hasSize(1);
+        assertThat(result.getContent().get(0).status()).isEqualTo(OrderStatus.PENDING.name());
+    }
+
+    @Test
+    @DisplayName("status 지정 시 결과가 없으면 빈 페이지를 반환한다")
+    void getOrders_withStatusNoResults_returnsEmptyPage() {
+        Page<Order> emptyPage = new PageImpl<>(List.of());
+        given(orderRepository.findByUserIdAndStatus("user1", OrderStatus.SHIPPED, PageRequest.of(0, 20)))
+                .willReturn(emptyPage);
+
+        Page<OrderSummary> result = orderQueryService.getOrders("user1", OrderStatus.SHIPPED, PageRequest.of(0, 20));
+
+        assertThat(result.getContent()).isEmpty();
+        assertThat(result.getTotalElements()).isZero();
+    }
+
+    @Test
+    @DisplayName("주문 상세 조회 시 소유자가 맞으면 OrderDetail을 반환한다")
+    void getOrder_ownerRequests_returnsDetail() {
+        Order order = Order.create("user1",
+                List.of(new Order.OrderItemData("p1", "v1", "노트북", null, 2, 5000L)),
+                ADDRESS, FIXED_CLOCK);
+        given(orderRepository.findById(order.getOrderId())).willReturn(Optional.of(order));
+
+        OrderDetail detail = orderQueryService.getOrder(order.getOrderId(), "user1");
+
+        assertThat(detail.orderId()).isEqualTo(order.getOrderId());
+        assertThat(detail.totalPrice()).isEqualTo(10000L);
+        assertThat(detail.items()).hasSize(1);
+    }
+
+    @Test
+    @DisplayName("다른 사용자가 조회하면 UnauthorizedOrderAccessException이 발생한다")
+    void getOrder_differentUser_throwsUnauthorized() {
+        Order order = Order.create("user1",
+                List.of(new Order.OrderItemData("p1", "v1", "노트북", null, 1, 1000L)),
+                ADDRESS, FIXED_CLOCK);
+        given(orderRepository.findById(order.getOrderId())).willReturn(Optional.of(order));
+
+        assertThatThrownBy(() -> orderQueryService.getOrder(order.getOrderId(), "user2"))
+                .isInstanceOf(UnauthorizedOrderAccessException.class);
+    }
+
+    @Test
+    @DisplayName("존재하지 않는 orderId 조회 시 OrderNotFoundException이 발생한다")
+    void getOrder_notFound_throwsOrderNotFoundException() {
+        given(orderRepository.findById("nonexistent")).willReturn(Optional.empty());
+
+        assertThatThrownBy(() -> orderQueryService.getOrder("nonexistent", "user1"))
+                .isInstanceOf(OrderNotFoundException.class);
+    }
+}

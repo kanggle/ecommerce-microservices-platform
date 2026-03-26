@@ -1,0 +1,205 @@
+import { describe, it, expect, vi, beforeEach } from 'vitest';
+import { render, screen, waitFor } from '@testing-library/react';
+import userEvent from '@testing-library/user-event';
+import { CheckoutForm } from '@/features/checkout/ui/CheckoutForm';
+import type { ApiErrorResponse } from '@repo/types';
+import type { CheckoutCartItem } from '@/features/checkout/model/types';
+
+const mockPush = vi.fn();
+vi.mock('next/navigation', () => ({
+  useRouter: () => ({ push: mockPush, replace: vi.fn() }),
+}));
+
+vi.mock('@/features/checkout/api/place-order', () => ({
+  submitOrder: vi.fn(),
+}));
+
+import { submitOrder } from '@/features/checkout/api/place-order';
+const mockSubmitOrder = vi.mocked(submitOrder);
+
+const CART_ITEMS: CheckoutCartItem[] = [
+  {
+    productId: 'p1',
+    variantId: 'v1',
+    productName: '노트북',
+    optionName: '실버',
+    price: 1500000,
+    quantity: 1,
+  },
+];
+
+const mockOnOrderComplete = vi.fn();
+
+function renderCheckoutForm(items = CART_ITEMS, totalAmount = 1500000) {
+  return render(
+    <CheckoutForm
+      items={items}
+      totalAmount={totalAmount}
+      onOrderComplete={mockOnOrderComplete}
+    />,
+  );
+}
+
+async function fillRequiredFields(user: ReturnType<typeof userEvent.setup>) {
+  await user.type(screen.getByLabelText('수령인'), '홍길동');
+  await user.type(screen.getByLabelText('전화번호'), '010-1234-5678');
+  await user.type(screen.getByLabelText('우편번호'), '12345');
+  await user.type(screen.getByLabelText('주소'), '서울시 강남구');
+}
+
+describe('CheckoutForm', () => {
+  beforeEach(() => {
+    vi.clearAllMocks();
+  });
+
+  it('주문 상품 정보를 표시한다', () => {
+    renderCheckoutForm();
+
+    expect(screen.getByText(/노트북/)).toBeInTheDocument();
+    const priceElements = screen.getAllByText(/1,500,000원/);
+    expect(priceElements.length).toBeGreaterThanOrEqual(1);
+  });
+
+  it('배송지 입력 필드를 표시한다', () => {
+    renderCheckoutForm();
+
+    expect(screen.getByLabelText('수령인')).toBeInTheDocument();
+    expect(screen.getByLabelText('전화번호')).toBeInTheDocument();
+    expect(screen.getByLabelText('우편번호')).toBeInTheDocument();
+    expect(screen.getByLabelText('주소')).toBeInTheDocument();
+    expect(screen.getByLabelText('상세주소')).toBeInTheDocument();
+  });
+
+  it('필수 필드가 비어있으면 결제 버튼이 비활성화된다', () => {
+    renderCheckoutForm();
+
+    const button = screen.getByRole('button', { name: /결제하기/ });
+    expect(button).toBeDisabled();
+  });
+
+  it('필수 필드를 모두 채우면 결제 버튼이 활성화된다', async () => {
+    const user = userEvent.setup();
+    renderCheckoutForm();
+
+    await fillRequiredFields(user);
+
+    const button = screen.getByRole('button', { name: /결제하기/ });
+    expect(button).toBeEnabled();
+  });
+
+  it('주문 성공 시 주문 상세 페이지로 이동한다', async () => {
+    mockSubmitOrder.mockResolvedValueOnce({ orderId: 'order-1' });
+
+    const user = userEvent.setup();
+    renderCheckoutForm();
+
+    await fillRequiredFields(user);
+    await user.click(screen.getByRole('button', { name: /결제하기/ }));
+
+    await waitFor(() => {
+      expect(mockPush).toHaveBeenCalledWith('/orders/order-1');
+    });
+  });
+
+  it('주문 성공 시 onOrderComplete를 호출한다', async () => {
+    mockSubmitOrder.mockResolvedValueOnce({ orderId: 'order-1' });
+
+    const user = userEvent.setup();
+    renderCheckoutForm();
+
+    await fillRequiredFields(user);
+    await user.click(screen.getByRole('button', { name: /결제하기/ }));
+
+    await waitFor(() => {
+      expect(mockOnOrderComplete).toHaveBeenCalledTimes(1);
+    });
+  });
+
+  it('주문 성공 시 올바른 데이터를 전송한다', async () => {
+    mockSubmitOrder.mockResolvedValueOnce({ orderId: 'order-1' });
+
+    const user = userEvent.setup();
+    renderCheckoutForm();
+
+    await fillRequiredFields(user);
+    await user.type(screen.getByLabelText('상세주소'), '101호');
+    await user.click(screen.getByRole('button', { name: /결제하기/ }));
+
+    await waitFor(() => {
+      expect(mockSubmitOrder).toHaveBeenCalledWith({
+        items: [{ productId: 'p1', variantId: 'v1', quantity: 1 }],
+        shippingAddress: {
+          recipient: '홍길동',
+          phone: '010-1234-5678',
+          zipCode: '12345',
+          address1: '서울시 강남구',
+          address2: '101호',
+        },
+      });
+    });
+  });
+
+  it('주문 실패 시 API 에러 메시지를 표시한다', async () => {
+    const apiError: ApiErrorResponse = {
+      code: 'INSUFFICIENT_STOCK',
+      message: 'Not enough stock',
+      timestamp: new Date().toISOString(),
+    };
+    mockSubmitOrder.mockRejectedValueOnce(apiError);
+
+    const user = userEvent.setup();
+    renderCheckoutForm();
+
+    await fillRequiredFields(user);
+    await user.click(screen.getByRole('button', { name: /결제하기/ }));
+
+    await waitFor(() => {
+      expect(screen.getByRole('alert')).toHaveTextContent('재고가 부족한 상품이 있습니다.');
+    });
+  });
+
+  it('알 수 없는 에러 시 기본 메시지를 표시한다', async () => {
+    mockSubmitOrder.mockRejectedValueOnce(new Error('unknown'));
+
+    const user = userEvent.setup();
+    renderCheckoutForm();
+
+    await fillRequiredFields(user);
+    await user.click(screen.getByRole('button', { name: /결제하기/ }));
+
+    await waitFor(() => {
+      expect(screen.getByRole('alert')).toHaveTextContent('주문에 실패했습니다.');
+    });
+  });
+
+  it('주문 처리 중 중복 클릭을 방지한다', async () => {
+    let resolveOrder: (value: { orderId: string }) => void;
+    mockSubmitOrder.mockImplementationOnce(
+      () => new Promise((resolve) => { resolveOrder = resolve; }),
+    );
+
+    const user = userEvent.setup();
+    renderCheckoutForm();
+
+    await fillRequiredFields(user);
+
+    const button = screen.getByRole('button', { name: /결제하기/ });
+    await user.click(button);
+
+    expect(screen.getByRole('button', { name: /주문 처리 중/ })).toBeDisabled();
+    expect(mockSubmitOrder).toHaveBeenCalledTimes(1);
+
+    resolveOrder!({ orderId: 'order-1' });
+
+    await waitFor(() => {
+      expect(mockPush).toHaveBeenCalledWith('/orders/order-1');
+    });
+  });
+
+  it('상품이 없으면 결제 버튼이 비활성화된다', () => {
+    renderCheckoutForm([], 0);
+
+    const button = screen.getByRole('button', { name: /결제하기/ });
+    expect(button).toBeDisabled();
+  });
+});
