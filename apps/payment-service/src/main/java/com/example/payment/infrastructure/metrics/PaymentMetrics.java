@@ -43,14 +43,6 @@ public class PaymentMetrics implements PaymentMetricRecorder {
         paymentCompletedTotal.increment();
     }
 
-    public void incrementPaymentFailed(String reason) {
-        Counter.builder("payment_failed_total")
-                .description("Total payment failures by reason")
-                .tag("reason", reason)
-                .register(registry)
-                .increment();
-    }
-
     @Override
     public void incrementPaymentRefunded() {
         paymentRefundedTotal.increment();
@@ -72,10 +64,4 @@ public class PaymentMetrics implements PaymentMetricRecorder {
                 .increment();
     }
 
-    public void incrementEventConsumeFailure(String eventType) {
-        registry.counter(EventMetricNames.EVENT_CONSUME_FAILURE_TOTAL,
-                EventMetricNames.TAG_SERVICE, "payment-service",
-                EventMetricNames.TAG_EVENT_TYPE, eventType)
-                .increment();
-    }
 }
