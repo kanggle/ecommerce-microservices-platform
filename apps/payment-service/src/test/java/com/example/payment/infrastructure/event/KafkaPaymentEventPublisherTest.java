@@ -6,7 +6,7 @@ import ch.qos.logback.classic.spi.ILoggingEvent;
 import ch.qos.logback.core.read.ListAppender;
 import com.example.payment.application.event.PaymentCompletedEvent;
 import com.example.payment.application.event.PaymentRefundedEvent;
-import com.example.payment.infrastructure.metrics.PaymentMetrics;
+import com.example.payment.application.port.out.PaymentMetricRecorder;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -39,7 +39,7 @@ class KafkaPaymentEventPublisherTest {
     private KafkaTemplate<String, Object> kafkaTemplate;
 
     @Mock
-    private PaymentMetrics paymentMetrics;
+    private PaymentMetricRecorder paymentMetricRecorder;
 
     private ListAppender<ILoggingEvent> listAppender;
     private Logger logger;
@@ -47,7 +47,7 @@ class KafkaPaymentEventPublisherTest {
     @BeforeEach
     void setUp() {
         publisher = new KafkaPaymentEventPublisher(
-                TOPIC_COMPLETED, TOPIC_REFUNDED, kafkaTemplate, paymentMetrics
+                TOPIC_COMPLETED, TOPIC_REFUNDED, kafkaTemplate, paymentMetricRecorder
         );
         logger = (Logger) LoggerFactory.getLogger(KafkaPaymentEventPublisher.class);
         listAppender = new ListAppender<>();
@@ -87,7 +87,7 @@ class KafkaPaymentEventPublisherTest {
 
         publisher.publishPaymentCompleted(sampleCompletedEvent());
 
-        verify(paymentMetrics).incrementEventPublishFailure("PaymentCompleted");
+        verify(paymentMetricRecorder).incrementEventPublishFailure("PaymentCompleted");
     }
 
     @Test
@@ -110,7 +110,7 @@ class KafkaPaymentEventPublisherTest {
 
         publisher.publishPaymentRefunded(sampleRefundedEvent());
 
-        verify(paymentMetrics).incrementEventPublishFailure("PaymentRefunded");
+        verify(paymentMetricRecorder).incrementEventPublishFailure("PaymentRefunded");
     }
 
     @Test

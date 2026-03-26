@@ -3,7 +3,7 @@ package com.example.payment.infrastructure.event;
 import com.example.payment.application.event.PaymentCompletedEvent;
 import com.example.payment.application.event.PaymentRefundedEvent;
 import com.example.payment.application.port.out.PaymentEventPublisher;
-import com.example.payment.infrastructure.metrics.PaymentMetrics;
+import com.example.payment.application.port.out.PaymentMetricRecorder;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.kafka.KafkaException;
@@ -17,18 +17,18 @@ public class KafkaPaymentEventPublisher implements PaymentEventPublisher {
     private final String topicPaymentCompleted;
     private final String topicPaymentRefunded;
     private final KafkaTemplate<String, Object> kafkaTemplate;
-    private final PaymentMetrics paymentMetrics;
+    private final PaymentMetricRecorder paymentMetricRecorder;
 
     public KafkaPaymentEventPublisher(
             @Value("${app.kafka.topics.payment-completed}") String topicPaymentCompleted,
             @Value("${app.kafka.topics.payment-refunded}") String topicPaymentRefunded,
             KafkaTemplate<String, Object> kafkaTemplate,
-            PaymentMetrics paymentMetrics
+            PaymentMetricRecorder paymentMetricRecorder
     ) {
         this.topicPaymentCompleted = topicPaymentCompleted;
         this.topicPaymentRefunded = topicPaymentRefunded;
         this.kafkaTemplate = kafkaTemplate;
-        this.paymentMetrics = paymentMetrics;
+        this.paymentMetricRecorder = paymentMetricRecorder;
     }
 
     @Override
@@ -37,7 +37,7 @@ public class KafkaPaymentEventPublisher implements PaymentEventPublisher {
             kafkaTemplate.send(topicPaymentCompleted, event.payload().paymentId(), event);
         } catch (KafkaException e) {
             log.error("Event publishing failed: eventType={}, topic={}, orderId={}", "PaymentCompleted", topicPaymentCompleted, event.payload().orderId(), e);
-            paymentMetrics.incrementEventPublishFailure("PaymentCompleted");
+            paymentMetricRecorder.incrementEventPublishFailure("PaymentCompleted");
         }
     }
 
@@ -47,7 +47,7 @@ public class KafkaPaymentEventPublisher implements PaymentEventPublisher {
             kafkaTemplate.send(topicPaymentRefunded, event.payload().paymentId(), event);
         } catch (KafkaException e) {
             log.error("Event publishing failed: eventType={}, topic={}, orderId={}", "PaymentRefunded", topicPaymentRefunded, event.payload().orderId(), e);
-            paymentMetrics.incrementEventPublishFailure("PaymentRefunded");
+            paymentMetricRecorder.incrementEventPublishFailure("PaymentRefunded");
         }
     }
 }
