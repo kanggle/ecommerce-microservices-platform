@@ -1,4 +1,4 @@
-package com.example.order.infrastructure.exception;
+package com.example.order.presentation.dto;
 
 import java.time.Instant;
 
