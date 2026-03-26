@@ -8,7 +8,7 @@ order-service Repository save() 업데이트 시 불필요한 SELECT 제거
 
 # Status
 
-ready
+in-progress
 
 # Owner
 

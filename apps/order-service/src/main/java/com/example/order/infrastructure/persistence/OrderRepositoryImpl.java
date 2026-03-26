@@ -21,9 +21,17 @@ public class OrderRepositoryImpl implements OrderRepository {
 
     @Override
     public Order save(Order order) {
-        OrderJpaEntity entity = mapper.toEntity(order);
-        OrderJpaEntity saved = jpaRepository.save(entity);
-        return mapper.toDomain(saved);
+        if (order.getVersion() == null) {
+            OrderJpaEntity entity = mapper.toEntity(order);
+            OrderJpaEntity saved = jpaRepository.save(entity);
+            return mapper.toDomain(saved);
+        }
+
+        OrderJpaEntity existing = jpaRepository.findById(order.getOrderId())
+                .orElseThrow(() -> new IllegalStateException(
+                        "Order not found for update: " + order.getOrderId()));
+        existing.updateFrom(order);
+        return mapper.toDomain(existing);
     }
 
     @Override
