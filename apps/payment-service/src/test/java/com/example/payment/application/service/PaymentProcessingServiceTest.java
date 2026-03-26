@@ -2,10 +2,10 @@ package com.example.payment.application.service;
 
 import com.example.payment.application.event.PaymentCompletedEvent;
 import com.example.payment.application.port.out.PaymentEventPublisher;
+import com.example.payment.application.port.out.PaymentMetricRecorder;
 import com.example.payment.domain.model.Payment;
 import com.example.payment.domain.model.PaymentStatus;
 import com.example.payment.domain.repository.PaymentRepository;
-import com.example.payment.infrastructure.metrics.PaymentMetrics;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -34,12 +34,12 @@ class PaymentProcessingServiceTest {
     private PaymentEventPublisher paymentEventPublisher;
 
     @Mock
-    private PaymentMetrics paymentMetrics;
+    private PaymentMetricRecorder paymentMetricRecorder;
 
     @BeforeEach
     void setUp() {
         paymentProcessingService = new PaymentProcessingService(
-                paymentRepository, paymentEventPublisher, paymentMetrics
+                paymentRepository, paymentEventPublisher, paymentMetricRecorder
         );
     }
 
