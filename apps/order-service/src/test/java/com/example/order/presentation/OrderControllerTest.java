@@ -11,6 +11,8 @@ import com.example.order.application.exception.UnauthorizedOrderAccessException;
 import com.example.order.domain.exception.OrderCannotBeCancelledException;
 import com.example.order.domain.exception.OrderNotFoundException;
 import com.example.order.domain.model.OrderStatus;
+import com.example.order.domain.model.PageQuery;
+import com.example.order.domain.model.PageResult;
 import com.example.order.presentation.GlobalExceptionHandler;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -18,8 +20,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.context.annotation.Import;
 import org.springframework.dao.OptimisticLockingFailureException;
-import org.springframework.data.domain.PageImpl;
-import org.springframework.data.domain.Pageable;
 import org.springframework.http.MediaType;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
@@ -152,7 +152,8 @@ class OrderControllerTest {
     @DisplayName("주문 목록 조회 시 200과 페이지네이션 응답 반환")
     void getOrders_validRequest_returns200() throws Exception {
         OrderSummary summary = new OrderSummary("order-1", OrderStatus.PENDING.name(), 1000L, 1, Instant.now());
-        given(orderQueryService.getOrders(eq("user1"), any(), any())).willReturn(new PageImpl<>(List.of(summary)));
+        given(orderQueryService.getOrders(eq("user1"), any(), any()))
+                .willReturn(new PageResult<>(List.of(summary), 0, 20, 1L, 1));
 
         mockMvc.perform(get("/api/orders").header("X-User-Id", "user1"))
                 .andExpect(status().isOk())
@@ -166,7 +167,7 @@ class OrderControllerTest {
     void getOrders_withStatus_returns200() throws Exception {
         OrderSummary summary = new OrderSummary("order-1", OrderStatus.CONFIRMED.name(), 2000L, 1, Instant.now());
         given(orderQueryService.getOrders(eq("user1"), eq(OrderStatus.CONFIRMED), any()))
-                .willReturn(new PageImpl<>(List.of(summary)));
+                .willReturn(new PageResult<>(List.of(summary), 0, 20, 1L, 1));
 
         mockMvc.perform(get("/api/orders")
                         .header("X-User-Id", "user1")
@@ -180,7 +181,8 @@ class OrderControllerTest {
     @DisplayName("status가 빈 문자열이면 전체 주문을 조회한다")
     void getOrders_emptyStatus_returnsAll() throws Exception {
         OrderSummary summary = new OrderSummary("order-1", OrderStatus.PENDING.name(), 1000L, 1, Instant.now());
-        given(orderQueryService.getOrders(eq("user1"), any(), any())).willReturn(new PageImpl<>(List.of(summary)));
+        given(orderQueryService.getOrders(eq("user1"), any(), any()))
+                .willReturn(new PageResult<>(List.of(summary), 0, 20, 1L, 1));
 
         mockMvc.perform(get("/api/orders")
                         .header("X-User-Id", "user1")
@@ -221,7 +223,10 @@ class OrderControllerTest {
     @DisplayName("size가 최대값(100) 초과 시 100으로 클램핑된다")
     void getOrders_sizeExceedsMax_clampedTo100() throws Exception {
         given(orderQueryService.getOrders(any(), any(), any()))
-                .willAnswer(inv -> new PageImpl<>(List.of(), inv.getArgument(2, Pageable.class), 0));
+                .willAnswer(inv -> {
+                    PageQuery pq = inv.getArgument(2, PageQuery.class);
+                    return new PageResult<>(List.of(), pq.page(), pq.size(), 0L, 0);
+                });
 
         mockMvc.perform(get("/api/orders")
                         .header("X-User-Id", "user1")
@@ -234,7 +239,10 @@ class OrderControllerTest {
     @DisplayName("size가 정확히 최대값(100)이면 그대로 사용된다")
     void getOrders_sizeEqualsMax_usedAsIs() throws Exception {
         given(orderQueryService.getOrders(any(), any(), any()))
-                .willAnswer(inv -> new PageImpl<>(List.of(), inv.getArgument(2, Pageable.class), 0));
+                .willAnswer(inv -> {
+                    PageQuery pq = inv.getArgument(2, PageQuery.class);
+                    return new PageResult<>(List.of(), pq.page(), pq.size(), 0L, 0);
+                });
 
         mockMvc.perform(get("/api/orders")
                         .header("X-User-Id", "user1")
@@ -247,7 +255,10 @@ class OrderControllerTest {
     @DisplayName("size가 0이면 기본값(20)이 사용된다")
     void getOrders_sizeZero_defaultUsed() throws Exception {
         given(orderQueryService.getOrders(any(), any(), any()))
-                .willAnswer(inv -> new PageImpl<>(List.of(), inv.getArgument(2, Pageable.class), 0));
+                .willAnswer(inv -> {
+                    PageQuery pq = inv.getArgument(2, PageQuery.class);
+                    return new PageResult<>(List.of(), pq.page(), pq.size(), 0L, 0);
+                });
 
         mockMvc.perform(get("/api/orders")
                         .header("X-User-Id", "user1")
@@ -260,7 +271,10 @@ class OrderControllerTest {
     @DisplayName("size가 음수이면 기본값(20)이 사용된다")
     void getOrders_sizeNegative_defaultUsed() throws Exception {
         given(orderQueryService.getOrders(any(), any(), any()))
-                .willAnswer(inv -> new PageImpl<>(List.of(), inv.getArgument(2, Pageable.class), 0));
+                .willAnswer(inv -> {
+                    PageQuery pq = inv.getArgument(2, PageQuery.class);
+                    return new PageResult<>(List.of(), pq.page(), pq.size(), 0L, 0);
+                });
 
         mockMvc.perform(get("/api/orders")
                         .header("X-User-Id", "user1")
@@ -273,7 +287,10 @@ class OrderControllerTest {
     @DisplayName("정상 범위의 size는 그대로 사용된다")
     void getOrders_sizeInRange_usedAsIs() throws Exception {
         given(orderQueryService.getOrders(any(), any(), any()))
-                .willAnswer(inv -> new PageImpl<>(List.of(), inv.getArgument(2, Pageable.class), 0));
+                .willAnswer(inv -> {
+                    PageQuery pq = inv.getArgument(2, PageQuery.class);
+                    return new PageResult<>(List.of(), pq.page(), pq.size(), 0L, 0);
+                });
 
         mockMvc.perform(get("/api/orders")
                         .header("X-User-Id", "user1")
@@ -286,7 +303,10 @@ class OrderControllerTest {
     @DisplayName("page가 음수이면 0으로 대체된다")
     void getOrders_pageNegative_replacedWithZero() throws Exception {
         given(orderQueryService.getOrders(any(), any(), any()))
-                .willAnswer(inv -> new PageImpl<>(List.of(), inv.getArgument(2, Pageable.class), 0));
+                .willAnswer(inv -> {
+                    PageQuery pq = inv.getArgument(2, PageQuery.class);
+                    return new PageResult<>(List.of(), pq.page(), pq.size(), 0L, 0);
+                });
 
         mockMvc.perform(get("/api/orders")
                         .header("X-User-Id", "user1")

@@ -6,6 +6,8 @@ import com.example.order.application.exception.UnauthorizedOrderAccessException;
 import com.example.order.domain.exception.OrderNotFoundException;
 import com.example.order.domain.model.Order;
 import com.example.order.domain.model.OrderStatus;
+import com.example.order.domain.model.PageQuery;
+import com.example.order.domain.model.PageResult;
 import com.example.order.domain.model.ShippingAddress;
 import com.example.order.domain.repository.OrderRepository;
 import org.junit.jupiter.api.DisplayName;
@@ -14,9 +16,6 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageImpl;
-import org.springframework.data.domain.PageRequest;
 
 import java.time.Clock;
 import java.time.Instant;
@@ -43,19 +42,21 @@ class OrderQueryServiceTest {
             "홍길동", "010-1234-5678", "12345", "서울시 강남구", "101호"
     );
 
+    private static final PageQuery DEFAULT_PAGE_QUERY = new PageQuery(0, 20, "createdAt", "DESC");
+
     @Test
     @DisplayName("status 미지정 시 전체 주문 목록이 반환된다")
     void getOrders_noStatus_returnsSummaries() {
         Order order = Order.create("user1",
                 List.of(new Order.OrderItemData("p1", "v1", "노트북", null, 1, 1000L)),
                 ADDRESS, FIXED_CLOCK);
-        Page<Order> orderPage = new PageImpl<>(List.of(order));
-        given(orderRepository.findByUserId("user1", PageRequest.of(0, 20))).willReturn(orderPage);
+        PageResult<Order> orderPage = new PageResult<>(List.of(order), 0, 20, 1L, 1);
+        given(orderRepository.findByUserId("user1", DEFAULT_PAGE_QUERY)).willReturn(orderPage);
 
-        Page<OrderSummary> result = orderQueryService.getOrders("user1", null, PageRequest.of(0, 20));
+        PageResult<OrderSummary> result = orderQueryService.getOrders("user1", null, DEFAULT_PAGE_QUERY);
 
-        assertThat(result.getContent()).hasSize(1);
-        assertThat(result.getContent().get(0).status()).isEqualTo(OrderStatus.PENDING.name());
+        assertThat(result.content()).hasSize(1);
+        assertThat(result.content().get(0).status()).isEqualTo(OrderStatus.PENDING.name());
     }
 
     @Test
@@ -64,27 +65,27 @@ class OrderQueryServiceTest {
         Order order = Order.create("user1",
                 List.of(new Order.OrderItemData("p1", "v1", "노트북", null, 1, 1000L)),
                 ADDRESS, FIXED_CLOCK);
-        Page<Order> orderPage = new PageImpl<>(List.of(order));
-        given(orderRepository.findByUserIdAndStatus("user1", OrderStatus.PENDING, PageRequest.of(0, 20)))
+        PageResult<Order> orderPage = new PageResult<>(List.of(order), 0, 20, 1L, 1);
+        given(orderRepository.findByUserIdAndStatus("user1", OrderStatus.PENDING, DEFAULT_PAGE_QUERY))
                 .willReturn(orderPage);
 
-        Page<OrderSummary> result = orderQueryService.getOrders("user1", OrderStatus.PENDING, PageRequest.of(0, 20));
+        PageResult<OrderSummary> result = orderQueryService.getOrders("user1", OrderStatus.PENDING, DEFAULT_PAGE_QUERY);
 
-        assertThat(result.getContent()).hasSize(1);
-        assertThat(result.getContent().get(0).status()).isEqualTo(OrderStatus.PENDING.name());
+        assertThat(result.content()).hasSize(1);
+        assertThat(result.content().get(0).status()).isEqualTo(OrderStatus.PENDING.name());
     }
 
     @Test
     @DisplayName("status 지정 시 결과가 없으면 빈 페이지를 반환한다")
     void getOrders_withStatusNoResults_returnsEmptyPage() {
-        Page<Order> emptyPage = new PageImpl<>(List.of());
-        given(orderRepository.findByUserIdAndStatus("user1", OrderStatus.SHIPPED, PageRequest.of(0, 20)))
+        PageResult<Order> emptyPage = new PageResult<>(List.of(), 0, 20, 0L, 0);
+        given(orderRepository.findByUserIdAndStatus("user1", OrderStatus.SHIPPED, DEFAULT_PAGE_QUERY))
                 .willReturn(emptyPage);
 
-        Page<OrderSummary> result = orderQueryService.getOrders("user1", OrderStatus.SHIPPED, PageRequest.of(0, 20));
+        PageResult<OrderSummary> result = orderQueryService.getOrders("user1", OrderStatus.SHIPPED, DEFAULT_PAGE_QUERY);
 
-        assertThat(result.getContent()).isEmpty();
-        assertThat(result.getTotalElements()).isZero();
+        assertThat(result.content()).isEmpty();
+        assertThat(result.totalElements()).isZero();
     }
 
     @Test

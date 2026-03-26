@@ -2,10 +2,13 @@ package com.example.order.infrastructure.persistence;
 
 import com.example.order.domain.model.Order;
 import com.example.order.domain.model.OrderStatus;
+import com.example.order.domain.model.PageQuery;
+import com.example.order.domain.model.PageResult;
 import com.example.order.domain.repository.OrderRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Repository;
 
 import java.util.ArrayList;
@@ -76,13 +79,17 @@ public class OrderRepositoryImpl implements OrderRepository {
     }
 
     @Override
-    public Page<Order> findByUserId(String userId, Pageable pageable) {
-        return jpaRepository.findByUserId(userId, pageable).map(mapper::toDomain);
+    public PageResult<Order> findByUserId(String userId, PageQuery pageQuery) {
+        PageRequest pageable = toPageRequest(pageQuery);
+        Page<OrderJpaEntity> page = jpaRepository.findByUserId(userId, pageable);
+        return toPageResult(page);
     }
 
     @Override
-    public Page<Order> findByUserIdAndStatus(String userId, OrderStatus status, Pageable pageable) {
-        return jpaRepository.findByUserIdAndStatus(userId, status, pageable).map(mapper::toDomain);
+    public PageResult<Order> findByUserIdAndStatus(String userId, OrderStatus status, PageQuery pageQuery) {
+        PageRequest pageable = toPageRequest(pageQuery);
+        Page<OrderJpaEntity> page = jpaRepository.findByUserIdAndStatus(userId, status, pageable);
+        return toPageResult(page);
     }
 
     @Override
@@ -90,5 +97,19 @@ public class OrderRepositoryImpl implements OrderRepository {
         return jpaRepository.findByUserIdAndStatusIn(userId, statuses).stream()
                 .map(mapper::toDomain)
                 .toList();
+    }
+
+    private PageRequest toPageRequest(PageQuery pageQuery) {
+        Sort.Direction direction = "ASC".equalsIgnoreCase(pageQuery.sortDirection())
+                ? Sort.Direction.ASC
+                : Sort.Direction.DESC;
+        return PageRequest.of(pageQuery.page(), pageQuery.size(), Sort.by(direction, pageQuery.sortBy()));
+    }
+
+    private PageResult<Order> toPageResult(Page<OrderJpaEntity> page) {
+        List<Order> content = page.getContent().stream()
+                .map(mapper::toDomain)
+                .toList();
+        return new PageResult<>(content, page.getNumber(), page.getSize(), page.getTotalElements(), page.getTotalPages());
     }
 }

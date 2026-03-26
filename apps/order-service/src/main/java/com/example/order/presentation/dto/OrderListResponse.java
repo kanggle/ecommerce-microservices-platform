@@ -1,7 +1,7 @@
 package com.example.order.presentation.dto;
 
 import com.example.order.application.dto.OrderSummary;
-import org.springframework.data.domain.Page;
+import com.example.order.domain.model.PageResult;
 
 import java.time.Instant;
 import java.util.List;
@@ -12,13 +12,13 @@ public record OrderListResponse(
         int size,
         long totalElements
 ) {
-    public static OrderListResponse from(Page<OrderSummary> page) {
-        List<OrderSummaryItem> items = page.getContent().stream()
+    public static OrderListResponse from(PageResult<OrderSummary> pageResult) {
+        List<OrderSummaryItem> items = pageResult.content().stream()
                 .map(s -> new OrderSummaryItem(
                         s.orderId(), s.status(), s.totalPrice(), s.itemCount(), s.createdAt()
                 ))
                 .toList();
-        return new OrderListResponse(items, page.getNumber(), page.getSize(), page.getTotalElements());
+        return new OrderListResponse(items, pageResult.page(), pageResult.size(), pageResult.totalElements());
     }
 
     public record OrderSummaryItem(

@@ -2,8 +2,8 @@ package com.example.order.domain.repository;
 
 import com.example.order.domain.model.Order;
 import com.example.order.domain.model.OrderStatus;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
+import com.example.order.domain.model.PageQuery;
+import com.example.order.domain.model.PageResult;
 
 import java.util.Collection;
 import java.util.List;
@@ -17,9 +17,9 @@ public interface OrderRepository {
 
     Optional<Order> findById(String orderId);
 
-    Page<Order> findByUserId(String userId, Pageable pageable);
+    PageResult<Order> findByUserId(String userId, PageQuery pageQuery);
 
-    Page<Order> findByUserIdAndStatus(String userId, OrderStatus status, Pageable pageable);
+    PageResult<Order> findByUserIdAndStatus(String userId, OrderStatus status, PageQuery pageQuery);
 
     List<Order> findByUserIdAndStatusIn(String userId, Collection<OrderStatus> statuses);
 }

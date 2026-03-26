@@ -6,10 +6,10 @@ import com.example.order.application.exception.UnauthorizedOrderAccessException;
 import com.example.order.domain.exception.OrderNotFoundException;
 import com.example.order.domain.model.Order;
 import com.example.order.domain.model.OrderStatus;
+import com.example.order.domain.model.PageQuery;
+import com.example.order.domain.model.PageResult;
 import com.example.order.domain.repository.OrderRepository;
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -20,11 +20,11 @@ public class OrderQueryService {
     private final OrderRepository orderRepository;
 
     @Transactional(readOnly = true)
-    public Page<OrderSummary> getOrders(String userId, OrderStatus status, Pageable pageable) {
-        Page<Order> orders = (status != null)
-                ? orderRepository.findByUserIdAndStatus(userId, status, pageable)
-                : orderRepository.findByUserId(userId, pageable);
-        return orders.map(OrderSummary::from);
+    public PageResult<OrderSummary> getOrders(String userId, OrderStatus status, PageQuery pageQuery) {
+        PageResult<Order> orders = (status != null)
+                ? orderRepository.findByUserIdAndStatus(userId, status, pageQuery)
+                : orderRepository.findByUserId(userId, pageQuery);
+        return mapToSummaryPageResult(orders);
     }
 
     @Transactional(readOnly = true)
@@ -37,5 +37,15 @@ public class OrderQueryService {
         }
 
         return OrderDetail.from(order);
+    }
+
+    private PageResult<OrderSummary> mapToSummaryPageResult(PageResult<Order> orders) {
+        return new PageResult<>(
+                orders.content().stream().map(OrderSummary::from).toList(),
+                orders.page(),
+                orders.size(),
+                orders.totalElements(),
+                orders.totalPages()
+        );
     }
 }

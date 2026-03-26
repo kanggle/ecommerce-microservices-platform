@@ -9,6 +9,7 @@ import com.example.order.application.service.OrderPlacementService;
 import com.example.order.application.service.OrderQueryService;
 import com.example.order.domain.exception.OrderNotFoundException;
 import com.example.order.domain.model.OrderStatus;
+import com.example.order.domain.model.PageResult;
 import com.example.order.presentation.GlobalExceptionHandler;
 import com.example.order.presentation.OrderController;
 import com.fasterxml.jackson.databind.JsonNode;
@@ -18,7 +19,6 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.context.annotation.Import;
-import org.springframework.data.domain.PageImpl;
 import org.springframework.http.MediaType;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
@@ -87,7 +87,7 @@ class OrderApiContractTest {
     void getOrders_response_containsSpecFields() throws Exception {
         OrderSummary summary = new OrderSummary("order-1", OrderStatus.PENDING.name(), 1000L, 1, Instant.now());
         given(orderQueryService.getOrders(eq("user-1"), any(), any()))
-                .willReturn(new PageImpl<>(List.of(summary)));
+                .willReturn(new PageResult<>(List.of(summary), 0, 20, 1L, 1));
 
         MvcResult result = mockMvc.perform(get("/api/orders").header("X-User-Id", "user-1"))
                 .andExpect(status().isOk())

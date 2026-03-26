@@ -9,6 +9,8 @@ import com.example.order.application.service.OrderCancellationService;
 import com.example.order.application.service.OrderPlacementService;
 import com.example.order.application.service.OrderQueryService;
 import com.example.order.domain.model.OrderStatus;
+import com.example.order.domain.model.PageQuery;
+import com.example.order.domain.model.PageResult;
 import com.example.order.presentation.exception.InvalidOrderStatusException;
 import com.example.order.presentation.dto.CancelOrderResponse;
 import com.example.order.presentation.dto.OrderDetailResponse;
@@ -18,9 +20,6 @@ import com.example.order.presentation.dto.PlaceOrderResponse;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotBlank;
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
@@ -73,8 +72,8 @@ public class OrderController {
         int safePage = Math.max(page, 0);
         int safeSize = size < 1 ? DEFAULT_PAGE_SIZE : Math.min(size, MAX_PAGE_SIZE);
         OrderStatus orderStatus = parseStatus(status);
-        PageRequest pageable = PageRequest.of(safePage, safeSize, Sort.by(Sort.Direction.DESC, "createdAt"));
-        Page<OrderSummary> result = orderQueryService.getOrders(userId, orderStatus, pageable);
+        PageQuery pageQuery = new PageQuery(safePage, safeSize, "createdAt", "DESC");
+        PageResult<OrderSummary> result = orderQueryService.getOrders(userId, orderStatus, pageQuery);
         return ResponseEntity.ok(OrderListResponse.from(result));
     }
 
