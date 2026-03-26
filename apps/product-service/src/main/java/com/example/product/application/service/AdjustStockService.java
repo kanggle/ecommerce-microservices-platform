@@ -31,29 +31,44 @@ public class AdjustStockService {
 
     @Transactional
     public AdjustStockResult adjust(AdjustStockCommand command) {
+        validateQuantity(command);
+        Product product = findProductAndValidateVariant(command.productId(), command.variantId());
+        int[] stocks = adjustInventoryStock(command.variantId(), command.quantity());
+        int previousStock = stocks[0];
+        int currentStock = stocks[1];
+        recordStockMetrics(command, currentStock, product);
+        publishStockChangedEvent(command, command.variantId(), previousStock, currentStock);
+        return new AdjustStockResult(command.variantId(), currentStock);
+    }
+
+    private void validateQuantity(AdjustStockCommand command) {
         if (command.quantity() == 0) {
             throw new IllegalArgumentException("Stock adjustment quantity must not be zero");
         }
+    }
 
-        Product product = productRepository.findById(command.productId())
-                .orElseThrow(() -> new ProductNotFoundException(command.productId()));
-
-        UUID variantId = command.variantId();
+    private Product findProductAndValidateVariant(UUID productId, UUID variantId) {
+        Product product = productRepository.findById(productId)
+                .orElseThrow(() -> new ProductNotFoundException(productId));
         boolean variantBelongsToProduct = product.getVariants().stream()
                 .anyMatch(v -> v.getId().equals(variantId));
         if (!variantBelongsToProduct) {
             throw new VariantNotFoundException(variantId);
         }
+        return product;
+    }
 
+    private int[] adjustInventoryStock(UUID variantId, int quantity) {
         Inventory inventory = inventoryRepository.findByVariantId(variantId)
                 .orElseThrow(() -> new VariantNotFoundException(variantId));
-
         int previousStock = inventory.currentStock().value();
-        inventory.adjustStock(command.quantity());
+        inventory.adjustStock(quantity);
         int currentStock = inventory.currentStock().value();
-
         inventoryRepository.save(inventory);
+        return new int[]{previousStock, currentStock};
+    }
 
+    private void recordStockMetrics(AdjustStockCommand command, int currentStock, Product product) {
         String adjustType = command.quantity() > 0 ? "increase" : "decrease";
         if (command.reason() != null && command.reason().contains("reserve")) {
             adjustType = "reserve";
@@ -67,7 +82,10 @@ public class AdjustStockService {
             }
             productRepository.save(product);
         }
+    }
 
+    private void publishStockChangedEvent(AdjustStockCommand command, UUID variantId,
+                                          int previousStock, int currentStock) {
         try {
             productEventPublisher.publish(ProductEvent.stockChanged(new StockChangedPayload(
                     command.productId().toString(),
@@ -81,7 +99,5 @@ public class AdjustStockService {
         } catch (Exception e) {
             log.warn("Failed to publish StockChanged event for variant: {}", variantId, e);
         }
-
-        return new AdjustStockResult(variantId, currentStock);
     }
 }
