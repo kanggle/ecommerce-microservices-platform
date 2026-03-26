@@ -9,6 +9,7 @@ import com.example.product.domain.model.Category;
 import com.example.product.domain.model.Product;
 import com.example.product.domain.repository.CategoryRepository;
 import com.example.product.domain.repository.ProductRepository;
+import com.example.product.infrastructure.metrics.ProductMetrics;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -42,6 +43,9 @@ class RegisterProductServiceTest {
 
     @Mock
     private ProductEventPublisher productEventPublisher;
+
+    @Mock
+    private ProductMetrics productMetrics;
 
     @InjectMocks
     private RegisterProductService registerProductService;

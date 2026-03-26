@@ -9,7 +9,6 @@ import com.example.product.domain.exception.ProductNotFoundException;
 import com.example.product.domain.exception.VariantNotFoundException;
 import com.example.product.domain.model.Inventory;
 import com.example.product.domain.model.Product;
-import com.example.product.domain.model.ProductStatus;
 import com.example.product.domain.repository.InventoryRepository;
 import com.example.product.domain.repository.ProductRepository;
 import com.example.product.infrastructure.metrics.ProductMetrics;
@@ -61,12 +60,11 @@ public class AdjustStockService {
         }
         productMetrics.incrementStockAdjusted(adjustType);
 
-        if (currentStock == 0 && product.getStatus() != ProductStatus.SOLD_OUT) {
-            productMetrics.incrementOutOfStock();
-            product.changeStatus(ProductStatus.SOLD_OUT);
-            productRepository.save(product);
-        } else if (currentStock > 0 && product.getStatus() == ProductStatus.SOLD_OUT) {
-            product.changeStatus(ProductStatus.ON_SALE);
+        boolean statusChanged = product.adjustStatusByStock(currentStock);
+        if (statusChanged) {
+            if (currentStock == 0) {
+                productMetrics.incrementOutOfStock();
+            }
             productRepository.save(product);
         }
 

@@ -11,6 +11,7 @@ import com.example.product.domain.model.ProductStatus;
 import com.example.product.domain.model.ProductVariant;
 import com.example.product.domain.model.StockQuantity;
 import com.example.product.domain.repository.ProductRepository;
+import com.example.product.infrastructure.metrics.ProductMetrics;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -41,6 +42,9 @@ class UpdateProductServiceTest {
 
     @Mock
     private ProductEventPublisher productEventPublisher;
+
+    @Mock
+    private ProductMetrics productMetrics;
 
     @InjectMocks
     private UpdateProductService updateProductService;

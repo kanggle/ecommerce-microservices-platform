@@ -16,6 +16,7 @@ import com.example.product.domain.model.ProductVariant;
 import com.example.product.domain.model.StockQuantity;
 import com.example.product.domain.repository.InventoryRepository;
 import com.example.product.domain.repository.ProductRepository;
+import com.example.product.infrastructure.metrics.ProductMetrics;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -51,6 +52,9 @@ class AdjustStockServiceTest {
 
     @Mock
     private ProductEventPublisher productEventPublisher;
+
+    @Mock
+    private ProductMetrics productMetrics;
 
     private Product makeProductWithVariant(UUID productId, UUID variantId, int stock, ProductStatus status) {
         ProductVariant variant = ProductVariant.reconstitute(variantId, productId, "기본", new StockQuantity(stock), new Price(0));
