@@ -1,7 +1,7 @@
 'use client';
 
 import { useState } from 'react';
-import { PageLayout, StatusBadge, ConfirmDialog } from '@/shared/ui';
+import { PageLayout, StatusBadge, ConfirmDialog, DescriptionList } from '@/shared/ui';
 import { ErrorMessage } from '@repo/ui';
 import { useOrder } from '../hooks/use-order';
 import { useCancelOrder } from '../hooks/use-cancel-order';
@@ -49,16 +49,14 @@ export function OrderDetail({ orderId }: Props) {
         <h2 style={{ fontSize: '1.125rem', fontWeight: 600, marginBottom: '12px' }}>
           주문 정보
         </h2>
-        <dl style={{ display: 'grid', gridTemplateColumns: '120px 1fr', gap: '8px 16px' }}>
-          <dt style={{ color: '#6b7280', fontWeight: 500 }}>상태</dt>
-          <dd><StatusBadge status={order.status} /></dd>
-          <dt style={{ color: '#6b7280', fontWeight: 500 }}>총액</dt>
-          <dd>{order.totalPrice.toLocaleString()}원</dd>
-          <dt style={{ color: '#6b7280', fontWeight: 500 }}>주문일</dt>
-          <dd>{new Date(order.createdAt).toLocaleString('ko-KR')}</dd>
-          <dt style={{ color: '#6b7280', fontWeight: 500 }}>수정일</dt>
-          <dd>{new Date(order.updatedAt).toLocaleString('ko-KR')}</dd>
-        </dl>
+        <DescriptionList
+          items={[
+            { label: '상태', value: <StatusBadge status={order.status} /> },
+            { label: '총액', value: `${order.totalPrice.toLocaleString()}원` },
+            { label: '주문일', value: new Date(order.createdAt).toLocaleString('ko-KR') },
+            { label: '수정일', value: new Date(order.updatedAt).toLocaleString('ko-KR') },
+          ]}
+        />
       </section>
 
       <section style={{ marginBottom: '24px' }}>
@@ -111,16 +109,14 @@ export function OrderDetail({ orderId }: Props) {
         <h2 style={{ fontSize: '1.125rem', fontWeight: 600, marginBottom: '12px' }}>
           배송지 정보
         </h2>
-        <dl style={{ display: 'grid', gridTemplateColumns: '120px 1fr', gap: '8px 16px' }}>
-          <dt style={{ color: '#6b7280', fontWeight: 500 }}>수령인</dt>
-          <dd>{order.shippingAddress.recipient}</dd>
-          <dt style={{ color: '#6b7280', fontWeight: 500 }}>연락처</dt>
-          <dd>{order.shippingAddress.phone}</dd>
-          <dt style={{ color: '#6b7280', fontWeight: 500 }}>우편번호</dt>
-          <dd>{order.shippingAddress.zipCode}</dd>
-          <dt style={{ color: '#6b7280', fontWeight: 500 }}>주소</dt>
-          <dd>{order.shippingAddress.address1} {order.shippingAddress.address2}</dd>
-        </dl>
+        <DescriptionList
+          items={[
+            { label: '수령인', value: order.shippingAddress.recipient },
+            { label: '연락처', value: order.shippingAddress.phone },
+            { label: '우편번호', value: order.shippingAddress.zipCode },
+            { label: '주소', value: `${order.shippingAddress.address1} ${order.shippingAddress.address2}` },
+          ]}
+        />
       </section>
 
       {cancelMutation.isError && (

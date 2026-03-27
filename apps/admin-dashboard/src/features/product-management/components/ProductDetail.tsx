@@ -1,7 +1,7 @@
 'use client';
 
 import { useState } from 'react';
-import { PageLayout, StatusBadge } from '@/shared/ui';
+import { PageLayout, StatusBadge, DescriptionList } from '@/shared/ui';
 import { ErrorMessage } from '@repo/ui';
 import { useProduct } from '../hooks/use-product';
 import { StockAdjustmentForm } from './StockAdjustmentForm';
@@ -34,16 +34,14 @@ export function ProductDetail({ productId }: Props) {
         <h2 style={{ fontSize: '1.125rem', fontWeight: 600, marginBottom: '12px' }}>
           기본 정보
         </h2>
-        <dl style={{ display: 'grid', gridTemplateColumns: '120px 1fr', gap: '8px 16px' }}>
-          <dt style={{ color: '#6b7280', fontWeight: 500 }}>상태</dt>
-          <dd><StatusBadge status={product.status} /></dd>
-          <dt style={{ color: '#6b7280', fontWeight: 500 }}>가격</dt>
-          <dd>{product.price.toLocaleString()}원</dd>
-          <dt style={{ color: '#6b7280', fontWeight: 500 }}>카테고리</dt>
-          <dd>{product.categoryId}</dd>
-          <dt style={{ color: '#6b7280', fontWeight: 500 }}>설명</dt>
-          <dd>{product.description}</dd>
-        </dl>
+        <DescriptionList
+          items={[
+            { label: '상태', value: <StatusBadge status={product.status} /> },
+            { label: '가격', value: `${product.price.toLocaleString()}원` },
+            { label: '카테고리', value: product.categoryId },
+            { label: '설명', value: product.description },
+          ]}
+        />
       </section>
 
       <section>

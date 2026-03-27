@@ -1,6 +1,6 @@
 'use client';
 
-import { PageLayout, StatusBadge } from '@/shared/ui';
+import { PageLayout, StatusBadge, DescriptionList } from '@/shared/ui';
 import { ErrorMessage } from '@repo/ui';
 import { useUser } from '../hooks/use-user';
 
@@ -33,34 +33,29 @@ export function UserDetail({ userId }: Props) {
         <h2 style={{ fontSize: '1.125rem', fontWeight: 600, marginBottom: '12px' }}>
           기본 정보
         </h2>
-        <dl style={{ display: 'grid', gridTemplateColumns: '120px 1fr', gap: '8px 16px' }}>
-          <dt style={{ color: '#6b7280', fontWeight: 500 }}>상태</dt>
-          <dd><StatusBadge status={user.status} /></dd>
-          <dt style={{ color: '#6b7280', fontWeight: 500 }}>이메일</dt>
-          <dd style={{ overflow: 'hidden', textOverflow: 'ellipsis' }}>{user.email}</dd>
-          <dt style={{ color: '#6b7280', fontWeight: 500 }}>이름</dt>
-          <dd>{user.name}</dd>
-          <dt style={{ color: '#6b7280', fontWeight: 500 }}>닉네임</dt>
-          <dd style={{ overflow: 'hidden', textOverflow: 'ellipsis' }}>{user.nickname ?? '-'}</dd>
-          <dt style={{ color: '#6b7280', fontWeight: 500 }}>연락처</dt>
-          <dd>{user.phone ?? '-'}</dd>
-          <dt style={{ color: '#6b7280', fontWeight: 500 }}>프로필 이미지</dt>
-          <dd>
-            {user.profileImageUrl ? (
-              <img
-                src={user.profileImageUrl}
-                alt={`${user.name} 프로필`}
-                style={{ width: '64px', height: '64px', borderRadius: '50%', objectFit: 'cover' }}
-              />
-            ) : (
-              '-'
-            )}
-          </dd>
-          <dt style={{ color: '#6b7280', fontWeight: 500 }}>가입일</dt>
-          <dd>{new Date(user.createdAt).toLocaleString('ko-KR')}</dd>
-          <dt style={{ color: '#6b7280', fontWeight: 500 }}>수정일</dt>
-          <dd>{new Date(user.updatedAt).toLocaleString('ko-KR')}</dd>
-        </dl>
+        <DescriptionList
+          items={[
+            { label: '상태', value: <StatusBadge status={user.status} /> },
+            { label: '이메일', value: <span style={{ overflow: 'hidden', textOverflow: 'ellipsis' }}>{user.email}</span> },
+            { label: '이름', value: user.name },
+            { label: '닉네임', value: <span style={{ overflow: 'hidden', textOverflow: 'ellipsis' }}>{user.nickname ?? '-'}</span> },
+            { label: '연락처', value: user.phone ?? '-' },
+            {
+              label: '프로필 이미지',
+              value: user.profileImageUrl ? (
+                <img
+                  src={user.profileImageUrl}
+                  alt={`${user.name} 프로필`}
+                  style={{ width: '64px', height: '64px', borderRadius: '50%', objectFit: 'cover' }}
+                />
+              ) : (
+                '-'
+              ),
+            },
+            { label: '가입일', value: new Date(user.createdAt).toLocaleString('ko-KR') },
+            { label: '수정일', value: new Date(user.updatedAt).toLocaleString('ko-KR') },
+          ]}
+        />
       </section>
     </PageLayout>
   );
