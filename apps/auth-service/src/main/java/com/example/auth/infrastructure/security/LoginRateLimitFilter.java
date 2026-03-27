@@ -2,7 +2,6 @@ package com.example.auth.infrastructure.security;
 
 import com.example.auth.domain.service.LoginRateLimiter;
 import com.example.auth.domain.service.AuthMetricsRecorder;
-import com.example.auth.presentation.support.ClientIpResolver;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -27,13 +26,11 @@ public class LoginRateLimitFilter extends OncePerRequestFilter {
 
     private final LoginRateLimiter loginRateLimiter;
     private final AuthMetricsRecorder authMetrics;
-    private final ClientIpResolver clientIpResolver;
     private final Map<String, PathLimit> pathLimits;
 
     public LoginRateLimitFilter(
             LoginRateLimiter loginRateLimiter,
             AuthMetricsRecorder authMetrics,
-            ClientIpResolver clientIpResolver,
             @Value("${app.rate-limit.login.max-requests:20}") int loginMax,
             @Value("${app.rate-limit.login.window-seconds:60}") long loginWindow,
             @Value("${app.rate-limit.signup.max-requests:10}") int signupMax,
@@ -42,7 +39,6 @@ public class LoginRateLimitFilter extends OncePerRequestFilter {
             @Value("${app.rate-limit.refresh.window-seconds:60}") long refreshWindow) {
         this.loginRateLimiter = loginRateLimiter;
         this.authMetrics = authMetrics;
-        this.clientIpResolver = clientIpResolver;
         this.pathLimits = Map.of(
             "/api/auth/login",   new PathLimit(loginMax, loginWindow),
             "/api/auth/signup",  new PathLimit(signupMax, signupWindow),
@@ -72,6 +68,10 @@ public class LoginRateLimitFilter extends OncePerRequestFilter {
     }
 
     private String resolveClientIp(HttpServletRequest request) {
-        return clientIpResolver.resolve(request);
+        String xff = request.getHeader("X-Forwarded-For");
+        if (xff != null && !xff.isBlank()) {
+            return xff.split(",")[0].trim();
+        }
+        return request.getRemoteAddr();
     }
 }
