@@ -1,6 +1,5 @@
-package com.example.user.infrastructure.exception;
+package com.example.user.presentation.exception;
 
-import com.example.user.presentation.exception.AccessDeniedException;
 import com.example.user.domain.exception.AddressNotFoundException;
 import com.example.user.domain.exception.DefaultAddressCannotBeDeletedException;
 import com.example.user.domain.exception.UserProfileNotFoundException;

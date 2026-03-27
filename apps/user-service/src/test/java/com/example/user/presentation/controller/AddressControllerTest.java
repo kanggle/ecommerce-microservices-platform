@@ -5,7 +5,7 @@ import com.example.user.application.service.AddressService;
 import com.example.user.domain.exception.AddressNotFoundException;
 import com.example.user.domain.exception.DefaultAddressCannotBeDeletedException;
 import com.example.user.domain.model.Address;
-import com.example.user.infrastructure.exception.GlobalExceptionHandler;
+import com.example.user.presentation.exception.GlobalExceptionHandler;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;

@@ -5,7 +5,7 @@ import com.example.user.application.result.UserProfileSummaryResult;
 import com.example.user.application.service.UserProfileService;
 import com.example.user.domain.exception.UserProfileNotFoundException;
 import com.example.user.domain.model.ProfileStatus;
-import com.example.user.infrastructure.exception.GlobalExceptionHandler;
+import com.example.user.presentation.exception.GlobalExceptionHandler;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;

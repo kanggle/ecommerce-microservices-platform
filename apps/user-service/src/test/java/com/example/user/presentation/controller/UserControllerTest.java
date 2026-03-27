@@ -4,7 +4,7 @@ import com.example.user.application.command.UpdateProfileCommand;
 import com.example.user.application.result.UserProfileResult;
 import com.example.user.application.service.UserProfileService;
 import com.example.user.domain.exception.UserProfileNotFoundException;
-import com.example.user.infrastructure.exception.GlobalExceptionHandler;
+import com.example.user.presentation.exception.GlobalExceptionHandler;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;

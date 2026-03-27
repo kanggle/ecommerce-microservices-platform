@@ -1,4 +1,4 @@
-package com.example.user.infrastructure.exception;
+package com.example.user.presentation.exception;
 
 import java.time.Instant;
 

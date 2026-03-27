@@ -6,7 +6,7 @@ import com.example.user.application.result.UserProfileSummaryResult;
 import com.example.user.application.service.AddressService;
 import com.example.user.application.service.UserProfileService;
 import com.example.user.domain.exception.UserProfileNotFoundException;
-import com.example.user.infrastructure.exception.GlobalExceptionHandler;
+import com.example.user.presentation.exception.GlobalExceptionHandler;
 import com.example.user.presentation.controller.AddressController;
 import com.example.user.presentation.controller.AdminUserController;
 import com.example.user.presentation.controller.UserController;
