@@ -20,29 +20,17 @@ public class IndexSyncService {
 
     public void upsert(SearchDocument document) {
         log.info("Upserting search index for productId={}", document.productId());
-        try {
-            searchIndexPort.upsert(document);
-            searchMetrics.incrementIndexSync("created");
-        } catch (Exception e) {
-            searchMetrics.incrementIndexSyncFailure();
-            throw e;
-        }
+        executeWithMetrics("created", () -> searchIndexPort.upsert(document));
     }
 
     public void delete(String productId) {
         log.info("Deleting search index for productId={}", productId);
-        try {
-            searchIndexPort.delete(productId);
-            searchMetrics.incrementIndexSync("deleted");
-        } catch (Exception e) {
-            searchMetrics.incrementIndexSyncFailure();
-            throw e;
-        }
+        executeWithMetrics("deleted", () -> searchIndexPort.delete(productId));
     }
 
     public void upsertPreservingStock(SearchDocument document) {
         log.info("Upserting search index (preserving stock) for productId={}", document.productId());
-        try {
+        executeWithMetrics("updated", () -> {
             int existingStock = 0;
             try {
                 Optional<SearchDocument> existing = searchIndexPort.findById(document.productId());
@@ -61,19 +49,19 @@ public class IndexSyncService {
                     existingStock
             );
             searchIndexPort.upsert(withStock);
-            searchMetrics.incrementIndexSync("updated");
-        } catch (Exception e) {
-            searchMetrics.incrementIndexSyncFailure();
-            throw e;
-        }
+        });
     }
 
     public void updateStock(String productId, int currentStock) {
         String status = currentStock == 0 ? ProductStatus.SOLD_OUT.name() : ProductStatus.ON_SALE.name();
         log.info("Updating stock for productId={}, currentStock={}, status={}", productId, currentStock, status);
+        executeWithMetrics("updated", () -> searchIndexPort.updateStock(productId, currentStock, status));
+    }
+
+    private void executeWithMetrics(String eventType, Runnable operation) {
         try {
-            searchIndexPort.updateStock(productId, currentStock, status);
-            searchMetrics.incrementIndexSync("updated");
+            operation.run();
+            searchMetrics.incrementIndexSync(eventType);
         } catch (Exception e) {
             searchMetrics.incrementIndexSyncFailure();
             throw e;
