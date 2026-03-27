@@ -5,3 +5,4 @@ export { StatusBadge } from './StatusBadge';
 export { ConfirmDialog } from './ConfirmDialog';
 export { FilterBar } from './FilterBar';
 export { Sidebar } from './Sidebar';
+export { ListError } from './ListError';

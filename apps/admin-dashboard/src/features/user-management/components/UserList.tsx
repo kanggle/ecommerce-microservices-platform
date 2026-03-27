@@ -1,7 +1,7 @@
 'use client';
 
 import { useRouter } from 'next/navigation';
-import { DataTable, StatusBadge, FilterBar } from '@/shared/ui';
+import { DataTable, StatusBadge, FilterBar, ListError } from '@/shared/ui';
 import type { ColumnDef } from '@/shared/ui';
 import { useUsers } from '../hooks/use-users';
 import type { AdminUserSummary } from '@repo/types';
@@ -34,14 +34,7 @@ export function UserList() {
   const { data, isLoading, isError, refetch, pagination, filters } = useUsers();
 
   if (isError) {
-    return (
-      <div role="alert" style={{ padding: '2rem', textAlign: 'center' }}>
-        <p style={{ color: 'red' }}>사용자 목록을 불러오는데 실패했습니다.</p>
-        <button onClick={() => refetch()} style={{ marginTop: '1rem' }}>
-          다시 시도
-        </button>
-      </div>
-    );
+    return <ListError message="사용자 목록을 불러오는데 실패했습니다." onRetry={() => refetch()} />;
   }
 
   return (

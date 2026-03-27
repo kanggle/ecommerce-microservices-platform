@@ -1,7 +1,7 @@
 'use client';
 
 import { useRouter } from 'next/navigation';
-import { DataTable, StatusBadge, FilterBar } from '@/shared/ui';
+import { DataTable, StatusBadge, FilterBar, ListError } from '@/shared/ui';
 import type { ColumnDef } from '@/shared/ui';
 import { useProducts } from '../hooks/use-products';
 import type { ProductSummary } from '@repo/types';
@@ -32,14 +32,7 @@ export function ProductList() {
   const { data, isLoading, isError, refetch, pagination, filters } = useProducts();
 
   if (isError) {
-    return (
-      <div role="alert" style={{ padding: '2rem', textAlign: 'center' }}>
-        <p style={{ color: 'red' }}>상품 목록을 불러오는데 실패했습니다.</p>
-        <button onClick={() => refetch()} style={{ marginTop: '1rem' }}>
-          다시 시도
-        </button>
-      </div>
-    );
+    return <ListError message="상품 목록을 불러오는데 실패했습니다." onRetry={() => refetch()} />;
   }
 
   return (
