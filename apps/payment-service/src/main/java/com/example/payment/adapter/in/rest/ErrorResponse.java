@@ -1,4 +1,4 @@
-package com.example.payment.infrastructure.exception;
+package com.example.payment.adapter.in.rest;
 
 import java.time.Instant;
 

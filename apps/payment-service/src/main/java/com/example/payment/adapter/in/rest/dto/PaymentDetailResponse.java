@@ -1,4 +1,4 @@
-package com.example.payment.presentation.dto;
+package com.example.payment.adapter.in.rest.dto;
 
 import com.example.payment.domain.model.Payment;
 

@@ -1,9 +1,9 @@
-package com.example.payment.presentation;
+package com.example.payment.adapter.in.rest;
 
 import com.example.payment.application.service.PaymentQueryService;
 import com.example.payment.domain.exception.InvalidPaymentException;
 import com.example.payment.domain.model.Payment;
-import com.example.payment.presentation.dto.PaymentDetailResponse;
+import com.example.payment.adapter.in.rest.dto.PaymentDetailResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;

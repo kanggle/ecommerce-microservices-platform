@@ -1,11 +1,10 @@
-package com.example.payment.presentation;
+package com.example.payment.adapter.in.rest;
 
 import com.example.payment.application.service.PaymentQueryService;
 import com.example.payment.application.exception.UnauthorizedPaymentAccessException;
 import com.example.payment.domain.exception.InvalidPaymentException;
 import com.example.payment.domain.exception.PaymentNotFoundException;
 import com.example.payment.domain.model.Payment;
-import com.example.payment.infrastructure.exception.GlobalExceptionHandler;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;

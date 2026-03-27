@@ -1,4 +1,4 @@
-package com.example.payment.infrastructure.exception;
+package com.example.payment.adapter.in.rest;
 
 import com.example.payment.application.exception.UnauthorizedPaymentAccessException;
 import com.example.payment.domain.exception.InvalidPaymentException;
