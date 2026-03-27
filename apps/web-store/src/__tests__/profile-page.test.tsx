@@ -1,6 +1,8 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { render, screen, waitFor } from '@testing-library/react';
+import { useState, useEffect, useCallback } from 'react';
 import type { UserProfile } from '@repo/types';
+import { LoadingSpinner, ErrorMessage } from '@repo/ui';
 
 const mockPush = vi.fn();
 const mockReplace = vi.fn();
@@ -25,11 +27,13 @@ vi.mock('@/features/user', () => ({
   ProfileForm: ({ profile }: { profile: UserProfile }) => (
     <div data-testid="profile-form">{profile.email}</div>
   ),
+  ProfileLoader: vi.fn(),
   getMyProfile: vi.fn(),
 }));
 
-import { getMyProfile } from '@/features/user';
+import { getMyProfile, ProfileLoader } from '@/features/user';
 const mockGetMyProfile = vi.mocked(getMyProfile);
+const MockProfileLoader = vi.mocked(ProfileLoader);
 
 import ProfilePage from '@/app/(store)/my/profile/page';
 
@@ -45,6 +49,47 @@ const MOCK_PROFILE: UserProfile = {
   updatedAt: '2024-01-01T00:00:00Z',
 };
 
+function createProfileLoaderImpl(getProfile: typeof getMyProfile) {
+  return function ProfileLoaderImpl() {
+    const [profile, setProfile] = useState<UserProfile | null>(null);
+    const [isLoading, setIsLoading] = useState(true);
+    const [error, setError] = useState('');
+
+    const loadProfile = useCallback(async () => {
+      setIsLoading(true);
+      setError('');
+      try {
+        const data = await getProfile();
+        setProfile(data);
+      } catch (err) {
+        const apiErr = err as { code?: string };
+        if (apiErr.code === 'USER_PROFILE_NOT_FOUND') {
+          setError('프로필을 찾을 수 없습니다.');
+        } else {
+          setError('프로필을 불러오는데 실패했습니다.');
+        }
+      } finally {
+        setIsLoading(false);
+      }
+    }, []);
+
+    useEffect(() => {
+      loadProfile();
+    }, [loadProfile]);
+
+    return (
+      <main style={{ maxWidth: '600px', margin: '0 auto', padding: '24px' }}>
+        <h1 style={{ marginBottom: '24px' }}>내 프로필</h1>
+        {isLoading && <LoadingSpinner />}
+        {error && <ErrorMessage message={error} onRetry={loadProfile} />}
+        {!isLoading && !error && profile && (
+          <div data-testid="profile-form">{profile.email}</div>
+        )}
+      </main>
+    );
+  };
+}
+
 describe('ProfilePage', () => {
   beforeEach(() => {
     vi.clearAllMocks();
@@ -56,6 +101,7 @@ describe('ProfilePage', () => {
       signup: vi.fn(),
       logout: vi.fn(),
     };
+    MockProfileLoader.mockImplementation(createProfileLoaderImpl(mockGetMyProfile));
   });
 
   it('프로필을 로드하고 ProfileForm을 렌더링한다', async () => {
