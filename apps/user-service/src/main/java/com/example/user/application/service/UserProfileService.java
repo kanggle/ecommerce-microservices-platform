@@ -44,13 +44,13 @@ public class UserProfileService {
         boolean changed = hasChanges(profile, command);
 
         if (command.nickname() != null) {
-            profile.updateNickname(command.nickname().trim());
+            profile.updateNickname(command.nickname());
         }
         if (command.phone() != null) {
-            profile.updatePhone(command.phone().trim());
+            profile.updatePhone(command.phone());
         }
         if (command.profileImageUrl() != null) {
-            profile.updateProfileImageUrl(command.profileImageUrl().trim());
+            profile.updateProfileImageUrl(command.profileImageUrl());
         }
 
         UserProfile saved = userProfileRepository.save(profile);
