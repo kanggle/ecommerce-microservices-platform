@@ -6,6 +6,7 @@ import { isApiError, ERROR_MESSAGES } from '@repo/types/guards';
 import type { ProfileFieldErrors } from '../model/types';
 import { updateMyProfile } from '../api/user-profile-api';
 import { Toast } from '@/shared/ui';
+import { ProfileFormField } from './ProfileFormField';
 
 interface ProfileFormProps {
   profile: UserProfile;
@@ -124,89 +125,41 @@ export function ProfileForm({ profile, onUpdated }: ProfileFormProps) {
       <section style={{ marginBottom: '24px' }}>
         <h2 style={{ fontSize: '18px', marginBottom: '12px' }}>프로필 수정</h2>
         <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
-          <div>
-            <label htmlFor="nickname">닉네임</label>
-            <input
-              id="nickname"
-              type="text"
-              value={nickname}
-              onChange={(e) => {
-                setNickname(e.target.value);
-                setFieldErrors((prev) => ({ ...prev, nickname: undefined }));
-              }}
-              style={{
-                display: 'block',
-                width: '100%',
-                padding: '8px',
-                marginTop: '4px',
-              }}
-            />
-            {fieldErrors.nickname && (
-              <p
-                role="alert"
-                style={{ color: 'red', fontSize: '14px', margin: '4px 0 0' }}
-              >
-                {fieldErrors.nickname}
-              </p>
-            )}
-          </div>
-          <div>
-            <label htmlFor="phone">전화번호</label>
-            <input
-              id="phone"
-              type="tel"
-              value={phone}
-              onChange={(e) => {
-                setPhone(e.target.value);
-                setFieldErrors((prev) => ({ ...prev, phone: undefined }));
-              }}
-              placeholder="010-0000-0000"
-              style={{
-                display: 'block',
-                width: '100%',
-                padding: '8px',
-                marginTop: '4px',
-              }}
-            />
-            {fieldErrors.phone && (
-              <p
-                role="alert"
-                style={{ color: 'red', fontSize: '14px', margin: '4px 0 0' }}
-              >
-                {fieldErrors.phone}
-              </p>
-            )}
-          </div>
-          <div>
-            <label htmlFor="profileImageUrl">프로필 이미지 URL</label>
-            <input
-              id="profileImageUrl"
-              type="url"
-              value={profileImageUrl}
-              onChange={(e) => {
-                setProfileImageUrl(e.target.value);
-                setFieldErrors((prev) => ({
-                  ...prev,
-                  profileImageUrl: undefined,
-                }));
-              }}
-              placeholder="https://example.com/image.jpg"
-              style={{
-                display: 'block',
-                width: '100%',
-                padding: '8px',
-                marginTop: '4px',
-              }}
-            />
-            {fieldErrors.profileImageUrl && (
-              <p
-                role="alert"
-                style={{ color: 'red', fontSize: '14px', margin: '4px 0 0' }}
-              >
-                {fieldErrors.profileImageUrl}
-              </p>
-            )}
-          </div>
+          <ProfileFormField
+            id="nickname"
+            label="닉네임"
+            type="text"
+            value={nickname}
+            onChange={(value) => {
+              setNickname(value);
+              setFieldErrors((prev) => ({ ...prev, nickname: undefined }));
+            }}
+            error={fieldErrors.nickname}
+          />
+          <ProfileFormField
+            id="phone"
+            label="전화번호"
+            type="tel"
+            value={phone}
+            onChange={(value) => {
+              setPhone(value);
+              setFieldErrors((prev) => ({ ...prev, phone: undefined }));
+            }}
+            placeholder="010-0000-0000"
+            error={fieldErrors.phone}
+          />
+          <ProfileFormField
+            id="profileImageUrl"
+            label="프로필 이미지 URL"
+            type="url"
+            value={profileImageUrl}
+            onChange={(value) => {
+              setProfileImageUrl(value);
+              setFieldErrors((prev) => ({ ...prev, profileImageUrl: undefined }));
+            }}
+            placeholder="https://example.com/image.jpg"
+            error={fieldErrors.profileImageUrl}
+          />
         </div>
       </section>
 
