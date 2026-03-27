@@ -17,6 +17,7 @@ import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
 import java.util.Objects;
 import java.util.UUID;
 
@@ -97,7 +98,7 @@ public class UserProfileService {
             profiles = userProfileRepository.findAll(pageQuery);
         }
 
-        java.util.List<UserProfileSummaryResult> content = profiles.content().stream()
+        List<UserProfileSummaryResult> content = profiles.content().stream()
                 .map(UserProfileSummaryResult::from)
                 .toList();
         return new PageResult<>(content, profiles.totalElements(), profiles.totalPages(), profiles.pageNumber(), profiles.pageSize());
