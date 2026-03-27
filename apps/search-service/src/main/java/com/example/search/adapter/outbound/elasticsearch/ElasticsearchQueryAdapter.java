@@ -83,10 +83,10 @@ public class ElasticsearchQueryAdapter implements SearchQueryPort {
             }
             if (filter.minPrice() != null || filter.maxPrice() != null) {
                 builder.filter(f -> f.range(r -> r.number(n -> {
-                    var nb = n.field("price");
-                    if (filter.minPrice() != null) nb = nb.gte(filter.minPrice().doubleValue());
-                    if (filter.maxPrice() != null) nb = nb.lte(filter.maxPrice().doubleValue());
-                    return nb;
+                    var priceRange = n.field("price");
+                    if (filter.minPrice() != null) priceRange = priceRange.gte(filter.minPrice().doubleValue());
+                    if (filter.maxPrice() != null) priceRange = priceRange.lte(filter.maxPrice().doubleValue());
+                    return priceRange;
                 })));
             }
             return builder;
