@@ -12,6 +12,7 @@ import { getErrorMessage } from '@repo/types/guards';
 import { useCreateProduct } from '../hooks/use-create-product';
 import { useUpdateProduct } from '../hooks/use-update-product';
 import { VariantEditor, type VariantInput } from './VariantEditor';
+import { Section } from '@/shared/ui';
 
 interface Props {
   product?: ProductDetail;
@@ -19,12 +20,10 @@ interface Props {
 
 const styles = {
   error: { color: 'red', marginBottom: '16px' } as const,
-  sectionTitle: { fontSize: '1.125rem', fontWeight: 600, marginBottom: '12px' } as const,
   fieldGrid: { display: 'grid', gap: '12px', maxWidth: '480px' } as const,
   label: { display: 'block', marginBottom: '4px', fontWeight: 500 } as const,
   input: { width: '100%', padding: '8px 12px', border: '1px solid #d1d5db', borderRadius: '6px' } as const,
   textarea: { width: '100%', padding: '8px 12px', border: '1px solid #d1d5db', borderRadius: '6px', resize: 'vertical' } as const,
-  section: { marginBottom: '24px' } as const,
   buttonRow: { display: 'flex', gap: '8px' } as const,
   cancelBtn: { padding: '10px 24px', borderRadius: '6px', border: '1px solid #d1d5db', backgroundColor: '#fff', cursor: 'pointer' } as const,
   categoryInputEditing: { width: '100%', padding: '8px 12px', border: '1px solid #d1d5db', borderRadius: '6px', backgroundColor: '#f3f4f6' } as const,
@@ -86,8 +85,7 @@ export function ProductForm({ product }: Props) {
     <form onSubmit={handleSubmit}>
       {error && <p role="alert" style={styles.error}>{error}</p>}
 
-      <section style={styles.section}>
-        <h2 style={styles.sectionTitle}>기본 정보</h2>
+      <Section title="기본 정보">
         <div style={styles.fieldGrid}>
           <div>
             <label htmlFor="name" style={styles.label}>상품명 *</label>
@@ -117,7 +115,7 @@ export function ProductForm({ product }: Props) {
             </div>
           )}
         </div>
-      </section>
+      </Section>
 
       {!isEdit && (
         <VariantEditor variants={variants} onChange={setVariants} initialKeyCount={product?.variants.length ?? 1} />
