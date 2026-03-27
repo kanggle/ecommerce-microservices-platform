@@ -1,7 +1,7 @@
 import { useQuery } from '@tanstack/react-query';
 import { getUsers } from '../api/user-api';
-import { useListParams } from '../../../shared/hooks';
-import { toValidStatus } from '../../../shared/lib/to-valid-status';
+import { useListParams } from '@/shared/hooks';
+import { toValidStatus } from '@/shared/lib/to-valid-status';
 import type { UserStatus } from '@repo/types';
 
 const VALID_STATUSES: readonly UserStatus[] = ['ACTIVE', 'SUSPENDED', 'WITHDRAWN'] as const;

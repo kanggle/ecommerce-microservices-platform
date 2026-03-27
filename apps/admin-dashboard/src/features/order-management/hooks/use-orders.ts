@@ -1,7 +1,7 @@
 import { useQuery } from '@tanstack/react-query';
 import { getOrders } from '../api/order-api';
-import { useListParams } from '../../../shared/hooks';
-import { toValidStatus } from '../../../shared/lib/to-valid-status';
+import { useListParams } from '@/shared/hooks';
+import { toValidStatus } from '@/shared/lib/to-valid-status';
 import type { OrderStatus } from '@repo/types';
 
 const VALID_STATUSES: readonly OrderStatus[] = ['PENDING', 'CONFIRMED', 'SHIPPED', 'DELIVERED', 'CANCELLED'] as const;
