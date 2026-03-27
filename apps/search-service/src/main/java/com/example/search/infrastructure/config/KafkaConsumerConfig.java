@@ -2,6 +2,7 @@ package com.example.search.infrastructure.config;
 
 import lombok.extern.slf4j.Slf4j;
 import org.apache.kafka.clients.consumer.ConsumerRecord;
+import org.apache.kafka.common.TopicPartition;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.kafka.core.KafkaTemplate;
@@ -20,7 +21,7 @@ public class KafkaConsumerConfig {
                 (ConsumerRecord<?, ?> record, Exception ex) -> {
                     log.error("Sending record to DLT. topic={}, offset={}, error={}",
                             record.topic(), record.offset(), ex.getMessage());
-                    return new org.apache.kafka.common.TopicPartition(
+                    return new TopicPartition(
                             record.topic() + ".DLT", record.partition());
                 });
 
