@@ -18,7 +18,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.context.annotation.Import;
-import org.springframework.data.domain.PageImpl;
+import com.example.user.domain.model.PageResult;
 import org.springframework.http.MediaType;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
@@ -178,7 +178,7 @@ class UserApiContractTest {
             UserProfileSummaryResult summary = new UserProfileSummaryResult(
                     UUID.randomUUID(), "test@example.com", "홍길동", "길동이", "ACTIVE", Instant.now());
             given(userProfileService.listUsers(isNull(), isNull(), eq(0), eq(20)))
-                    .willReturn(new PageImpl<>(List.of(summary)));
+                    .willReturn(new PageResult<>(List.of(summary), 1L, 1, 0, 20));
 
             MvcResult result = mockMvc.perform(get("/api/admin/users")
                             .header("X-User-Role", "ADMIN"))

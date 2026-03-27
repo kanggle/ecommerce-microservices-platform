@@ -1,13 +1,18 @@
 package com.example.user.infrastructure.persistence;
 
+import com.example.user.domain.model.PageQuery;
+import com.example.user.domain.model.PageResult;
 import com.example.user.domain.model.ProfileStatus;
 import com.example.user.domain.model.UserProfile;
 import com.example.user.domain.repository.UserProfileRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Repository;
 
+import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -36,22 +41,51 @@ public class UserProfileRepositoryImpl implements UserProfileRepository {
     }
 
     @Override
-    public Page<UserProfile> findByStatusAndEmailContaining(ProfileStatus status, String email, Pageable pageable) {
-        return jpaRepository.findByStatusAndEmailContaining(status, email, pageable).map(mapper::toDomain);
+    public PageResult<UserProfile> findByStatusAndEmailContaining(ProfileStatus status, String email, PageQuery pageQuery) {
+        Pageable pageable = toPageable(pageQuery);
+        Page<UserProfileJpaEntity> page = jpaRepository.findByStatusAndEmailContaining(status, email, pageable);
+        return toPageResult(page, pageQuery);
     }
 
     @Override
-    public Page<UserProfile> findByStatus(ProfileStatus status, Pageable pageable) {
-        return jpaRepository.findByStatus(status, pageable).map(mapper::toDomain);
+    public PageResult<UserProfile> findByStatus(ProfileStatus status, PageQuery pageQuery) {
+        Pageable pageable = toPageable(pageQuery);
+        Page<UserProfileJpaEntity> page = jpaRepository.findByStatus(status, pageable);
+        return toPageResult(page, pageQuery);
     }
 
     @Override
-    public Page<UserProfile> findByEmailContaining(String email, Pageable pageable) {
-        return jpaRepository.findByEmailContaining(email, pageable).map(mapper::toDomain);
+    public PageResult<UserProfile> findByEmailContaining(String email, PageQuery pageQuery) {
+        Pageable pageable = toPageable(pageQuery);
+        Page<UserProfileJpaEntity> page = jpaRepository.findByEmailContaining(email, pageable);
+        return toPageResult(page, pageQuery);
     }
 
     @Override
-    public Page<UserProfile> findAll(Pageable pageable) {
-        return jpaRepository.findAll(pageable).map(mapper::toDomain);
+    public PageResult<UserProfile> findAll(PageQuery pageQuery) {
+        Pageable pageable = toPageable(pageQuery);
+        Page<UserProfileJpaEntity> page = jpaRepository.findAll(pageable);
+        return toPageResult(page, pageQuery);
+    }
+
+    private Pageable toPageable(PageQuery pageQuery) {
+        Sort.Direction direction = "ASC".equalsIgnoreCase(pageQuery.sortDirection())
+                ? Sort.Direction.ASC
+                : Sort.Direction.DESC;
+        Sort sort = Sort.by(direction, pageQuery.sortField());
+        return PageRequest.of(pageQuery.page(), pageQuery.size(), sort);
+    }
+
+    private PageResult<UserProfile> toPageResult(Page<UserProfileJpaEntity> page, PageQuery pageQuery) {
+        List<UserProfile> content = page.getContent().stream()
+                .map(mapper::toDomain)
+                .toList();
+        return new PageResult<>(
+                content,
+                page.getTotalElements(),
+                page.getTotalPages(),
+                page.getNumber(),
+                pageQuery.size()
+        );
     }
 }

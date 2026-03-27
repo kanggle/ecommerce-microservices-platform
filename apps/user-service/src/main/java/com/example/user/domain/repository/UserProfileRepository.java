@@ -1,9 +1,9 @@
 package com.example.user.domain.repository;
 
+import com.example.user.domain.model.PageQuery;
+import com.example.user.domain.model.PageResult;
 import com.example.user.domain.model.ProfileStatus;
 import com.example.user.domain.model.UserProfile;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
 
 import java.util.Optional;
 import java.util.UUID;
@@ -16,11 +16,11 @@ public interface UserProfileRepository {
 
     boolean existsByUserId(UUID userId);
 
-    Page<UserProfile> findByStatusAndEmailContaining(ProfileStatus status, String email, Pageable pageable);
+    PageResult<UserProfile> findByStatusAndEmailContaining(ProfileStatus status, String email, PageQuery pageQuery);
 
-    Page<UserProfile> findByStatus(ProfileStatus status, Pageable pageable);
+    PageResult<UserProfile> findByStatus(ProfileStatus status, PageQuery pageQuery);
 
-    Page<UserProfile> findByEmailContaining(String email, Pageable pageable);
+    PageResult<UserProfile> findByEmailContaining(String email, PageQuery pageQuery);
 
-    Page<UserProfile> findAll(Pageable pageable);
+    PageResult<UserProfile> findAll(PageQuery pageQuery);
 }

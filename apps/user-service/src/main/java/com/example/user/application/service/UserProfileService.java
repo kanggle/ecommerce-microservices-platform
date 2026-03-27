@@ -6,16 +6,14 @@ import com.example.user.application.event.UserWithdrawnSpringEvent;
 import com.example.user.application.result.UserProfileResult;
 import com.example.user.application.result.UserProfileSummaryResult;
 import com.example.user.domain.exception.UserProfileNotFoundException;
+import com.example.user.domain.model.PageQuery;
+import com.example.user.domain.model.PageResult;
 import com.example.user.domain.model.ProfileStatus;
 import com.example.user.domain.model.UserProfile;
 import com.example.user.domain.repository.UserProfileRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.ApplicationEventPublisher;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -82,24 +80,27 @@ public class UserProfileService {
         return false;
     }
 
-    public Page<UserProfileSummaryResult> listUsers(ProfileStatus status, String email, int page, int size) {
+    public PageResult<UserProfileSummaryResult> listUsers(ProfileStatus status, String email, int page, int size) {
         int safePage = Math.max(page, 0);
         int safeSize = Math.max(Math.min(size, 100), 1);
-        Pageable pageable = PageRequest.of(safePage, safeSize, Sort.by(Sort.Direction.DESC, "createdAt"));
+        PageQuery pageQuery = new PageQuery(safePage, safeSize, "createdAt", "DESC");
 
-        Page<UserProfile> profiles;
+        PageResult<UserProfile> profiles;
 
         if (status != null && email != null && !email.isBlank()) {
-            profiles = userProfileRepository.findByStatusAndEmailContaining(status, email, pageable);
+            profiles = userProfileRepository.findByStatusAndEmailContaining(status, email, pageQuery);
         } else if (status != null) {
-            profiles = userProfileRepository.findByStatus(status, pageable);
+            profiles = userProfileRepository.findByStatus(status, pageQuery);
         } else if (email != null && !email.isBlank()) {
-            profiles = userProfileRepository.findByEmailContaining(email, pageable);
+            profiles = userProfileRepository.findByEmailContaining(email, pageQuery);
         } else {
-            profiles = userProfileRepository.findAll(pageable);
+            profiles = userProfileRepository.findAll(pageQuery);
         }
 
-        return profiles.map(UserProfileSummaryResult::from);
+        java.util.List<UserProfileSummaryResult> content = profiles.content().stream()
+                .map(UserProfileSummaryResult::from)
+                .toList();
+        return new PageResult<>(content, profiles.totalElements(), profiles.totalPages(), profiles.pageNumber(), profiles.pageSize());
     }
 
     public UserProfileResult getUserById(UUID userId) {

@@ -5,6 +5,8 @@ import com.example.user.application.event.UserProfileUpdatedSpringEvent;
 import com.example.user.application.result.UserProfileResult;
 import com.example.user.application.result.UserProfileSummaryResult;
 import com.example.user.domain.exception.UserProfileNotFoundException;
+import com.example.user.domain.model.PageQuery;
+import com.example.user.domain.model.PageResult;
 import com.example.user.domain.model.ProfileStatus;
 import com.example.user.domain.model.UserProfile;
 import com.example.user.domain.repository.UserProfileRepository;
@@ -17,9 +19,6 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.context.ApplicationEventPublisher;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageImpl;
-import org.springframework.data.domain.Pageable;
 
 import java.util.List;
 import java.util.Optional;
@@ -189,59 +188,59 @@ class UserProfileServiceTest {
         @DisplayName("전체 사용자 목록을 페이지네이션하여 반환한다")
         void listUsers_noFilter_returnsAll() {
             UserProfile profile = UserProfile.create(UUID.randomUUID(), "test@example.com", "홍길동");
-            Page<UserProfile> page = new PageImpl<>(List.of(profile));
-            given(userProfileRepository.findAll(any(Pageable.class))).willReturn(page);
+            PageResult<UserProfile> pageResult = new PageResult<>(List.of(profile), 1L, 1, 0, 20);
+            given(userProfileRepository.findAll(any(PageQuery.class))).willReturn(pageResult);
 
-            Page<UserProfileSummaryResult> result = userProfileService.listUsers(null, null, 0, 20);
+            PageResult<UserProfileSummaryResult> result = userProfileService.listUsers(null, null, 0, 20);
 
-            assertThat(result.getContent()).hasSize(1);
-            assertThat(result.getContent().get(0).email()).isEqualTo("test@example.com");
+            assertThat(result.content()).hasSize(1);
+            assertThat(result.content().get(0).email()).isEqualTo("test@example.com");
         }
 
         @Test
         @DisplayName("status 필터로 사용자 목록을 조회한다")
         void listUsers_statusFilter_filtersByStatus() {
             UserProfile profile = UserProfile.create(UUID.randomUUID(), "test@example.com", "홍길동");
-            Page<UserProfile> page = new PageImpl<>(List.of(profile));
-            given(userProfileRepository.findByStatus(eq(ProfileStatus.ACTIVE), any(Pageable.class))).willReturn(page);
+            PageResult<UserProfile> pageResult = new PageResult<>(List.of(profile), 1L, 1, 0, 20);
+            given(userProfileRepository.findByStatus(eq(ProfileStatus.ACTIVE), any(PageQuery.class))).willReturn(pageResult);
 
-            Page<UserProfileSummaryResult> result = userProfileService.listUsers(ProfileStatus.ACTIVE, null, 0, 20);
+            PageResult<UserProfileSummaryResult> result = userProfileService.listUsers(ProfileStatus.ACTIVE, null, 0, 20);
 
-            assertThat(result.getContent()).hasSize(1);
+            assertThat(result.content()).hasSize(1);
         }
 
         @Test
         @DisplayName("email 부분 검색으로 사용자 목록을 조회한다")
         void listUsers_emailFilter_filtersByEmail() {
             UserProfile profile = UserProfile.create(UUID.randomUUID(), "test@example.com", "홍길동");
-            Page<UserProfile> page = new PageImpl<>(List.of(profile));
-            given(userProfileRepository.findByEmailContaining(eq("test"), any(Pageable.class))).willReturn(page);
+            PageResult<UserProfile> pageResult = new PageResult<>(List.of(profile), 1L, 1, 0, 20);
+            given(userProfileRepository.findByEmailContaining(eq("test"), any(PageQuery.class))).willReturn(pageResult);
 
-            Page<UserProfileSummaryResult> result = userProfileService.listUsers(null, "test", 0, 20);
+            PageResult<UserProfileSummaryResult> result = userProfileService.listUsers(null, "test", 0, 20);
 
-            assertThat(result.getContent()).hasSize(1);
+            assertThat(result.content()).hasSize(1);
         }
 
         @Test
         @DisplayName("status와 email 필터를 동시에 적용한다")
         void listUsers_statusAndEmailFilter_filtersByBoth() {
             UserProfile profile = UserProfile.create(UUID.randomUUID(), "test@example.com", "홍길동");
-            Page<UserProfile> page = new PageImpl<>(List.of(profile));
+            PageResult<UserProfile> pageResult = new PageResult<>(List.of(profile), 1L, 1, 0, 20);
             given(userProfileRepository.findByStatusAndEmailContaining(
-                    eq(ProfileStatus.ACTIVE), eq("test"), any(Pageable.class))).willReturn(page);
+                    eq(ProfileStatus.ACTIVE), eq("test"), any(PageQuery.class))).willReturn(pageResult);
 
-            Page<UserProfileSummaryResult> result = userProfileService.listUsers(ProfileStatus.ACTIVE, "test", 0, 20);
+            PageResult<UserProfileSummaryResult> result = userProfileService.listUsers(ProfileStatus.ACTIVE, "test", 0, 20);
 
-            assertThat(result.getContent()).hasSize(1);
+            assertThat(result.content()).hasSize(1);
         }
 
         @Test
         @DisplayName("음수 페이지 번호는 0으로 보정된다")
         void listUsers_negativePage_correctedToZero() {
-            Page<UserProfile> page = new PageImpl<>(List.of());
-            given(userProfileRepository.findAll(any(Pageable.class))).willReturn(page);
+            PageResult<UserProfile> pageResult = new PageResult<>(List.of(), 0L, 0, 0, 20);
+            given(userProfileRepository.findAll(any(PageQuery.class))).willReturn(pageResult);
 
-            Page<UserProfileSummaryResult> result = userProfileService.listUsers(null, null, -1, 20);
+            PageResult<UserProfileSummaryResult> result = userProfileService.listUsers(null, null, -1, 20);
 
             assertThat(result).isNotNull();
         }
