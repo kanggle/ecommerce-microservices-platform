@@ -3,6 +3,7 @@ package com.example.user.application.service;
 import com.example.user.application.command.CreateAddressCommand;
 import com.example.user.application.command.UpdateAddressCommand;
 import com.example.user.application.result.AddressResult;
+import com.example.user.domain.exception.AddressLimitExceededException;
 import com.example.user.domain.exception.AddressNotFoundException;
 import com.example.user.domain.exception.DefaultAddressCannotBeDeletedException;
 import com.example.user.domain.model.Address;
@@ -127,7 +128,7 @@ class AddressServiceTest {
                     "12345", "서울시 강남구", null, false);
 
             assertThatThrownBy(() -> addressService.createAddress(command))
-                    .isInstanceOf(Address.AddressLimitExceededException.class);
+                    .isInstanceOf(AddressLimitExceededException.class);
         }
     }
 

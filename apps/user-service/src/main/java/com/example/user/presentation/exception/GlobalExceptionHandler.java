@@ -1,9 +1,9 @@
 package com.example.user.presentation.exception;
 
+import com.example.user.domain.exception.AddressLimitExceededException;
 import com.example.user.domain.exception.AddressNotFoundException;
 import com.example.user.domain.exception.DefaultAddressCannotBeDeletedException;
 import com.example.user.domain.exception.UserProfileNotFoundException;
-import com.example.user.domain.model.Address;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -35,8 +35,8 @@ public class GlobalExceptionHandler {
                 .body(ErrorResponse.of("ADDRESS_NOT_FOUND", e.getMessage()));
     }
 
-    @ExceptionHandler(Address.AddressLimitExceededException.class)
-    public ResponseEntity<ErrorResponse> handleAddressLimitExceeded(Address.AddressLimitExceededException e) {
+    @ExceptionHandler(AddressLimitExceededException.class)
+    public ResponseEntity<ErrorResponse> handleAddressLimitExceeded(AddressLimitExceededException e) {
         return ResponseEntity.status(HttpStatus.UNPROCESSABLE_ENTITY)
                 .body(ErrorResponse.of("ADDRESS_LIMIT_EXCEEDED", e.getMessage()));
     }
