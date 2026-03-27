@@ -65,22 +65,21 @@ public class SignupService {
             TransactionSynchronizationManager.registerSynchronization(new TransactionSynchronization() {
                 @Override
                 public void afterCommit() {
-                    auditLogService.recordSignup(savedId, savedEmail, command.ipAddress(), command.userAgent());
-                    try {
-                        eventPublisher.publish(AuthEvent.of(new UserSignedUp(savedId, savedEmail, savedName)));
-                    } catch (Exception e) {
-                        log.error("Event publishing failed: UserSignedUp, userId={}", savedId, e);
-                    }
+                    publishAuditAndEvent(savedId, savedEmail, savedName, command.ipAddress(), command.userAgent());
                 }
             });
         } else {
-            auditLogService.recordSignup(savedId, savedEmail, command.ipAddress(), command.userAgent());
-            try {
-                eventPublisher.publish(AuthEvent.of(new UserSignedUp(savedId, savedEmail, savedName)));
-            } catch (Exception e) {
-                log.error("Event publishing failed: UserSignedUp, userId={}", savedId, e);
-            }
+            publishAuditAndEvent(savedId, savedEmail, savedName, command.ipAddress(), command.userAgent());
         }
         return new SignupResult(saved.getId(), saved.getEmail().value(), saved.getName(), saved.getCreatedAt());
+    }
+
+    private void publishAuditAndEvent(UUID userId, String email, String name, String ipAddress, String userAgent) {
+        auditLogService.recordSignup(userId, email, ipAddress, userAgent);
+        try {
+            eventPublisher.publish(AuthEvent.of(new UserSignedUp(userId, email, name)));
+        } catch (Exception e) {
+            log.error("Event publishing failed: UserSignedUp, userId={}", userId, e);
+        }
     }
 }
