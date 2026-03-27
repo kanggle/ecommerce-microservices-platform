@@ -1,4 +1,4 @@
-package com.example.payment.infrastructure.event;
+package com.example.payment.adapter.in.event;
 
 import com.example.payment.application.service.PaymentProcessingService;
 import com.fasterxml.jackson.core.JsonProcessingException;

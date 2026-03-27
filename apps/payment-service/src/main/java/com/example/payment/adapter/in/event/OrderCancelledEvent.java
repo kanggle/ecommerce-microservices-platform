@@ -1,4 +1,4 @@
-package com.example.payment.infrastructure.event;
+package com.example.payment.adapter.in.event;
 
 import com.fasterxml.jackson.annotation.JsonAlias;
 import com.fasterxml.jackson.annotation.JsonProperty;

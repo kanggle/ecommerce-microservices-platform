@@ -2,8 +2,8 @@ package com.example.payment;
 
 import com.example.payment.domain.model.PaymentStatus;
 import com.example.payment.application.port.out.PaymentRepository;
-import com.example.payment.infrastructure.event.OrderCancelledEventConsumer;
-import com.example.payment.infrastructure.event.OrderPlacedEventConsumer;
+import com.example.payment.adapter.in.event.OrderCancelledEventConsumer;
+import com.example.payment.adapter.in.event.OrderPlacedEventConsumer;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
