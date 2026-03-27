@@ -125,32 +125,6 @@ class AddressTest {
     }
 
     @Test
-    @DisplayName("기본 주소 표시를 설정할 수 있다")
-    void markAsDefault_setsDefaultTrue() {
-        Address address = Address.create(
-                USER_ID, "집", "홍길동", "010-1234-5678",
-                "12345", "서울시 강남구", null, false
-        );
-
-        address.markAsDefault();
-
-        assertThat(address.isDefault()).isTrue();
-    }
-
-    @Test
-    @DisplayName("기본 주소 표시를 해제할 수 있다")
-    void unmarkAsDefault_setsDefaultFalse() {
-        Address address = Address.create(
-                USER_ID, "집", "홍길동", "010-1234-5678",
-                "12345", "서울시 강남구", null, true
-        );
-
-        address.unmarkAsDefault();
-
-        assertThat(address.isDefault()).isFalse();
-    }
-
-    @Test
     @DisplayName("주소 수가 최대치(10)에 도달하면 AddressLimitExceededException 발생")
     void validateAddressLimit_atMax_throwsException() {
         assertThatThrownBy(() -> Address.validateAddressLimit(10))

@@ -97,16 +97,6 @@ public class Address {
         this.updatedAt = Instant.now();
     }
 
-    public void markAsDefault() {
-        this.isDefault = true;
-        this.updatedAt = Instant.now();
-    }
-
-    public void unmarkAsDefault() {
-        this.isDefault = false;
-        this.updatedAt = Instant.now();
-    }
-
     public static void validateAddressLimit(int currentCount) {
         if (currentCount >= MAX_ADDRESSES_PER_USER) {
             throw new AddressLimitExceededException(
