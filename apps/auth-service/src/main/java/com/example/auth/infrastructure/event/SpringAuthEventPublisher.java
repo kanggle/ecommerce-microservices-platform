@@ -2,7 +2,7 @@ package com.example.auth.infrastructure.event;
 
 import com.example.auth.domain.event.AuthEvent;
 import com.example.auth.domain.event.AuthEventPublisher;
-import com.example.auth.infrastructure.metrics.AuthMetrics;
+import com.example.auth.domain.service.AuthMetricsRecorder;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.ApplicationEventPublisher;
@@ -14,7 +14,7 @@ import org.springframework.stereotype.Component;
 public class SpringAuthEventPublisher implements AuthEventPublisher {
 
     private final ApplicationEventPublisher applicationEventPublisher;
-    private final AuthMetrics authMetrics;
+    private final AuthMetricsRecorder authMetrics;
 
     @Override
     public void publish(AuthEvent event) {

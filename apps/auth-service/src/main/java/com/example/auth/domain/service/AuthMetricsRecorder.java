@@ -15,4 +15,6 @@ public interface AuthMetricsRecorder {
     void incrementTokenRefreshFailure();
 
     void incrementSessionEviction();
+
+    void incrementEventPublishFailure(String eventType);
 }
