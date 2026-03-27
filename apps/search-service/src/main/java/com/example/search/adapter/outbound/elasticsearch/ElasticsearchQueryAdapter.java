@@ -4,7 +4,6 @@ import co.elastic.clients.elasticsearch.ElasticsearchClient;
 import co.elastic.clients.elasticsearch._types.SortOptions;
 import co.elastic.clients.elasticsearch._types.SortOrder;
 import co.elastic.clients.elasticsearch._types.aggregations.StringTermsBucket;
-import co.elastic.clients.elasticsearch._types.query_dsl.BoolQuery;
 import co.elastic.clients.elasticsearch._types.query_dsl.Query;
 import co.elastic.clients.elasticsearch.core.SearchRequest;
 import co.elastic.clients.elasticsearch.core.SearchResponse;
@@ -71,8 +70,7 @@ public class ElasticsearchQueryAdapter implements SearchQueryPort {
 
     private Query buildQuery(SearchProductQuery query) {
         var filter = query.filter();
-        return Query.of(q -> q.bool(b -> {
-            BoolQuery.Builder builder = b;
+        return Query.of(q -> q.bool(builder -> {
             builder.must(m -> m.multiMatch(mm -> mm
                     .query(filter.keyword())
                     .fields("name", "description")
