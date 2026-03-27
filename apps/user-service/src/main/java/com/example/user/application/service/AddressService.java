@@ -38,7 +38,7 @@ public class AddressService {
         boolean isDefault = isFirst || command.isDefault();
 
         if (isDefault && !isFirst) {
-            unmarkCurrentDefault(command.userId());
+            addressRepository.unmarkDefaultByUserId(command.userId());
         }
 
         Address address = Address.create(
@@ -63,7 +63,7 @@ public class AddressService {
                 .orElseThrow(() -> new AddressNotFoundException(command.addressId()));
 
         if (Boolean.TRUE.equals(command.isDefault()) && !address.isDefault()) {
-            unmarkCurrentDefault(command.userId());
+            addressRepository.unmarkDefaultByUserId(command.userId());
         }
 
         if (Boolean.FALSE.equals(command.isDefault()) && address.isDefault()) {
@@ -103,7 +103,4 @@ public class AddressService {
         log.info("Address deleted: addressId={}, userId={}", addressId, userId);
     }
 
-    private void unmarkCurrentDefault(UUID userId) {
-        addressRepository.unmarkDefaultByUserId(userId);
-    }
 }
