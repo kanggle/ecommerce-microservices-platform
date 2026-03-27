@@ -2,6 +2,7 @@ package com.example.user.application.service;
 
 import com.example.user.application.command.UpdateProfileCommand;
 import com.example.user.application.event.UserProfileUpdatedSpringEvent;
+import com.example.user.application.result.UserListPageResult;
 import com.example.user.application.result.UserProfileResult;
 import com.example.user.application.result.UserProfileSummaryResult;
 import com.example.user.domain.exception.UserProfileNotFoundException;
@@ -191,7 +192,7 @@ class UserProfileServiceTest {
             PageResult<UserProfile> pageResult = new PageResult<>(List.of(profile), 1L, 1, 0, 20);
             given(userProfileRepository.findAll(any(PageQuery.class))).willReturn(pageResult);
 
-            PageResult<UserProfileSummaryResult> result = userProfileService.listUsers(null, null, 0, 20);
+            UserListPageResult result = userProfileService.listUsers(null, null, 0, 20);
 
             assertThat(result.content()).hasSize(1);
             assertThat(result.content().get(0).email()).isEqualTo("test@example.com");
@@ -204,7 +205,7 @@ class UserProfileServiceTest {
             PageResult<UserProfile> pageResult = new PageResult<>(List.of(profile), 1L, 1, 0, 20);
             given(userProfileRepository.findByStatus(eq(ProfileStatus.ACTIVE), any(PageQuery.class))).willReturn(pageResult);
 
-            PageResult<UserProfileSummaryResult> result = userProfileService.listUsers(ProfileStatus.ACTIVE, null, 0, 20);
+            UserListPageResult result = userProfileService.listUsers(ProfileStatus.ACTIVE, null, 0, 20);
 
             assertThat(result.content()).hasSize(1);
         }
@@ -216,7 +217,7 @@ class UserProfileServiceTest {
             PageResult<UserProfile> pageResult = new PageResult<>(List.of(profile), 1L, 1, 0, 20);
             given(userProfileRepository.findByEmailContaining(eq("test"), any(PageQuery.class))).willReturn(pageResult);
 
-            PageResult<UserProfileSummaryResult> result = userProfileService.listUsers(null, "test", 0, 20);
+            UserListPageResult result = userProfileService.listUsers(null, "test", 0, 20);
 
             assertThat(result.content()).hasSize(1);
         }
@@ -229,7 +230,7 @@ class UserProfileServiceTest {
             given(userProfileRepository.findByStatusAndEmailContaining(
                     eq(ProfileStatus.ACTIVE), eq("test"), any(PageQuery.class))).willReturn(pageResult);
 
-            PageResult<UserProfileSummaryResult> result = userProfileService.listUsers(ProfileStatus.ACTIVE, "test", 0, 20);
+            UserListPageResult result = userProfileService.listUsers(ProfileStatus.ACTIVE, "test", 0, 20);
 
             assertThat(result.content()).hasSize(1);
         }
@@ -240,7 +241,7 @@ class UserProfileServiceTest {
             PageResult<UserProfile> pageResult = new PageResult<>(List.of(), 0L, 0, 0, 20);
             given(userProfileRepository.findAll(any(PageQuery.class))).willReturn(pageResult);
 
-            PageResult<UserProfileSummaryResult> result = userProfileService.listUsers(null, null, -1, 20);
+            UserListPageResult result = userProfileService.listUsers(null, null, -1, 20);
 
             assertThat(result).isNotNull();
         }

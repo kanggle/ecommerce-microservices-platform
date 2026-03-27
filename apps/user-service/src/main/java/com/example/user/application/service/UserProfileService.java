@@ -3,6 +3,7 @@ package com.example.user.application.service;
 import com.example.user.application.command.UpdateProfileCommand;
 import com.example.user.application.event.UserProfileUpdatedSpringEvent;
 import com.example.user.application.event.UserWithdrawnSpringEvent;
+import com.example.user.application.result.UserListPageResult;
 import com.example.user.application.result.UserProfileResult;
 import com.example.user.application.result.UserProfileSummaryResult;
 import com.example.user.domain.exception.UserProfileNotFoundException;
@@ -81,7 +82,7 @@ public class UserProfileService {
         return false;
     }
 
-    public PageResult<UserProfileSummaryResult> listUsers(ProfileStatus status, String email, int page, int size) {
+    public UserListPageResult listUsers(ProfileStatus status, String email, int page, int size) {
         int safePage = Math.max(page, 0);
         int safeSize = Math.max(Math.min(size, 100), 1);
         PageQuery pageQuery = new PageQuery(safePage, safeSize, "createdAt", "DESC");
@@ -101,7 +102,7 @@ public class UserProfileService {
         List<UserProfileSummaryResult> content = profiles.content().stream()
                 .map(UserProfileSummaryResult::from)
                 .toList();
-        return new PageResult<>(content, profiles.totalElements(), profiles.totalPages(), profiles.pageNumber(), profiles.pageSize());
+        return new UserListPageResult(content, profiles.totalElements(), profiles.totalPages(), profiles.pageNumber(), profiles.pageSize());
     }
 
     @Transactional

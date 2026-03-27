@@ -1,10 +1,10 @@
 package com.example.user.presentation.controller;
 
+import com.example.user.application.result.UserListPageResult;
 import com.example.user.application.result.UserProfileResult;
 import com.example.user.application.result.UserProfileSummaryResult;
 import com.example.user.application.service.UserProfileService;
 import com.example.user.domain.exception.UserProfileNotFoundException;
-import com.example.user.domain.model.PageResult;
 import com.example.user.domain.model.ProfileStatus;
 import com.example.user.presentation.exception.GlobalExceptionHandler;
 import org.junit.jupiter.api.DisplayName;
@@ -48,7 +48,7 @@ class AdminUserControllerTest {
                     UUID.randomUUID(), "test@example.com", "홍길동", "길동이",
                     "ACTIVE", Instant.parse("2026-01-01T00:00:00Z")
             );
-            PageResult<UserProfileSummaryResult> page = new PageResult<>(List.of(summary), 1L, 1, 0, 20);
+            UserListPageResult page = new UserListPageResult(List.of(summary), 1L, 1, 0, 20);
             given(userProfileService.listUsers(isNull(), isNull(), eq(0), eq(20))).willReturn(page);
 
             mockMvc.perform(get("/api/admin/users")
@@ -81,7 +81,7 @@ class AdminUserControllerTest {
         @Test
         @DisplayName("status 필터로 사용자 목록을 조회한다")
         void listUsers_statusFilter_returns200() throws Exception {
-            PageResult<UserProfileSummaryResult> page = new PageResult<>(List.of(), 0L, 0, 0, 20);
+            UserListPageResult page = new UserListPageResult(List.of(), 0L, 0, 0, 20);
             given(userProfileService.listUsers(eq(ProfileStatus.ACTIVE), isNull(), eq(0), eq(20)))
                     .willReturn(page);
 
@@ -95,7 +95,7 @@ class AdminUserControllerTest {
         @Test
         @DisplayName("email 부분 검색으로 사용자 목록을 조회한다")
         void listUsers_emailFilter_returns200() throws Exception {
-            PageResult<UserProfileSummaryResult> page = new PageResult<>(List.of(), 0L, 0, 0, 20);
+            UserListPageResult page = new UserListPageResult(List.of(), 0L, 0, 0, 20);
             given(userProfileService.listUsers(isNull(), eq("test"), eq(0), eq(20)))
                     .willReturn(page);
 
@@ -109,7 +109,7 @@ class AdminUserControllerTest {
         @Test
         @DisplayName("페이지 번호와 사이즈를 지정하여 조회한다")
         void listUsers_withPagination_returns200() throws Exception {
-            PageResult<UserProfileSummaryResult> page = new PageResult<>(List.of(), 0L, 0, 2, 10);
+            UserListPageResult page = new UserListPageResult(List.of(), 0L, 0, 2, 10);
             given(userProfileService.listUsers(isNull(), isNull(), eq(2), eq(10)))
                     .willReturn(page);
 
