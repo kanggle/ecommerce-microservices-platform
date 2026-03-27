@@ -63,29 +63,11 @@ public class LoginService {
         boolean passwordMatches = passwordEncoder.matches(command.password(), hashToVerify);
 
         if (user != null && !user.isActive()) {
-            log.warn("Login attempt failed: account deactivated, userId={}", user.getId());
-            authMetrics.incrementLoginFailure("account_deactivated");
-            auditLogService.recordLoginFailure(
-                normalizedEmail, command.ipAddress(), command.userAgent(), "ACCOUNT_DEACTIVATED");
-            try {
-                eventPublisher.publish(AuthEvent.of(new LoginFailed(normalizedEmail, command.ipAddress(), "ACCOUNT_DEACTIVATED")));
-            } catch (Exception e) {
-                log.error("Event publishing failed: LoginFailed", e);
-            }
-            throw new InvalidCredentialsException();
+            handleLoginFailure(normalizedEmail, command, "account deactivated", "account_deactivated", "ACCOUNT_DEACTIVATED", user.getId());
         }
 
         if (user == null || !passwordMatches) {
-            log.warn("Login attempt failed: invalid credentials");
-            authMetrics.incrementLoginFailure("invalid_credentials");
-            auditLogService.recordLoginFailure(
-                normalizedEmail, command.ipAddress(), command.userAgent(), "INVALID_CREDENTIALS");
-            try {
-                eventPublisher.publish(AuthEvent.of(new LoginFailed(normalizedEmail, command.ipAddress(), "INVALID_CREDENTIALS")));
-            } catch (Exception e) {
-                log.error("Event publishing failed: LoginFailed", e);
-            }
-            throw new InvalidCredentialsException();
+            handleLoginFailure(normalizedEmail, command, "invalid credentials", "invalid_credentials", "INVALID_CREDENTIALS", null);
         }
 
         String accessToken = tokenGenerator.generateAccessToken(user);
@@ -106,25 +88,53 @@ public class LoginService {
             log.error("Session registry failed during login, userId={}", user.getId(), e);
         }
 
+        handleLoginSuccess(user, command, sessionResult, accessToken);
+
+        return new LoginResult(accessToken, refreshToken, tokenGenerator.accessTokenTtlSeconds());
+    }
+
+    private void handleLoginFailure(String normalizedEmail, LoginCommand command,
+                                    String logMessage, String metricsReason,
+                                    String auditReason, Object userId) {
+        if (userId != null) {
+            log.warn("Login attempt failed: {}, userId={}", logMessage, userId);
+        } else {
+            log.warn("Login attempt failed: {}", logMessage);
+        }
+        authMetrics.incrementLoginFailure(metricsReason);
+        auditLogService.recordLoginFailure(
+            normalizedEmail, command.ipAddress(), command.userAgent(), auditReason);
+        publishEventSafely(
+            AuthEvent.of(new LoginFailed(normalizedEmail, command.ipAddress(), auditReason)),
+            "LoginFailed");
+        throw new InvalidCredentialsException();
+    }
+
+    private void handleLoginSuccess(User user, LoginCommand command,
+                                    UserSessionRegistry.RegistrationResult sessionResult,
+                                    String accessToken) {
         log.info("Login succeeded: userId={}", user.getId());
         authMetrics.incrementLoginSuccess();
         if (sessionResult != null && sessionResult.evictedSessionId() != null) {
             log.info("Session limit exceeded: oldest session evicted, userId={}", user.getId());
             authMetrics.incrementSessionEviction();
-            try {
-                eventPublisher.publish(AuthEvent.of(new SessionLimitExceeded(
-                    user.getId(), sessionResult.evictedSessionId(), sessionResult.newSessionId())));
-            } catch (Exception e) {
-                log.error("Event publishing failed: SessionLimitExceeded, userId={}", user.getId(), e);
-            }
+            publishEventSafely(
+                AuthEvent.of(new SessionLimitExceeded(
+                    user.getId(), sessionResult.evictedSessionId(), sessionResult.newSessionId())),
+                "SessionLimitExceeded");
         }
         auditLogService.recordLoginSuccess(
             user.getId(), user.getEmail().value(), command.ipAddress(), command.userAgent());
+        publishEventSafely(
+            AuthEvent.of(new UserLoggedIn(user.getId(), user.getEmail().value(), command.ipAddress(), command.userAgent())),
+            "UserLoggedIn");
+    }
+
+    private void publishEventSafely(AuthEvent event, String eventName) {
         try {
-            eventPublisher.publish(AuthEvent.of(new UserLoggedIn(user.getId(), user.getEmail().value(), command.ipAddress(), command.userAgent())));
+            eventPublisher.publish(event);
         } catch (Exception e) {
-            log.error("Event publishing failed: UserLoggedIn, userId={}", user.getId(), e);
+            log.error("Event publishing failed: {}", eventName, e);
         }
-        return new LoginResult(accessToken, refreshToken, tokenGenerator.accessTokenTtlSeconds());
     }
 }
