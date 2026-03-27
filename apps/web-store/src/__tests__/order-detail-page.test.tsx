@@ -11,6 +11,7 @@ vi.mock('next/navigation', () => ({
 
 vi.mock('@/features/auth', () => ({
   useAuth: vi.fn(),
+  useRequireAuth: vi.fn(),
 }));
 
 vi.mock('@/entities/order', () => ({
@@ -34,13 +35,14 @@ vi.mock('@repo/ui', () => ({
   ),
 }));
 
-import { useAuth } from '@/features/auth';
+import { useAuth, useRequireAuth } from '@/features/auth';
 import { useParams } from 'next/navigation';
 import { getOrder, cancelOrder } from '@/entities/order';
 import { getPayment } from '@/entities/payment';
 import OrderDetailPage from '@/app/(store)/orders/[id]/page';
 
 const mockUseAuth = vi.mocked(useAuth);
+const mockUseRequireAuth = vi.mocked(useRequireAuth);
 const mockUseParams = vi.mocked(useParams);
 const mockGetOrder = vi.mocked(getOrder);
 const mockCancelOrder = vi.mocked(cancelOrder);
@@ -82,6 +84,7 @@ describe('OrderDetailPage', () => {
       signup: vi.fn(),
       logout: vi.fn(),
     });
+    mockUseRequireAuth.mockReturnValue({ isReady: true });
     mockUseParams.mockReturnValue({ id: 'order-1' });
   });
 
@@ -306,13 +309,9 @@ describe('OrderDetailPage', () => {
   });
 
   it('미인증 상태에서 로그인 페이지로 리다이렉트한다', () => {
-    mockUseAuth.mockReturnValue({
-      isAuthenticated: false,
-      isLoading: false,
-      user: null,
-      login: vi.fn(),
-      signup: vi.fn(),
-      logout: vi.fn(),
+    mockUseRequireAuth.mockImplementation(() => {
+      mockReplace('/login');
+      return { isReady: false };
     });
 
     render(<OrderDetailPage />);

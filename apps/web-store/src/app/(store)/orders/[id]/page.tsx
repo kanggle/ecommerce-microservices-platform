@@ -1,22 +1,14 @@
 'use client';
 
-import { useEffect } from 'react';
-import { useParams, useRouter } from 'next/navigation';
-import { useAuth } from '@/features/auth';
+import { useParams } from 'next/navigation';
+import { useRequireAuth } from '@/features/auth';
 import { OrderDetailView } from '@/features/order';
 
 export default function OrderDetailPage() {
-  const router = useRouter();
   const params = useParams<{ id: string }>();
-  const { isAuthenticated, isLoading: authLoading } = useAuth();
+  const { isReady } = useRequireAuth();
 
-  useEffect(() => {
-    if (!authLoading && !isAuthenticated) {
-      router.replace('/login');
-    }
-  }, [authLoading, isAuthenticated, router]);
-
-  if (authLoading || !isAuthenticated) return null;
+  if (!isReady) return null;
 
   return <OrderDetailView orderId={params.id} />;
 }

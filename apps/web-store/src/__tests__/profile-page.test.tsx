@@ -21,6 +21,7 @@ let mockAuthState = {
 
 vi.mock('@/features/auth', () => ({
   useAuth: () => mockAuthState,
+  useRequireAuth: vi.fn(),
 }));
 
 vi.mock('@/features/user', () => ({
@@ -32,8 +33,10 @@ vi.mock('@/features/user', () => ({
 }));
 
 import { getMyProfile, ProfileLoader } from '@/features/user';
+import { useRequireAuth } from '@/features/auth';
 const mockGetMyProfile = vi.mocked(getMyProfile);
 const MockProfileLoader = vi.mocked(ProfileLoader);
+const mockUseRequireAuth = vi.mocked(useRequireAuth);
 
 import ProfilePage from '@/app/(store)/my/profile/page';
 
@@ -101,6 +104,7 @@ describe('ProfilePage', () => {
       signup: vi.fn(),
       logout: vi.fn(),
     };
+    mockUseRequireAuth.mockReturnValue({ isReady: true });
     MockProfileLoader.mockImplementation(createProfileLoaderImpl(mockGetMyProfile));
   });
 
@@ -119,11 +123,10 @@ describe('ProfilePage', () => {
   });
 
   it('미인증 사용자는 로그인 페이지로 리다이렉트한다', () => {
-    mockAuthState = {
-      ...mockAuthState,
-      user: null,
-      isAuthenticated: false,
-    };
+    mockUseRequireAuth.mockImplementation(() => {
+      mockReplace('/login');
+      return { isReady: false };
+    });
 
     render(<ProfilePage />);
 

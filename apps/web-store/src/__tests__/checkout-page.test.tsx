@@ -8,6 +8,7 @@ vi.mock('next/navigation', () => ({
 
 vi.mock('@/features/auth', () => ({
   useAuth: vi.fn(),
+  useRequireAuth: vi.fn(),
 }));
 
 vi.mock('@/features/cart', () => ({
@@ -20,11 +21,12 @@ vi.mock('@/features/checkout', () => ({
   ),
 }));
 
-import { useAuth } from '@/features/auth';
+import { useAuth, useRequireAuth } from '@/features/auth';
 import { useCart } from '@/features/cart';
 import CheckoutPage from '@/app/(store)/checkout/page';
 
 const mockUseAuth = vi.mocked(useAuth);
+const mockUseRequireAuth = vi.mocked(useRequireAuth);
 const mockUseCart = vi.mocked(useCart);
 
 const CART_ITEMS = [
@@ -34,9 +36,22 @@ const CART_ITEMS = [
 describe('CheckoutPage', () => {
   beforeEach(() => {
     vi.clearAllMocks();
+    mockUseRequireAuth.mockReturnValue({ isReady: true });
+    mockUseAuth.mockReturnValue({
+      isAuthenticated: true,
+      isLoading: false,
+      user: null,
+      login: vi.fn(),
+      signup: vi.fn(),
+      logout: vi.fn(),
+    });
   });
 
   it('미인증 상태에서 로그인 페이지로 리다이렉트한다', () => {
+    mockUseRequireAuth.mockImplementation(() => {
+      mockReplace('/login');
+      return { isReady: false };
+    });
     mockUseAuth.mockReturnValue({
       isAuthenticated: false,
       isLoading: false,
@@ -61,14 +76,6 @@ describe('CheckoutPage', () => {
   });
 
   it('장바구니가 비어있으면 장바구니 페이지로 리다이렉트한다', () => {
-    mockUseAuth.mockReturnValue({
-      isAuthenticated: true,
-      isLoading: false,
-      user: null,
-      login: vi.fn(),
-      signup: vi.fn(),
-      logout: vi.fn(),
-    });
     mockUseCart.mockReturnValue({
       items: [],
       totalAmount: 0,
@@ -85,14 +92,6 @@ describe('CheckoutPage', () => {
   });
 
   it('인증 완료 + 장바구니에 상품이 있으면 CheckoutForm을 렌더링한다', () => {
-    mockUseAuth.mockReturnValue({
-      isAuthenticated: true,
-      isLoading: false,
-      user: null,
-      login: vi.fn(),
-      signup: vi.fn(),
-      logout: vi.fn(),
-    });
     mockUseCart.mockReturnValue({
       items: CART_ITEMS,
       totalAmount: 1500000,
@@ -109,6 +108,7 @@ describe('CheckoutPage', () => {
   });
 
   it('인증 로딩 중이면 아무것도 렌더링하지 않는다', () => {
+    mockUseRequireAuth.mockReturnValue({ isReady: false });
     mockUseAuth.mockReturnValue({
       isAuthenticated: false,
       isLoading: true,

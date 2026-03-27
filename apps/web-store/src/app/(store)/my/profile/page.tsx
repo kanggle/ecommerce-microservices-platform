@@ -1,21 +1,12 @@
 'use client';
 
-import { useEffect } from 'react';
-import { useRouter } from 'next/navigation';
-import { useAuth } from '@/features/auth';
+import { useRequireAuth } from '@/features/auth';
 import { ProfileLoader } from '@/features/user';
 
 export default function ProfilePage() {
-  const router = useRouter();
-  const { isAuthenticated, isLoading: authLoading } = useAuth();
+  const { isReady } = useRequireAuth();
 
-  useEffect(() => {
-    if (!authLoading && !isAuthenticated) {
-      router.replace('/login');
-    }
-  }, [authLoading, isAuthenticated, router]);
-
-  if (authLoading || !isAuthenticated) return null;
+  if (!isReady) return null;
 
   return <ProfileLoader />;
 }

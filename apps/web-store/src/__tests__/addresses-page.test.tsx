@@ -20,6 +20,7 @@ let mockAuthState = {
 
 vi.mock('@/features/auth', () => ({
   useAuth: () => mockAuthState,
+  useRequireAuth: vi.fn(),
 }));
 
 const { mockGetMyAddressesFn } = vi.hoisted(() => ({
@@ -149,7 +150,10 @@ vi.mock('@/features/user', async () => {
   };
 });
 
+import { useRequireAuth } from '@/features/auth';
 import AddressesPage from '@/app/(store)/my/addresses/page';
+
+const mockUseRequireAuth = vi.mocked(useRequireAuth);
 
 const MOCK_ADDRESSES: Address[] = [
   {
@@ -175,6 +179,7 @@ describe('AddressesPage', () => {
       signup: vi.fn(),
       logout: vi.fn(),
     };
+    mockUseRequireAuth.mockReturnValue({ isReady: true });
   });
 
   it('배송지 목록을 로드하고 AddressList를 렌더링한다', async () => {
@@ -192,11 +197,10 @@ describe('AddressesPage', () => {
   });
 
   it('미인증 사용자는 로그인 페이지로 리다이렉트한다', () => {
-    mockAuthState = {
-      ...mockAuthState,
-      user: null,
-      isAuthenticated: false,
-    };
+    mockUseRequireAuth.mockImplementation(() => {
+      mockReplace('/login');
+      return { isReady: false };
+    });
 
     render(<AddressesPage />);
 
