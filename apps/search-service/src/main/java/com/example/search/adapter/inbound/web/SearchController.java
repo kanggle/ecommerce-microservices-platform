@@ -6,7 +6,6 @@ import com.example.search.application.dto.SearchProductResult;
 import com.example.search.application.service.SearchProductService;
 import com.example.search.domain.model.SearchFilter;
 import com.example.search.domain.model.SearchSort;
-import com.example.search.infrastructure.exception.InvalidSearchRequestException;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Positive;
 import lombok.RequiredArgsConstructor;
