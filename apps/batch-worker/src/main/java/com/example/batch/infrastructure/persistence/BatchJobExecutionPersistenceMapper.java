@@ -18,6 +18,13 @@ class BatchJobExecutionPersistenceMapper {
     }
 
     BatchJobExecutionJpaEntity toEntity(BatchJobExecution execution) {
-        return BatchJobExecutionJpaEntity.fromDomain(execution);
+        return new BatchJobExecutionJpaEntity(
+                execution.getId(),
+                execution.getJobName(),
+                execution.getStatus(),
+                execution.getStartedAt(),
+                execution.getFinishedAt(),
+                execution.getErrorMessage()
+        );
     }
 }

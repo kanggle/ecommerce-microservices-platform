@@ -33,10 +33,12 @@ class BatchJobExecutionRepositoryImplTest {
     @DisplayName("save 호출 시 도메인 → 엔티티 변환 후 저장하고 다시 도메인으로 반환한다")
     void save_convertsAndDelegates() {
         BatchJobExecution execution = BatchJobExecution.start("cleanup-job");
-        BatchJobExecutionJpaEntity entity = BatchJobExecutionJpaEntity.fromDomain(execution);
-        BatchJobExecutionJpaEntity savedEntity = BatchJobExecutionJpaEntity.fromDomain(
-                BatchJobExecution.reconstitute(1L, "cleanup-job", BatchJobStatus.RUNNING,
-                        execution.getStartedAt(), null, null));
+        BatchJobExecutionJpaEntity entity = new BatchJobExecutionJpaEntity(
+                execution.getId(), execution.getJobName(), execution.getStatus(),
+                execution.getStartedAt(), execution.getFinishedAt(), execution.getErrorMessage());
+        BatchJobExecutionJpaEntity savedEntity = new BatchJobExecutionJpaEntity(
+                1L, "cleanup-job", BatchJobStatus.RUNNING,
+                execution.getStartedAt(), null, null);
         BatchJobExecution expectedResult = BatchJobExecution.reconstitute(
                 1L, "cleanup-job", BatchJobStatus.RUNNING, execution.getStartedAt(), null, null);
 
@@ -58,9 +60,9 @@ class BatchJobExecutionRepositoryImplTest {
     @DisplayName("findById 조회 성공 시 도메인 객체를 반환한다")
     void findById_found_returnsDomain() {
         Instant now = Instant.parse("2025-01-01T10:00:00Z");
-        BatchJobExecutionJpaEntity entity = BatchJobExecutionJpaEntity.fromDomain(
-                BatchJobExecution.reconstitute(1L, "cleanup-job", BatchJobStatus.COMPLETED,
-                        now, now.plusSeconds(60), null));
+        BatchJobExecutionJpaEntity entity = new BatchJobExecutionJpaEntity(
+                1L, "cleanup-job", BatchJobStatus.COMPLETED,
+                now, now.plusSeconds(60), null);
         BatchJobExecution expected = BatchJobExecution.reconstitute(
                 1L, "cleanup-job", BatchJobStatus.COMPLETED, now, now.plusSeconds(60), null);
 
@@ -91,10 +93,12 @@ class BatchJobExecutionRepositoryImplTest {
         Instant now = Instant.parse("2025-06-01T12:00:00Z");
         BatchJobExecution execution = BatchJobExecution.reconstitute(
                 null, "aggregate-job", BatchJobStatus.FAILED, now, now.plusSeconds(30), "DB connection lost");
-        BatchJobExecutionJpaEntity entity = BatchJobExecutionJpaEntity.fromDomain(execution);
-        BatchJobExecutionJpaEntity savedEntity = BatchJobExecutionJpaEntity.fromDomain(
-                BatchJobExecution.reconstitute(2L, "aggregate-job", BatchJobStatus.FAILED,
-                        now, now.plusSeconds(30), "DB connection lost"));
+        BatchJobExecutionJpaEntity entity = new BatchJobExecutionJpaEntity(
+                execution.getId(), execution.getJobName(), execution.getStatus(),
+                execution.getStartedAt(), execution.getFinishedAt(), execution.getErrorMessage());
+        BatchJobExecutionJpaEntity savedEntity = new BatchJobExecutionJpaEntity(
+                2L, "aggregate-job", BatchJobStatus.FAILED,
+                now, now.plusSeconds(30), "DB connection lost");
         BatchJobExecution expectedResult = BatchJobExecution.reconstitute(
                 2L, "aggregate-job", BatchJobStatus.FAILED, now, now.plusSeconds(30), "DB connection lost");
 

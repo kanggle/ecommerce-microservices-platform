@@ -1,6 +1,5 @@
 package com.example.batch.infrastructure.persistence;
 
-import com.example.batch.domain.model.BatchJobExecution;
 import com.example.batch.domain.model.BatchJobStatus;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
@@ -35,14 +34,13 @@ class BatchJobExecutionJpaEntity {
     @Column(name = "error_message")
     private String errorMessage;
 
-    static BatchJobExecutionJpaEntity fromDomain(BatchJobExecution execution) {
-        BatchJobExecutionJpaEntity entity = new BatchJobExecutionJpaEntity();
-        entity.id = execution.getId();
-        entity.jobName = execution.getJobName();
-        entity.status = execution.getStatus();
-        entity.startedAt = execution.getStartedAt();
-        entity.finishedAt = execution.getFinishedAt();
-        entity.errorMessage = execution.getErrorMessage();
-        return entity;
+    BatchJobExecutionJpaEntity(Long id, String jobName, BatchJobStatus status,
+                               Instant startedAt, Instant finishedAt, String errorMessage) {
+        this.id = id;
+        this.jobName = jobName;
+        this.status = status;
+        this.startedAt = startedAt;
+        this.finishedAt = finishedAt;
+        this.errorMessage = errorMessage;
     }
 }
