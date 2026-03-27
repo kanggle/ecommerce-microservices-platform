@@ -42,9 +42,24 @@ public class RefreshTokenService {
     public RefreshResult refresh(RefreshCommand command) {
         String oldRefreshToken = command.refreshToken();
 
-        UUID userId;
+        UUID userId = resolveTokenOwner(oldRefreshToken);
+        User user = userRepository.findById(userId)
+            .orElseThrow(InvalidRefreshTokenException::new);
+
+        invalidateOldToken(oldRefreshToken, userId);
+
+        String[] newTokens = issueNewTokens(user, userId, oldRefreshToken);
+        String newAccessToken = newTokens[0];
+        String newRefreshToken = newTokens[1];
+
+        handleRefreshSuccess(userId, user.getEmail().value(), newRefreshToken, command);
+
+        return new RefreshResult(newAccessToken, newRefreshToken, tokenGenerator.accessTokenTtlSeconds());
+    }
+
+    private UUID resolveTokenOwner(String oldRefreshToken) {
         try {
-            userId = refreshTokenStore.findUserIdByToken(oldRefreshToken)
+            return refreshTokenStore.findUserIdByToken(oldRefreshToken)
                 .orElseThrow(() -> {
                     authMetrics.incrementTokenRefreshFailure();
                     if (refreshTokenStore.isRevoked(oldRefreshToken)) {
@@ -56,10 +71,9 @@ public class RefreshTokenService {
             log.error("Token refresh failed: Redis error during token lookup", e);
             throw e;
         }
+    }
 
-        User user = userRepository.findById(userId)
-            .orElseThrow(InvalidRefreshTokenException::new);
-
+    private void invalidateOldToken(String oldRefreshToken, UUID userId) {
         // invalidate 먼저 수행: DEL 반환값으로 레이스 조건 감지
         // 동시 요청 시 두 번째 요청은 DEL 0 → false → RevokedException
         boolean invalidated;
@@ -84,7 +98,9 @@ public class RefreshTokenService {
             authMetrics.incrementTokenRefreshFailure();
             throw new RefreshTokenRevokedException();
         }
+    }
 
+    private String[] issueNewTokens(User user, UUID userId, String oldRefreshToken) {
         String newAccessToken = tokenGenerator.generateAccessToken(user);
         String newRefreshToken = UUID.randomUUID().toString();
         try {
@@ -103,14 +119,17 @@ public class RefreshTokenService {
             log.error("Session registry failed during token rotation, userId={}", userId, e);
         }
 
+        return new String[]{newAccessToken, newRefreshToken};
+    }
+
+    private void handleRefreshSuccess(UUID userId, String email, String newRefreshToken, RefreshCommand command) {
         log.info("Token rotated: userId={}", userId);
         authMetrics.incrementTokenRefreshSuccess();
-        auditLogService.recordTokenRefresh(userId, user.getEmail().value(), command.ipAddress(), command.userAgent());
+        auditLogService.recordTokenRefresh(userId, email, command.ipAddress(), command.userAgent());
         try {
             eventPublisher.publish(AuthEvent.of(new TokenRefreshed(userId, newRefreshToken)));
         } catch (Exception e) {
             log.error("Event publishing failed: TokenRefreshed, userId={}", userId, e);
         }
-        return new RefreshResult(newAccessToken, newRefreshToken, tokenGenerator.accessTokenTtlSeconds());
     }
 }
