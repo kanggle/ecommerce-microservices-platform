@@ -45,9 +45,9 @@ export function ProductList() {
         statusValue={filters.status}
         onStatusChange={(value) => filters.setFilter('status', value)}
       />
-      <DataTable<ProductSummary & Record<string, unknown>>
-        columns={columns as ColumnDef<ProductSummary & Record<string, unknown>>[]}
-        data={(data?.content ?? []) as (ProductSummary & Record<string, unknown>)[]}
+      <DataTable<ProductSummary>
+        columns={columns}
+        data={data?.content ?? []}
         pagination={pagination}
         isLoading={isLoading}
         emptyMessage="등록된 상품이 없습니다."

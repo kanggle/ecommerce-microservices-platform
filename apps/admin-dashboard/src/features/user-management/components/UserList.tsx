@@ -47,9 +47,9 @@ export function UserList() {
         statusValue={filters.status}
         onStatusChange={(value) => filters.setFilter('status', value)}
       />
-      <DataTable<AdminUserSummary & Record<string, unknown>>
-        columns={columns as ColumnDef<AdminUserSummary & Record<string, unknown>>[]}
-        data={(data?.content ?? []) as (AdminUserSummary & Record<string, unknown>)[]}
+      <DataTable<AdminUserSummary>
+        columns={columns}
+        data={data?.content ?? []}
         pagination={pagination}
         isLoading={isLoading}
         emptyMessage="등록된 사용자가 없습니다."

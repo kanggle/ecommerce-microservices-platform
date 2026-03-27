@@ -27,7 +27,7 @@ interface DataTableProps<T> {
   rowKey?: (item: T, index: number) => string;
 }
 
-export function DataTable<T extends Record<string, unknown>>({
+export function DataTable<T>({
   columns,
   data,
   pagination,
@@ -46,8 +46,9 @@ export function DataTable<T extends Record<string, unknown>>({
 
   function getRowKey(item: T, index: number): string {
     if (rowKey) return rowKey(item, index);
-    if (item['id'] != null) return String(item['id']);
-    return columns.map((col) => String(item[col.key] ?? '')).join('::') || String(index);
+    const record = item as Record<string, unknown>;
+    if (record['id'] != null) return String(record['id']);
+    return columns.map((col) => String(record[col.key] ?? '')).join('::') || String(index);
   }
 
   return (
@@ -93,7 +94,7 @@ export function DataTable<T extends Record<string, unknown>>({
                 >
                   {col.render
                     ? col.render(item)
-                    : String(item[col.key] ?? '')}
+                    : String((item as Record<string, unknown>)[col.key] ?? '')}
                 </td>
               ))}
             </tr>

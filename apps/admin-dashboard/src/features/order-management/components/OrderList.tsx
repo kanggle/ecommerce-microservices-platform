@@ -50,9 +50,9 @@ export function OrderList() {
         statusValue={filters.status}
         onStatusChange={(value) => filters.setFilter('status', value)}
       />
-      <DataTable<OrderSummary & Record<string, unknown>>
-        columns={columns as ColumnDef<OrderSummary & Record<string, unknown>>[]}
-        data={(data?.content ?? []) as (OrderSummary & Record<string, unknown>)[]}
+      <DataTable<OrderSummary>
+        columns={columns}
+        data={data?.content ?? []}
         pagination={pagination}
         isLoading={isLoading}
         emptyMessage="주문이 없습니다."
