@@ -24,7 +24,7 @@ class BatchJobExecutionRepositoryImplTest {
     private BatchJobExecutionRepositoryImpl repository;
 
     @Mock
-    private JpaBatchJobExecutionRepository jpaRepository;
+    private BatchJobExecutionJpaRepository jpaRepository;
 
     @Mock
     private BatchJobExecutionPersistenceMapper mapper;

@@ -11,7 +11,7 @@ import java.util.Optional;
 @RequiredArgsConstructor
 public class BatchJobExecutionRepositoryImpl implements BatchJobExecutionRepository {
 
-    private final JpaBatchJobExecutionRepository jpaRepository;
+    private final BatchJobExecutionJpaRepository jpaRepository;
     private final BatchJobExecutionPersistenceMapper mapper;
 
     @Override
