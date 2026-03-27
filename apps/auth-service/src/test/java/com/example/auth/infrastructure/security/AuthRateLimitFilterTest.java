@@ -5,7 +5,7 @@ import com.example.auth.application.service.LogoutService;
 import com.example.auth.application.service.RefreshTokenService;
 import com.example.auth.application.service.SignupService;
 import com.example.auth.domain.repository.AccessTokenBlocklist;
-import com.example.auth.domain.service.LoginRateLimiter;
+import com.example.auth.domain.service.RateLimiter;
 import com.example.auth.infrastructure.config.SecurityConfig;
 import com.example.auth.domain.service.AuthMetricsRecorder;
 import com.example.auth.presentation.support.ClientIpResolver;
@@ -41,7 +41,7 @@ class AuthRateLimitFilterTest {
     private ObjectMapper objectMapper;
 
     @MockitoBean
-    private LoginRateLimiter loginRateLimiter;
+    private RateLimiter loginRateLimiter;
 
     @MockitoBean
     private SignupService signupService;

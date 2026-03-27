@@ -1,6 +1,6 @@
 package com.example.auth.infrastructure.security;
 
-import com.example.auth.domain.service.LoginRateLimiter;
+import com.example.auth.domain.service.RateLimiter;
 import com.example.auth.domain.service.AuthMetricsRecorder;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
@@ -24,12 +24,12 @@ public class AuthRateLimitFilter extends OncePerRequestFilter {
 
     private record PathLimit(int maxRequests, long windowSeconds) {}
 
-    private final LoginRateLimiter loginRateLimiter;
+    private final RateLimiter loginRateLimiter;
     private final AuthMetricsRecorder authMetrics;
     private final Map<String, PathLimit> pathLimits;
 
     public AuthRateLimitFilter(
-            LoginRateLimiter loginRateLimiter,
+            RateLimiter loginRateLimiter,
             AuthMetricsRecorder authMetrics,
             @Value("${app.rate-limit.login.max-requests:20}") int loginMax,
             @Value("${app.rate-limit.login.window-seconds:60}") long loginWindow,

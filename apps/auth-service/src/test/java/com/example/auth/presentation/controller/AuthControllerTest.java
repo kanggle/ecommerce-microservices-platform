@@ -28,7 +28,7 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 import com.example.auth.domain.repository.AccessTokenBlocklist;
-import com.example.auth.domain.service.LoginRateLimiter;
+import com.example.auth.domain.service.RateLimiter;
 import com.example.auth.infrastructure.metrics.AuthMetrics;
 import com.example.auth.infrastructure.config.SecurityConfig;
 import com.example.auth.infrastructure.security.JwtAuthenticationFilter;
@@ -68,7 +68,7 @@ class AuthControllerTest {
     private AccessTokenBlocklist accessTokenBlocklist;
 
     @MockitoBean
-    private LoginRateLimiter loginRateLimiter;
+    private RateLimiter loginRateLimiter;
 
     @MockitoBean
     private AuthMetrics authMetrics;
