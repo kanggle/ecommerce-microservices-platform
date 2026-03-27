@@ -38,7 +38,6 @@ public class ElasticsearchQueryAdapter implements SearchQueryPort {
     @Override
     public SearchProductResult search(SearchProductQuery query) {
         try {
-            var filter = query.filter();
             int from = query.page() * query.size();
 
             SearchRequest request = SearchRequest.of(s -> s
