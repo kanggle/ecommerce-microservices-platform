@@ -7,3 +7,4 @@ export { ConfirmDialog } from './ConfirmDialog';
 export { FilterBar } from './FilterBar';
 export { Sidebar } from './Sidebar';
 export { ListError } from './ListError';
+export { Section } from './Section';

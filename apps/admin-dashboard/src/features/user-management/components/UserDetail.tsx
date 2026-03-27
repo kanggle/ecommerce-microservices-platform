@@ -1,6 +1,6 @@
 'use client';
 
-import { PageLayout, StatusBadge, DescriptionList } from '@/shared/ui';
+import { PageLayout, StatusBadge, DescriptionList, Section } from '@/shared/ui';
 import { ErrorMessage } from '@repo/ui';
 import { useUser } from '../hooks/use-user';
 
@@ -29,10 +29,7 @@ export function UserDetail({ userId }: Props) {
 
   return (
     <PageLayout title={user.name}>
-      <section style={{ marginBottom: '24px' }}>
-        <h2 style={{ fontSize: '1.125rem', fontWeight: 600, marginBottom: '12px' }}>
-          기본 정보
-        </h2>
+      <Section title="기본 정보">
         <DescriptionList
           items={[
             { label: '상태', value: <StatusBadge status={user.status} /> },
@@ -56,7 +53,7 @@ export function UserDetail({ userId }: Props) {
             { label: '수정일', value: new Date(user.updatedAt).toLocaleString('ko-KR') },
           ]}
         />
-      </section>
+      </Section>
     </PageLayout>
   );
 }

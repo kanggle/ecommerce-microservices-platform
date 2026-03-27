@@ -1,7 +1,7 @@
 'use client';
 
 import { useState } from 'react';
-import { PageLayout, StatusBadge, DescriptionList } from '@/shared/ui';
+import { PageLayout, StatusBadge, DescriptionList, Section } from '@/shared/ui';
 import { ErrorMessage } from '@repo/ui';
 import { useProduct } from '../hooks/use-product';
 import { StockAdjustmentForm } from './StockAdjustmentForm';
@@ -30,10 +30,7 @@ export function ProductDetail({ productId }: Props) {
         { label: '수정', href: `/products/${productId}/edit` },
       ]}
     >
-      <section style={{ marginBottom: '24px' }}>
-        <h2 style={{ fontSize: '1.125rem', fontWeight: 600, marginBottom: '12px' }}>
-          기본 정보
-        </h2>
+      <Section title="기본 정보">
         <DescriptionList
           items={[
             { label: '상태', value: <StatusBadge status={product.status} /> },
@@ -42,12 +39,9 @@ export function ProductDetail({ productId }: Props) {
             { label: '설명', value: product.description },
           ]}
         />
-      </section>
+      </Section>
 
-      <section>
-        <h2 style={{ fontSize: '1.125rem', fontWeight: 600, marginBottom: '12px' }}>
-          옵션 / 재고
-        </h2>
+      <Section title="옵션 / 재고">
         {product.variants.length === 0 ? (
           <p style={{ color: '#6b7280' }}>등록된 옵션이 없습니다.</p>
         ) : (
@@ -98,7 +92,7 @@ export function ProductDetail({ productId }: Props) {
             </tbody>
           </table>
         )}
-      </section>
+      </Section>
 
       {selectedVariant && (
         <StockAdjustmentForm

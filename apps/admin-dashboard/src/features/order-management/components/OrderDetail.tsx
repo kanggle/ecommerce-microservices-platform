@@ -1,7 +1,7 @@
 'use client';
 
 import { useState } from 'react';
-import { PageLayout, StatusBadge, ConfirmDialog, DescriptionList } from '@/shared/ui';
+import { PageLayout, StatusBadge, ConfirmDialog, DescriptionList, Section } from '@/shared/ui';
 import { ErrorMessage } from '@repo/ui';
 import { useOrder } from '../hooks/use-order';
 import { useCancelOrder } from '../hooks/use-cancel-order';
@@ -45,10 +45,7 @@ export function OrderDetail({ orderId }: Props) {
         },
       ] : []}
     >
-      <section style={{ marginBottom: '24px' }}>
-        <h2 style={{ fontSize: '1.125rem', fontWeight: 600, marginBottom: '12px' }}>
-          주문 정보
-        </h2>
+      <Section title="주문 정보">
         <DescriptionList
           items={[
             { label: '상태', value: <StatusBadge status={order.status} /> },
@@ -57,12 +54,9 @@ export function OrderDetail({ orderId }: Props) {
             { label: '수정일', value: new Date(order.updatedAt).toLocaleString('ko-KR') },
           ]}
         />
-      </section>
+      </Section>
 
-      <section style={{ marginBottom: '24px' }}>
-        <h2 style={{ fontSize: '1.125rem', fontWeight: 600, marginBottom: '12px' }}>
-          주문 항목
-        </h2>
+      <Section title="주문 항목">
         {order.items.length === 0 ? (
           <p style={{ color: '#6b7280' }}>주문 항목이 없습니다.</p>
         ) : (
@@ -103,12 +97,9 @@ export function OrderDetail({ orderId }: Props) {
             </tbody>
           </table>
         )}
-      </section>
+      </Section>
 
-      <section>
-        <h2 style={{ fontSize: '1.125rem', fontWeight: 600, marginBottom: '12px' }}>
-          배송지 정보
-        </h2>
+      <Section title="배송지 정보">
         <DescriptionList
           items={[
             { label: '수령인', value: order.shippingAddress.recipient },
@@ -117,7 +108,7 @@ export function OrderDetail({ orderId }: Props) {
             { label: '주소', value: `${order.shippingAddress.address1} ${order.shippingAddress.address2}` },
           ]}
         />
-      </section>
+      </Section>
 
       {cancelMutation.isError && (
         <div role="alert" style={{ marginTop: '16px', padding: '12px', backgroundColor: '#fee2e2', borderRadius: '6px', color: '#991b1b' }}>
