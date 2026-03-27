@@ -90,12 +90,7 @@ public class JwtAuthenticationFilter implements GlobalFilter, Ordered {
             String userId = claims.getSubject();
             String email = claims.get("email", String.class);
 
-            if (userId == null || userId.isBlank()) {
-                gatewayMetrics.incrementJwtValidationFailure("invalid");
-                return writeUnauthorized(exchange, "Invalid or expired access token");
-            }
-
-            if (email == null || email.isBlank()) {
+            if (userId == null || userId.isBlank() || email == null || email.isBlank()) {
                 gatewayMetrics.incrementJwtValidationFailure("invalid");
                 return writeUnauthorized(exchange, "Invalid or expired access token");
             }
