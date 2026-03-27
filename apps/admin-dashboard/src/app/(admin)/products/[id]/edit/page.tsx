@@ -3,8 +3,7 @@
 import { use } from 'react';
 import { PageLayout } from '@/shared/ui';
 import { ErrorMessage } from '@repo/ui';
-import { ProductForm } from '@/features/product-management';
-import { useProduct } from '@/features/product-management/hooks/use-product';
+import { ProductForm, useProduct } from '@/features/product-management';
 
 interface Props {
   params: Promise<{ id: string }>;
