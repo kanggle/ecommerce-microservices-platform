@@ -257,7 +257,7 @@ class UserProfileServiceTest {
             UserProfile profile = UserProfile.create(userId, "admin-test@example.com", "관리자조회");
             given(userProfileRepository.findByUserId(userId)).willReturn(Optional.of(profile));
 
-            UserProfileResult result = userProfileService.getUserById(userId);
+            UserProfileResult result = userProfileService.getProfile(userId);
 
             assertThat(result.userId()).isEqualTo(userId);
             assertThat(result.email()).isEqualTo("admin-test@example.com");
@@ -269,7 +269,7 @@ class UserProfileServiceTest {
             UUID userId = UUID.randomUUID();
             given(userProfileRepository.findByUserId(userId)).willReturn(Optional.empty());
 
-            assertThatThrownBy(() -> userProfileService.getUserById(userId))
+            assertThatThrownBy(() -> userProfileService.getProfile(userId))
                     .isInstanceOf(UserProfileNotFoundException.class);
         }
     }

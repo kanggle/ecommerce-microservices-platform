@@ -197,7 +197,7 @@ class UserApiContractTest {
         @Test
         @DisplayName("GET /api/admin/users/{userId} 응답은 스펙 정의 필드만 포함한다")
         void getUser_response_containsSpecFields() throws Exception {
-            given(userProfileService.getUserById(any())).willReturn(profileResult());
+            given(userProfileService.getProfile(any())).willReturn(profileResult());
 
             MvcResult result = mockMvc.perform(get("/api/admin/users/" + USER_ID)
                             .header("X-User-Role", "ADMIN"))

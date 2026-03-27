@@ -37,7 +37,7 @@ public class AdminUserController {
             @RequestHeader(value = "X-User-Role", required = false) String userRole,
             @PathVariable UUID userId) {
         validateAdminRole(userRole);
-        var result = userProfileService.getUserById(userId);
+        var result = userProfileService.getProfile(userId);
         return ResponseEntity.ok(UserProfileResponse.from(result));
     }
 

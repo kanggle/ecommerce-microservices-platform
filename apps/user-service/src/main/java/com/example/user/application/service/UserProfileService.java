@@ -104,10 +104,6 @@ public class UserProfileService {
         return new PageResult<>(content, profiles.totalElements(), profiles.totalPages(), profiles.pageNumber(), profiles.pageSize());
     }
 
-    public UserProfileResult getUserById(UUID userId) {
-        return getProfile(userId);
-    }
-
     @Transactional
     public void withdrawProfile(UUID userId) {
         UserProfile profile = userProfileRepository.findByUserId(userId)

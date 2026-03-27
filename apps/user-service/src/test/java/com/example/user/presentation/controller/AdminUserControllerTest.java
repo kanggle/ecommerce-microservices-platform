@@ -135,7 +135,7 @@ class AdminUserControllerTest {
                     Instant.parse("2026-01-01T00:00:00Z"),
                     Instant.parse("2026-01-02T00:00:00Z")
             );
-            given(userProfileService.getUserById(userId)).willReturn(result);
+            given(userProfileService.getProfile(userId)).willReturn(result);
 
             mockMvc.perform(get("/api/admin/users/{userId}", userId)
                             .header("X-User-Role", "ADMIN"))
@@ -158,7 +158,7 @@ class AdminUserControllerTest {
         @DisplayName("존재하지 않는 사용자 조회 시 404를 반환한다")
         void getUser_nonExistingUser_returns404() throws Exception {
             UUID userId = UUID.randomUUID();
-            given(userProfileService.getUserById(userId))
+            given(userProfileService.getProfile(userId))
                     .willThrow(new UserProfileNotFoundException(userId));
 
             mockMvc.perform(get("/api/admin/users/{userId}", userId)
