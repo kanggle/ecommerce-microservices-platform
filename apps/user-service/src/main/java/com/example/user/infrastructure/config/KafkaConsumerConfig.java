@@ -1,5 +1,6 @@
 package com.example.user.infrastructure.config;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.kafka.clients.consumer.ConsumerRecord;
 import org.apache.kafka.common.TopicPartition;
@@ -27,7 +28,7 @@ public class KafkaConsumerConfig {
 
         var errorHandler = new DefaultErrorHandler(recoverer, new FixedBackOff(1000L, 2));
         errorHandler.addNotRetryableExceptions(
-                com.fasterxml.jackson.core.JsonProcessingException.class
+                JsonProcessingException.class
         );
         return errorHandler;
     }
