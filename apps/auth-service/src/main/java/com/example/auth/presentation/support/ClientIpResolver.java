@@ -1,4 +1,4 @@
-package com.example.auth.infrastructure.util;
+package com.example.auth.presentation.support;
 
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.stereotype.Component;

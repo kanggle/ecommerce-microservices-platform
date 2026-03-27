@@ -8,7 +8,7 @@ import com.example.auth.domain.repository.AccessTokenBlocklist;
 import com.example.auth.domain.service.LoginRateLimiter;
 import com.example.auth.infrastructure.config.SecurityConfig;
 import com.example.auth.domain.service.AuthMetricsRecorder;
-import com.example.auth.infrastructure.util.ClientIpResolver;
+import com.example.auth.presentation.support.ClientIpResolver;
 import com.example.auth.presentation.advice.GlobalExceptionHandler;
 import com.example.auth.presentation.controller.AuthController;
 import com.fasterxml.jackson.databind.ObjectMapper;

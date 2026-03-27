@@ -1,4 +1,4 @@
-package com.example.auth.infrastructure.util;
+package com.example.auth.presentation.support;
 
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
