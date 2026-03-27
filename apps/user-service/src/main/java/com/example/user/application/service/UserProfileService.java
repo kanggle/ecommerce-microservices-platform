@@ -103,9 +103,7 @@ public class UserProfileService {
     }
 
     public UserProfileResult getUserById(UUID userId) {
-        UserProfile profile = userProfileRepository.findByUserId(userId)
-                .orElseThrow(() -> new UserProfileNotFoundException(userId));
-        return UserProfileResult.from(profile);
+        return getProfile(userId);
     }
 
     @Transactional
