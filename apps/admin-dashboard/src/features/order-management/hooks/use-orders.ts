@@ -1,19 +1,15 @@
 import { useQuery } from '@tanstack/react-query';
 import { getOrders } from '../api/order-api';
 import { useListParams } from '../../../shared/hooks';
+import { toValidStatus } from '../../../shared/lib/to-valid-status';
 import type { OrderStatus } from '@repo/types';
 
-const VALID_STATUSES: OrderStatus[] = ['PENDING', 'CONFIRMED', 'SHIPPED', 'DELIVERED', 'CANCELLED'];
-
-function toOrderStatus(value: string | null): OrderStatus | undefined {
-  if (!value) return undefined;
-  return VALID_STATUSES.includes(value as OrderStatus) ? (value as OrderStatus) : undefined;
-}
+const VALID_STATUSES: readonly OrderStatus[] = ['PENDING', 'CONFIRMED', 'SHIPPED', 'DELIVERED', 'CANCELLED'] as const;
 
 export function useOrders() {
   const { page, getParam, setFilter, buildPagination } = useListParams();
 
-  const status = toOrderStatus(getParam('status'));
+  const status = toValidStatus(getParam('status'), VALID_STATUSES);
 
   const query = useQuery({
     queryKey: ['admin', 'orders', { page, status }],

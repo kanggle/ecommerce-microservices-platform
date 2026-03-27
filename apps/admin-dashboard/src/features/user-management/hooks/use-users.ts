@@ -1,19 +1,15 @@
 import { useQuery } from '@tanstack/react-query';
 import { getUsers } from '../api/user-api';
 import { useListParams } from '../../../shared/hooks';
+import { toValidStatus } from '../../../shared/lib/to-valid-status';
 import type { UserStatus } from '@repo/types';
 
-const VALID_STATUSES: UserStatus[] = ['ACTIVE', 'SUSPENDED', 'WITHDRAWN'];
-
-function toUserStatus(value: string | null): UserStatus | undefined {
-  if (!value) return undefined;
-  return VALID_STATUSES.includes(value as UserStatus) ? (value as UserStatus) : undefined;
-}
+const VALID_STATUSES: readonly UserStatus[] = ['ACTIVE', 'SUSPENDED', 'WITHDRAWN'] as const;
 
 export function useUsers() {
   const { page, getParam, setFilter, buildPagination } = useListParams();
 
-  const status = toUserStatus(getParam('status'));
+  const status = toValidStatus(getParam('status'), VALID_STATUSES);
   const email = getParam('email') || undefined;
 
   const query = useQuery({
