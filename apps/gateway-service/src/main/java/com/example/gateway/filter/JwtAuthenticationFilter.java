@@ -1,7 +1,7 @@
 package com.example.gateway.filter;
 
 import com.example.gateway.filter.dto.ErrorResponse;
-import com.example.gateway.metrics.GatewayMetrics;
+import com.example.gateway.config.GatewayMetrics;
 import com.example.gateway.security.RouteService;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;

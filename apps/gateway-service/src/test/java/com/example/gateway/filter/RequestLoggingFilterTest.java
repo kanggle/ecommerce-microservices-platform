@@ -1,6 +1,6 @@
 package com.example.gateway.filter;
 
-import com.example.gateway.metrics.GatewayMetrics;
+import com.example.gateway.config.GatewayMetrics;
 import com.example.gateway.security.RouteService;
 import io.micrometer.core.instrument.simple.SimpleMeterRegistry;
 import org.junit.jupiter.api.BeforeEach;

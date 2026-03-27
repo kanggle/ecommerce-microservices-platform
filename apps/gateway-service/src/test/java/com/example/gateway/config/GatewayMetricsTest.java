@@ -1,4 +1,4 @@
-package com.example.gateway.metrics;
+package com.example.gateway.config;
 
 import io.micrometer.core.instrument.MeterRegistry;
 import io.micrometer.core.instrument.simple.SimpleMeterRegistry;
