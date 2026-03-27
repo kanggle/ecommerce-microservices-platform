@@ -22,20 +22,31 @@ vi.mock('@/features/auth', () => ({
   useAuth: () => mockAuthState,
 }));
 
-vi.mock('@/features/user', () => ({
-  AddressList: ({
+const { mockGetMyAddressesFn } = vi.hoisted(() => ({
+  mockGetMyAddressesFn: vi.fn(),
+}));
+
+vi.mock('@/features/user', async () => {
+  const { useState, useCallback, useEffect } = await import('react');
+
+  type ViewMode = 'list' | 'add' | 'edit';
+
+  function MockAddressList({
     addresses,
     onAddClick,
   }: {
     addresses: Address[];
     onAddClick: () => void;
-  }) => (
-    <div data-testid="address-list">
-      <span>{addresses.length}개 배송지</span>
-      <button onClick={onAddClick}>배송지 추가</button>
-    </div>
-  ),
-  AddressForm: ({
+  }) {
+    return (
+      <div data-testid="address-list">
+        <span>{addresses.length}개 배송지</span>
+        <button onClick={onAddClick}>배송지 추가</button>
+      </div>
+    );
+  }
+
+  function MockAddressForm({
     onSaved,
     onCancel,
     address,
@@ -43,18 +54,100 @@ vi.mock('@/features/user', () => ({
     onSaved: () => void;
     onCancel: () => void;
     address?: Address;
-  }) => (
-    <div data-testid="address-form">
-      <span>{address ? '수정 모드' : '추가 모드'}</span>
-      <button onClick={onSaved}>저장</button>
-      <button onClick={onCancel}>취소</button>
-    </div>
-  ),
-  getMyAddresses: vi.fn(),
-}));
+  }) {
+    return (
+      <div data-testid="address-form">
+        <span>{address ? '수정 모드' : '추가 모드'}</span>
+        <button onClick={onSaved}>저장</button>
+        <button onClick={onCancel}>취소</button>
+      </div>
+    );
+  }
 
-import { getMyAddresses } from '@/features/user';
-const mockGetMyAddresses = vi.mocked(getMyAddresses);
+  function MockAddressManager() {
+    const [addresses, setAddresses] = useState<Address[]>([]);
+    const [isLoading, setIsLoading] = useState(true);
+    const [error, setError] = useState('');
+    const [viewMode, setViewMode] = useState<ViewMode>('list');
+    const [editingAddress, setEditingAddress] = useState<Address | null>(null);
+
+    const loadAddresses = useCallback(async () => {
+      setIsLoading(true);
+      setError('');
+      try {
+        const data = await mockGetMyAddressesFn();
+        setAddresses(data.addresses);
+      } catch {
+        setError('배송지 목록을 불러오는데 실패했습니다.');
+      } finally {
+        setIsLoading(false);
+      }
+    }, []);
+
+    useEffect(() => {
+      loadAddresses();
+    }, [loadAddresses]);
+
+    function handleAddClick() {
+      setViewMode('add');
+      setEditingAddress(null);
+    }
+
+    function handleSaved() {
+      setViewMode('list');
+      setEditingAddress(null);
+      loadAddresses();
+    }
+
+    function handleCancel() {
+      setViewMode('list');
+      setEditingAddress(null);
+    }
+
+    return (
+      <main>
+        <h1>배송지 관리</h1>
+        {isLoading && <span>로딩 중...</span>}
+        {error && (
+          <div>
+            <span>{error}</span>
+            <button onClick={loadAddresses}>다시 시도</button>
+          </div>
+        )}
+        {!isLoading && !error && (
+          <>
+            {viewMode !== 'list' && (
+              <MockAddressForm
+                address={viewMode === 'edit' ? (editingAddress ?? undefined) : undefined}
+                onSaved={handleSaved}
+                onCancel={handleCancel}
+              />
+            )}
+            {viewMode === 'list' && addresses.length === 0 && (
+              <div>
+                <span>등록된 배송지가 없습니다.</span>
+                <button onClick={handleAddClick}>첫 배송지 추가하기</button>
+              </div>
+            )}
+            {viewMode === 'list' && addresses.length > 0 && (
+              <MockAddressList
+                addresses={addresses}
+                onAddClick={handleAddClick}
+              />
+            )}
+          </>
+        )}
+      </main>
+    );
+  }
+
+  return {
+    AddressList: MockAddressList,
+    AddressForm: MockAddressForm,
+    getMyAddresses: mockGetMyAddressesFn,
+    AddressManager: MockAddressManager,
+  };
+});
 
 import AddressesPage from '@/app/(store)/my/addresses/page';
 
@@ -85,7 +178,7 @@ describe('AddressesPage', () => {
   });
 
   it('배송지 목록을 로드하고 AddressList를 렌더링한다', async () => {
-    mockGetMyAddresses.mockResolvedValueOnce({ addresses: MOCK_ADDRESSES });
+    mockGetMyAddressesFn.mockResolvedValueOnce({ addresses: MOCK_ADDRESSES });
 
     render(<AddressesPage />);
 
@@ -111,7 +204,7 @@ describe('AddressesPage', () => {
   });
 
   it('배송지가 없을 때 빈 상태를 표시한다', async () => {
-    mockGetMyAddresses.mockResolvedValueOnce({ addresses: [] });
+    mockGetMyAddressesFn.mockResolvedValueOnce({ addresses: [] });
 
     render(<AddressesPage />);
 
@@ -125,7 +218,7 @@ describe('AddressesPage', () => {
   });
 
   it('목록 조회 실패 시 에러 메시지를 표시한다', async () => {
-    mockGetMyAddresses.mockRejectedValueOnce({
+    mockGetMyAddressesFn.mockRejectedValueOnce({
       code: 'NETWORK_ERROR',
       message: 'Network error',
       timestamp: new Date().toISOString(),
@@ -141,7 +234,7 @@ describe('AddressesPage', () => {
   });
 
   it('에러 시 재시도 버튼이 표시된다', async () => {
-    mockGetMyAddresses.mockRejectedValueOnce({
+    mockGetMyAddressesFn.mockRejectedValueOnce({
       code: 'NETWORK_ERROR',
       message: 'error',
       timestamp: new Date().toISOString(),
@@ -155,7 +248,7 @@ describe('AddressesPage', () => {
   });
 
   it('배송지 추가 클릭 시 AddressForm을 렌더링한다', async () => {
-    mockGetMyAddresses.mockResolvedValueOnce({ addresses: MOCK_ADDRESSES });
+    mockGetMyAddressesFn.mockResolvedValueOnce({ addresses: MOCK_ADDRESSES });
 
     const user = userEvent.setup();
     render(<AddressesPage />);
@@ -171,7 +264,7 @@ describe('AddressesPage', () => {
   });
 
   it('폼 취소 시 목록으로 돌아간다', async () => {
-    mockGetMyAddresses.mockResolvedValueOnce({ addresses: MOCK_ADDRESSES });
+    mockGetMyAddressesFn.mockResolvedValueOnce({ addresses: MOCK_ADDRESSES });
 
     const user = userEvent.setup();
     render(<AddressesPage />);
@@ -191,7 +284,7 @@ describe('AddressesPage', () => {
   });
 
   it('폼 저장 후 목록을 다시 로드한다', async () => {
-    mockGetMyAddresses
+    mockGetMyAddressesFn
       .mockResolvedValueOnce({ addresses: MOCK_ADDRESSES })
       .mockResolvedValueOnce({ addresses: MOCK_ADDRESSES });
 
@@ -206,12 +299,12 @@ describe('AddressesPage', () => {
     await user.click(screen.getByText('저장'));
 
     await waitFor(() => {
-      expect(mockGetMyAddresses).toHaveBeenCalledTimes(2);
+      expect(mockGetMyAddressesFn).toHaveBeenCalledTimes(2);
     });
   });
 
   it('로딩 중 스피너를 표시한다', () => {
-    mockGetMyAddresses.mockImplementation(() => new Promise(() => {}));
+    mockGetMyAddressesFn.mockImplementation(() => new Promise(() => {}));
 
     render(<AddressesPage />);
 
