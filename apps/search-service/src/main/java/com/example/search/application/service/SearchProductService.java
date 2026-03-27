@@ -2,7 +2,7 @@ package com.example.search.application.service;
 
 import com.example.search.application.dto.SearchProductQuery;
 import com.example.search.application.dto.SearchProductResult;
-import com.example.search.domain.port.SearchQueryPort;
+import com.example.search.application.port.out.SearchQueryPort;
 import com.example.search.infrastructure.metrics.SearchMetrics;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;

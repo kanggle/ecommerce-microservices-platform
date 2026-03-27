@@ -2,7 +2,7 @@ package com.example.search.application.service;
 
 import com.example.search.domain.model.ProductStatus;
 import com.example.search.domain.model.SearchDocument;
-import com.example.search.domain.port.SearchIndexPort;
+import com.example.search.application.port.out.SearchIndexPort;
 import com.example.search.infrastructure.metrics.SearchMetrics;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;

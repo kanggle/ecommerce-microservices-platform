@@ -2,7 +2,7 @@ package com.example.search.application.service;
 
 import com.example.search.domain.model.ProductStatus;
 import com.example.search.domain.model.SearchDocument;
-import com.example.search.domain.port.SearchIndexPort;
+import com.example.search.application.port.out.SearchIndexPort;
 import com.example.search.infrastructure.metrics.SearchMetrics;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;

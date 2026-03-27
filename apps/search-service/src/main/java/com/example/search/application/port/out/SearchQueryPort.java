@@ -1,4 +1,4 @@
-package com.example.search.domain.port;
+package com.example.search.application.port.out;
 
 import com.example.search.application.dto.SearchProductQuery;
 import com.example.search.application.dto.SearchProductResult;

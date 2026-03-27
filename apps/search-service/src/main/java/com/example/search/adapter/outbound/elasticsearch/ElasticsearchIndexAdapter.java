@@ -6,7 +6,7 @@ import co.elastic.clients.elasticsearch.core.GetResponse;
 import co.elastic.clients.elasticsearch.core.IndexRequest;
 import co.elastic.clients.elasticsearch.core.UpdateRequest;
 import com.example.search.domain.model.SearchDocument;
-import com.example.search.domain.port.SearchIndexPort;
+import com.example.search.application.port.out.SearchIndexPort;
 import com.example.search.infrastructure.config.IndexProperties;
 import com.example.search.infrastructure.exception.SearchException;
 import lombok.RequiredArgsConstructor;

@@ -6,7 +6,7 @@ import com.example.search.domain.model.FacetResult;
 import com.example.search.domain.model.SearchDocument;
 import com.example.search.domain.model.SearchFilter;
 import com.example.search.domain.model.SearchSort;
-import com.example.search.domain.port.SearchQueryPort;
+import com.example.search.application.port.out.SearchQueryPort;
 import com.example.search.infrastructure.metrics.SearchMetrics;
 import io.micrometer.core.instrument.Timer;
 import org.junit.jupiter.api.BeforeEach;
