@@ -1,12 +1,15 @@
 package com.example.search.infrastructure.metrics;
 
+import com.example.search.application.port.out.SearchMetricsPort;
 import io.micrometer.core.instrument.Counter;
 import io.micrometer.core.instrument.MeterRegistry;
 import io.micrometer.core.instrument.Timer;
 import org.springframework.stereotype.Component;
 
+import java.util.function.Supplier;
+
 @Component
-public class SearchMetrics {
+public class SearchMetrics implements SearchMetricsPort {
 
     private final Counter searchQueryTotal;
     private final Timer searchQueryDuration;
@@ -49,18 +52,22 @@ public class SearchMetrics {
                 .register(registry);
     }
 
+    @Override
     public void incrementSearchQuery() {
         searchQueryTotal.increment();
     }
 
-    public Timer getSearchQueryDuration() {
-        return searchQueryDuration;
+    @Override
+    public <T> T recordSearchQueryDuration(Supplier<T> operation) {
+        return searchQueryDuration.record(operation);
     }
 
+    @Override
     public void incrementZeroResults() {
         searchZeroResultsTotal.increment();
     }
 
+    @Override
     public void incrementIndexSync(String eventType) {
         switch (eventType) {
             case "created" -> indexSyncCreated.increment();
@@ -69,6 +76,7 @@ public class SearchMetrics {
         }
     }
 
+    @Override
     public void incrementIndexSyncFailure() {
         indexSyncFailureTotal.increment();
     }

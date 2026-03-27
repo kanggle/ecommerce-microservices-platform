@@ -3,7 +3,7 @@ package com.example.search.application.service;
 import com.example.search.domain.model.ProductStatus;
 import com.example.search.domain.model.SearchDocument;
 import com.example.search.application.port.out.SearchIndexPort;
-import com.example.search.infrastructure.metrics.SearchMetrics;
+import com.example.search.application.port.out.SearchMetricsPort;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -29,7 +29,7 @@ class IndexSyncServiceTest {
     private SearchIndexPort searchIndexPort;
 
     @Mock
-    private SearchMetrics searchMetrics;
+    private SearchMetricsPort searchMetrics;
 
     @Test
     @DisplayName("upsert 호출 시 SearchIndexPort.upsert가 호출된다")

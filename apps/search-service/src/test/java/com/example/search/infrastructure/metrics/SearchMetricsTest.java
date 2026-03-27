@@ -58,9 +58,11 @@ class SearchMetricsTest {
     }
 
     @Test
-    @DisplayName("검색 쿼리 타이머가 등록된다")
-    void searchQueryDuration_isRegistered() {
-        assertThat(searchMetrics.getSearchQueryDuration()).isNotNull();
-        assertThat(registry.timer("search_query_duration_seconds")).isNotNull();
+    @DisplayName("recordSearchQueryDuration 호출 시 타이머에 기록되고 결과를 반환한다")
+    void recordSearchQueryDuration_recordsTimerAndReturnsResult() {
+        String result = searchMetrics.recordSearchQueryDuration(() -> "result");
+
+        assertThat(result).isEqualTo("result");
+        assertThat(registry.timer("search_query_duration_seconds").count()).isEqualTo(1L);
     }
 }

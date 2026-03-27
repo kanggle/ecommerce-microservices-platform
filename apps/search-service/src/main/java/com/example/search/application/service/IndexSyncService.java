@@ -3,7 +3,7 @@ package com.example.search.application.service;
 import com.example.search.domain.model.ProductStatus;
 import com.example.search.domain.model.SearchDocument;
 import com.example.search.application.port.out.SearchIndexPort;
-import com.example.search.infrastructure.metrics.SearchMetrics;
+import com.example.search.application.port.out.SearchMetricsPort;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -16,7 +16,7 @@ import java.util.Optional;
 public class IndexSyncService {
 
     private final SearchIndexPort searchIndexPort;
-    private final SearchMetrics searchMetrics;
+    private final SearchMetricsPort searchMetrics;
 
     public void upsert(SearchDocument document) {
         log.info("Upserting search index for productId={}", document.productId());

@@ -2,8 +2,8 @@ package com.example.search.application.service;
 
 import com.example.search.application.dto.SearchProductQuery;
 import com.example.search.application.dto.SearchProductResult;
+import com.example.search.application.port.out.SearchMetricsPort;
 import com.example.search.application.port.out.SearchQueryPort;
-import com.example.search.infrastructure.metrics.SearchMetrics;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -14,13 +14,13 @@ import org.springframework.stereotype.Service;
 public class SearchProductService {
 
     private final SearchQueryPort searchQueryPort;
-    private final SearchMetrics searchMetrics;
+    private final SearchMetricsPort searchMetrics;
 
     public SearchProductResult search(SearchProductQuery query) {
         log.info("Searching products keyword={}, page={}, size={}",
                 query.filter().keyword(), query.page(), query.size());
 
-        SearchProductResult result = searchMetrics.getSearchQueryDuration().record(() -> searchQueryPort.search(query));
+        SearchProductResult result = searchMetrics.recordSearchQueryDuration(() -> searchQueryPort.search(query));
         searchMetrics.incrementSearchQuery();
         if (result != null && result.content().isEmpty()) {
             searchMetrics.incrementZeroResults();

@@ -6,9 +6,8 @@ import com.example.search.domain.model.FacetResult;
 import com.example.search.domain.model.SearchDocument;
 import com.example.search.domain.model.SearchFilter;
 import com.example.search.domain.model.SearchSort;
+import com.example.search.application.port.out.SearchMetricsPort;
 import com.example.search.application.port.out.SearchQueryPort;
-import com.example.search.infrastructure.metrics.SearchMetrics;
-import io.micrometer.core.instrument.Timer;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -37,15 +36,11 @@ class SearchProductServiceTest {
     private SearchQueryPort searchQueryPort;
 
     @Mock
-    private SearchMetrics searchMetrics;
-
-    @Mock
-    private Timer timer;
+    private SearchMetricsPort searchMetrics;
 
     @BeforeEach
     void setUp() {
-        given(searchMetrics.getSearchQueryDuration()).willReturn(timer);
-        given(timer.record(any(Supplier.class))).willAnswer(invocation -> {
+        given(searchMetrics.recordSearchQueryDuration(any(Supplier.class))).willAnswer(invocation -> {
             Supplier<?> supplier = invocation.getArgument(0);
             return supplier.get();
         });
