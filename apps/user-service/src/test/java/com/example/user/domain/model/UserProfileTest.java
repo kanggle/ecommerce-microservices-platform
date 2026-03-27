@@ -155,16 +155,6 @@ class UserProfileTest {
     }
 
     @Test
-    @DisplayName("프로필 상태를 SUSPENDED로 변경할 수 있다")
-    void suspend_changesStatusToSuspended() {
-        UserProfile profile = UserProfile.create(UUID.randomUUID(), "test@example.com", "홍길동");
-
-        profile.suspend();
-
-        assertThat(profile.getStatus()).isEqualTo(ProfileStatus.SUSPENDED);
-    }
-
-    @Test
     @DisplayName("프로필 상태를 WITHDRAWN으로 변경할 수 있다")
     void withdraw_changesStatusToWithdrawn() {
         UserProfile profile = UserProfile.create(UUID.randomUUID(), "test@example.com", "홍길동");
@@ -174,14 +164,4 @@ class UserProfileTest {
         assertThat(profile.getStatus()).isEqualTo(ProfileStatus.WITHDRAWN);
     }
 
-    @Test
-    @DisplayName("프로필 상태를 ACTIVE로 복원할 수 있다")
-    void activate_changesStatusToActive() {
-        UserProfile profile = UserProfile.create(UUID.randomUUID(), "test@example.com", "홍길동");
-        profile.suspend();
-
-        profile.activate();
-
-        assertThat(profile.getStatus()).isEqualTo(ProfileStatus.ACTIVE);
-    }
 }

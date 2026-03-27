@@ -79,18 +79,8 @@ public class UserProfile {
         this.updatedAt = Instant.now();
     }
 
-    public void suspend() {
-        this.status = ProfileStatus.SUSPENDED;
-        this.updatedAt = Instant.now();
-    }
-
     public void withdraw() {
         this.status = ProfileStatus.WITHDRAWN;
-        this.updatedAt = Instant.now();
-    }
-
-    public void activate() {
-        this.status = ProfileStatus.ACTIVE;
         this.updatedAt = Instant.now();
     }
 
