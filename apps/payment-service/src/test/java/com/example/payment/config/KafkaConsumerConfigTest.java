@@ -1,4 +1,4 @@
-package com.example.payment.infrastructure.config;
+package com.example.payment.config;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import org.junit.jupiter.api.DisplayName;
