@@ -1,5 +1,6 @@
 package com.example.search.adapter.outbound.elasticsearch;
 
+import com.example.search.domain.model.SearchDocument;
 import lombok.extern.slf4j.Slf4j;
 
 import java.util.Map;
@@ -8,6 +9,19 @@ import java.util.Map;
 final class ElasticsearchFieldMapper {
 
     private ElasticsearchFieldMapper() {
+    }
+
+    static SearchDocument toSearchDocument(Map<String, Object> source, Double score) {
+        return new SearchDocument(
+                getString(source, "productId"),
+                getString(source, "name"),
+                getString(source, "description"),
+                toLong(source.get("price")),
+                getString(source, "status"),
+                getString(source, "categoryId"),
+                toInt(source.get("totalStock")),
+                score
+        );
     }
 
     static String getString(Map<String, Object> source, String key) {
