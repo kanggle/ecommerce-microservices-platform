@@ -65,12 +65,7 @@ public class JwtAuthenticationFilter implements GlobalFilter, Ordered {
         HttpMethod method = request.getMethod();
         String path = request.getPath().value();
 
-        ServerHttpRequest strippedRequest = request.mutate()
-                .headers(h -> {
-                    h.remove("X-User-Id");
-                    h.remove("X-User-Email");
-                })
-                .build();
+        ServerHttpRequest strippedRequest = stripSpoofHeaders(request);
 
         if (routeService.isPublicRoute(method, path)) {
             String targetService = routeService.resolveTargetService(path);
@@ -85,6 +80,24 @@ public class JwtAuthenticationFilter implements GlobalFilter, Ordered {
         }
 
         String token = authHeader.substring(7);
+        return validateTokenAndEnrichRequest(exchange, strippedRequest, chain, token, path);
+    }
+
+    private ServerHttpRequest stripSpoofHeaders(ServerHttpRequest request) {
+        return request.mutate()
+                .headers(h -> {
+                    h.remove("X-User-Id");
+                    h.remove("X-User-Email");
+                })
+                .build();
+    }
+
+    private Mono<Void> validateTokenAndEnrichRequest(
+            ServerWebExchange exchange,
+            ServerHttpRequest strippedRequest,
+            GatewayFilterChain chain,
+            String token,
+            String path) {
         try {
             Claims claims = jwtParser.parseSignedClaims(token).getPayload();
             String userId = claims.getSubject();
