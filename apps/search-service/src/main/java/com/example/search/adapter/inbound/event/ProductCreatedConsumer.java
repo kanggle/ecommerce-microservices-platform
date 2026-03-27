@@ -1,6 +1,6 @@
 package com.example.search.adapter.inbound.event;
 
-import com.example.search.application.service.IndexSyncService;
+import com.example.search.application.port.in.IndexSyncUseCase;
 import com.example.search.domain.model.SearchDocument;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -15,7 +15,7 @@ import org.springframework.stereotype.Component;
 @RequiredArgsConstructor
 public class ProductCreatedConsumer {
 
-    private final IndexSyncService indexSyncService;
+    private final IndexSyncUseCase indexSyncService;
     private final ObjectMapper objectMapper;
 
     @KafkaListener(topics = "product.product.created", groupId = "search-service")

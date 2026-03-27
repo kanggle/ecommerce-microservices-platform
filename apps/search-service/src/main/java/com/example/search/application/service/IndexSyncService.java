@@ -1,5 +1,6 @@
 package com.example.search.application.service;
 
+import com.example.search.application.port.in.IndexSyncUseCase;
 import com.example.search.domain.model.ProductStatus;
 import com.example.search.domain.model.SearchDocument;
 import com.example.search.application.port.out.SearchIndexPort;
@@ -13,7 +14,7 @@ import java.util.Optional;
 @Slf4j
 @Service
 @RequiredArgsConstructor
-public class IndexSyncService {
+public class IndexSyncService implements IndexSyncUseCase {
 
     private final SearchIndexPort searchIndexPort;
     private final SearchMetricsPort searchMetrics;

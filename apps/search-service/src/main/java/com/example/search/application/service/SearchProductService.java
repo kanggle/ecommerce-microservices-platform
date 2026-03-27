@@ -2,6 +2,7 @@ package com.example.search.application.service;
 
 import com.example.search.application.dto.SearchProductQuery;
 import com.example.search.application.dto.SearchProductResult;
+import com.example.search.application.port.in.SearchProductUseCase;
 import com.example.search.application.port.out.SearchMetricsPort;
 import com.example.search.application.port.out.SearchQueryPort;
 import lombok.RequiredArgsConstructor;
@@ -11,7 +12,7 @@ import org.springframework.stereotype.Service;
 @Slf4j
 @Service
 @RequiredArgsConstructor
-public class SearchProductService {
+public class SearchProductService implements SearchProductUseCase {
 
     private final SearchQueryPort searchQueryPort;
     private final SearchMetricsPort searchMetrics;

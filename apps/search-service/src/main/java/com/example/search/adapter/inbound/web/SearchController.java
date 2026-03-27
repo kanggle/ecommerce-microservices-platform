@@ -3,7 +3,7 @@ package com.example.search.adapter.inbound.web;
 import com.example.search.adapter.inbound.web.dto.SearchProductResponse;
 import com.example.search.application.dto.SearchProductQuery;
 import com.example.search.application.dto.SearchProductResult;
-import com.example.search.application.service.SearchProductService;
+import com.example.search.application.port.in.SearchProductUseCase;
 import com.example.search.domain.model.SearchFilter;
 import com.example.search.domain.model.SearchSort;
 import jakarta.validation.constraints.NotBlank;
@@ -22,7 +22,7 @@ import org.springframework.web.bind.annotation.RestController;
 @Validated
 public class SearchController {
 
-    private final SearchProductService searchProductService;
+    private final SearchProductUseCase searchProductService;
 
     @GetMapping("/products")
     public ResponseEntity<SearchProductResponse> search(
