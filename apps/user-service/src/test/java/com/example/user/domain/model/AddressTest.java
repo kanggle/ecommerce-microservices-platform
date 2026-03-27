@@ -1,5 +1,6 @@
 package com.example.user.domain.model;
 
+import com.example.user.domain.exception.AddressLimitExceededException;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
@@ -128,7 +129,7 @@ class AddressTest {
     @DisplayName("주소 수가 최대치(10)에 도달하면 AddressLimitExceededException 발생")
     void validateAddressLimit_atMax_throwsException() {
         assertThatThrownBy(() -> Address.validateAddressLimit(10))
-                .isInstanceOf(Address.AddressLimitExceededException.class)
+                .isInstanceOf(AddressLimitExceededException.class)
                 .hasMessageContaining("10");
     }
 

@@ -2,9 +2,9 @@ package com.example.user.presentation.controller;
 
 import com.example.user.application.result.AddressResult;
 import com.example.user.application.service.AddressService;
+import com.example.user.domain.exception.AddressLimitExceededException;
 import com.example.user.domain.exception.AddressNotFoundException;
 import com.example.user.domain.exception.DefaultAddressCannotBeDeletedException;
-import com.example.user.domain.model.Address;
 import com.example.user.presentation.exception.GlobalExceptionHandler;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.DisplayName;
@@ -125,7 +125,7 @@ class AddressControllerTest {
         @DisplayName("10개 초과 시 422 ADDRESS_LIMIT_EXCEEDED를 반환한다")
         void createAddress_limitExceeded_returns422() throws Exception {
             given(addressService.createAddress(any()))
-                    .willThrow(new Address.AddressLimitExceededException("Maximum number of addresses reached (10)"));
+                    .willThrow(new AddressLimitExceededException("Maximum number of addresses reached (10)"));
 
             mockMvc.perform(post("/api/users/me/addresses")
                             .header("X-User-Id", USER_ID.toString())

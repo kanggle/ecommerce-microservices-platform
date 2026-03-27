@@ -1,5 +1,6 @@
 package com.example.user.domain.model;
 
+import com.example.user.domain.exception.AddressLimitExceededException;
 import lombok.Getter;
 
 import java.time.Instant;
@@ -130,9 +131,4 @@ public class Address {
         return trimmed;
     }
 
-    public static class AddressLimitExceededException extends RuntimeException {
-        public AddressLimitExceededException(String message) {
-            super(message);
-        }
-    }
 }
