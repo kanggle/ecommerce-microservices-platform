@@ -2,6 +2,7 @@ import { useQuery } from '@tanstack/react-query';
 import { getProducts } from '../api/product-api';
 import { useListParams } from '@/shared/hooks';
 import { toValidStatus } from '@/shared/lib/to-valid-status';
+import { productKeys } from './query-keys';
 import type { ProductStatus } from '@repo/types';
 
 const VALID_STATUSES: readonly ProductStatus[] = ['ON_SALE', 'SOLD_OUT', 'HIDDEN'] as const;
@@ -13,7 +14,7 @@ export function useProducts() {
   const name = getParam('name') || undefined;
 
   const query = useQuery({
-    queryKey: ['admin', 'products', { page, status, name }],
+    queryKey: productKeys.list({ page, status, name }),
     queryFn: () => getProducts({ page, status, name }),
   });
 

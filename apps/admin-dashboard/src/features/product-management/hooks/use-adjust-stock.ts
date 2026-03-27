@@ -1,6 +1,7 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { getErrorMessage } from '@repo/types/guards';
 import { adjustStock } from '../api/product-api';
+import { productKeys } from './query-keys';
 import type { StockAdjustmentRequest } from '@repo/types';
 
 export function useAdjustStock() {
@@ -15,9 +16,9 @@ export function useAdjustStock() {
       data: StockAdjustmentRequest;
     }) => adjustStock(productId, data),
     onSuccess: (_data, variables) => {
-      queryClient.invalidateQueries({ queryKey: ['admin', 'products'] });
+      queryClient.invalidateQueries({ queryKey: productKeys.all });
       queryClient.invalidateQueries({
-        queryKey: ['admin', 'products', variables.productId],
+        queryKey: productKeys.detail(variables.productId),
       });
     },
     onError: (error) => {
