@@ -1,4 +1,4 @@
-package com.example.payment.infrastructure.metrics;
+package com.example.payment.adapter.out.metrics;
 
 import io.micrometer.core.instrument.MeterRegistry;
 import io.micrometer.core.instrument.simple.SimpleMeterRegistry;

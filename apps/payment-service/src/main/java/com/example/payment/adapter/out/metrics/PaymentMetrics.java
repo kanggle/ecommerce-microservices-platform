@@ -1,4 +1,4 @@
-package com.example.payment.infrastructure.metrics;
+package com.example.payment.adapter.out.metrics;
 
 import com.example.observability.metrics.EventMetricNames;
 import com.example.payment.application.port.out.PaymentMetricRecorder;
