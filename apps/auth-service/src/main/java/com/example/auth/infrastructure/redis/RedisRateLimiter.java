@@ -1,6 +1,6 @@
 package com.example.auth.infrastructure.redis;
 
-import com.example.auth.domain.service.LoginRateLimiter;
+import com.example.auth.domain.service.RateLimiter;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.dao.DataAccessException;
@@ -17,7 +17,7 @@ import java.util.List;
  */
 @Slf4j
 @Component
-public class RedisLoginRateLimiter implements LoginRateLimiter {
+public class RedisRateLimiter implements RateLimiter {
 
     private static final DefaultRedisScript<Long> RATE_LIMIT_SCRIPT;
 
@@ -36,8 +36,8 @@ public class RedisLoginRateLimiter implements LoginRateLimiter {
     private final StringRedisTemplate redisTemplate;
     private final String keyPrefix;
 
-    public RedisLoginRateLimiter(StringRedisTemplate redisTemplate,
-                                 @Value("${app.redis.key-namespace:auth}") String namespace) {
+    public RedisRateLimiter(StringRedisTemplate redisTemplate,
+                            @Value("${app.redis.key-namespace:auth}") String namespace) {
         this.redisTemplate = redisTemplate;
         this.keyPrefix = namespace + ":ratelimit:";
     }

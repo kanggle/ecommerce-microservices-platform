@@ -8,7 +8,7 @@ import com.example.auth.application.service.LogoutService;
 import com.example.auth.application.service.RefreshTokenService;
 import com.example.auth.application.service.SignupService;
 import com.example.auth.domain.repository.AccessTokenBlocklist;
-import com.example.auth.domain.service.LoginRateLimiter;
+import com.example.auth.domain.service.RateLimiter;
 import com.example.auth.infrastructure.config.SecurityConfig;
 import com.example.auth.infrastructure.security.JwtAuthenticationFilter;
 import com.example.auth.infrastructure.security.JsonAuthenticationEntryPoint;
@@ -68,7 +68,7 @@ class AuthRefreshLogoutControllerTest {
     private AccessTokenBlocklist accessTokenBlocklist;
 
     @MockitoBean
-    private LoginRateLimiter loginRateLimiter;
+    private RateLimiter loginRateLimiter;
 
     @MockitoBean
     private AuthMetrics authMetrics;
