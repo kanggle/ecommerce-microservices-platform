@@ -112,15 +112,8 @@ public class ElasticsearchQueryAdapter implements SearchQueryPort {
             Map<String, Object> source = hit.source();
             if (source == null) continue;
 
-            documents.add(new SearchDocument(
-                    ElasticsearchFieldMapper.getString(source, "productId"),
-                    ElasticsearchFieldMapper.getString(source, "name"),
-                    ElasticsearchFieldMapper.getString(source, "description"),
-                    ElasticsearchFieldMapper.toLong(source.get("price")),
-                    ElasticsearchFieldMapper.getString(source, "status"),
-                    ElasticsearchFieldMapper.getString(source, "categoryId"),
-                    ElasticsearchFieldMapper.toInt(source.get("totalStock")),
-                    hit.score() != null ? hit.score().doubleValue() : null
+            documents.add(ElasticsearchFieldMapper.toSearchDocument(
+                    source, hit.score() != null ? hit.score().doubleValue() : null
             ));
         }
 

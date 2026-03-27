@@ -91,16 +91,7 @@ public class ElasticsearchIndexAdapter implements SearchIndexPort {
             }
 
             Map<String, Object> source = response.source();
-            return Optional.of(new SearchDocument(
-                    ElasticsearchFieldMapper.getString(source, "productId"),
-                    ElasticsearchFieldMapper.getString(source, "name"),
-                    ElasticsearchFieldMapper.getString(source, "description"),
-                    ElasticsearchFieldMapper.toLong(source.get("price")),
-                    ElasticsearchFieldMapper.getString(source, "status"),
-                    ElasticsearchFieldMapper.getString(source, "categoryId"),
-                    ElasticsearchFieldMapper.toInt(source.get("totalStock")),
-                    null
-            ));
+            return Optional.of(ElasticsearchFieldMapper.toSearchDocument(source, null));
         } catch (Exception e) {
             log.warn("Failed to find document for productId={}", productId, e);
             return Optional.empty();
