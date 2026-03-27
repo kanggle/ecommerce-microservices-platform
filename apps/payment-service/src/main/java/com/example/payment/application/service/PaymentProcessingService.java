@@ -5,27 +5,19 @@ import com.example.payment.application.port.out.PaymentEventPublisher;
 import com.example.payment.application.port.out.PaymentMetricRecorder;
 import com.example.payment.domain.model.Payment;
 import com.example.payment.application.port.out.PaymentRepository;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 @Slf4j
 @Service
+@RequiredArgsConstructor
 public class PaymentProcessingService {
 
     private final PaymentRepository paymentRepository;
     private final PaymentEventPublisher paymentEventPublisher;
     private final PaymentMetricRecorder paymentMetricRecorder;
-
-    public PaymentProcessingService(
-            PaymentRepository paymentRepository,
-            PaymentEventPublisher paymentEventPublisher,
-            PaymentMetricRecorder paymentMetricRecorder
-    ) {
-        this.paymentRepository = paymentRepository;
-        this.paymentEventPublisher = paymentEventPublisher;
-        this.paymentMetricRecorder = paymentMetricRecorder;
-    }
 
     @Transactional
     public void processPayment(String orderId, String userId, long amount) {

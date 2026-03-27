@@ -6,6 +6,7 @@ import com.example.payment.application.port.out.PaymentMetricRecorder;
 import com.example.payment.domain.model.Payment;
 import com.example.payment.domain.model.PaymentStatus;
 import com.example.payment.application.port.out.PaymentRepository;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -14,21 +15,12 @@ import java.util.Optional;
 
 @Slf4j
 @Service
+@RequiredArgsConstructor
 public class PaymentRefundService {
 
     private final PaymentRepository paymentRepository;
     private final PaymentEventPublisher paymentEventPublisher;
     private final PaymentMetricRecorder paymentMetricRecorder;
-
-    public PaymentRefundService(
-            PaymentRepository paymentRepository,
-            PaymentEventPublisher paymentEventPublisher,
-            PaymentMetricRecorder paymentMetricRecorder
-    ) {
-        this.paymentRepository = paymentRepository;
-        this.paymentEventPublisher = paymentEventPublisher;
-        this.paymentMetricRecorder = paymentMetricRecorder;
-    }
 
     @Transactional
     public void refundPayment(String orderId) {
