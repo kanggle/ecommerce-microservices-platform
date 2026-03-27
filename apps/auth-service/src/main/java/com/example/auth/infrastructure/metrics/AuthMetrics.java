@@ -25,47 +25,23 @@ public class AuthMetrics implements AuthMetricsRecorder {
     public AuthMetrics(MeterRegistry registry) {
         Objects.requireNonNull(registry, "MeterRegistry must not be null");
         this.registry = registry;
-        this.signupTotal = Counter.builder("auth_signup_total")
-                .description("Total successful signups")
-                .register(registry);
+        this.signupTotal = buildCounter("auth_signup_total", "Total successful signups");
+        this.loginSuccessTotal = buildCounter("auth_login_total", "Total login attempts", "result", "success");
+        this.loginFailureTotal = buildCounter("auth_login_total", "Total login attempts", "result", "failure");
+        this.loginFailureInvalidCredentials = buildCounter("auth_login_failure_total", "Total failed login attempts by reason", "reason", "invalid_credentials");
+        this.loginFailureRateLimited = buildCounter("auth_login_failure_total", "Total failed login attempts by reason", "reason", "rate_limited");
+        this.logoutTotal = buildCounter("auth_logout_total", "Total logout requests");
+        this.tokenRefreshSuccessTotal = buildCounter("auth_token_refresh_total", "Total token refresh attempts", "result", "success");
+        this.tokenRefreshFailureTotal = buildCounter("auth_token_refresh_total", "Total token refresh attempts", "result", "failure");
+        this.sessionEvictionTotal = buildCounter("auth_session_eviction_total", "Total sessions evicted due to concurrent session limit");
+    }
 
-        this.loginSuccessTotal = Counter.builder("auth_login_total")
-                .description("Total login attempts")
-                .tag("result", "success")
-                .register(registry);
-
-        this.loginFailureTotal = Counter.builder("auth_login_total")
-                .description("Total login attempts")
-                .tag("result", "failure")
-                .register(registry);
-
-        this.loginFailureInvalidCredentials = Counter.builder("auth_login_failure_total")
-                .description("Total failed login attempts by reason")
-                .tag("reason", "invalid_credentials")
-                .register(registry);
-
-        this.loginFailureRateLimited = Counter.builder("auth_login_failure_total")
-                .description("Total failed login attempts by reason")
-                .tag("reason", "rate_limited")
-                .register(registry);
-
-        this.logoutTotal = Counter.builder("auth_logout_total")
-                .description("Total logout requests")
-                .register(registry);
-
-        this.tokenRefreshSuccessTotal = Counter.builder("auth_token_refresh_total")
-                .description("Total token refresh attempts")
-                .tag("result", "success")
-                .register(registry);
-
-        this.tokenRefreshFailureTotal = Counter.builder("auth_token_refresh_total")
-                .description("Total token refresh attempts")
-                .tag("result", "failure")
-                .register(registry);
-
-        this.sessionEvictionTotal = Counter.builder("auth_session_eviction_total")
-                .description("Total sessions evicted due to concurrent session limit")
-                .register(registry);
+    private Counter buildCounter(String name, String description, String... tags) {
+        Counter.Builder builder = Counter.builder(name).description(description);
+        for (int i = 0; i + 1 < tags.length; i += 2) {
+            builder = builder.tag(tags[i], tags[i + 1]);
+        }
+        return builder.register(registry);
     }
 
     @Override
