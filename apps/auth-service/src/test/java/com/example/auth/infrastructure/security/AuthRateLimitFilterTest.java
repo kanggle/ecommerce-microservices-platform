@@ -30,9 +30,9 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 @WebMvcTest(AuthController.class)
-@Import({SecurityConfig.class, GlobalExceptionHandler.class, JwtAuthenticationFilter.class, JsonAuthenticationEntryPoint.class, LoginRateLimitFilter.class, ClientIpResolver.class})
-@DisplayName("LoginRateLimitFilter 슬라이스 테스트")
-class LoginRateLimitFilterTest {
+@Import({SecurityConfig.class, GlobalExceptionHandler.class, JwtAuthenticationFilter.class, JsonAuthenticationEntryPoint.class, AuthRateLimitFilter.class, ClientIpResolver.class})
+@DisplayName("AuthRateLimitFilter 슬라이스 테스트")
+class AuthRateLimitFilterTest {
 
     @Autowired
     private MockMvc mockMvc;

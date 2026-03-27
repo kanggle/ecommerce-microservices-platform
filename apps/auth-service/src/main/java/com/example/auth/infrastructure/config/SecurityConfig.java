@@ -2,7 +2,7 @@ package com.example.auth.infrastructure.config;
 
 import com.example.auth.infrastructure.security.JsonAuthenticationEntryPoint;
 import com.example.auth.infrastructure.security.JwtAuthenticationFilter;
-import com.example.auth.infrastructure.security.LoginRateLimitFilter;
+import com.example.auth.infrastructure.security.AuthRateLimitFilter;
 import org.springframework.boot.web.servlet.FilterRegistrationBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -23,7 +23,7 @@ public class SecurityConfig {
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http,
                                            JwtAuthenticationFilter jwtAuthenticationFilter,
-                                           LoginRateLimitFilter loginRateLimitFilter,
+                                           AuthRateLimitFilter authRateLimitFilter,
                                            JsonAuthenticationEntryPoint authenticationEntryPoint) throws Exception {
         return http
             .csrf(AbstractHttpConfigurer::disable)
@@ -45,7 +45,7 @@ public class SecurityConfig {
             )
             .exceptionHandling(e -> e.authenticationEntryPoint(authenticationEntryPoint))
             .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class)
-            .addFilterBefore(loginRateLimitFilter, JwtAuthenticationFilter.class)
+            .addFilterBefore(authRateLimitFilter, JwtAuthenticationFilter.class)
             .build();
     }
 
@@ -55,9 +55,9 @@ public class SecurityConfig {
     }
 
     @Bean
-    public FilterRegistrationBean<LoginRateLimitFilter> disableLoginRateLimitFilterAutoRegistration(
-            LoginRateLimitFilter filter) {
-        FilterRegistrationBean<LoginRateLimitFilter> registration = new FilterRegistrationBean<>(filter);
+    public FilterRegistrationBean<AuthRateLimitFilter> disableAuthRateLimitFilterAutoRegistration(
+            AuthRateLimitFilter filter) {
+        FilterRegistrationBean<AuthRateLimitFilter> registration = new FilterRegistrationBean<>(filter);
         registration.setEnabled(false);
         return registration;
     }

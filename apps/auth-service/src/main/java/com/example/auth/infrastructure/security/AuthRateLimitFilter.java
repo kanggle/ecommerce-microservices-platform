@@ -17,7 +17,7 @@ import java.util.Map;
 
 @Slf4j
 @Component
-public class LoginRateLimitFilter extends OncePerRequestFilter {
+public class AuthRateLimitFilter extends OncePerRequestFilter {
 
     private static final String RATE_LIMIT_RESPONSE =
         "{\"code\":\"RATE_LIMIT_EXCEEDED\",\"message\":\"Too many requests. Please try again later.\"}";
@@ -28,7 +28,7 @@ public class LoginRateLimitFilter extends OncePerRequestFilter {
     private final AuthMetricsRecorder authMetrics;
     private final Map<String, PathLimit> pathLimits;
 
-    public LoginRateLimitFilter(
+    public AuthRateLimitFilter(
             LoginRateLimiter loginRateLimiter,
             AuthMetricsRecorder authMetrics,
             @Value("${app.rate-limit.login.max-requests:20}") int loginMax,

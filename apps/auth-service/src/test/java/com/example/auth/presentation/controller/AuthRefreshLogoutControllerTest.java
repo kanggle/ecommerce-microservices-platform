@@ -14,7 +14,7 @@ import com.example.auth.infrastructure.security.JwtAuthenticationFilter;
 import com.example.auth.infrastructure.security.JsonAuthenticationEntryPoint;
 import com.example.auth.domain.service.ParsedToken;
 import com.example.auth.infrastructure.security.JwtTokenParser;
-import com.example.auth.infrastructure.security.LoginRateLimitFilter;
+import com.example.auth.infrastructure.security.AuthRateLimitFilter;
 import com.example.auth.infrastructure.metrics.AuthMetrics;
 import com.example.auth.presentation.support.ClientIpResolver;
 import com.example.auth.presentation.advice.GlobalExceptionHandler;
@@ -39,7 +39,7 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 @WebMvcTest(AuthController.class)
-@Import({SecurityConfig.class, GlobalExceptionHandler.class, JwtAuthenticationFilter.class, JsonAuthenticationEntryPoint.class, LoginRateLimitFilter.class, ClientIpResolver.class})
+@Import({SecurityConfig.class, GlobalExceptionHandler.class, JwtAuthenticationFilter.class, JsonAuthenticationEntryPoint.class, AuthRateLimitFilter.class, ClientIpResolver.class})
 @DisplayName("AuthController refresh/logout 슬라이스 테스트")
 class AuthRefreshLogoutControllerTest {
 

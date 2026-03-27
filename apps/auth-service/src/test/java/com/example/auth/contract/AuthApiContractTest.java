@@ -15,7 +15,7 @@ import com.example.auth.infrastructure.metrics.AuthMetrics;
 import com.example.auth.infrastructure.security.JwtAuthenticationFilter;
 import com.example.auth.infrastructure.security.JsonAuthenticationEntryPoint;
 import com.example.auth.infrastructure.security.JwtTokenParser;
-import com.example.auth.infrastructure.security.LoginRateLimitFilter;
+import com.example.auth.infrastructure.security.AuthRateLimitFilter;
 import com.example.auth.presentation.support.ClientIpResolver;
 import com.example.auth.presentation.advice.GlobalExceptionHandler;
 import com.example.auth.presentation.controller.AuthController;
@@ -47,7 +47,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
  */
 @WebMvcTest(AuthController.class)
 @Import({SecurityConfig.class, GlobalExceptionHandler.class, JwtAuthenticationFilter.class,
-        JsonAuthenticationEntryPoint.class, LoginRateLimitFilter.class, ClientIpResolver.class})
+        JsonAuthenticationEntryPoint.class, AuthRateLimitFilter.class, ClientIpResolver.class})
 @DisplayName("Auth API 컨트랙트 테스트 — specs/contracts/http/auth-api.md")
 class AuthApiContractTest {
 
