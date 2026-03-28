@@ -8,7 +8,7 @@ promotion-service 에러 코드 등록 및 validation 에러 코드 수정
 
 # Status
 
-in-progress
+done
 
 # Owner
 
