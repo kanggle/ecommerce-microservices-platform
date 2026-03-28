@@ -50,7 +50,9 @@ All client-facing HTTP requests enter through `gateway-service`.
 | gateway-service | search-service | `search-api.md` | Product search by keyword and filters |
 | gateway-service | order-service | `order-api.md` | Order placement, listing, cancellation |
 | gateway-service | payment-service | `payment-api.md` | Payment status queries |
+| gateway-service | review-service | `review-api.md` | Product reviews, ratings, user review history |
 | order-service | product-service | `product-api.md` | Stock validation at order placement |
+| review-service | order-service | `order-api.md` | Purchase verification for review creation |
 
 - No circular synchronous dependencies exist.
 - All other inter-service communication uses events (see `event-driven-policy.md`).

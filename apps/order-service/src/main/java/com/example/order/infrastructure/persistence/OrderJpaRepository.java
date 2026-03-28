@@ -5,6 +5,9 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
+
 import java.util.Collection;
 import java.util.List;
 
@@ -15,4 +18,11 @@ interface OrderJpaRepository extends JpaRepository<OrderJpaEntity, String> {
     Page<OrderJpaEntity> findByUserIdAndStatus(String userId, OrderStatus status, Pageable pageable);
 
     List<OrderJpaEntity> findByUserIdAndStatusIn(String userId, Collection<OrderStatus> statuses);
+
+    @Query("SELECT COUNT(o) > 0 FROM OrderJpaEntity o JOIN o.items i " +
+           "WHERE o.userId = :userId AND i.productId = :productId AND o.status = :status")
+    boolean existsByUserIdAndProductIdAndStatus(
+            @Param("userId") String userId,
+            @Param("productId") String productId,
+            @Param("status") OrderStatus status);
 }

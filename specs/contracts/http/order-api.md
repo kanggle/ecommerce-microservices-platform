@@ -128,6 +128,28 @@ Get order detail for the authenticated user.
 
 ---
 
+### GET /api/orders/verify-purchase
+Verify if the authenticated user has purchased a specific product (in DELIVERED status).
+Used by review-service for purchase verification before review creation.
+
+**Query Parameters**
+- `productId` (required) — product ID to verify (UUID)
+
+**Response 200**
+```json
+{
+  "purchased": true
+}
+```
+
+**Error responses**
+| Status | Code | Reason |
+|---|---|---|
+| 400 | INVALID_REQUEST | Missing or invalid productId |
+| 401 | UNAUTHORIZED | Missing or invalid access token |
+
+---
+
 ### POST /api/orders/{orderId}/cancel
 Cancel an order. Only the order owner may cancel.
 
