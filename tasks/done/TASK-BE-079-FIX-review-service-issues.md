@@ -8,7 +8,7 @@ review-service 리뷰 시스템 결함 수정 — N+1 HTTP 호출, UNIQUE 제약
 
 # Status
 
-ready
+done
 
 # Owner
 
