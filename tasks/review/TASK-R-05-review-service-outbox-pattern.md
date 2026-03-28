@@ -8,7 +8,7 @@ review-service Outbox 패턴 적용 (이벤트 발행 정책 준수)
 
 # Status
 
-ready
+review
 
 # Owner
 

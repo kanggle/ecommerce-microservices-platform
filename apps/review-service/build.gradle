@@ -7,6 +7,9 @@ dependencies {
     // Observability
     implementation project(':libs:java-observability')
 
+    // Messaging (Outbox pattern)
+    implementation project(':libs:java-messaging')
+
     // Web
     implementation 'org.springframework.boot:spring-boot-starter-web'
 
