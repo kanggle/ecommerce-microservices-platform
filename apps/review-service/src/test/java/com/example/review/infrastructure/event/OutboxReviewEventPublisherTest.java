@@ -16,6 +16,10 @@ import org.mockito.ArgumentCaptor;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
+import java.time.Clock;
+import java.time.Instant;
+import java.time.ZoneOffset;
+
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.verify;
 
@@ -27,6 +31,9 @@ class OutboxReviewEventPublisherTest {
     private OutboxWriter outboxWriter;
 
     private OutboxReviewEventPublisher publisher;
+
+    private static final Instant FIXED_TIME = Instant.parse("2026-01-01T00:00:00Z");
+    private final Clock fixedClock = Clock.fixed(FIXED_TIME, ZoneOffset.UTC);
 
     @BeforeEach
     void setUp() {
@@ -41,7 +48,7 @@ class OutboxReviewEventPublisherTest {
     void publish_reviewCreatedEvent_savesToOutbox() {
         ReviewCreatedPayload payload = new ReviewCreatedPayload(
                 "review-id-123", "product-id-456", "user-id-789", 5, "2024-01-01T00:00:00Z");
-        ReviewEvent event = ReviewEvent.created(payload);
+        ReviewEvent event = ReviewEvent.created(payload, fixedClock);
 
         publisher.publish(event);
 
@@ -69,7 +76,7 @@ class OutboxReviewEventPublisherTest {
     void publish_reviewUpdatedEvent_savesToOutbox() {
         ReviewUpdatedPayload payload = new ReviewUpdatedPayload(
                 "review-id-123", "product-id-456", "user-id-789", 4, "2024-01-02T00:00:00Z");
-        ReviewEvent event = ReviewEvent.updated(payload);
+        ReviewEvent event = ReviewEvent.updated(payload, fixedClock);
 
         publisher.publish(event);
 
@@ -91,7 +98,7 @@ class OutboxReviewEventPublisherTest {
     void publish_reviewDeletedEvent_savesToOutbox() {
         ReviewDeletedPayload payload = new ReviewDeletedPayload(
                 "review-id-123", "product-id-456", "user-id-789", "2024-01-03T00:00:00Z");
-        ReviewEvent event = ReviewEvent.deleted(payload);
+        ReviewEvent event = ReviewEvent.deleted(payload, fixedClock);
 
         publisher.publish(event);
 
@@ -111,7 +118,7 @@ class OutboxReviewEventPublisherTest {
     void publish_serializedPayload_containsEnvelopeFields() {
         ReviewCreatedPayload payload = new ReviewCreatedPayload(
                 "review-id-123", "product-id-456", "user-id-789", 5, "2024-01-01T00:00:00Z");
-        ReviewEvent event = ReviewEvent.created(payload);
+        ReviewEvent event = ReviewEvent.created(payload, fixedClock);
 
         publisher.publish(event);
 
