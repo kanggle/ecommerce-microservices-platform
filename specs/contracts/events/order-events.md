@@ -53,6 +53,25 @@ Published when a new order is successfully created.
 
 ---
 
+## OrderConfirmed
+
+Published when an order is confirmed (payment completed and order status transitions to CONFIRMED).
+
+**Consumers:** shipping-service
+
+**Topic:** `order.order.confirmed`
+
+**Payload**
+```json
+{
+  "orderId": "string (UUID)",
+  "userId": "string (UUID)",
+  "confirmedAt": "string (ISO 8601)"
+}
+```
+
+---
+
 ## OrderCancelled
 
 Published when an order is cancelled.
