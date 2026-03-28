@@ -315,6 +315,49 @@ class OrderControllerTest {
                 .andExpect(jsonPath("$.page").value(0));
     }
 
+    // ─── GET /api/orders/verify-purchase ────────────────────────────────
+
+    @Test
+    @DisplayName("구매 확인 요청 시 purchased=true 반환")
+    void verifyPurchase_purchased_returnsTrue() throws Exception {
+        given(orderQueryService.hasUserPurchasedProduct("user1", "p1")).willReturn(true);
+
+        mockMvc.perform(get("/api/orders/verify-purchase")
+                        .header("X-User-Id", "user1")
+                        .param("productId", "p1"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.purchased").value(true));
+    }
+
+    @Test
+    @DisplayName("미구매 상품에 대해 purchased=false 반환")
+    void verifyPurchase_notPurchased_returnsFalse() throws Exception {
+        given(orderQueryService.hasUserPurchasedProduct("user1", "p2")).willReturn(false);
+
+        mockMvc.perform(get("/api/orders/verify-purchase")
+                        .header("X-User-Id", "user1")
+                        .param("productId", "p2"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.purchased").value(false));
+    }
+
+    @Test
+    @DisplayName("productId 누락 시 400 반환")
+    void verifyPurchase_missingProductId_returns400() throws Exception {
+        mockMvc.perform(get("/api/orders/verify-purchase")
+                        .header("X-User-Id", "user1"))
+                .andExpect(status().isBadRequest());
+    }
+
+    @Test
+    @DisplayName("X-User-Id 누락 시 400 반환")
+    void verifyPurchase_missingUserId_returns400() throws Exception {
+        mockMvc.perform(get("/api/orders/verify-purchase")
+                        .param("productId", "p1"))
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.code").value("INVALID_ORDER_REQUEST"));
+    }
+
     // ─── GET /api/orders/{orderId} ──────────────────────────────────────
 
     @Test

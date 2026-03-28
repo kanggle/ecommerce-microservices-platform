@@ -192,7 +192,7 @@ class ReviewControllerTest {
     void getMyReviews_success_returns200() throws Exception {
         MyReviewListResult result = new MyReviewListResult(
                 List.of(new MyReviewListResult.MyReviewItem(
-                        REVIEW_ID, PRODUCT_ID, null, 5, "Good", "Content", Instant.now())),
+                        REVIEW_ID, PRODUCT_ID, "테스트상품", 5, "Good", "Content", Instant.now())),
                 0, 20, 1
         );
         given(reviewQueryService.getMyReviews(eq(USER_ID), anyInt(), anyInt())).willReturn(result);

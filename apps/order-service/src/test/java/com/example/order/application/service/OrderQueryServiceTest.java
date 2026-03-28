@@ -123,4 +123,39 @@ class OrderQueryServiceTest {
         assertThatThrownBy(() -> orderQueryService.getOrder("nonexistent", "user1"))
                 .isInstanceOf(OrderNotFoundException.class);
     }
+
+    // ─── hasUserPurchasedProduct ──────────────────────────────────────
+
+    @Test
+    @DisplayName("배송 완료된 주문에 해당 상품이 포함되어 있으면 true를 반환한다")
+    void hasUserPurchasedProduct_delivered_returnsTrue() {
+        given(orderRepository.existsByUserIdAndProductIdAndStatus("user1", "p1", OrderStatus.DELIVERED))
+                .willReturn(true);
+
+        boolean result = orderQueryService.hasUserPurchasedProduct("user1", "p1");
+
+        assertThat(result).isTrue();
+    }
+
+    @Test
+    @DisplayName("배송 완료된 주문에 해당 상품이 없으면 false를 반환한다")
+    void hasUserPurchasedProduct_notDelivered_returnsFalse() {
+        given(orderRepository.existsByUserIdAndProductIdAndStatus("user1", "p1", OrderStatus.DELIVERED))
+                .willReturn(false);
+
+        boolean result = orderQueryService.hasUserPurchasedProduct("user1", "p1");
+
+        assertThat(result).isFalse();
+    }
+
+    @Test
+    @DisplayName("주문이 없는 사용자의 구매 확인은 false를 반환한다")
+    void hasUserPurchasedProduct_noOrders_returnsFalse() {
+        given(orderRepository.existsByUserIdAndProductIdAndStatus("user-no-orders", "p1", OrderStatus.DELIVERED))
+                .willReturn(false);
+
+        boolean result = orderQueryService.hasUserPurchasedProduct("user-no-orders", "p1");
+
+        assertThat(result).isFalse();
+    }
 }

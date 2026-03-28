@@ -28,11 +28,7 @@ public class KafkaReviewEventPublisher implements ReviewEventPublisher {
         };
 
         String key = event.eventId().toString();
-        try {
-            kafkaTemplate.send(topic, key, event);
-            log.debug("Published event to Kafka: topic={}, eventType={}, key={}", topic, event.eventType(), key);
-        } catch (Exception e) {
-            log.error("Event publishing failed: eventType={}, topic={}, key={}", event.eventType(), topic, key, e);
-        }
+        kafkaTemplate.send(topic, key, event);
+        log.debug("Published event to Kafka: topic={}, eventType={}, key={}", topic, event.eventType(), key);
     }
 }

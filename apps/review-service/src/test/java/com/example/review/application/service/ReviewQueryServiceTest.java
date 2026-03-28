@@ -70,7 +70,7 @@ class ReviewQueryServiceTest {
         UUID userId = UUID.randomUUID();
         MyReviewListResult expected = new MyReviewListResult(
                 List.of(new MyReviewListResult.MyReviewItem(
-                        UUID.randomUUID(), UUID.randomUUID(), null, 5, "제목", "내용", Instant.now())),
+                        UUID.randomUUID(), UUID.randomUUID(), "테스트상품", 5, "제목", "내용", Instant.now())),
                 0, 20, 1
         );
 

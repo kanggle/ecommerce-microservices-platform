@@ -8,6 +8,7 @@ public class Review {
     private UUID id;
     private UUID userId;
     private UUID productId;
+    private String productName;
     private Rating rating;
     private String title;
     private String content;
@@ -17,7 +18,8 @@ public class Review {
 
     private Review() {}
 
-    public static Review create(UUID userId, UUID productId, int rating, String title, String content) {
+    public static Review create(UUID userId, UUID productId, String productName,
+                                int rating, String title, String content) {
         validateTitle(title);
         validateContent(content);
 
@@ -25,6 +27,7 @@ public class Review {
         review.id = UUID.randomUUID();
         review.userId = userId;
         review.productId = productId;
+        review.productName = productName;
         review.rating = new Rating(rating);
         review.title = title.trim();
         review.content = content.trim();
@@ -35,8 +38,8 @@ public class Review {
         return review;
     }
 
-    public static Review reconstitute(UUID id, UUID userId, UUID productId, int rating,
-                                       String title, String content, ReviewStatus status,
+    public static Review reconstitute(UUID id, UUID userId, UUID productId, String productName,
+                                       int rating, String title, String content, ReviewStatus status,
                                        Instant createdAt, Instant updatedAt) {
         if (id == null) throw new IllegalArgumentException("id must not be null");
         if (userId == null) throw new IllegalArgumentException("userId must not be null");
@@ -49,6 +52,7 @@ public class Review {
         review.id = id;
         review.userId = userId;
         review.productId = productId;
+        review.productName = productName;
         review.rating = new Rating(rating);
         review.title = title;
         review.content = content;
@@ -85,6 +89,7 @@ public class Review {
     public UUID getId() { return id; }
     public UUID getUserId() { return userId; }
     public UUID getProductId() { return productId; }
+    public String getProductName() { return productName; }
     public Rating getRating() { return rating; }
     public int getRatingValue() { return rating.value(); }
     public String getTitle() { return title; }

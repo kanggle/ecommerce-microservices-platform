@@ -17,8 +17,10 @@ import com.example.order.presentation.dto.OrderDetailResponse;
 import com.example.order.presentation.dto.OrderListResponse;
 import com.example.order.presentation.dto.PlaceOrderRequest;
 import com.example.order.presentation.dto.PlaceOrderResponse;
+import com.example.order.presentation.dto.VerifyPurchaseResponse;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -86,6 +88,15 @@ public class OrderController {
         } catch (IllegalArgumentException e) {
             throw new InvalidOrderStatusException(status);
         }
+    }
+
+    @GetMapping("/verify-purchase")
+    public ResponseEntity<VerifyPurchaseResponse> verifyPurchase(
+            @RequestHeader("X-User-Id") @NotBlank(message = "X-User-Id 헤더는 필수입니다") String userId,
+            @RequestParam @NotNull(message = "productId는 필수입니다") String productId
+    ) {
+        boolean purchased = orderQueryService.hasUserPurchasedProduct(userId, productId);
+        return ResponseEntity.ok(new VerifyPurchaseResponse(purchased));
     }
 
     @GetMapping("/{orderId}")
