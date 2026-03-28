@@ -8,7 +8,7 @@ promotion-service KafkaConsumerConfig 단순화 (수동 팩토리 제거)
 
 # Status
 
-ready
+review
 
 # Owner
 
