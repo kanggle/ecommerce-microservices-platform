@@ -5,14 +5,14 @@ import com.example.notification.adapter.in.rest.dto.response.NotificationDetailR
 import com.example.notification.adapter.in.rest.dto.response.NotificationListResponse;
 import com.example.notification.adapter.in.rest.dto.response.PreferenceResponse;
 import com.example.notification.application.command.UpdatePreferenceCommand;
+import com.example.notification.application.page.PageQuery;
+import com.example.notification.application.page.PageResult;
 import com.example.notification.application.service.NotificationQueryService;
 import com.example.notification.application.service.PreferenceService;
 import com.example.notification.domain.model.Notification;
 import com.example.notification.domain.model.UserNotificationPreference;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -30,8 +30,8 @@ public class NotificationController {
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "20") int size
     ) {
-        Page<Notification> notifications = notificationQueryService.getNotifications(
-                userId, PageRequest.of(page, size));
+        PageResult<Notification> notifications = notificationQueryService.getNotifications(
+                userId, PageQuery.of(page, size));
         return ResponseEntity.ok(NotificationListResponse.from(notifications));
     }
 

@@ -8,7 +8,7 @@ notification-service application port에서 Spring Data 타입 제거
 
 # Status
 
-ready
+review
 
 # Owner
 

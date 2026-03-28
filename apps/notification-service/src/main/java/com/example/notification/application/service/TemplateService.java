@@ -2,14 +2,14 @@ package com.example.notification.application.service;
 
 import com.example.notification.application.command.CreateTemplateCommand;
 import com.example.notification.application.command.UpdateTemplateCommand;
+import com.example.notification.application.page.PageQuery;
+import com.example.notification.application.page.PageResult;
 import com.example.notification.application.port.out.TemplateRepository;
 import com.example.notification.application.result.TemplateResult;
 import com.example.notification.domain.exception.TemplateAlreadyExistsException;
 import com.example.notification.domain.exception.TemplateNotFoundException;
 import com.example.notification.domain.model.NotificationTemplate;
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -20,8 +20,8 @@ public class TemplateService {
 
     private final TemplateRepository templateRepository;
 
-    public Page<NotificationTemplate> getTemplates(Pageable pageable) {
-        return templateRepository.findAll(pageable);
+    public PageResult<NotificationTemplate> getTemplates(PageQuery pageQuery) {
+        return templateRepository.findAll(pageQuery);
     }
 
     @Transactional

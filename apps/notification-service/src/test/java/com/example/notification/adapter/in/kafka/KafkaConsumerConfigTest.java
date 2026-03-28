@@ -1,4 +1,4 @@
-package com.example.notification.config;
+package com.example.notification.adapter.in.kafka;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import org.junit.jupiter.api.DisplayName;

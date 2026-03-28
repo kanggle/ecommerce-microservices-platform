@@ -6,6 +6,8 @@ import com.example.notification.adapter.in.rest.dto.response.TemplateIdResponse;
 import com.example.notification.adapter.in.rest.dto.response.TemplateListResponse;
 import com.example.notification.application.command.CreateTemplateCommand;
 import com.example.notification.application.command.UpdateTemplateCommand;
+import com.example.notification.application.page.PageQuery;
+import com.example.notification.application.page.PageResult;
 import com.example.notification.application.result.TemplateResult;
 import com.example.notification.application.service.TemplateService;
 import com.example.notification.domain.exception.AdminAccessDeniedException;
@@ -14,8 +16,6 @@ import com.example.notification.domain.model.NotificationTemplate;
 import com.example.notification.domain.model.TemplateType;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -36,7 +36,7 @@ public class TemplateController {
             @RequestParam(defaultValue = "20") int size
     ) {
         validateAdminRole(userRole);
-        Page<NotificationTemplate> templates = templateService.getTemplates(PageRequest.of(page, size));
+        PageResult<NotificationTemplate> templates = templateService.getTemplates(PageQuery.of(page, size));
         return ResponseEntity.ok(TemplateListResponse.from(templates));
     }
 

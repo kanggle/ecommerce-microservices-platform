@@ -1,5 +1,7 @@
 package com.example.notification.application.service;
 
+import com.example.notification.application.page.PageQuery;
+import com.example.notification.application.page.PageResult;
 import com.example.notification.application.port.out.NotificationRepository;
 import com.example.notification.domain.exception.NotificationNotFoundException;
 import com.example.notification.domain.exception.UnauthorizedNotificationAccessException;
@@ -12,9 +14,6 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageImpl;
-import org.springframework.data.domain.PageRequest;
 
 import java.util.List;
 import java.util.Optional;
@@ -40,13 +39,15 @@ class NotificationQueryServiceTest {
                 "noti-1", "user-1", NotificationChannel.EMAIL,
                 "Subject", "Body", NotificationStatus.SENT,
                 "event-1", 0, null, null);
-        Page<Notification> page = new PageImpl<>(List.of(notification));
-        given(notificationRepository.findByUserId("user-1", PageRequest.of(0, 20)))
-                .willReturn(page);
+        PageQuery pageQuery = PageQuery.of(0, 20);
+        PageResult<Notification> pageResult = PageResult.of(List.of(notification), 1L, 1, 0, 20);
+        given(notificationRepository.findByUserId("user-1", pageQuery))
+                .willReturn(pageResult);
 
-        Page<Notification> result = notificationQueryService.getNotifications("user-1", PageRequest.of(0, 20));
+        PageResult<Notification> result = notificationQueryService.getNotifications("user-1", pageQuery);
 
-        assertThat(result.getContent()).hasSize(1);
+        assertThat(result.content()).hasSize(1);
+        assertThat(result.totalElements()).isEqualTo(1L);
     }
 
     @Test

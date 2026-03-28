@@ -1,5 +1,6 @@
 package com.example.notification.adapter.in.rest;
 
+import com.example.notification.application.page.PageResult;
 import com.example.notification.application.result.TemplateResult;
 import com.example.notification.application.service.TemplateService;
 import com.example.notification.domain.exception.TemplateAlreadyExistsException;
@@ -12,8 +13,6 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
-import org.springframework.data.domain.PageImpl;
-import org.springframework.data.domain.PageRequest;
 import org.springframework.http.MediaType;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
@@ -45,8 +44,9 @@ class TemplateControllerTest {
                 TemplateType.ORDER_PLACED, NotificationChannel.EMAIL,
                 "Subject", "Body");
 
+        PageResult<NotificationTemplate> pageResult = PageResult.of(List.of(template), 1L, 1, 0, 20);
         given(templateService.getTemplates(any()))
-                .willReturn(new PageImpl<>(List.of(template), PageRequest.of(0, 20), 1));
+                .willReturn(pageResult);
 
         mockMvc.perform(get("/api/notifications/templates")
                         .header("X-User-Role", "ADMIN"))

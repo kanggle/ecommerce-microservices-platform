@@ -14,7 +14,8 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.context.TestConfiguration;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Primary;
-import org.springframework.data.domain.PageRequest;
+import com.example.notification.application.page.PageQuery;
+import com.example.notification.application.page.PageResult;
 import org.springframework.http.MediaType;
 import org.springframework.kafka.test.context.EmbeddedKafka;
 import org.springframework.test.context.DynamicPropertyRegistry;
@@ -123,10 +124,10 @@ class NotificationIntegrationTest {
         orderPlacedEventConsumer.onMessage(eventJson);
 
         // 3. 알림 이력 조회
-        var notifications = notificationRepository.findByUserId(userId, PageRequest.of(0, 20));
-        assertThat(notifications.getContent()).hasSize(1);
-        assertThat(notifications.getContent().get(0).getStatus()).isEqualTo(NotificationStatus.SENT);
-        assertThat(notifications.getContent().get(0).getSubject()).contains(orderId);
+        PageResult<Notification> notifications = notificationRepository.findByUserId(userId, PageQuery.of(0, 20));
+        assertThat(notifications.content()).hasSize(1);
+        assertThat(notifications.content().get(0).getStatus()).isEqualTo(NotificationStatus.SENT);
+        assertThat(notifications.content().get(0).getSubject()).contains(orderId);
 
         // 4. HTTP API로 알림 이력 조회
         mockMvc.perform(get("/api/notifications/me")
@@ -164,8 +165,8 @@ class NotificationIntegrationTest {
         orderPlacedEventConsumer.onMessage(orderEventJson);
         orderPlacedEventConsumer.onMessage(orderEventJson);
 
-        var notifications = notificationRepository.findByUserId(userId, PageRequest.of(0, 100));
-        long orderPlacedCount = notifications.getContent().stream()
+        PageResult<Notification> notifications = notificationRepository.findByUserId(userId, PageQuery.of(0, 100));
+        long orderPlacedCount = notifications.content().stream()
                 .filter(n -> n.getEventId().equals(orderEventId))
                 .count();
         assertThat(orderPlacedCount).isEqualTo(1);

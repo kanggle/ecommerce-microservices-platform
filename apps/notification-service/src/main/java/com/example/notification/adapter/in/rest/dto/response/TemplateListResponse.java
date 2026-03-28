@@ -1,7 +1,7 @@
 package com.example.notification.adapter.in.rest.dto.response;
 
+import com.example.notification.application.page.PageResult;
 import com.example.notification.domain.model.NotificationTemplate;
-import org.springframework.data.domain.Page;
 
 import java.util.List;
 
@@ -29,12 +29,12 @@ public record TemplateListResponse(
         }
     }
 
-    public static TemplateListResponse from(Page<NotificationTemplate> page) {
+    public static TemplateListResponse from(PageResult<NotificationTemplate> pageResult) {
         return new TemplateListResponse(
-                page.getContent().stream().map(TemplateSummary::from).toList(),
-                page.getNumber(),
-                page.getSize(),
-                page.getTotalElements()
+                pageResult.content().stream().map(TemplateSummary::from).toList(),
+                pageResult.page(),
+                pageResult.size(),
+                pageResult.totalElements()
         );
     }
 }

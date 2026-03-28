@@ -1,5 +1,6 @@
 package com.example.notification.adapter.in.rest;
 
+import com.example.notification.application.page.PageResult;
 import com.example.notification.application.service.NotificationQueryService;
 import com.example.notification.application.service.PreferenceService;
 import com.example.notification.domain.exception.NotificationNotFoundException;
@@ -10,8 +11,6 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
-import org.springframework.data.domain.PageImpl;
-import org.springframework.data.domain.PageRequest;
 import org.springframework.http.MediaType;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
@@ -49,8 +48,9 @@ class NotificationControllerTest {
                 "Test Subject", "Test Body", NotificationStatus.SENT,
                 "event-1", 0, LocalDateTime.now(), LocalDateTime.now());
 
+        PageResult<Notification> pageResult = PageResult.of(List.of(notification), 1L, 1, 0, 20);
         given(notificationQueryService.getNotifications(eq("user-1"), any()))
-                .willReturn(new PageImpl<>(List.of(notification), PageRequest.of(0, 20), 1));
+                .willReturn(pageResult);
 
         mockMvc.perform(get("/api/notifications/me")
                         .header("X-User-Id", "user-1"))

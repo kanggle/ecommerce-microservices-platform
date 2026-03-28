@@ -1,12 +1,12 @@
 package com.example.notification.application.service;
 
+import com.example.notification.application.page.PageQuery;
+import com.example.notification.application.page.PageResult;
 import com.example.notification.application.port.out.NotificationRepository;
 import com.example.notification.domain.exception.NotificationNotFoundException;
 import com.example.notification.domain.exception.UnauthorizedNotificationAccessException;
 import com.example.notification.domain.model.Notification;
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -17,8 +17,8 @@ public class NotificationQueryService {
 
     private final NotificationRepository notificationRepository;
 
-    public Page<Notification> getNotifications(String userId, Pageable pageable) {
-        return notificationRepository.findByUserId(userId, pageable);
+    public PageResult<Notification> getNotifications(String userId, PageQuery pageQuery) {
+        return notificationRepository.findByUserId(userId, pageQuery);
     }
 
     public Notification getNotificationDetail(String userId, String notificationId) {

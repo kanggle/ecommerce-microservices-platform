@@ -1,11 +1,13 @@
 package com.example.notification.adapter.out.persistence.repository;
 
 import com.example.notification.adapter.out.persistence.mapper.NotificationPersistenceMapper;
+import com.example.notification.application.page.PageQuery;
+import com.example.notification.application.page.PageResult;
 import com.example.notification.application.port.out.NotificationRepository;
 import com.example.notification.domain.model.Notification;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Repository;
 
 import java.util.Optional;
@@ -30,8 +32,17 @@ public class NotificationRepositoryImpl implements NotificationRepository {
     }
 
     @Override
-    public Page<Notification> findByUserId(String userId, Pageable pageable) {
-        return jpaRepository.findByUserIdOrderByCreatedAtDesc(userId, pageable).map(mapper::toDomain);
+    public PageResult<Notification> findByUserId(String userId, PageQuery pageQuery) {
+        PageRequest pageable = PageRequest.of(pageQuery.page(), pageQuery.size());
+        Page<Notification> page = jpaRepository.findByUserIdOrderByCreatedAtDesc(userId, pageable)
+                .map(mapper::toDomain);
+        return PageResult.of(
+                page.getContent(),
+                page.getTotalElements(),
+                page.getTotalPages(),
+                page.getNumber(),
+                page.getSize()
+        );
     }
 
     @Override
