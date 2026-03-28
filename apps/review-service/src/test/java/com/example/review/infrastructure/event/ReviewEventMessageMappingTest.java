@@ -13,6 +13,10 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
+import java.time.Clock;
+import java.time.Instant;
+import java.time.ZoneOffset;
+
 import static org.assertj.core.api.Assertions.assertThat;
 
 @DisplayName("ReviewEventMessage 매핑 및 직렬화 테스트")
@@ -20,6 +24,9 @@ class ReviewEventMessageMappingTest {
 
     private OutboxReviewEventPublisher publisher;
     private ObjectMapper objectMapper;
+
+    private static final Instant FIXED_TIME = Instant.parse("2026-01-01T00:00:00Z");
+    private final Clock fixedClock = Clock.fixed(FIXED_TIME, ZoneOffset.UTC);
 
     @BeforeEach
     void setUp() {
@@ -34,7 +41,7 @@ class ReviewEventMessageMappingTest {
     void toMessage_reviewCreatedEvent_mapsAllFields() {
         ReviewCreatedPayload payload = new ReviewCreatedPayload(
                 "review-id-123", "product-id-456", "user-id-789", 5, "2024-01-01T00:00:00Z");
-        ReviewEvent event = ReviewEvent.created(payload);
+        ReviewEvent event = ReviewEvent.created(payload, fixedClock);
 
         ReviewEventMessage message = publisher.toMessage(event);
 
@@ -50,7 +57,7 @@ class ReviewEventMessageMappingTest {
     void toMessage_reviewUpdatedEvent_mapsAllFields() {
         ReviewUpdatedPayload payload = new ReviewUpdatedPayload(
                 "review-id-123", "product-id-456", "user-id-789", 4, "2024-01-02T00:00:00Z");
-        ReviewEvent event = ReviewEvent.updated(payload);
+        ReviewEvent event = ReviewEvent.updated(payload, fixedClock);
 
         ReviewEventMessage message = publisher.toMessage(event);
 
@@ -63,7 +70,7 @@ class ReviewEventMessageMappingTest {
     void toMessage_reviewDeletedEvent_mapsAllFields() {
         ReviewDeletedPayload payload = new ReviewDeletedPayload(
                 "review-id-123", "product-id-456", "user-id-789", "2024-01-03T00:00:00Z");
-        ReviewEvent event = ReviewEvent.deleted(payload);
+        ReviewEvent event = ReviewEvent.deleted(payload, fixedClock);
 
         ReviewEventMessage message = publisher.toMessage(event);
 
@@ -76,7 +83,7 @@ class ReviewEventMessageMappingTest {
     void toMessage_serialized_containsSnakeCaseEnvelopeFields() throws Exception {
         ReviewCreatedPayload payload = new ReviewCreatedPayload(
                 "review-id-123", "product-id-456", "user-id-789", 5, "2024-01-01T00:00:00Z");
-        ReviewEvent event = ReviewEvent.created(payload);
+        ReviewEvent event = ReviewEvent.created(payload, fixedClock);
 
         ReviewEventMessage message = publisher.toMessage(event);
         String json = objectMapper.writeValueAsString(message);
@@ -94,7 +101,7 @@ class ReviewEventMessageMappingTest {
     void toMessage_serialized_doesNotContainCamelCaseEnvelopeFields() throws Exception {
         ReviewCreatedPayload payload = new ReviewCreatedPayload(
                 "review-id-123", "product-id-456", "user-id-789", 5, "2024-01-01T00:00:00Z");
-        ReviewEvent event = ReviewEvent.created(payload);
+        ReviewEvent event = ReviewEvent.created(payload, fixedClock);
 
         ReviewEventMessage message = publisher.toMessage(event);
         String json = objectMapper.writeValueAsString(message);

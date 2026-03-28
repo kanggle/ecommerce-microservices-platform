@@ -65,7 +65,7 @@ public class ReviewCommandService {
                 review.getRatingValue(),
                 review.getCreatedAt().toString()
         );
-        reviewEventPublisher.publish(ReviewEvent.created(payload));
+        reviewEventPublisher.publish(ReviewEvent.created(payload, clock));
 
         return new CreateReviewResult(review.getId());
     }
@@ -89,7 +89,7 @@ public class ReviewCommandService {
                 review.getRatingValue(),
                 review.getUpdatedAt().toString()
         );
-        reviewEventPublisher.publish(ReviewEvent.updated(payload));
+        reviewEventPublisher.publish(ReviewEvent.updated(payload, clock));
 
         return new UpdateReviewResult(review.getId());
     }
@@ -112,6 +112,6 @@ public class ReviewCommandService {
                 review.getUserId().toString(),
                 review.getUpdatedAt().toString()
         );
-        reviewEventPublisher.publish(ReviewEvent.deleted(payload));
+        reviewEventPublisher.publish(ReviewEvent.deleted(payload, clock));
     }
 }
