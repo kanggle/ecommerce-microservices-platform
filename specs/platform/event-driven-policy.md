@@ -104,7 +104,7 @@ All events must follow this JSON envelope:
 | auth-service | LoginFailed | audit-service (future), security-monitoring (future) |
 | auth-service | SessionLimitExceeded | audit-service (future) |
 | order-service | OrderPlaced | payment-service |
-| order-service | OrderCancelled | payment-service |
+| order-service | OrderCancelled | payment-service, promotion-service |
 | payment-service | PaymentCompleted | order-service |
 | payment-service | PaymentFailed | order-service |
 | payment-service | PaymentRefunded | order-service |

@@ -64,6 +64,18 @@ public class Coupon {
         this.orderId = orderId;
     }
 
+    public void restore() {
+        if (this.status == CouponStatus.EXPIRED) {
+            throw new CouponRestoreNotAllowedException(this.couponId);
+        }
+        if (this.status == CouponStatus.ISSUED) {
+            return;
+        }
+        this.status = CouponStatus.ISSUED;
+        this.usedAt = null;
+        this.orderId = null;
+    }
+
     public void expire(Clock clock) {
         if (this.status != CouponStatus.ISSUED) {
             return;

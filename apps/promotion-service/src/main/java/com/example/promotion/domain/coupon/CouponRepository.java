@@ -22,5 +22,7 @@ public interface CouponRepository {
 
     List<Coupon> findExpiredIssuedCoupons(Instant now, int batchSize);
 
+    List<Coupon> findByOrderIdAndStatus(String orderId, CouponStatus status);
+
     boolean existsByPromotionId(String promotionId);
 }

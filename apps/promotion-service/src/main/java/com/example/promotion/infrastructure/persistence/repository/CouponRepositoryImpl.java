@@ -75,6 +75,13 @@ public class CouponRepositoryImpl implements CouponRepository {
     }
 
     @Override
+    public List<Coupon> findByOrderIdAndStatus(String orderId, CouponStatus status) {
+        return jpaRepository.findByOrderIdAndStatus(orderId, status).stream()
+                .map(CouponJpaEntity::toDomain)
+                .toList();
+    }
+
+    @Override
     public boolean existsByPromotionId(String promotionId) {
         return jpaRepository.existsByPromotionId(promotionId);
     }

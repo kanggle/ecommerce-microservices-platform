@@ -68,7 +68,7 @@ Key domain concepts:
 
 ## Events
 - Publishes: `CouponUsed`, `CouponExpired`
-- Consumes: none
+- Consumes: `OrderCancelled` (from order-service, restores USED coupons to ISSUED)
 
 ## Testing Expectations
 Required emphasis:

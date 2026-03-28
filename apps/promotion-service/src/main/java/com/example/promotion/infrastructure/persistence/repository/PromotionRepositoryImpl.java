@@ -13,6 +13,7 @@ import org.springframework.stereotype.Repository;
 
 import java.time.Clock;
 import java.time.Instant;
+import java.util.List;
 import java.util.Optional;
 
 @Repository
@@ -35,6 +36,16 @@ public class PromotionRepositoryImpl implements PromotionRepository {
     @Override
     public Optional<Promotion> findById(String promotionId) {
         return jpaRepository.findById(promotionId).map(PromotionJpaEntity::toDomain);
+    }
+
+    @Override
+    public List<Promotion> findAllByIds(List<String> promotionIds) {
+        if (promotionIds.isEmpty()) {
+            return List.of();
+        }
+        return jpaRepository.findAllById(promotionIds).stream()
+                .map(PromotionJpaEntity::toDomain)
+                .toList();
     }
 
     @Override

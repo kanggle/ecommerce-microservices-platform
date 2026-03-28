@@ -26,5 +26,7 @@ public interface CouponJpaRepository extends JpaRepository<CouponJpaEntity, Stri
     @Query("SELECT c FROM CouponJpaEntity c WHERE c.status = 'ISSUED' AND c.expiresAt <= :now ORDER BY c.expiresAt ASC")
     List<CouponJpaEntity> findExpiredIssuedCoupons(Instant now, Pageable pageable);
 
+    List<CouponJpaEntity> findByOrderIdAndStatus(String orderId, CouponStatus status);
+
     boolean existsByPromotionId(String promotionId);
 }

@@ -23,7 +23,7 @@ Consumers must not depend on fields not defined in this contract.
 
 Published when a new order is successfully created.
 
-**Consumers:** payment-service
+**Consumers:** payment-service, promotion-service
 
 **Payload**
 ```json
@@ -76,7 +76,7 @@ Published when an order is confirmed (payment completed and order status transit
 
 Published when an order is cancelled.
 
-**Consumers:** payment-service
+**Consumers:** payment-service, promotion-service
 
 **Payload**
 ```json

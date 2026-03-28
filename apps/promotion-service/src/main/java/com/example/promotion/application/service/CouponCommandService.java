@@ -17,6 +17,8 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.example.promotion.domain.coupon.CouponStatus;
+
 import java.time.Clock;
 import java.util.ArrayList;
 import java.util.List;
@@ -81,5 +83,20 @@ public class CouponCommandService {
         log.info("Coupon applied: couponId={}, orderId={}, discount={}",
                 coupon.getCouponId(), command.orderId(), discountAmount);
         return new ApplyCouponResult(coupon.getCouponId(), discountAmount, finalAmount);
+    }
+
+    @Transactional
+    public void restoreCouponsByOrderId(String orderId) {
+        List<Coupon> usedCoupons = couponRepository.findByOrderIdAndStatus(orderId, CouponStatus.USED);
+        if (usedCoupons.isEmpty()) {
+            log.info("No USED coupons found for orderId={}, skipping restore", orderId);
+            return;
+        }
+
+        for (Coupon coupon : usedCoupons) {
+            coupon.restore();
+            couponRepository.save(coupon);
+            log.info("Coupon restored: couponId={}, orderId={}", coupon.getCouponId(), orderId);
+        }
     }
 }

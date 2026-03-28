@@ -1,5 +1,6 @@
 package com.example.promotion.domain.promotion;
 
+import java.util.List;
 import java.util.Optional;
 
 public interface PromotionRepository {
@@ -7,6 +8,8 @@ public interface PromotionRepository {
     Promotion save(Promotion promotion);
 
     Optional<Promotion> findById(String promotionId);
+
+    List<Promotion> findAllByIds(List<String> promotionIds);
 
     Optional<Promotion> findByIdForUpdate(String promotionId);
 

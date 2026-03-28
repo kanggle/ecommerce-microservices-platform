@@ -11,6 +11,11 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
+import java.util.Map;
+import java.util.function.Function;
+import java.util.stream.Collectors;
+
 @Service
 @RequiredArgsConstructor
 @Transactional(readOnly = true)
@@ -27,9 +32,17 @@ public class CouponQueryService {
             result = couponRepository.findByUserId(userId, page, size);
         }
 
+        List<String> promotionIds = result.content().stream()
+                .map(Coupon::getPromotionId)
+                .distinct()
+                .toList();
+
+        Map<String, Promotion> promotionMap = promotionRepository.findAllByIds(promotionIds).stream()
+                .collect(Collectors.toMap(Promotion::getPromotionId, Function.identity()));
+
         return new PageResult<>(
                 result.content().stream()
-                        .map(this::toCouponDetail)
+                        .map(coupon -> toCouponDetail(coupon, promotionMap.get(coupon.getPromotionId())))
                         .toList(),
                 result.page(),
                 result.size(),
@@ -37,10 +50,7 @@ public class CouponQueryService {
         );
     }
 
-    private CouponDetail toCouponDetail(Coupon coupon) {
-        Promotion promotion = promotionRepository.findById(coupon.getPromotionId())
-                .orElse(null);
-
+    private CouponDetail toCouponDetail(Coupon coupon, Promotion promotion) {
         String promotionName = promotion != null ? promotion.getName() : "Unknown";
         var discountType = promotion != null ? promotion.getDiscountType() : null;
         long discountValue = promotion != null ? promotion.getDiscountValue() : 0;
