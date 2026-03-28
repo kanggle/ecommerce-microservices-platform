@@ -8,7 +8,7 @@ error-handling.md Promotion 섹션 중복 제거
 
 # Status
 
-ready
+review
 
 # Owner
 
@@ -50,10 +50,10 @@ backend
 
 # Acceptance Criteria
 
-- [ ] `specs/platform/error-handling.md`에 Promotion 섹션이 정확히 1개만 존재함
-- [ ] 남은 섹션에 10개 에러 코드가 모두 등록됨
-- [ ] `INVALID_PROMOTION_REQUEST`의 설명이 두 용도(missing/invalid fields, bad status filter, invalid date format)를 모두 포괄함
-- [ ] Rules 섹션 앞에 중복 섹션이 없음
+- [x] `specs/platform/error-handling.md`에 Promotion 섹션이 정확히 1개만 존재함
+- [x] 남은 섹션에 10개 에러 코드가 모두 등록됨
+- [x] `INVALID_PROMOTION_REQUEST`의 설명이 두 용도(missing/invalid fields, bad status filter, invalid date format)를 모두 포괄함
+- [x] Rules 섹션 앞에 중복 섹션이 없음
 
 ---
 
