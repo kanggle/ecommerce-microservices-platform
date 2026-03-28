@@ -44,7 +44,7 @@ public class OrderController {
 
     @PostMapping
     public ResponseEntity<PlaceOrderResponse> placeOrder(
-            @RequestHeader("X-User-Id") @NotBlank(message = "X-User-Id 헤더는 필수입니다") String userId,
+            @RequestHeader("X-User-Id") @NotBlank(message = "X-User-Id header is required") String userId,
             @Valid @RequestBody PlaceOrderRequest request
     ) {
         List<PlaceOrderCommand.OrderItemCommand> itemCommands = request.items().stream()
@@ -66,7 +66,7 @@ public class OrderController {
 
     @GetMapping
     public ResponseEntity<OrderListResponse> getOrders(
-            @RequestHeader("X-User-Id") @NotBlank(message = "X-User-Id 헤더는 필수입니다") String userId,
+            @RequestHeader("X-User-Id") @NotBlank(message = "X-User-Id header is required") String userId,
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "20") int size,
             @RequestParam(required = false) String status
@@ -92,8 +92,8 @@ public class OrderController {
 
     @GetMapping("/verify-purchase")
     public ResponseEntity<VerifyPurchaseResponse> verifyPurchase(
-            @RequestHeader("X-User-Id") @NotBlank(message = "X-User-Id 헤더는 필수입니다") String userId,
-            @RequestParam @NotNull(message = "productId는 필수입니다") String productId
+            @RequestHeader("X-User-Id") @NotBlank(message = "X-User-Id header is required") String userId,
+            @RequestParam @NotNull(message = "productId is required") String productId
     ) {
         boolean purchased = orderQueryService.hasUserPurchasedProduct(userId, productId);
         return ResponseEntity.ok(new VerifyPurchaseResponse(purchased));
@@ -101,7 +101,7 @@ public class OrderController {
 
     @GetMapping("/{orderId}")
     public ResponseEntity<OrderDetailResponse> getOrder(
-            @RequestHeader("X-User-Id") @NotBlank(message = "X-User-Id 헤더는 필수입니다") String userId,
+            @RequestHeader("X-User-Id") @NotBlank(message = "X-User-Id header is required") String userId,
             @PathVariable String orderId
     ) {
         OrderDetail detail = orderQueryService.getOrder(orderId, userId);
@@ -110,7 +110,7 @@ public class OrderController {
 
     @PostMapping("/{orderId}/cancel")
     public ResponseEntity<CancelOrderResponse> cancelOrder(
-            @RequestHeader("X-User-Id") @NotBlank(message = "X-User-Id 헤더는 필수입니다") String userId,
+            @RequestHeader("X-User-Id") @NotBlank(message = "X-User-Id header is required") String userId,
             @PathVariable String orderId
     ) {
         CancelOrderResult result = orderCancellationService.cancelOrder(orderId, userId);

@@ -8,7 +8,7 @@ order-service 한국어 에러 메시지 -> 영어 통일
 
 # Status
 
-ready
+review
 
 # Owner
 
