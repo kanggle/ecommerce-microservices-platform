@@ -165,6 +165,6 @@ class PromotionControllerTest {
                                 }
                                 """))
                 .andExpect(status().isBadRequest())
-                .andExpect(jsonPath("$.code").value("INVALID_PROMOTION_REQUEST"));
+                .andExpect(jsonPath("$.code").value("VALIDATION_ERROR"));
     }
 }
