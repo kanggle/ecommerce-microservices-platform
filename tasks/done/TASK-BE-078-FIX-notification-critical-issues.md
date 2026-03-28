@@ -8,7 +8,7 @@ TASK-BE-078-FIX-notification-critical-issues
 
 # Status
 
-ready
+done
 
 # Owner
 
