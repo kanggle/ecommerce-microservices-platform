@@ -14,6 +14,7 @@ public class PreferenceService {
 
     private final PreferenceRepository preferenceRepository;
 
+    @Transactional
     public UserNotificationPreference getPreference(String userId) {
         return preferenceRepository.findByUserId(userId)
                 .orElseGet(() -> {
