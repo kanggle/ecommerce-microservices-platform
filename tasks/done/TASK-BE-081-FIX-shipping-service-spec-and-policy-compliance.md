@@ -8,7 +8,11 @@ TASK-BE-081-FIX-shipping-service-spec-and-policy-compliance
 
 # Status
 
+<<<<<<<< HEAD:tasks/done/TASK-BE-081-FIX-shipping-service-spec-and-policy-compliance.md
 done
+========
+review
+>>>>>>>> worktree-agent-ac4cdd70:tasks/review/TASK-BE-081-FIX-shipping-service-spec-and-policy-compliance.md
 
 # Owner
 
@@ -64,13 +68,13 @@ TASK-BE-081 리뷰에서 발견된 Critical/Warning 이슈를 수정한다.
 
 # Acceptance Criteria
 
-- [ ] `specs/services/shipping-service/architecture.md` 파일 존재하며 레이어 구조 명시
-- [ ] `specs/contracts/http/shipping-api.md` 파일 존재하며 구현된 3개 엔드포인트 계약 포함
-- [ ] `specs/contracts/events/shipping-events.md` 파일 존재하며 ShippingStatusChanged 이벤트 계약 포함
-- [ ] `specs/platform/error-handling.md`에 SHIPPING_NOT_FOUND, INVALID_SHIPPING_REQUEST, INVALID_STATUS_TRANSITION 에러코드 등록
-- [ ] `specs/platform/event-driven-policy.md` Services Using Events 테이블에 `shipping-service | ShippingStatusChanged | order-service, notification-service` 행 추가
-- [ ] `KafkaConsumerConfig.java` DLQ suffix가 `.dlq`
-- [ ] `KafkaConsumerConfig.java` 재시도가 지수 백오프 방식, 최대 3회
+- [x] `specs/services/shipping-service/architecture.md` 파일 존재하며 레이어 구조 명시
+- [x] `specs/contracts/http/shipping-api.md` 파일 존재하며 구현된 3개 엔드포인트 계약 포함
+- [x] `specs/contracts/events/shipping-events.md` 파일 존재하며 ShippingStatusChanged 이벤트 계약 포함
+- [x] `specs/platform/error-handling.md`에 SHIPPING_NOT_FOUND, INVALID_SHIPPING_REQUEST, INVALID_STATUS_TRANSITION 에러코드 등록
+- [x] `specs/platform/event-driven-policy.md` Services Using Events 테이블에 `shipping-service | ShippingStatusChanged | order-service, notification-service` 행 추가
+- [x] `KafkaConsumerConfig.java` DLQ suffix가 `.dlq`
+- [x] `KafkaConsumerConfig.java` 재시도가 지수 백오프 방식, 최대 3회
 
 ---
 
