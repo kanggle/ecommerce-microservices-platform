@@ -4,6 +4,7 @@ import com.example.promotion.domain.coupon.CouponAlreadyUsedException;
 import com.example.promotion.domain.coupon.CouponExpiredException;
 import com.example.promotion.domain.coupon.CouponNotFoundException;
 import com.example.promotion.domain.coupon.CouponNotOwnedException;
+import com.example.promotion.domain.coupon.CouponRestoreNotAllowedException;
 import com.example.promotion.domain.promotion.CouponLimitExceededException;
 import com.example.promotion.domain.promotion.PromotionAlreadyEndedException;
 import com.example.promotion.domain.promotion.PromotionHasIssuedCouponsException;
@@ -113,6 +114,12 @@ public class GlobalExceptionHandler {
     public ResponseEntity<ErrorResponse> handleCouponNotOwned(CouponNotOwnedException e) {
         return ResponseEntity.status(HttpStatus.UNPROCESSABLE_ENTITY)
                 .body(ErrorResponse.of("COUPON_NOT_OWNED", e.getMessage()));
+    }
+
+    @ExceptionHandler(CouponRestoreNotAllowedException.class)
+    public ResponseEntity<ErrorResponse> handleCouponRestoreNotAllowed(CouponRestoreNotAllowedException e) {
+        return ResponseEntity.status(HttpStatus.UNPROCESSABLE_ENTITY)
+                .body(ErrorResponse.of("COUPON_RESTORE_NOT_ALLOWED", e.getMessage()));
     }
 
     @ExceptionHandler({InvalidPromotionStatusException.class, InvalidCouponStatusException.class})
