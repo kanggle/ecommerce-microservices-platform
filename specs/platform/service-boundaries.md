@@ -49,7 +49,7 @@ All client-facing HTTP requests enter through `gateway-service`.
 | Caller | Callee | Contract | Purpose |
 |---|---|---|---|
 | gateway-service | auth-service | `auth-api.md` | Authentication (signup, login, refresh, logout) |
-| gateway-service | user-service | `user-api.md` | User profile and address management |
+| gateway-service | user-service | `user-api.md`, `wishlist-api.md` | User profile, address, and wishlist management |
 | gateway-service | product-service | `product-api.md` | Product catalog and admin management |
 | gateway-service | search-service | `search-api.md` | Product search by keyword and filters |
 | gateway-service | order-service | `order-api.md` | Order placement, listing, cancellation |
@@ -60,6 +60,7 @@ All client-facing HTTP requests enter through `gateway-service`.
 | gateway-service | shipping-service | `shipping-api.md` | Shipping status tracking |
 | order-service | product-service | `product-api.md` | Stock validation at order placement |
 | order-service | promotion-service | `promotion-api.md` | Coupon application at order placement |
+| user-service | product-service | `product-api.md` | Product info for wishlist display |
 | review-service | order-service | `order-api.md` | Purchase verification for review creation |
 
 - No circular synchronous dependencies exist.
