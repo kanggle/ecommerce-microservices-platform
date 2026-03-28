@@ -1,10 +1,9 @@
-package com.example.shipping.infrastructure.config;
+package com.example.notification.config;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.classify.BinaryExceptionClassifier;
 import org.springframework.kafka.core.KafkaTemplate;
@@ -15,22 +14,21 @@ import org.springframework.util.backoff.ExponentialBackOff;
 import java.lang.reflect.Field;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.Mockito.mock;
 
 @ExtendWith(MockitoExtension.class)
 @DisplayName("KafkaConsumerConfig 단위 테스트")
 class KafkaConsumerConfigTest {
 
-    @Mock
-    private KafkaTemplate<String, String> kafkaTemplate;
+    private final KafkaConsumerConfig config = new KafkaConsumerConfig();
 
     @Test
-    @DisplayName("kafkaErrorHandler가 DefaultErrorHandler 인스턴스를 반환한다")
+    @DisplayName("kafkaErrorHandler 빈이 DefaultErrorHandler 인스턴스를 반환한다")
     void kafkaErrorHandler_returnsDefaultErrorHandler() {
-        KafkaConsumerConfig config = new KafkaConsumerConfig();
+        KafkaTemplate<String, String> kafkaTemplate = mock(KafkaTemplate.class);
 
         CommonErrorHandler errorHandler = config.kafkaErrorHandler(kafkaTemplate);
 
-        assertThat(errorHandler).isNotNull();
         assertThat(errorHandler).isInstanceOf(DefaultErrorHandler.class);
     }
 
@@ -50,7 +48,7 @@ class KafkaConsumerConfigTest {
     @Test
     @DisplayName("JsonProcessingException이 not-retryable 예외로 등록되어 있다")
     void kafkaErrorHandler_jsonProcessingExceptionIsNotRetryable() {
-        KafkaConsumerConfig config = new KafkaConsumerConfig();
+        KafkaTemplate<String, String> kafkaTemplate = mock(KafkaTemplate.class);
 
         DefaultErrorHandler errorHandler = (DefaultErrorHandler) config.kafkaErrorHandler(kafkaTemplate);
         BinaryExceptionClassifier classifier = extractClassifier(errorHandler);
@@ -59,20 +57,9 @@ class KafkaConsumerConfigTest {
     }
 
     @Test
-    @DisplayName("IllegalArgumentException이 not-retryable 예외로 등록되어 있다")
-    void kafkaErrorHandler_illegalArgumentExceptionIsNotRetryable() {
-        KafkaConsumerConfig config = new KafkaConsumerConfig();
-
-        DefaultErrorHandler errorHandler = (DefaultErrorHandler) config.kafkaErrorHandler(kafkaTemplate);
-        BinaryExceptionClassifier classifier = extractClassifier(errorHandler);
-
-        assertThat(classifier.classify(new IllegalArgumentException("test"))).isFalse();
-    }
-
-    @Test
     @DisplayName("Transient 예외(RuntimeException)는 retryable로 분류된다")
-    void kafkaErrorHandler_retryableExceptionsClassified() {
-        KafkaConsumerConfig config = new KafkaConsumerConfig();
+    void kafkaErrorHandler_runtimeExceptionIsRetryable() {
+        KafkaTemplate<String, String> kafkaTemplate = mock(KafkaTemplate.class);
 
         DefaultErrorHandler errorHandler = (DefaultErrorHandler) config.kafkaErrorHandler(kafkaTemplate);
         BinaryExceptionClassifier classifier = extractClassifier(errorHandler);

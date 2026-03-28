@@ -18,7 +18,7 @@ public class KafkaConsumerConfig {
     public CommonErrorHandler kafkaErrorHandler(KafkaTemplate<String, String> kafkaTemplate) {
         var recoverer = new DeadLetterPublishingRecoverer(kafkaTemplate,
                 (ConsumerRecord<?, ?> record, Exception ex) -> {
-                    log.error("Sending record to DLT. topic={}, offset={}, error={}",
+                    log.error("Sending record to DLQ. topic={}, offset={}, error={}",
                             record.topic(), record.offset(), ex.getMessage());
                     return new org.apache.kafka.common.TopicPartition(
                             record.topic() + ".dlq", record.partition());
@@ -26,7 +26,7 @@ public class KafkaConsumerConfig {
 
         ExponentialBackOff backOff = new ExponentialBackOff(1000L, 2.0);
         backOff.setMaxInterval(30000L);
-        backOff.setMaxElapsedTime(7000L); // ~3 retries: 1s + 2s + 4s = 7s
+        backOff.setMaxAttempts(3);
 
         var errorHandler = new DefaultErrorHandler(recoverer, backOff);
         errorHandler.addNotRetryableExceptions(

@@ -8,7 +8,7 @@ KafkaConsumerConfig 표준 템플릿 정의 및 전 서비스 통일
 
 # Status
 
-ready
+review
 
 # Owner
 
