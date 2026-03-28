@@ -8,6 +8,7 @@ import com.example.notification.application.command.CreateTemplateCommand;
 import com.example.notification.application.command.UpdateTemplateCommand;
 import com.example.notification.application.result.TemplateResult;
 import com.example.notification.application.service.TemplateService;
+import com.example.notification.domain.exception.AdminAccessDeniedException;
 import com.example.notification.domain.model.NotificationChannel;
 import com.example.notification.domain.model.NotificationTemplate;
 import com.example.notification.domain.model.TemplateType;
@@ -24,21 +25,27 @@ import org.springframework.web.bind.annotation.*;
 @RequestMapping("/api/notifications/templates")
 public class TemplateController {
 
+    private static final String ADMIN_ROLE = "ADMIN";
+
     private final TemplateService templateService;
 
     @GetMapping
     public ResponseEntity<TemplateListResponse> getTemplates(
+            @RequestHeader(value = "X-User-Role", required = false) String userRole,
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "20") int size
     ) {
+        validateAdminRole(userRole);
         Page<NotificationTemplate> templates = templateService.getTemplates(PageRequest.of(page, size));
         return ResponseEntity.ok(TemplateListResponse.from(templates));
     }
 
     @PostMapping
     public ResponseEntity<TemplateIdResponse> createTemplate(
+            @RequestHeader(value = "X-User-Role", required = false) String userRole,
             @Valid @RequestBody CreateTemplateRequest request
     ) {
+        validateAdminRole(userRole);
         CreateTemplateCommand command = new CreateTemplateCommand(
                 TemplateType.valueOf(request.type()),
                 NotificationChannel.valueOf(request.channel()),
@@ -51,12 +58,20 @@ public class TemplateController {
 
     @PutMapping("/{templateId}")
     public ResponseEntity<TemplateIdResponse> updateTemplate(
+            @RequestHeader(value = "X-User-Role", required = false) String userRole,
             @PathVariable String templateId,
             @Valid @RequestBody UpdateTemplateRequest request
     ) {
+        validateAdminRole(userRole);
         UpdateTemplateCommand command = new UpdateTemplateCommand(
                 templateId, request.subject(), request.body());
         TemplateResult result = templateService.updateTemplate(command);
         return ResponseEntity.ok(TemplateIdResponse.from(result));
+    }
+
+    private void validateAdminRole(String userRole) {
+        if (!ADMIN_ROLE.equals(userRole)) {
+            throw new AdminAccessDeniedException("Not an admin user");
+        }
     }
 }
