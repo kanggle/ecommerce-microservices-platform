@@ -22,7 +22,7 @@ public class OrderCancelledEventConsumer {
         handle(objectMapper.readValue(payload, OrderCancelledEvent.class));
     }
 
-    void handle(OrderCancelledEvent event) {
+    public void handle(OrderCancelledEvent event) {
         if (event.payload() == null) {
             log.warn("OrderCancelled event has null payload, skipping. eventId={}", event.eventId());
             return;

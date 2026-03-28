@@ -10,6 +10,7 @@ import com.example.promotion.domain.coupon.Coupon;
 import com.example.promotion.domain.coupon.CouponAlreadyUsedException;
 import com.example.promotion.domain.coupon.CouponNotFoundException;
 import com.example.promotion.domain.coupon.CouponRepository;
+import com.example.promotion.domain.coupon.CouponStatus;
 import com.example.promotion.domain.promotion.DiscountType;
 import com.example.promotion.domain.promotion.Promotion;
 import com.example.promotion.domain.promotion.PromotionNotFoundException;
@@ -28,9 +29,11 @@ import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.assertj.core.api.Assertions.assertThatCode;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyList;
 import static org.mockito.BDDMockito.given;
+import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 
 @ExtendWith(MockitoExtension.class)
@@ -160,5 +163,38 @@ class CouponCommandServiceTest {
 
         assertThatThrownBy(() -> service.issueCoupons(command))
                 .isInstanceOf(PromotionNotFoundException.class);
+    }
+
+    @Test
+    @DisplayName("주문 취소 시 USED 쿠폰이 ISSUED 상태로 복원된다")
+    void restoreCouponsByOrderId_usedCoupons_restoresToIssued() {
+        CouponCommandService service = createService();
+
+        Coupon coupon = Coupon.issue("promo-1", "user-1",
+                Instant.parse("2026-04-01T00:00:00Z"), clock);
+        coupon.apply("order-1", "user-1", clock);
+
+        given(couponRepository.findByOrderIdAndStatus("order-1", CouponStatus.USED))
+                .willReturn(List.of(coupon));
+        given(couponRepository.save(any(Coupon.class))).willAnswer(inv -> inv.getArgument(0));
+
+        service.restoreCouponsByOrderId("order-1");
+
+        assertThat(coupon.getStatus()).isEqualTo(CouponStatus.ISSUED);
+        verify(couponRepository).save(coupon);
+    }
+
+    @Test
+    @DisplayName("주문에 연결된 USED 쿠폰이 없으면 복원을 건너뛴다")
+    void restoreCouponsByOrderId_noCouponsFound_skips() {
+        CouponCommandService service = createService();
+
+        given(couponRepository.findByOrderIdAndStatus("order-999", CouponStatus.USED))
+                .willReturn(List.of());
+
+        assertThatCode(() -> service.restoreCouponsByOrderId("order-999"))
+                .doesNotThrowAnyException();
+
+        verify(couponRepository, never()).save(any(Coupon.class));
     }
 }

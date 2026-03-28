@@ -4,6 +4,7 @@ import com.example.promotion.domain.coupon.Coupon;
 import com.example.promotion.domain.coupon.CouponAlreadyUsedException;
 import com.example.promotion.domain.coupon.CouponExpiredException;
 import com.example.promotion.domain.coupon.CouponNotOwnedException;
+import com.example.promotion.domain.coupon.CouponRestoreNotAllowedException;
 import com.example.promotion.domain.coupon.CouponStatus;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -110,5 +111,41 @@ class CouponTest {
 
         assertThatThrownBy(() -> coupon.apply("order-1", "user-1", clock))
                 .isInstanceOf(CouponExpiredException.class);
+    }
+
+    @Test
+    @DisplayName("USED 상태의 쿠폰을 복원하면 ISSUED 상태로 변경된다")
+    void restore_usedCoupon_changesStatusToIssued() {
+        Coupon coupon = Coupon.issue("promo-1", "user-1",
+                Instant.parse("2026-04-01T00:00:00Z"), clock);
+        coupon.apply("order-1", "user-1", clock);
+
+        coupon.restore();
+
+        assertThat(coupon.getStatus()).isEqualTo(CouponStatus.ISSUED);
+        assertThat(coupon.getUsedAt()).isNull();
+        assertThat(coupon.getOrderId()).isNull();
+    }
+
+    @Test
+    @DisplayName("EXPIRED 상태의 쿠폰을 복원하면 예외가 발생한다")
+    void restore_expiredCoupon_throwsCouponRestoreNotAllowedException() {
+        Coupon coupon = Coupon.issue("promo-1", "user-1",
+                Instant.parse("2026-04-01T00:00:00Z"), clock);
+        coupon.expire(clock);
+
+        assertThatThrownBy(() -> coupon.restore())
+                .isInstanceOf(CouponRestoreNotAllowedException.class);
+    }
+
+    @Test
+    @DisplayName("이미 ISSUED 상태인 쿠폰에 restore 호출 시 멱등 처리된다")
+    void restore_alreadyIssuedCoupon_noOpIdempotent() {
+        Coupon coupon = Coupon.issue("promo-1", "user-1",
+                Instant.parse("2026-04-01T00:00:00Z"), clock);
+
+        coupon.restore();
+
+        assertThat(coupon.getStatus()).isEqualTo(CouponStatus.ISSUED);
     }
 }
