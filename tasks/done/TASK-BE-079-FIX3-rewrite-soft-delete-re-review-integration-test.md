@@ -8,7 +8,7 @@ review-service: 소프트 삭제 후 재리뷰 통합 테스트 누락 추가
 
 # Status
 
-review
+done
 
 # Owner
 
