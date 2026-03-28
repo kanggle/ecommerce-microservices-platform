@@ -51,7 +51,7 @@ class ReviewRepositoryIntegrationTest {
 
     @MockitoBean
     @SuppressWarnings("unused")
-    private KafkaTemplate<String, Object> kafkaTemplate;
+    private KafkaTemplate<String, String> kafkaTemplate;
 
     @MockitoBean
     @SuppressWarnings("unused")
