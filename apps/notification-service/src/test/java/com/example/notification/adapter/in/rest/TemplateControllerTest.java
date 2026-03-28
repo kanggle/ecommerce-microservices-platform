@@ -48,7 +48,8 @@ class TemplateControllerTest {
         given(templateService.getTemplates(any()))
                 .willReturn(new PageImpl<>(List.of(template), PageRequest.of(0, 20), 1));
 
-        mockMvc.perform(get("/api/notifications/templates"))
+        mockMvc.perform(get("/api/notifications/templates")
+                        .header("X-User-Role", "ADMIN"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.content[0].type").value("ORDER_PLACED"))
                 .andExpect(jsonPath("$.content[0].channel").value("EMAIL"))
@@ -62,6 +63,7 @@ class TemplateControllerTest {
                 .willReturn(new TemplateResult("template-1"));
 
         mockMvc.perform(post("/api/notifications/templates")
+                        .header("X-User-Role", "ADMIN")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content("{\"type\":\"ORDER_PLACED\",\"channel\":\"EMAIL\"," +
                                 "\"subject\":\"Order confirmed\",\"body\":\"Your order has been placed.\"}"))
@@ -76,6 +78,7 @@ class TemplateControllerTest {
                 .willThrow(new TemplateAlreadyExistsException("ORDER_PLACED", "EMAIL"));
 
         mockMvc.perform(post("/api/notifications/templates")
+                        .header("X-User-Role", "ADMIN")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content("{\"type\":\"ORDER_PLACED\",\"channel\":\"EMAIL\"," +
                                 "\"subject\":\"Subject\",\"body\":\"Body\"}"))
@@ -90,6 +93,7 @@ class TemplateControllerTest {
                 .willReturn(new TemplateResult("template-1"));
 
         mockMvc.perform(put("/api/notifications/templates/template-1")
+                        .header("X-User-Role", "ADMIN")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content("{\"subject\":\"Updated subject\",\"body\":\"Updated body\"}"))
                 .andExpect(status().isOk())
@@ -103,6 +107,7 @@ class TemplateControllerTest {
                 .willThrow(new TemplateNotFoundException("template-999"));
 
         mockMvc.perform(put("/api/notifications/templates/template-999")
+                        .header("X-User-Role", "ADMIN")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content("{\"subject\":\"Subject\",\"body\":\"Body\"}"))
                 .andExpect(status().isNotFound())
@@ -113,9 +118,61 @@ class TemplateControllerTest {
     @DisplayName("POST /api/notifications/templates - 필수 필드 누락 시 400")
     void createTemplate_missingField_returns400() throws Exception {
         mockMvc.perform(post("/api/notifications/templates")
+                        .header("X-User-Role", "ADMIN")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content("{\"type\":\"ORDER_PLACED\"}"))
                 .andExpect(status().isBadRequest())
                 .andExpect(jsonPath("$.code").value("VALIDATION_ERROR"));
+    }
+
+    @Test
+    @DisplayName("GET /api/notifications/templates - X-User-Role 헤더 없는 요청 시 403 반환")
+    void getTemplates_missingRoleHeader_returns403() throws Exception {
+        mockMvc.perform(get("/api/notifications/templates"))
+                .andExpect(status().isForbidden())
+                .andExpect(jsonPath("$.code").value("ACCESS_DENIED"));
+    }
+
+    @Test
+    @DisplayName("POST /api/notifications/templates - X-User-Role 헤더 없는 요청 시 403 반환")
+    void createTemplate_missingRoleHeader_returns403() throws Exception {
+        mockMvc.perform(post("/api/notifications/templates")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content("{\"type\":\"ORDER_PLACED\",\"channel\":\"EMAIL\"," +
+                                "\"subject\":\"Subject\",\"body\":\"Body\"}"))
+                .andExpect(status().isForbidden())
+                .andExpect(jsonPath("$.code").value("ACCESS_DENIED"));
+    }
+
+    @Test
+    @DisplayName("GET /api/notifications/templates - 비관리자 역할(USER)로 요청 시 403 반환")
+    void getTemplates_nonAdminRole_returns403() throws Exception {
+        mockMvc.perform(get("/api/notifications/templates")
+                        .header("X-User-Role", "USER"))
+                .andExpect(status().isForbidden())
+                .andExpect(jsonPath("$.code").value("ACCESS_DENIED"));
+    }
+
+    @Test
+    @DisplayName("POST /api/notifications/templates - 비관리자 역할(USER)로 요청 시 403 반환")
+    void createTemplate_nonAdminRole_returns403() throws Exception {
+        mockMvc.perform(post("/api/notifications/templates")
+                        .header("X-User-Role", "USER")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content("{\"type\":\"ORDER_PLACED\",\"channel\":\"EMAIL\"," +
+                                "\"subject\":\"Subject\",\"body\":\"Body\"}"))
+                .andExpect(status().isForbidden())
+                .andExpect(jsonPath("$.code").value("ACCESS_DENIED"));
+    }
+
+    @Test
+    @DisplayName("PUT /api/notifications/templates/{id} - 비관리자 역할(USER)로 요청 시 403 반환")
+    void updateTemplate_nonAdminRole_returns403() throws Exception {
+        mockMvc.perform(put("/api/notifications/templates/template-1")
+                        .header("X-User-Role", "USER")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content("{\"subject\":\"Subject\",\"body\":\"Body\"}"))
+                .andExpect(status().isForbidden())
+                .andExpect(jsonPath("$.code").value("ACCESS_DENIED"));
     }
 }
