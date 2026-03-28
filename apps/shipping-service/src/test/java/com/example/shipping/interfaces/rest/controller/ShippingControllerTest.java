@@ -156,7 +156,7 @@ class ShippingControllerTest {
                                 {"trackingNumber": "TRK-001", "carrier": "CJ"}
                                 """))
                 .andExpect(status().isBadRequest())
-                .andExpect(jsonPath("$.code").value("INVALID_SHIPPING_REQUEST"));
+                .andExpect(jsonPath("$.code").value("VALIDATION_ERROR"));
     }
 
     @Test

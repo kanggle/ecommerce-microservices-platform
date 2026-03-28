@@ -15,8 +15,6 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
-import java.util.stream.Collectors;
-
 @Slf4j
 @RestControllerAdvice
 public class GlobalExceptionHandler {
@@ -25,15 +23,20 @@ public class GlobalExceptionHandler {
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     public ErrorResponse handleValidation(MethodArgumentNotValidException ex) {
         String message = ex.getBindingResult().getFieldErrors().stream()
+                .findFirst()
                 .map(FieldError::getDefaultMessage)
-                .collect(Collectors.joining(", "));
-        return ErrorResponse.of("INVALID_REVIEW_REQUEST", message.isEmpty() ? "Validation failed" : message);
+                .orElse("Validation failed");
+        return ErrorResponse.of("VALIDATION_ERROR", message);
     }
 
     @ExceptionHandler(ConstraintViolationException.class)
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     public ErrorResponse handleConstraintViolation(ConstraintViolationException ex) {
-        return ErrorResponse.of("INVALID_REVIEW_REQUEST", ex.getMessage());
+        String message = ex.getConstraintViolations().stream()
+                .map(v -> v.getMessage())
+                .findFirst()
+                .orElse("Invalid input value");
+        return ErrorResponse.of("VALIDATION_ERROR", message);
     }
 
     @ExceptionHandler(MissingRequestHeaderException.class)

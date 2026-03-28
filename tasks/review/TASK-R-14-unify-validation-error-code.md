@@ -8,7 +8,7 @@ Validation 에러코드 VALIDATION_ERROR로 통일
 
 # Status
 
-ready
+review
 
 # Owner
 

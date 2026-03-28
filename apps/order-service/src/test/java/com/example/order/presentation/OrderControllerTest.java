@@ -103,7 +103,7 @@ class OrderControllerTest {
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(VALID_PLACE_BODY))
                 .andExpect(status().isBadRequest())
-                .andExpect(jsonPath("$.code").value("INVALID_ORDER_REQUEST"));
+                .andExpect(jsonPath("$.code").value("VALIDATION_ERROR"));
     }
 
     @Test
@@ -124,7 +124,7 @@ class OrderControllerTest {
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(body))
                 .andExpect(status().isBadRequest())
-                .andExpect(jsonPath("$.code").value("INVALID_ORDER_REQUEST"));
+                .andExpect(jsonPath("$.code").value("VALIDATION_ERROR"));
     }
 
     @Test
@@ -143,7 +143,7 @@ class OrderControllerTest {
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(body))
                 .andExpect(status().isBadRequest())
-                .andExpect(jsonPath("$.code").value("INVALID_ORDER_REQUEST"));
+                .andExpect(jsonPath("$.code").value("VALIDATION_ERROR"));
     }
 
     // ─── GET /api/orders ────────────────────────────────────────────────
@@ -214,7 +214,7 @@ class OrderControllerTest {
     void getOrders_blankUserId_returns400() throws Exception {
         mockMvc.perform(get("/api/orders").header("X-User-Id", " "))
                 .andExpect(status().isBadRequest())
-                .andExpect(jsonPath("$.code").value("INVALID_ORDER_REQUEST"));
+                .andExpect(jsonPath("$.code").value("VALIDATION_ERROR"));
     }
 
     // ─── GET /api/orders — 페이지 사이즈 제한 ─────────────────────────────
@@ -433,7 +433,7 @@ class OrderControllerTest {
     void cancelOrder_blankUserId_returns400() throws Exception {
         mockMvc.perform(post("/api/orders/order-1/cancel").header("X-User-Id", ""))
                 .andExpect(status().isBadRequest())
-                .andExpect(jsonPath("$.code").value("INVALID_ORDER_REQUEST"));
+                .andExpect(jsonPath("$.code").value("VALIDATION_ERROR"));
     }
 
     // ─── Optimistic Locking ──────────────────────────────────────────

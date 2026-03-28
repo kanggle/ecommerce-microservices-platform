@@ -26,7 +26,7 @@ public class GlobalExceptionHandler {
                 .map(fe -> fe.getDefaultMessage())
                 .orElse("Invalid input value");
         return ResponseEntity.status(HttpStatus.BAD_REQUEST)
-                .body(ErrorResponse.of("INVALID_SHIPPING_REQUEST", message));
+                .body(ErrorResponse.of("VALIDATION_ERROR", message));
     }
 
     @ExceptionHandler(ConstraintViolationException.class)
@@ -36,7 +36,7 @@ public class GlobalExceptionHandler {
                 .findFirst()
                 .orElse("Invalid input value");
         return ResponseEntity.status(HttpStatus.BAD_REQUEST)
-                .body(ErrorResponse.of("INVALID_SHIPPING_REQUEST", message));
+                .body(ErrorResponse.of("VALIDATION_ERROR", message));
     }
 
     @ExceptionHandler(MissingRequestHeaderException.class)

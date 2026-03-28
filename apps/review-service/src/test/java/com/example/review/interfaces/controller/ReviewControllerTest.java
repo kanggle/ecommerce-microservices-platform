@@ -90,7 +90,7 @@ class ReviewControllerTest {
                                 }
                                 """.formatted(PRODUCT_ID)))
                 .andExpect(status().isBadRequest())
-                .andExpect(jsonPath("$.code").value("INVALID_REVIEW_REQUEST"));
+                .andExpect(jsonPath("$.code").value("VALIDATION_ERROR"));
     }
 
     @Test
