@@ -126,7 +126,7 @@ All services must return errors in the following JSON format:
 
 | Code | HTTP | Description |
 |---|---|---|
-| INVALID_PROMOTION_REQUEST | 400 | Promotion request is invalid (missing or invalid fields) |
+| INVALID_PROMOTION_REQUEST | 400 | Promotion request is invalid (missing or invalid fields, bad status filter, invalid date format) |
 | PROMOTION_NOT_FOUND | 404 | Promotion with given ID does not exist |
 | PROMOTION_ALREADY_ENDED | 422 | Cannot update an ended promotion |
 | PROMOTION_HAS_ISSUED_COUPONS | 422 | Cannot delete a promotion with issued coupons |
@@ -173,21 +173,6 @@ All services must return errors in the following JSON format:
 | INVALID_STATUS_TRANSITION | 422 | Shipping status transition is not allowed |
 
 ---
-
-## Promotion
-
-| Code | HTTP | Description |
-|---|---|---|
-| INVALID_PROMOTION_REQUEST | 400 | Promotion request field is invalid (bad status filter, invalid date format) |
-| PROMOTION_NOT_FOUND | 404 | Promotion with given ID does not exist |
-| COUPON_NOT_FOUND | 404 | Coupon with given ID does not exist |
-| PROMOTION_ALREADY_ENDED | 422 | Cannot update an ended promotion |
-| PROMOTION_HAS_ISSUED_COUPONS | 422 | Cannot delete a promotion with issued coupons |
-| PROMOTION_NOT_ACTIVE | 422 | Promotion is not currently active |
-| COUPON_LIMIT_EXCEEDED | 422 | Issuance would exceed max issuance count |
-| COUPON_ALREADY_USED | 422 | Coupon has already been used |
-| COUPON_EXPIRED | 422 | Coupon has expired |
-| COUPON_NOT_OWNED | 422 | Coupon does not belong to the authenticated user |
 
 # Rules
 
