@@ -46,6 +46,7 @@ public class ReviewController {
         CreateReviewCommand command = new CreateReviewCommand(
                 UUID.fromString(userId),
                 request.productId(),
+                request.productName(),
                 request.rating(),
                 request.title(),
                 request.content()

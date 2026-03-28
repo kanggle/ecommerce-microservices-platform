@@ -27,6 +27,9 @@ public class ReviewJpaEntity implements Persistable<UUID> {
     @Column(name = "product_id", nullable = false, columnDefinition = "uuid")
     private UUID productId;
 
+    @Column(name = "product_name")
+    private String productName;
+
     @Column(nullable = false)
     private int rating;
 
@@ -66,6 +69,7 @@ public class ReviewJpaEntity implements Persistable<UUID> {
         entity.id = review.getId();
         entity.userId = review.getUserId();
         entity.productId = review.getProductId();
+        entity.productName = review.getProductName();
         entity.rating = review.getRatingValue();
         entity.title = review.getTitle();
         entity.content = review.getContent();
@@ -78,7 +82,7 @@ public class ReviewJpaEntity implements Persistable<UUID> {
 
     public Review toDomain() {
         return Review.reconstitute(
-                id, userId, productId, rating,
+                id, userId, productId, productName, rating,
                 title, content, status, createdAt, updatedAt
         );
     }

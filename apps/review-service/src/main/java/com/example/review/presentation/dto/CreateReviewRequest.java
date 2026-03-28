@@ -11,6 +11,8 @@ public record CreateReviewRequest(
         @NotNull(message = "productId must not be null")
         UUID productId,
 
+        String productName,
+
         @Min(value = 1, message = "rating must be between 1 and 5")
         @Max(value = 5, message = "rating must be between 1 and 5")
         int rating,

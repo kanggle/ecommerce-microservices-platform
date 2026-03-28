@@ -134,6 +134,23 @@ class OrderApiContractTest {
                 SPEC_REF + " GET /api/orders/{orderId} 200 shippingAddress");
     }
 
+    // ─── GET /api/orders/verify-purchase — 200 ─────────────────────────
+
+    @Test
+    @DisplayName("GET /api/orders/verify-purchase 응답은 {purchased}만 포함한다")
+    void verifyPurchase_response_containsOnlyPurchased() throws Exception {
+        given(orderQueryService.hasUserPurchasedProduct("user-1", "p1")).willReturn(true);
+
+        MvcResult result = mockMvc.perform(get("/api/orders/verify-purchase")
+                        .header("X-User-Id", "user-1")
+                        .param("productId", "p1"))
+                .andExpect(status().isOk())
+                .andReturn();
+
+        assertFieldsMatch(result.getResponse().getContentAsString(),
+                Set.of("purchased"), SPEC_REF + " GET /api/orders/verify-purchase 200");
+    }
+
     // ─── POST /api/orders/{orderId}/cancel — 200 ────────────────────────
 
     @Test

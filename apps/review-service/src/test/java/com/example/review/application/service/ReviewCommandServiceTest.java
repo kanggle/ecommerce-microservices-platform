@@ -51,7 +51,7 @@ class ReviewCommandServiceTest {
     @Test
     @DisplayName("구매한 상품에 대해 리뷰를 작성할 수 있다")
     void createReview_validPurchase_success() {
-        CreateReviewCommand command = new CreateReviewCommand(USER_ID, PRODUCT_ID, 5, "좋은 상품", "매우 만족합니다");
+        CreateReviewCommand command = new CreateReviewCommand(USER_ID, PRODUCT_ID, "테스트상품", 5, "좋은 상품", "매우 만족합니다");
 
         given(reviewRepository.existsByUserIdAndProductId(USER_ID, PRODUCT_ID)).willReturn(false);
         given(purchaseVerificationPort.hasUserPurchasedProduct(USER_ID, PRODUCT_ID)).willReturn(true);
@@ -67,7 +67,7 @@ class ReviewCommandServiceTest {
     @Test
     @DisplayName("이미 리뷰를 작성한 상품에 대해 중복 리뷰 시 예외가 발생한다")
     void createReview_alreadyExists_throws() {
-        CreateReviewCommand command = new CreateReviewCommand(USER_ID, PRODUCT_ID, 5, "좋은 상품", "매우 만족합니다");
+        CreateReviewCommand command = new CreateReviewCommand(USER_ID, PRODUCT_ID, "테스트상품", 5, "좋은 상품", "매우 만족합니다");
 
         given(reviewRepository.existsByUserIdAndProductId(USER_ID, PRODUCT_ID)).willReturn(true);
 
@@ -78,7 +78,7 @@ class ReviewCommandServiceTest {
     @Test
     @DisplayName("미구매 상품에 대해 리뷰 작성 시 예외가 발생한다")
     void createReview_notPurchased_throws() {
-        CreateReviewCommand command = new CreateReviewCommand(USER_ID, PRODUCT_ID, 5, "좋은 상품", "매우 만족합니다");
+        CreateReviewCommand command = new CreateReviewCommand(USER_ID, PRODUCT_ID, "테스트상품", 5, "좋은 상품", "매우 만족합니다");
 
         given(reviewRepository.existsByUserIdAndProductId(USER_ID, PRODUCT_ID)).willReturn(false);
         given(purchaseVerificationPort.hasUserPurchasedProduct(USER_ID, PRODUCT_ID)).willReturn(false);
@@ -91,10 +91,10 @@ class ReviewCommandServiceTest {
     @DisplayName("자신의 리뷰를 수정할 수 있다")
     void updateReview_ownReview_success() {
         UUID reviewId = UUID.randomUUID();
-        Review existingReview = Review.create(USER_ID, PRODUCT_ID, 5, "좋은 상품", "매우 만족합니다");
+        Review existingReview = Review.create(USER_ID, PRODUCT_ID, "테스트상품", 5, "좋은 상품", "매우 만족합니다");
         // Use reconstitute to set the specific ID
         Review review = Review.reconstitute(
-                reviewId, USER_ID, PRODUCT_ID, 5, "좋은 상품", "매우 만족합니다",
+                reviewId, USER_ID, PRODUCT_ID, "테스트상품", 5, "좋은 상품", "매우 만족합니다",
                 ReviewStatus.ACTIVE, existingReview.getCreatedAt(), existingReview.getUpdatedAt());
 
         UpdateReviewCommand command = new UpdateReviewCommand(USER_ID, reviewId, 3, "수정된 제목", "수정된 내용");
@@ -114,7 +114,7 @@ class ReviewCommandServiceTest {
         UUID reviewId = UUID.randomUUID();
         UUID otherUserId = UUID.randomUUID();
         Review review = Review.reconstitute(
-                reviewId, USER_ID, PRODUCT_ID, 5, "좋은 상품", "매우 만족합니다",
+                reviewId, USER_ID, PRODUCT_ID, "테스트상품", 5, "좋은 상품", "매우 만족합니다",
                 ReviewStatus.ACTIVE, java.time.Instant.now(), java.time.Instant.now());
 
         UpdateReviewCommand command = new UpdateReviewCommand(otherUserId, reviewId, 3, "수정", "수정 내용");
@@ -142,7 +142,7 @@ class ReviewCommandServiceTest {
     void deleteReview_ownReview_success() {
         UUID reviewId = UUID.randomUUID();
         Review review = Review.reconstitute(
-                reviewId, USER_ID, PRODUCT_ID, 5, "좋은 상품", "매우 만족합니다",
+                reviewId, USER_ID, PRODUCT_ID, "테스트상품", 5, "좋은 상품", "매우 만족합니다",
                 ReviewStatus.ACTIVE, java.time.Instant.now(), java.time.Instant.now());
 
         given(reviewRepository.findActiveById(reviewId)).willReturn(Optional.of(review));
@@ -155,12 +155,28 @@ class ReviewCommandServiceTest {
     }
 
     @Test
+    @DisplayName("이벤트 발행 실패 시 예외가 전파된다")
+    void createReview_eventPublishFails_throwsException() {
+        CreateReviewCommand command = new CreateReviewCommand(USER_ID, PRODUCT_ID, "테스트상품", 5, "좋은 상품", "매우 만족합니다");
+
+        given(reviewRepository.existsByUserIdAndProductId(USER_ID, PRODUCT_ID)).willReturn(false);
+        given(purchaseVerificationPort.hasUserPurchasedProduct(USER_ID, PRODUCT_ID)).willReturn(true);
+        given(reviewRepository.save(any(Review.class))).willAnswer(inv -> inv.getArgument(0));
+        willThrow(new RuntimeException("Kafka unavailable"))
+                .given(reviewEventPublisher).publish(any());
+
+        assertThatThrownBy(() -> reviewCommandService.createReview(command))
+                .isInstanceOf(RuntimeException.class)
+                .hasMessageContaining("Kafka unavailable");
+    }
+
+    @Test
     @DisplayName("다른 사용자의 리뷰를 삭제하면 예외가 발생한다")
     void deleteReview_notOwner_throws() {
         UUID reviewId = UUID.randomUUID();
         UUID otherUserId = UUID.randomUUID();
         Review review = Review.reconstitute(
-                reviewId, USER_ID, PRODUCT_ID, 5, "좋은 상품", "매우 만족합니다",
+                reviewId, USER_ID, PRODUCT_ID, "테스트상품", 5, "좋은 상품", "매우 만족합니다",
                 ReviewStatus.ACTIVE, java.time.Instant.now(), java.time.Instant.now());
 
         given(reviewRepository.findActiveById(reviewId)).willReturn(Optional.of(review));

@@ -47,6 +47,7 @@ public class ReviewCommandService {
         Review review = Review.create(
                 command.userId(),
                 command.productId(),
+                command.productName(),
                 command.rating(),
                 command.title(),
                 command.content()
@@ -54,18 +55,14 @@ public class ReviewCommandService {
 
         reviewRepository.save(review);
 
-        try {
-            ReviewCreatedPayload payload = new ReviewCreatedPayload(
-                    review.getId().toString(),
-                    review.getProductId().toString(),
-                    review.getUserId().toString(),
-                    review.getRatingValue(),
-                    review.getCreatedAt().toString()
-            );
-            reviewEventPublisher.publish(ReviewEvent.created(payload));
-        } catch (Exception e) {
-            log.warn("Failed to publish ReviewCreated event for review: {}", review.getId(), e);
-        }
+        ReviewCreatedPayload payload = new ReviewCreatedPayload(
+                review.getId().toString(),
+                review.getProductId().toString(),
+                review.getUserId().toString(),
+                review.getRatingValue(),
+                review.getCreatedAt().toString()
+        );
+        reviewEventPublisher.publish(ReviewEvent.created(payload));
 
         return new CreateReviewResult(review.getId());
     }
@@ -82,18 +79,14 @@ public class ReviewCommandService {
         review.update(command.rating(), command.title(), command.content());
         reviewRepository.save(review);
 
-        try {
-            ReviewUpdatedPayload payload = new ReviewUpdatedPayload(
-                    review.getId().toString(),
-                    review.getProductId().toString(),
-                    review.getUserId().toString(),
-                    review.getRatingValue(),
-                    review.getUpdatedAt().toString()
-            );
-            reviewEventPublisher.publish(ReviewEvent.updated(payload));
-        } catch (Exception e) {
-            log.warn("Failed to publish ReviewUpdated event for review: {}", review.getId(), e);
-        }
+        ReviewUpdatedPayload payload = new ReviewUpdatedPayload(
+                review.getId().toString(),
+                review.getProductId().toString(),
+                review.getUserId().toString(),
+                review.getRatingValue(),
+                review.getUpdatedAt().toString()
+        );
+        reviewEventPublisher.publish(ReviewEvent.updated(payload));
 
         return new UpdateReviewResult(review.getId());
     }
@@ -110,16 +103,12 @@ public class ReviewCommandService {
         review.softDelete();
         reviewRepository.save(review);
 
-        try {
-            ReviewDeletedPayload payload = new ReviewDeletedPayload(
-                    review.getId().toString(),
-                    review.getProductId().toString(),
-                    review.getUserId().toString(),
-                    review.getUpdatedAt().toString()
-            );
-            reviewEventPublisher.publish(ReviewEvent.deleted(payload));
-        } catch (Exception e) {
-            log.warn("Failed to publish ReviewDeleted event for review: {}", review.getId(), e);
-        }
+        ReviewDeletedPayload payload = new ReviewDeletedPayload(
+                review.getId().toString(),
+                review.getProductId().toString(),
+                review.getUserId().toString(),
+                review.getUpdatedAt().toString()
+        );
+        reviewEventPublisher.publish(ReviewEvent.deleted(payload));
     }
 }

@@ -113,7 +113,7 @@ class ReviewRepositoryAdapter implements ReviewRepository, ReviewQueryPort {
                 .map(entity -> new MyReviewListResult.MyReviewItem(
                         entity.getId(),
                         entity.getProductId(),
-                        null, // productName not available in review-service (boundary rule)
+                        entity.getProductName(),
                         entity.getRating(),
                         entity.getTitle(),
                         entity.getContent(),

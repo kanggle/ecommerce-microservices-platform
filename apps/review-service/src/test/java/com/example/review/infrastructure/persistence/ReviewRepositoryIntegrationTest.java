@@ -67,7 +67,7 @@ class ReviewRepositoryIntegrationTest {
     void save_andFindById_success() {
         UUID userId = UUID.randomUUID();
         UUID productId = UUID.randomUUID();
-        Review review = Review.create(userId, productId, 5, "좋은 상품", "매우 만족합니다");
+        Review review = Review.create(userId, productId, "테스트상품", 5, "좋은 상품", "매우 만족합니다");
 
         reviewRepository.save(review);
 
@@ -84,7 +84,7 @@ class ReviewRepositoryIntegrationTest {
     void existsByUserIdAndProductId_success() {
         UUID userId = UUID.randomUUID();
         UUID productId = UUID.randomUUID();
-        Review review = Review.create(userId, productId, 5, "좋은 상품", "매우 만족합니다");
+        Review review = Review.create(userId, productId, "테스트상품", 5, "좋은 상품", "매우 만족합니다");
 
         reviewRepository.save(review);
 
@@ -97,7 +97,7 @@ class ReviewRepositoryIntegrationTest {
     void findActiveById_deletedReview_empty() {
         UUID userId = UUID.randomUUID();
         UUID productId = UUID.randomUUID();
-        Review review = Review.create(userId, productId, 5, "좋은 상품", "매우 만족합니다");
+        Review review = Review.create(userId, productId, "테스트상품", 5, "좋은 상품", "매우 만족합니다");
         reviewRepository.save(review);
 
         review.softDelete();
@@ -112,7 +112,7 @@ class ReviewRepositoryIntegrationTest {
     void update_andSave_success() {
         UUID userId = UUID.randomUUID();
         UUID productId = UUID.randomUUID();
-        Review review = Review.create(userId, productId, 5, "좋은 상품", "매우 만족합니다");
+        Review review = Review.create(userId, productId, "테스트상품", 5, "좋은 상품", "매우 만족합니다");
         reviewRepository.save(review);
 
         Review loaded = reviewRepository.findActiveById(review.getId()).orElseThrow();
@@ -130,7 +130,7 @@ class ReviewRepositoryIntegrationTest {
     void findByProductId_pagination_success() {
         UUID productId = UUID.randomUUID();
         for (int i = 0; i < 3; i++) {
-            Review review = Review.create(UUID.randomUUID(), productId, i + 3, "제목 " + i, "내용 " + i);
+            Review review = Review.create(UUID.randomUUID(), productId, "상품" + i, i + 3, "제목 " + i, "내용 " + i);
             reviewRepository.save(review);
         }
 
@@ -146,9 +146,9 @@ class ReviewRepositoryIntegrationTest {
     @DisplayName("상품별 평점 요약을 조회할 수 있다")
     void getSummaryByProductId_success() {
         UUID productId = UUID.randomUUID();
-        reviewRepository.save(Review.create(UUID.randomUUID(), productId, 5, "제목1", "내용1"));
-        reviewRepository.save(Review.create(UUID.randomUUID(), productId, 4, "제목2", "내용2"));
-        reviewRepository.save(Review.create(UUID.randomUUID(), productId, 3, "제목3", "내용3"));
+        reviewRepository.save(Review.create(UUID.randomUUID(), productId, "상품A", 5, "제목1", "내용1"));
+        reviewRepository.save(Review.create(UUID.randomUUID(), productId, "상품A", 4, "제목2", "내용2"));
+        reviewRepository.save(Review.create(UUID.randomUUID(), productId, "상품A", 3, "제목3", "내용3"));
 
         ReviewSummaryResult summary = reviewQueryPort.getSummaryByProductId(productId);
 
@@ -166,8 +166,8 @@ class ReviewRepositoryIntegrationTest {
     @DisplayName("사용자별 리뷰 목록을 조회할 수 있다")
     void findByUserId_success() {
         UUID userId = UUID.randomUUID();
-        reviewRepository.save(Review.create(userId, UUID.randomUUID(), 5, "제목1", "내용1"));
-        reviewRepository.save(Review.create(userId, UUID.randomUUID(), 4, "제목2", "내용2"));
+        reviewRepository.save(Review.create(userId, UUID.randomUUID(), "상품1", 5, "제목1", "내용1"));
+        reviewRepository.save(Review.create(userId, UUID.randomUUID(), "상품2", 4, "제목2", "내용2"));
 
         MyReviewListResult result = reviewQueryPort.findByUserId(userId, 0, 20);
 
