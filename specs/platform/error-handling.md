@@ -136,6 +136,7 @@ All services must return errors in the following JSON format:
 | COUPON_EXPIRED | 422 | Coupon has expired |
 | COUPON_NOT_OWNED | 422 | Coupon does not belong to the user |
 | COUPON_LIMIT_EXCEEDED | 422 | Issuance would exceed max issuance count |
+| COUPON_RESTORE_NOT_ALLOWED | 422 | Coupon cannot be restored (e.g. coupon is not in a used state) |
 
 ## Notification
 
