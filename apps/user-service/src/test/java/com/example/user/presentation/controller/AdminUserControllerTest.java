@@ -66,7 +66,7 @@ class AdminUserControllerTest {
         void listUsers_withoutAdminRole_returns403() throws Exception {
             mockMvc.perform(get("/api/admin/users"))
                     .andExpect(status().isForbidden())
-                    .andExpect(jsonPath("$.code").value("FORBIDDEN"));
+                    .andExpect(jsonPath("$.code").value("ACCESS_DENIED"));
         }
 
         @Test
@@ -75,7 +75,7 @@ class AdminUserControllerTest {
             mockMvc.perform(get("/api/admin/users")
                             .header("X-User-Role", "USER"))
                     .andExpect(status().isForbidden())
-                    .andExpect(jsonPath("$.code").value("FORBIDDEN"));
+                    .andExpect(jsonPath("$.code").value("ACCESS_DENIED"));
         }
 
         @Test
@@ -151,7 +151,7 @@ class AdminUserControllerTest {
 
             mockMvc.perform(get("/api/admin/users/{userId}", userId))
                     .andExpect(status().isForbidden())
-                    .andExpect(jsonPath("$.code").value("FORBIDDEN"));
+                    .andExpect(jsonPath("$.code").value("ACCESS_DENIED"));
         }
 
         @Test

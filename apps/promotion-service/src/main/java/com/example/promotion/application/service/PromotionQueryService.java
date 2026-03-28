@@ -1,6 +1,6 @@
 package com.example.promotion.application.service;
 
-import com.example.promotion.application.exception.AccessDeniedException;
+import com.example.web.exception.AccessDeniedException;
 import com.example.promotion.application.result.PromotionDetail;
 import com.example.promotion.application.result.PromotionSummary;
 import com.example.common.page.PageResult;

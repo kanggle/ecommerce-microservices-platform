@@ -2,7 +2,7 @@ package com.example.promotion.application.service;
 
 import com.example.promotion.application.command.CreatePromotionCommand;
 import com.example.promotion.application.command.UpdatePromotionCommand;
-import com.example.promotion.application.exception.AccessDeniedException;
+import com.example.web.exception.AccessDeniedException;
 import com.example.promotion.application.result.CreatePromotionResult;
 import com.example.promotion.application.result.UpdatePromotionResult;
 import com.example.promotion.domain.coupon.CouponRepository;

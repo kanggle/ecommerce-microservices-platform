@@ -1,7 +1,7 @@
 package com.example.user.presentation.controller;
 
 import com.example.user.application.service.UserProfileService;
-import com.example.user.presentation.exception.AccessDeniedException;
+import com.example.web.exception.AccessDeniedException;
 import com.example.user.domain.model.ProfileStatus;
 import com.example.user.presentation.dto.response.AdminUserListResponse;
 import com.example.user.presentation.dto.response.UserProfileResponse;

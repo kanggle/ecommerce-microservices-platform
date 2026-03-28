@@ -1,6 +1,6 @@
 package com.example.shipping.application.service;
 
-import com.example.shipping.application.exception.AccessDeniedException;
+import com.example.web.exception.AccessDeniedException;
 import com.example.shipping.application.exception.UnauthorizedShippingAccessException;
 import com.example.shipping.application.result.ShippingResult;
 import com.example.shipping.application.result.ShippingSummary;

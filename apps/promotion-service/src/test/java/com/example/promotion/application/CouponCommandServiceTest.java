@@ -2,7 +2,7 @@ package com.example.promotion.application;
 
 import com.example.promotion.application.command.ApplyCouponCommand;
 import com.example.promotion.application.command.IssueCouponsCommand;
-import com.example.promotion.application.exception.AccessDeniedException;
+import com.example.web.exception.AccessDeniedException;
 import com.example.promotion.application.port.PromotionEventPublisher;
 import com.example.promotion.application.result.ApplyCouponResult;
 import com.example.promotion.application.result.IssueCouponsResult;

@@ -7,6 +7,9 @@ dependencies {
     // Common
     implementation project(':libs:java-common')
 
+    // Web (common exception primitives)
+    implementation project(':libs:java-web')
+
     // Observability
     implementation project(':libs:java-observability')
 

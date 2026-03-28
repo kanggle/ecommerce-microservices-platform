@@ -8,7 +8,7 @@ AccessDeniedException 중복 제거 및 도메인 예외 통일
 
 # Status
 
-ready
+review
 
 # Owner
 

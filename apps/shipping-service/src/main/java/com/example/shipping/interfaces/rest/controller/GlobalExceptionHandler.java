@@ -1,6 +1,6 @@
 package com.example.shipping.interfaces.rest.controller;
 
-import com.example.shipping.application.exception.AccessDeniedException;
+import com.example.web.exception.AccessDeniedException;
 import com.example.shipping.application.exception.UnauthorizedShippingAccessException;
 import com.example.shipping.domain.exception.InvalidShippingException;
 import com.example.shipping.domain.exception.InvalidStatusTransitionException;

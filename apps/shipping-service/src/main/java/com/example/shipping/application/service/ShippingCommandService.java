@@ -2,7 +2,7 @@ package com.example.shipping.application.service;
 
 import com.example.shipping.application.command.CreateShippingCommand;
 import com.example.shipping.application.command.UpdateShippingStatusCommand;
-import com.example.shipping.application.exception.AccessDeniedException;
+import com.example.web.exception.AccessDeniedException;
 import com.example.shipping.application.port.ShippingEventPublisher;
 import com.example.shipping.application.result.UpdateShippingStatusResult;
 import com.example.shipping.domain.exception.ShippingNotFoundException;
