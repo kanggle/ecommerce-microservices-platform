@@ -8,7 +8,7 @@ review-service 도메인에 Clock 주입 패턴 적용
 
 # Status
 
-ready
+review
 
 # Owner
 
