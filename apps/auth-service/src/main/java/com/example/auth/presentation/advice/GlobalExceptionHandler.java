@@ -4,7 +4,7 @@ import com.example.auth.application.exception.EmailAlreadyExistsException;
 import com.example.auth.application.exception.InvalidCredentialsException;
 import com.example.auth.application.exception.InvalidRefreshTokenException;
 import com.example.auth.application.exception.RefreshTokenRevokedException;
-import com.example.auth.presentation.dto.ErrorResponse;
+import com.example.web.dto.ErrorResponse;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.dao.DataAccessException;
 import org.springframework.dao.DataIntegrityViolationException;

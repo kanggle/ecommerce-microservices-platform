@@ -4,7 +4,7 @@ import com.example.review.domain.exception.ProductNotPurchasedException;
 import com.example.review.domain.exception.ReviewAccessDeniedException;
 import com.example.review.domain.exception.ReviewAlreadyExistsException;
 import com.example.review.domain.exception.ReviewNotFoundException;
-import com.example.review.interfaces.dto.ErrorResponse;
+import com.example.web.dto.ErrorResponse;
 import jakarta.validation.ConstraintViolationException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;

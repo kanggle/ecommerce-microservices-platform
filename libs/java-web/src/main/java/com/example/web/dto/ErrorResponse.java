@@ -1,4 +1,4 @@
-package com.example.gateway.filter.dto;
+package com.example.web.dto;
 
 import java.time.Instant;
 

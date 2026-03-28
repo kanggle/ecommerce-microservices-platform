@@ -1,6 +1,5 @@
-package com.example.gateway.filter.dto;
+package com.example.web.dto;
 
-import com.example.web.dto.ErrorResponse;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -26,12 +25,12 @@ class ErrorResponseTest {
     @Test
     @DisplayName("JSON 직렬화 시 code, message, timestamp 필드가 포함된다")
     void serialize_validResponse_containsAllFields() throws Exception {
-        ErrorResponse response = ErrorResponse.of("UNAUTHORIZED", "Invalid or expired access token");
+        ErrorResponse response = ErrorResponse.of("INTERNAL_ERROR", "Unexpected server-side error");
 
         String json = objectMapper.writeValueAsString(response);
 
-        assertThat(json).contains("\"code\":\"UNAUTHORIZED\"");
-        assertThat(json).contains("\"message\":\"Invalid or expired access token\"");
+        assertThat(json).contains("\"code\":\"INTERNAL_ERROR\"");
+        assertThat(json).contains("\"message\":\"Unexpected server-side error\"");
         assertThat(json).contains("\"timestamp\":");
     }
 
@@ -40,16 +39,24 @@ class ErrorResponseTest {
     void deserialize_validJson_producesCorrectObject() throws Exception {
         String json = """
                 {
-                  "code": "UNAUTHORIZED",
-                  "message": "Access token is required",
-                  "timestamp": "2026-03-25T10:00:00Z"
+                  "code": "NOT_FOUND",
+                  "message": "Requested resource does not exist",
+                  "timestamp": "2026-03-28T10:00:00Z"
                 }
                 """;
 
         ErrorResponse response = objectMapper.readValue(json, ErrorResponse.class);
 
-        assertThat(response.code()).isEqualTo("UNAUTHORIZED");
-        assertThat(response.message()).isEqualTo("Access token is required");
-        assertThat(response.timestamp()).isEqualTo("2026-03-25T10:00:00Z");
+        assertThat(response.code()).isEqualTo("NOT_FOUND");
+        assertThat(response.message()).isEqualTo("Requested resource does not exist");
+        assertThat(response.timestamp()).isEqualTo("2026-03-28T10:00:00Z");
+    }
+
+    @Test
+    @DisplayName("timestamp는 ISO 8601 형식이다")
+    void timestamp_isIso8601() {
+        ErrorResponse response = ErrorResponse.of("VALIDATION_ERROR", "Field is required");
+
+        assertThat(java.time.Instant.parse(response.timestamp())).isNotNull();
     }
 }

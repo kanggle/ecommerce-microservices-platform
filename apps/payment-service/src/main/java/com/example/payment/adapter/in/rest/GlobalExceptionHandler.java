@@ -1,5 +1,6 @@
 package com.example.payment.adapter.in.rest;
 
+import com.example.web.dto.ErrorResponse;
 import com.example.payment.application.exception.UnauthorizedPaymentAccessException;
 import com.example.payment.domain.exception.InvalidPaymentException;
 import com.example.payment.domain.exception.PaymentNotFoundException;

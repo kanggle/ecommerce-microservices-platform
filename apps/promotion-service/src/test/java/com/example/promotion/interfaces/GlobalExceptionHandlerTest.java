@@ -2,7 +2,7 @@ package com.example.promotion.interfaces;
 
 import com.example.promotion.domain.coupon.CouponRestoreNotAllowedException;
 import com.example.promotion.interfaces.rest.controller.GlobalExceptionHandler;
-import com.example.promotion.interfaces.rest.dto.response.ErrorResponse;
+import com.example.web.dto.ErrorResponse;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.http.HttpStatus;

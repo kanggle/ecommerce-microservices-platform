@@ -1,5 +1,6 @@
 package com.example.promotion.interfaces.rest.controller;
 
+import com.example.web.dto.ErrorResponse;
 import com.example.web.exception.AccessDeniedException;
 import com.example.promotion.domain.coupon.CouponAlreadyUsedException;
 import com.example.promotion.domain.coupon.CouponExpiredException;
@@ -11,7 +12,6 @@ import com.example.promotion.domain.promotion.PromotionAlreadyEndedException;
 import com.example.promotion.domain.promotion.PromotionHasIssuedCouponsException;
 import com.example.promotion.domain.promotion.PromotionNotActiveException;
 import com.example.promotion.domain.promotion.PromotionNotFoundException;
-import com.example.promotion.interfaces.rest.dto.response.ErrorResponse;
 import jakarta.validation.ConstraintViolationException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;

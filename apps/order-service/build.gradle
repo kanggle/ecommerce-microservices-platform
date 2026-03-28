@@ -4,6 +4,9 @@ plugins {
 }
 
 dependencies {
+    // Shared Web
+    implementation project(':libs:java-web')
+
     // Common
     implementation project(':libs:java-common')
 

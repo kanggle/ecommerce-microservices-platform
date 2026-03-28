@@ -8,6 +8,9 @@ ext {
 }
 
 dependencies {
+    // Shared Web
+    implementation project(':libs:java-web')
+
     // Observability
     implementation project(':libs:java-observability')
 

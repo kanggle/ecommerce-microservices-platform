@@ -1,5 +1,6 @@
 package com.example.user.presentation.exception;
 
+import com.example.web.dto.ErrorResponse;
 import com.example.web.exception.AccessDeniedException;
 import com.example.user.domain.exception.AddressLimitExceededException;
 import com.example.user.domain.exception.AddressNotFoundException;

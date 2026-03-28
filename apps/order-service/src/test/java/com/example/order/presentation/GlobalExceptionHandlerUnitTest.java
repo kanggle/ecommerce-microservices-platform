@@ -1,6 +1,6 @@
 package com.example.order.presentation;
 
-import com.example.order.presentation.dto.ErrorResponse;
+import com.example.web.dto.ErrorResponse;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;

@@ -4,7 +4,7 @@ import com.example.product.domain.exception.InsufficientStockException;
 import com.example.product.domain.exception.InvalidCategoryException;
 import com.example.product.domain.exception.ProductNotFoundException;
 import com.example.product.domain.exception.VariantNotFoundException;
-import com.example.product.presentation.dto.ErrorResponse;
+import com.example.web.dto.ErrorResponse;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.dao.OptimisticLockingFailureException;
 import org.springframework.http.HttpStatus;

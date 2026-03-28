@@ -1,5 +1,6 @@
 package com.example.notification.adapter.in.rest;
 
+import com.example.web.dto.ErrorResponse;
 import com.example.notification.domain.exception.AdminAccessDeniedException;
 import com.example.notification.domain.exception.NotificationNotFoundException;
 import com.example.notification.domain.exception.TemplateAlreadyExistsException;

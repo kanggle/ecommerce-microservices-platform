@@ -1,11 +1,11 @@
 package com.example.shipping.interfaces.rest.controller;
 
+import com.example.web.dto.ErrorResponse;
 import com.example.web.exception.AccessDeniedException;
 import com.example.shipping.application.exception.UnauthorizedShippingAccessException;
 import com.example.shipping.domain.exception.InvalidShippingException;
 import com.example.shipping.domain.exception.InvalidStatusTransitionException;
 import com.example.shipping.domain.exception.ShippingNotFoundException;
-import com.example.shipping.interfaces.rest.dto.response.ErrorResponse;
 import jakarta.validation.ConstraintViolationException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;

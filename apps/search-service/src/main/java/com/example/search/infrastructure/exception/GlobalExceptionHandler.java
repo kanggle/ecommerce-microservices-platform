@@ -1,5 +1,6 @@
 package com.example.search.infrastructure.exception;
 
+import com.example.web.dto.ErrorResponse;
 import jakarta.validation.ConstraintViolationException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;

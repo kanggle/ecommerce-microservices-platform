@@ -4,7 +4,7 @@ import com.example.order.application.exception.UnauthorizedOrderAccessException;
 import com.example.order.domain.exception.InvalidOrderException;
 import com.example.order.domain.exception.OrderCannotBeCancelledException;
 import com.example.order.domain.exception.OrderNotFoundException;
-import com.example.order.presentation.dto.ErrorResponse;
+import com.example.web.dto.ErrorResponse;
 import com.example.order.presentation.exception.InvalidOrderStatusException;
 import jakarta.validation.ConstraintViolationException;
 import lombok.extern.slf4j.Slf4j;
