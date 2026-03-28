@@ -8,7 +8,7 @@ notification-service KafkaConsumerConfig 패키지 위치 수정 (Hexagonal 아�
 
 # Status
 
-ready
+review
 
 # Owner
 
