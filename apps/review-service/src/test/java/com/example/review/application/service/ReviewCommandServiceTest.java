@@ -13,13 +13,16 @@ import com.example.review.domain.exception.ReviewNotFoundException;
 import com.example.review.domain.model.Review;
 import com.example.review.domain.model.ReviewStatus;
 import com.example.review.domain.repository.ReviewRepository;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
+import java.time.Clock;
+import java.time.Instant;
+import java.time.ZoneOffset;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -34,7 +37,6 @@ import static org.mockito.Mockito.verify;
 @DisplayName("ReviewCommandService 단위 테스트")
 class ReviewCommandServiceTest {
 
-    @InjectMocks
     private ReviewCommandService reviewCommandService;
 
     @Mock
@@ -48,6 +50,14 @@ class ReviewCommandServiceTest {
 
     private static final UUID USER_ID = UUID.randomUUID();
     private static final UUID PRODUCT_ID = UUID.randomUUID();
+    private static final Instant FIXED_TIME = Instant.parse("2026-01-01T00:00:00Z");
+    private final Clock fixedClock = Clock.fixed(FIXED_TIME, ZoneOffset.UTC);
+
+    @BeforeEach
+    void setUp() {
+        reviewCommandService = new ReviewCommandService(
+                reviewRepository, purchaseVerificationPort, reviewEventPublisher, fixedClock);
+    }
 
     @Test
     @DisplayName("구매한 상품에 대해 리뷰를 작성할 수 있다")
@@ -63,6 +73,20 @@ class ReviewCommandServiceTest {
         assertThat(result.reviewId()).isNotNull();
         verify(reviewRepository).save(any(Review.class));
         verify(reviewEventPublisher).publish(any());
+    }
+
+    @Test
+    @DisplayName("리뷰 생성 시 createdAt이 고정 Clock 기준 시간으로 설정된다")
+    void createReview_setsCreatedAtFromClock() {
+        CreateReviewCommand command = new CreateReviewCommand(USER_ID, PRODUCT_ID, "테스트상품", 5, "좋은 상품", "매우 만족합니다");
+
+        given(reviewRepository.existsByUserIdAndProductId(USER_ID, PRODUCT_ID)).willReturn(false);
+        given(purchaseVerificationPort.hasUserPurchasedProduct(USER_ID, PRODUCT_ID)).willReturn(true);
+        given(reviewRepository.save(any(Review.class))).willAnswer(inv -> inv.getArgument(0));
+
+        reviewCommandService.createReview(command);
+
+        verify(reviewRepository).save(any(Review.class));
     }
 
     @Test
@@ -92,11 +116,9 @@ class ReviewCommandServiceTest {
     @DisplayName("자신의 리뷰를 수정할 수 있다")
     void updateReview_ownReview_success() {
         UUID reviewId = UUID.randomUUID();
-        Review existingReview = Review.create(USER_ID, PRODUCT_ID, "테스트상품", 5, "좋은 상품", "매우 만족합니다");
-        // Use reconstitute to set the specific ID
         Review review = Review.reconstitute(
                 reviewId, USER_ID, PRODUCT_ID, "테스트상품", 5, "좋은 상품", "매우 만족합니다",
-                ReviewStatus.ACTIVE, existingReview.getCreatedAt(), existingReview.getUpdatedAt());
+                ReviewStatus.ACTIVE, FIXED_TIME, FIXED_TIME);
 
         UpdateReviewCommand command = new UpdateReviewCommand(USER_ID, reviewId, 3, "수정된 제목", "수정된 내용");
 
@@ -106,6 +128,7 @@ class ReviewCommandServiceTest {
         UpdateReviewResult result = reviewCommandService.updateReview(command);
 
         assertThat(result.reviewId()).isEqualTo(reviewId);
+        assertThat(review.getUpdatedAt()).isEqualTo(FIXED_TIME);
         verify(reviewEventPublisher).publish(any());
     }
 
@@ -116,7 +139,7 @@ class ReviewCommandServiceTest {
         UUID otherUserId = UUID.randomUUID();
         Review review = Review.reconstitute(
                 reviewId, USER_ID, PRODUCT_ID, "테스트상품", 5, "좋은 상품", "매우 만족합니다",
-                ReviewStatus.ACTIVE, java.time.Instant.now(), java.time.Instant.now());
+                ReviewStatus.ACTIVE, FIXED_TIME, FIXED_TIME);
 
         UpdateReviewCommand command = new UpdateReviewCommand(otherUserId, reviewId, 3, "수정", "수정 내용");
 
@@ -144,13 +167,15 @@ class ReviewCommandServiceTest {
         UUID reviewId = UUID.randomUUID();
         Review review = Review.reconstitute(
                 reviewId, USER_ID, PRODUCT_ID, "테스트상품", 5, "좋은 상품", "매우 만족합니다",
-                ReviewStatus.ACTIVE, java.time.Instant.now(), java.time.Instant.now());
+                ReviewStatus.ACTIVE, FIXED_TIME, FIXED_TIME);
 
         given(reviewRepository.findActiveById(reviewId)).willReturn(Optional.of(review));
         given(reviewRepository.save(any(Review.class))).willAnswer(inv -> inv.getArgument(0));
 
         reviewCommandService.deleteReview(USER_ID, reviewId);
 
+        assertThat(review.getStatus()).isEqualTo(ReviewStatus.DELETED);
+        assertThat(review.getUpdatedAt()).isEqualTo(FIXED_TIME);
         verify(reviewRepository).save(any(Review.class));
         verify(reviewEventPublisher).publish(any());
     }
@@ -178,7 +203,7 @@ class ReviewCommandServiceTest {
         UUID otherUserId = UUID.randomUUID();
         Review review = Review.reconstitute(
                 reviewId, USER_ID, PRODUCT_ID, "테스트상품", 5, "좋은 상품", "매우 만족합니다",
-                ReviewStatus.ACTIVE, java.time.Instant.now(), java.time.Instant.now());
+                ReviewStatus.ACTIVE, FIXED_TIME, FIXED_TIME);
 
         given(reviewRepository.findActiveById(reviewId)).willReturn(Optional.of(review));
 

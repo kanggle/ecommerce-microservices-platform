@@ -1,5 +1,6 @@
 package com.example.review.domain.model;
 
+import java.time.Clock;
 import java.time.Instant;
 import java.util.UUID;
 
@@ -19,7 +20,8 @@ public class Review {
     private Review() {}
 
     public static Review create(UUID userId, UUID productId, String productName,
-                                int rating, String title, String content) {
+                                int rating, String title, String content, Clock clock) {
+        if (clock == null) throw new IllegalArgumentException("clock must not be null");
         validateTitle(title);
         validateContent(content);
 
@@ -32,7 +34,7 @@ public class Review {
         review.title = title.trim();
         review.content = content.trim();
         review.status = ReviewStatus.ACTIVE;
-        Instant now = Instant.now();
+        Instant now = Instant.now(clock);
         review.createdAt = now;
         review.updatedAt = now;
         return review;
@@ -62,19 +64,21 @@ public class Review {
         return review;
     }
 
-    public void update(int newRating, String newTitle, String newContent) {
+    public void update(int newRating, String newTitle, String newContent, Clock clock) {
+        if (clock == null) throw new IllegalArgumentException("clock must not be null");
         validateTitle(newTitle);
         validateContent(newContent);
 
         this.rating = new Rating(newRating);
         this.title = newTitle.trim();
         this.content = newContent.trim();
-        this.updatedAt = Instant.now();
+        this.updatedAt = Instant.now(clock);
     }
 
-    public void softDelete() {
+    public void softDelete(Clock clock) {
+        if (clock == null) throw new IllegalArgumentException("clock must not be null");
         this.status = ReviewStatus.DELETED;
-        this.updatedAt = Instant.now();
+        this.updatedAt = Instant.now(clock);
     }
 
     public boolean isOwnedBy(UUID requestUserId) {

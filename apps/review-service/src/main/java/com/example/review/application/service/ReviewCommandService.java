@@ -21,6 +21,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.Clock;
 import java.util.UUID;
 
 @Slf4j
@@ -31,6 +32,7 @@ public class ReviewCommandService {
     private final ReviewRepository reviewRepository;
     private final PurchaseVerificationPort purchaseVerificationPort;
     private final ReviewEventPublisher reviewEventPublisher;
+    private final Clock clock;
 
     @Transactional
     public CreateReviewResult createReview(CreateReviewCommand command) {
@@ -50,7 +52,8 @@ public class ReviewCommandService {
                 command.productName(),
                 command.rating(),
                 command.title(),
-                command.content()
+                command.content(),
+                clock
         );
 
         reviewRepository.save(review);
@@ -76,7 +79,7 @@ public class ReviewCommandService {
             throw new ReviewAccessDeniedException(command.userId(), command.reviewId());
         }
 
-        review.update(command.rating(), command.title(), command.content());
+        review.update(command.rating(), command.title(), command.content(), clock);
         reviewRepository.save(review);
 
         ReviewUpdatedPayload payload = new ReviewUpdatedPayload(
@@ -100,7 +103,7 @@ public class ReviewCommandService {
             throw new ReviewAccessDeniedException(userId, reviewId);
         }
 
-        review.softDelete();
+        review.softDelete(clock);
         reviewRepository.save(review);
 
         ReviewDeletedPayload payload = new ReviewDeletedPayload(

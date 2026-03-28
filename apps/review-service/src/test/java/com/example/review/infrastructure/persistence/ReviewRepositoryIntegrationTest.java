@@ -22,6 +22,9 @@ import org.testcontainers.containers.PostgreSQLContainer;
 import org.testcontainers.junit.jupiter.Container;
 import org.testcontainers.junit.jupiter.Testcontainers;
 
+import java.time.Clock;
+import java.time.Instant;
+import java.time.ZoneOffset;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -32,6 +35,8 @@ import static org.assertj.core.api.Assertions.assertThat;
 @Transactional
 @DisplayName("ReviewRepository 통합 테스트")
 class ReviewRepositoryIntegrationTest {
+
+    private static final Clock TEST_CLOCK = Clock.fixed(Instant.parse("2026-01-01T00:00:00Z"), ZoneOffset.UTC);
 
     @SuppressWarnings("resource")
     @Container
@@ -71,7 +76,7 @@ class ReviewRepositoryIntegrationTest {
     void save_andFindById_success() {
         UUID userId = UUID.randomUUID();
         UUID productId = UUID.randomUUID();
-        Review review = Review.create(userId, productId, "테스트상품", 5, "좋은 상품", "매우 만족합니다");
+        Review review = Review.create(userId, productId, "테스트상품", 5, "좋은 상품", "매우 만족합니다", TEST_CLOCK);
 
         reviewRepository.save(review);
 
@@ -88,7 +93,7 @@ class ReviewRepositoryIntegrationTest {
     void existsByUserIdAndProductId_success() {
         UUID userId = UUID.randomUUID();
         UUID productId = UUID.randomUUID();
-        Review review = Review.create(userId, productId, "테스트상품", 5, "좋은 상품", "매우 만족합니다");
+        Review review = Review.create(userId, productId, "테스트상품", 5, "좋은 상품", "매우 만족합니다", TEST_CLOCK);
 
         reviewRepository.save(review);
 
@@ -101,10 +106,10 @@ class ReviewRepositoryIntegrationTest {
     void findActiveById_deletedReview_empty() {
         UUID userId = UUID.randomUUID();
         UUID productId = UUID.randomUUID();
-        Review review = Review.create(userId, productId, "테스트상품", 5, "좋은 상품", "매우 만족합니다");
+        Review review = Review.create(userId, productId, "테스트상품", 5, "좋은 상품", "매우 만족합니다", TEST_CLOCK);
         reviewRepository.save(review);
 
-        review.softDelete();
+        review.softDelete(TEST_CLOCK);
         reviewRepository.save(review);
 
         Optional<Review> found = reviewRepository.findActiveById(review.getId());
@@ -116,11 +121,11 @@ class ReviewRepositoryIntegrationTest {
     void update_andSave_success() {
         UUID userId = UUID.randomUUID();
         UUID productId = UUID.randomUUID();
-        Review review = Review.create(userId, productId, "테스트상품", 5, "좋은 상품", "매우 만족합니다");
+        Review review = Review.create(userId, productId, "테스트상품", 5, "좋은 상품", "매우 만족합니다", TEST_CLOCK);
         reviewRepository.save(review);
 
         Review loaded = reviewRepository.findActiveById(review.getId()).orElseThrow();
-        loaded.update(3, "수정된 제목", "수정된 내용");
+        loaded.update(3, "수정된 제목", "수정된 내용", TEST_CLOCK);
         reviewRepository.save(loaded);
 
         Review updated = reviewRepository.findActiveById(review.getId()).orElseThrow();
@@ -134,7 +139,7 @@ class ReviewRepositoryIntegrationTest {
     void findByProductId_pagination_success() {
         UUID productId = UUID.randomUUID();
         for (int i = 0; i < 3; i++) {
-            Review review = Review.create(UUID.randomUUID(), productId, "상품" + i, i + 3, "제목 " + i, "내용 " + i);
+            Review review = Review.create(UUID.randomUUID(), productId, "상품" + i, i + 3, "제목 " + i, "내용 " + i, TEST_CLOCK);
             reviewRepository.save(review);
         }
 
@@ -150,9 +155,9 @@ class ReviewRepositoryIntegrationTest {
     @DisplayName("상품별 평점 요약을 조회할 수 있다")
     void getSummaryByProductId_success() {
         UUID productId = UUID.randomUUID();
-        reviewRepository.save(Review.create(UUID.randomUUID(), productId, "상품A", 5, "제목1", "내용1"));
-        reviewRepository.save(Review.create(UUID.randomUUID(), productId, "상품A", 4, "제목2", "내용2"));
-        reviewRepository.save(Review.create(UUID.randomUUID(), productId, "상품A", 3, "제목3", "내용3"));
+        reviewRepository.save(Review.create(UUID.randomUUID(), productId, "상품A", 5, "제목1", "내용1", TEST_CLOCK));
+        reviewRepository.save(Review.create(UUID.randomUUID(), productId, "상품A", 4, "제목2", "내용2", TEST_CLOCK));
+        reviewRepository.save(Review.create(UUID.randomUUID(), productId, "상품A", 3, "제목3", "내용3", TEST_CLOCK));
 
         ReviewSummaryResult summary = reviewQueryPort.getSummaryByProductId(productId);
 
@@ -172,15 +177,15 @@ class ReviewRepositoryIntegrationTest {
         UUID userId = UUID.randomUUID();
         UUID productId = UUID.randomUUID();
 
-        Review firstReview = Review.create(userId, productId, "테스트상품", 4, "첫 리뷰", "첫 번째 리뷰입니다");
+        Review firstReview = Review.create(userId, productId, "테스트상품", 4, "첫 리뷰", "첫 번째 리뷰입니다", TEST_CLOCK);
         reviewRepository.save(firstReview);
 
-        firstReview.softDelete();
+        firstReview.softDelete(TEST_CLOCK);
         reviewRepository.save(firstReview);
         entityManager.flush();
         entityManager.clear();
 
-        Review secondReview = Review.create(userId, productId, "테스트상품", 5, "재리뷰", "재구매 후 다시 작성합니다");
+        Review secondReview = Review.create(userId, productId, "테스트상품", 5, "재리뷰", "재구매 후 다시 작성합니다", TEST_CLOCK);
         Review saved = reviewRepository.save(secondReview);
 
         assertThat(saved.getId()).isNotEqualTo(firstReview.getId());
@@ -199,11 +204,11 @@ class ReviewRepositoryIntegrationTest {
         UUID userId = UUID.randomUUID();
         UUID productId = UUID.randomUUID();
 
-        Review review = Review.create(userId, productId, "테스트상품", 5, "좋은 상품", "매우 만족합니다");
+        Review review = Review.create(userId, productId, "테스트상품", 5, "좋은 상품", "매우 만족합니다", TEST_CLOCK);
         reviewRepository.save(review);
         assertThat(reviewRepository.existsByUserIdAndProductId(userId, productId)).isTrue();
 
-        review.softDelete();
+        review.softDelete(TEST_CLOCK);
         reviewRepository.save(review);
 
         assertThat(reviewRepository.existsByUserIdAndProductId(userId, productId)).isFalse();
@@ -213,8 +218,8 @@ class ReviewRepositoryIntegrationTest {
     @DisplayName("사용자별 리뷰 목록을 조회할 수 있다")
     void findByUserId_success() {
         UUID userId = UUID.randomUUID();
-        reviewRepository.save(Review.create(userId, UUID.randomUUID(), "상품1", 5, "제목1", "내용1"));
-        reviewRepository.save(Review.create(userId, UUID.randomUUID(), "상품2", 4, "제목2", "내용2"));
+        reviewRepository.save(Review.create(userId, UUID.randomUUID(), "상품1", 5, "제목1", "내용1", TEST_CLOCK));
+        reviewRepository.save(Review.create(userId, UUID.randomUUID(), "상품2", 4, "제목2", "내용2", TEST_CLOCK));
 
         MyReviewListResult result = reviewQueryPort.findByUserId(userId, 0, 20);
 
