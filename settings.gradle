@@ -11,6 +11,7 @@ include(
     'apps:product-service',
     'apps:review-service',
     'apps:search-service',
+    'apps:shipping-service',
     'apps:user-service',
     'libs:java-common',
     'libs:java-messaging',

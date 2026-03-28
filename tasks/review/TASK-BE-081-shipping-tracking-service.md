@@ -8,7 +8,7 @@ TASK-BE-081
 
 # Status
 
-backlog
+review
 
 # Owner
 
@@ -65,7 +65,7 @@ backend
 - `specs/platform/architecture-decision-rule.md`
 - `specs/platform/service-boundaries.md`
 - `specs/platform/event-driven-policy.md`
-- (shipping-service 스펙 작성 필요)
+- `specs/services/shipping-service/architecture.md`
 
 # Related Skills
 
@@ -75,8 +75,8 @@ backend
 
 # Related Contracts
 
-- (shipping API 계약 작성 필요)
-- (shipping events 계약 작성 필요)
+- `specs/contracts/http/shipping-api.md`
+- `specs/contracts/events/shipping-events.md`
 - `specs/contracts/events/order-events.md`
 - `specs/contracts/http/order-api.md`
 
@@ -90,14 +90,14 @@ backend
 
 # Architecture
 
-- 서비스 아키텍처 결정 필요
+- DDD-style Architecture (see `specs/services/shipping-service/architecture.md`)
 
 ---
 
 # Implementation Notes
 
-- ready로 이동 전 shipping-service 스펙, API 계약, 이벤트 계약 작성 필요
-- order-service, notification-service와의 연동 설계 필요
+- OrderConfirmed 이벤트 소비로 배송 레코드 자동 생성
+- ShippingStatusChanged 이벤트를 order-service, notification-service가 소비
 
 ---
 
