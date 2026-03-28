@@ -8,7 +8,7 @@ TASK-BE-081-FIX-shipping-service-spec-and-policy-compliance
 
 # Status
 
-ready
+done
 
 # Owner
 
