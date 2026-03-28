@@ -52,6 +52,7 @@ Package organization may follow package-by-layer or package-by-feature if the la
 - User profile (nickname, email, phone, profile image URL)
 - User addresses (shipping addresses, default address designation)
 - Profile status (active, suspended, withdrawn)
+- Wishlist (user-product associations, product info fetched from product-service at query time)
 
 ## Domain Constraints
 - user-service must NOT own authentication credentials (owned by auth-service)

@@ -229,7 +229,7 @@ class WishlistControllerTest {
             mockMvc.perform(get("/api/wishlists/me/check")
                             .header("X-User-Id", USER_ID.toString()))
                     .andExpect(status().isBadRequest())
-                    .andExpect(jsonPath("$.code").value("INVALID_WISHLIST_REQUEST"));
+                    .andExpect(jsonPath("$.code").value("VALIDATION_ERROR"));
         }
 
         @Test

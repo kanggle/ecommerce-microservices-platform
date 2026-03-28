@@ -8,7 +8,11 @@ TASK-BE-080-FIX-wishlist-contract-and-infra
 
 # Status
 
+<<<<<<<< HEAD:tasks/done/TASK-BE-080-FIX-wishlist-contract-and-infra.md
 done
+========
+review
+>>>>>>>> worktree-agent-a250ba6d:tasks/review/TASK-BE-080-FIX-wishlist-contract-and-infra.md
 
 # Owner
 
