@@ -1,6 +1,7 @@
 package com.example.notification.adapter.in.rest;
 
 import com.example.notification.application.page.PageResult;
+import com.example.notification.application.result.GetPreferenceResult;
 import com.example.notification.application.service.NotificationQueryService;
 import com.example.notification.application.service.PreferenceService;
 import com.example.notification.domain.exception.NotificationNotFoundException;
@@ -106,8 +107,7 @@ class NotificationControllerTest {
     @Test
     @DisplayName("GET /api/notifications/me/preferences - 알림 설정 조회 성공")
     void getPreferences_returns200() throws Exception {
-        UserNotificationPreference pref = UserNotificationPreference.reconstitute(
-                "user-1", true, false, true, LocalDateTime.now(), LocalDateTime.now());
+        GetPreferenceResult pref = new GetPreferenceResult("user-1", true, false, true);
 
         given(preferenceService.getPreference("user-1")).willReturn(pref);
 
@@ -123,8 +123,7 @@ class NotificationControllerTest {
     @Test
     @DisplayName("PUT /api/notifications/me/preferences - 알림 설정 수정 성공")
     void updatePreferences_returns200() throws Exception {
-        UserNotificationPreference updated = UserNotificationPreference.reconstitute(
-                "user-1", false, true, false, LocalDateTime.now(), LocalDateTime.now());
+        GetPreferenceResult updated = new GetPreferenceResult("user-1", false, true, false);
 
         given(preferenceService.updatePreference(any())).willReturn(updated);
 
@@ -147,5 +146,40 @@ class NotificationControllerTest {
                         .content("{\"emailEnabled\":true}"))
                 .andExpect(status().isBadRequest())
                 .andExpect(jsonPath("$.code").value("VALIDATION_ERROR"));
+    }
+
+    @Test
+    @DisplayName("GET /api/notifications/me - X-User-Id 헤더 누락 시 401 반환")
+    void getMyNotifications_missingUserIdHeader_returns401() throws Exception {
+        mockMvc.perform(get("/api/notifications/me"))
+                .andExpect(status().isUnauthorized())
+                .andExpect(jsonPath("$.code").value("UNAUTHORIZED"));
+    }
+
+    @Test
+    @DisplayName("GET /api/notifications/me - X-User-Id 헤더 빈 문자열 시 400 반환")
+    void getMyNotifications_blankUserIdHeader_returns400() throws Exception {
+        mockMvc.perform(get("/api/notifications/me")
+                        .header("X-User-Id", ""))
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.code").value("VALIDATION_ERROR"));
+    }
+
+    @Test
+    @DisplayName("GET /api/notifications/me/preferences - X-User-Id 헤더 누락 시 401 반환")
+    void getPreferences_missingUserIdHeader_returns401() throws Exception {
+        mockMvc.perform(get("/api/notifications/me/preferences"))
+                .andExpect(status().isUnauthorized())
+                .andExpect(jsonPath("$.code").value("UNAUTHORIZED"));
+    }
+
+    @Test
+    @DisplayName("PUT /api/notifications/me/preferences - X-User-Id 헤더 누락 시 401 반환")
+    void updatePreferences_missingUserIdHeader_returns401() throws Exception {
+        mockMvc.perform(put("/api/notifications/me/preferences")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content("{\"emailEnabled\":true,\"smsEnabled\":false,\"pushEnabled\":true}"))
+                .andExpect(status().isUnauthorized())
+                .andExpect(jsonPath("$.code").value("UNAUTHORIZED"));
     }
 }

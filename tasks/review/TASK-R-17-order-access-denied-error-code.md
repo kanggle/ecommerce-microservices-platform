@@ -8,7 +8,7 @@ order-service UnauthorizedOrderAccessException 에러코드 UNAUTHORIZED -> ACCE
 
 # Status
 
-ready
+review
 
 # Owner
 

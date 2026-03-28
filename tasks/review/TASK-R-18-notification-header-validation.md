@@ -8,7 +8,7 @@ notification-service 컨트롤러 @NotBlank 추가 및 MissingRequestHeaderExcep
 
 # Status
 
-ready
+review
 
 # Owner
 

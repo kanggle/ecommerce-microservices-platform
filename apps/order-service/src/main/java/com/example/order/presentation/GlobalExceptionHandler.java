@@ -42,6 +42,10 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler(MissingRequestHeaderException.class)
     public ResponseEntity<ErrorResponse> handleMissingRequestHeader(MissingRequestHeaderException e) {
+        if ("X-User-Id".equals(e.getHeaderName())) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
+                    .body(ErrorResponse.of("UNAUTHORIZED", "X-User-Id 헤더는 필수입니다"));
+        }
         return ResponseEntity.status(HttpStatus.BAD_REQUEST)
                 .body(ErrorResponse.of("INVALID_ORDER_REQUEST", e.getHeaderName() + " 헤더는 필수입니다"));
     }
@@ -49,7 +53,7 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(UnauthorizedOrderAccessException.class)
     public ResponseEntity<ErrorResponse> handleUnauthorized(UnauthorizedOrderAccessException e) {
         return ResponseEntity.status(HttpStatus.FORBIDDEN)
-                .body(ErrorResponse.of("UNAUTHORIZED", e.getMessage()));
+                .body(ErrorResponse.of("ACCESS_DENIED", e.getMessage()));
     }
 
     @ExceptionHandler(OrderNotFoundException.class)

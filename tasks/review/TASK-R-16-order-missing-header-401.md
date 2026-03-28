@@ -8,7 +8,7 @@ order-service MissingRequestHeaderException -> 401 UNAUTHORIZED 수정
 
 # Status
 
-ready
+review
 
 # Owner
 

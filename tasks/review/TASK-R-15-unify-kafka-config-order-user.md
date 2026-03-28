@@ -8,7 +8,7 @@ order-service, user-service KafkaConsumerConfig ExponentialBackOff + .dlq 통일
 
 # Status
 
-ready
+review
 
 # Owner
 

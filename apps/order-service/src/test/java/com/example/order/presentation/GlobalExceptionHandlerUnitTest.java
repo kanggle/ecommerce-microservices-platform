@@ -69,15 +69,15 @@ class GlobalExceptionHandlerUnitTest {
     }
 
     @Test
-    @DisplayName("UnauthorizedOrderAccessException 핸들러가 ErrorResponse 형식으로 응답한다")
-    void handleUnauthorized_returnsErrorResponseFormat() {
+    @DisplayName("UnauthorizedOrderAccessException 핸들러가 403 ACCESS_DENIED로 응답한다")
+    void handleUnauthorized_returns403AccessDenied() {
         var ex = new com.example.order.application.exception.UnauthorizedOrderAccessException();
 
         ResponseEntity<ErrorResponse> result = handler.handleUnauthorized(ex);
 
         assertThat(result.getStatusCode()).isEqualTo(HttpStatus.FORBIDDEN);
         assertThat(result.getBody()).isNotNull();
-        assertThat(result.getBody().code()).isEqualTo("UNAUTHORIZED");
+        assertThat(result.getBody().code()).isEqualTo("ACCESS_DENIED");
         assertThat(result.getBody().timestamp()).isNotNull();
     }
 

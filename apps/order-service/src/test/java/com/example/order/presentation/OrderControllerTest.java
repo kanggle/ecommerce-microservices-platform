@@ -86,13 +86,13 @@ class OrderControllerTest {
     }
 
     @Test
-    @DisplayName("X-User-Id 헤더 누락 시 400 반환")
-    void placeOrder_missingUserId_returns400() throws Exception {
+    @DisplayName("X-User-Id 헤더 누락 시 401 반환")
+    void placeOrder_missingUserId_returns401() throws Exception {
         mockMvc.perform(post("/api/orders")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(VALID_PLACE_BODY))
-                .andExpect(status().isBadRequest())
-                .andExpect(jsonPath("$.code").value("INVALID_ORDER_REQUEST"));
+                .andExpect(status().isUnauthorized())
+                .andExpect(jsonPath("$.code").value("UNAUTHORIZED"));
     }
 
     @Test
@@ -202,11 +202,11 @@ class OrderControllerTest {
     }
 
     @Test
-    @DisplayName("주문 목록 조회 시 X-User-Id 누락이면 400 반환")
-    void getOrders_missingUserId_returns400() throws Exception {
+    @DisplayName("주문 목록 조회 시 X-User-Id 누락이면 401 반환")
+    void getOrders_missingUserId_returns401() throws Exception {
         mockMvc.perform(get("/api/orders"))
-                .andExpect(status().isBadRequest())
-                .andExpect(jsonPath("$.code").value("INVALID_ORDER_REQUEST"));
+                .andExpect(status().isUnauthorized())
+                .andExpect(jsonPath("$.code").value("UNAUTHORIZED"));
     }
 
     @Test
@@ -350,12 +350,12 @@ class OrderControllerTest {
     }
 
     @Test
-    @DisplayName("X-User-Id 누락 시 400 반환")
-    void verifyPurchase_missingUserId_returns400() throws Exception {
+    @DisplayName("X-User-Id 누락 시 401 반환")
+    void verifyPurchase_missingUserId_returns401() throws Exception {
         mockMvc.perform(get("/api/orders/verify-purchase")
                         .param("productId", "p1"))
-                .andExpect(status().isBadRequest())
-                .andExpect(jsonPath("$.code").value("INVALID_ORDER_REQUEST"));
+                .andExpect(status().isUnauthorized())
+                .andExpect(jsonPath("$.code").value("UNAUTHORIZED"));
     }
 
     // ─── GET /api/orders/{orderId} ──────────────────────────────────────
@@ -382,7 +382,7 @@ class OrderControllerTest {
 
         mockMvc.perform(get("/api/orders/order-1").header("X-User-Id", "other"))
                 .andExpect(status().isForbidden())
-                .andExpect(jsonPath("$.code").value("UNAUTHORIZED"));
+                .andExpect(jsonPath("$.code").value("ACCESS_DENIED"));
     }
 
     @Test
@@ -421,11 +421,11 @@ class OrderControllerTest {
     }
 
     @Test
-    @DisplayName("취소 시 X-User-Id 누락이면 400 반환")
-    void cancelOrder_missingUserId_returns400() throws Exception {
+    @DisplayName("취소 시 X-User-Id 누락이면 401 반환")
+    void cancelOrder_missingUserId_returns401() throws Exception {
         mockMvc.perform(post("/api/orders/order-1/cancel"))
-                .andExpect(status().isBadRequest())
-                .andExpect(jsonPath("$.code").value("INVALID_ORDER_REQUEST"));
+                .andExpect(status().isUnauthorized())
+                .andExpect(jsonPath("$.code").value("UNAUTHORIZED"));
     }
 
     @Test
