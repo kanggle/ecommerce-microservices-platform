@@ -1,0 +1,25 @@
+package com.example.user.domain.repository;
+
+import com.example.user.domain.model.PageQuery;
+import com.example.user.domain.model.PageResult;
+import com.example.user.domain.model.WishlistItem;
+
+import java.util.Optional;
+import java.util.UUID;
+
+public interface WishlistItemRepository {
+
+    WishlistItem save(WishlistItem item);
+
+    Optional<WishlistItem> findById(UUID id);
+
+    Optional<WishlistItem> findByUserIdAndProductId(UUID userId, UUID productId);
+
+    boolean existsByUserIdAndProductId(UUID userId, UUID productId);
+
+    PageResult<WishlistItem> findAllByUserId(UUID userId, PageQuery pageQuery);
+
+    void delete(WishlistItem item);
+
+    void deleteAllByUserId(UUID userId);
+}
