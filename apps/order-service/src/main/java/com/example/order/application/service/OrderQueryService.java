@@ -39,6 +39,11 @@ public class OrderQueryService {
         return OrderDetail.from(order);
     }
 
+    @Transactional(readOnly = true)
+    public boolean hasUserPurchasedProduct(String userId, String productId) {
+        return orderRepository.existsByUserIdAndProductIdAndStatus(userId, productId, OrderStatus.DELIVERED);
+    }
+
     private PageResult<OrderSummary> mapToSummaryPageResult(PageResult<Order> orders) {
         return new PageResult<>(
                 orders.content().stream().map(OrderSummary::from).toList(),

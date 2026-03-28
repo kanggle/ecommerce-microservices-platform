@@ -99,6 +99,11 @@ public class OrderRepositoryImpl implements OrderRepository {
                 .toList();
     }
 
+    @Override
+    public boolean existsByUserIdAndProductIdAndStatus(String userId, String productId, OrderStatus status) {
+        return jpaRepository.existsByUserIdAndProductIdAndStatus(userId, productId, status);
+    }
+
     private PageRequest toPageRequest(PageQuery pageQuery) {
         Sort.Direction direction = "ASC".equalsIgnoreCase(pageQuery.sortDirection())
                 ? Sort.Direction.ASC
