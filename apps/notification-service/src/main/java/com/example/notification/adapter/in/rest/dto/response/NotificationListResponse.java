@@ -1,7 +1,7 @@
 package com.example.notification.adapter.in.rest.dto.response;
 
 import com.example.notification.application.page.PageResult;
-import com.example.notification.domain.model.Notification;
+import com.example.notification.application.result.ListNotificationsResult;
 
 import java.util.List;
 
@@ -19,19 +19,19 @@ public record NotificationListResponse(
             String sentAt,
             String createdAt
     ) {
-        public static NotificationSummary from(Notification n) {
+        public static NotificationSummary from(ListNotificationsResult.NotificationSummary summary) {
             return new NotificationSummary(
-                    n.getNotificationId(),
-                    n.getChannel().name(),
-                    n.getSubject(),
-                    n.getStatus().name(),
-                    n.getSentAt() != null ? n.getSentAt().toString() : null,
-                    n.getCreatedAt().toString()
+                    summary.notificationId(),
+                    summary.channel(),
+                    summary.subject(),
+                    summary.status(),
+                    summary.sentAt() != null ? summary.sentAt().toString() : null,
+                    summary.createdAt().toString()
             );
         }
     }
 
-    public static NotificationListResponse from(PageResult<Notification> pageResult) {
+    public static NotificationListResponse from(PageResult<ListNotificationsResult.NotificationSummary> pageResult) {
         return new NotificationListResponse(
                 pageResult.content().stream().map(NotificationSummary::from).toList(),
                 pageResult.page(),

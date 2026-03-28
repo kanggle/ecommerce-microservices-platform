@@ -1,12 +1,13 @@
 package com.example.notification.adapter.in.rest;
 
 import com.example.notification.application.page.PageResult;
+import com.example.notification.application.result.GetNotificationResult;
 import com.example.notification.application.result.GetPreferenceResult;
+import com.example.notification.application.result.ListNotificationsResult;
 import com.example.notification.application.service.NotificationQueryService;
 import com.example.notification.application.service.PreferenceService;
 import com.example.notification.domain.exception.NotificationNotFoundException;
 import com.example.notification.domain.exception.UnauthorizedNotificationAccessException;
-import com.example.notification.domain.model.*;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -44,12 +45,12 @@ class NotificationControllerTest {
     @Test
     @DisplayName("GET /api/notifications/me - 알림 목록 조회 성공")
     void getMyNotifications_returns200() throws Exception {
-        Notification notification = Notification.reconstitute(
-                "noti-1", "user-1", NotificationChannel.EMAIL,
-                "Test Subject", "Test Body", NotificationStatus.SENT,
-                "event-1", 0, LocalDateTime.now(), LocalDateTime.now());
+        LocalDateTime now = LocalDateTime.now();
+        ListNotificationsResult.NotificationSummary summary = new ListNotificationsResult.NotificationSummary(
+                "noti-1", "EMAIL", "Test Subject", "SENT", now, now);
 
-        PageResult<Notification> pageResult = PageResult.of(List.of(notification), 1L, 1, 0, 20);
+        PageResult<ListNotificationsResult.NotificationSummary> pageResult =
+                PageResult.of(List.of(summary), 1L, 1, 0, 20);
         given(notificationQueryService.getNotifications(eq("user-1"), any()))
                 .willReturn(pageResult);
 
@@ -65,13 +66,12 @@ class NotificationControllerTest {
     @Test
     @DisplayName("GET /api/notifications/me/{notificationId} - 알림 상세 조회 성공")
     void getNotificationDetail_returns200() throws Exception {
-        Notification notification = Notification.reconstitute(
-                "noti-1", "user-1", NotificationChannel.EMAIL,
-                "Subject", "Body content", NotificationStatus.SENT,
-                "event-1", 0, LocalDateTime.now(), LocalDateTime.now());
+        LocalDateTime now = LocalDateTime.now();
+        GetNotificationResult result = new GetNotificationResult(
+                "noti-1", "user-1", "EMAIL", "Subject", "Body content", "SENT", now, now);
 
         given(notificationQueryService.getNotificationDetail("user-1", "noti-1"))
-                .willReturn(notification);
+                .willReturn(result);
 
         mockMvc.perform(get("/api/notifications/me/noti-1")
                         .header("X-User-Id", "user-1"))

@@ -3,6 +3,8 @@ package com.example.notification.application.service;
 import com.example.notification.application.page.PageQuery;
 import com.example.notification.application.page.PageResult;
 import com.example.notification.application.port.out.NotificationRepository;
+import com.example.notification.application.result.GetNotificationResult;
+import com.example.notification.application.result.ListNotificationsResult;
 import com.example.notification.domain.exception.NotificationNotFoundException;
 import com.example.notification.domain.exception.UnauthorizedNotificationAccessException;
 import com.example.notification.domain.model.Notification;
@@ -33,8 +35,8 @@ class NotificationQueryServiceTest {
     private NotificationRepository notificationRepository;
 
     @Test
-    @DisplayName("사용자별 알림 목록을 조회한다")
-    void getNotifications_returnsPage() {
+    @DisplayName("사용자별 알림 목록을 조회하면 result DTO를 반환한다")
+    void getNotifications_returnsResultDto() {
         Notification notification = Notification.reconstitute(
                 "noti-1", "user-1", NotificationChannel.EMAIL,
                 "Subject", "Body", NotificationStatus.SENT,
@@ -44,10 +46,29 @@ class NotificationQueryServiceTest {
         given(notificationRepository.findByUserId("user-1", pageQuery))
                 .willReturn(pageResult);
 
-        PageResult<Notification> result = notificationQueryService.getNotifications("user-1", pageQuery);
+        PageResult<ListNotificationsResult.NotificationSummary> result =
+                notificationQueryService.getNotifications("user-1", pageQuery);
 
         assertThat(result.content()).hasSize(1);
         assertThat(result.totalElements()).isEqualTo(1L);
+        assertThat(result.content().get(0).notificationId()).isEqualTo("noti-1");
+        assertThat(result.content().get(0).channel()).isEqualTo("EMAIL");
+    }
+
+    @Test
+    @DisplayName("알림 상세 조회 시 GetNotificationResult를 반환한다")
+    void getNotificationDetail_returnsResultDto() {
+        Notification notification = Notification.reconstitute(
+                "noti-1", "user-1", NotificationChannel.EMAIL,
+                "Subject", "Body", NotificationStatus.SENT,
+                "event-1", 0, null, null);
+        given(notificationRepository.findById("noti-1")).willReturn(Optional.of(notification));
+
+        GetNotificationResult result = notificationQueryService.getNotificationDetail("user-1", "noti-1");
+
+        assertThat(result.notificationId()).isEqualTo("noti-1");
+        assertThat(result.userId()).isEqualTo("user-1");
+        assertThat(result.channel()).isEqualTo("EMAIL");
     }
 
     @Test

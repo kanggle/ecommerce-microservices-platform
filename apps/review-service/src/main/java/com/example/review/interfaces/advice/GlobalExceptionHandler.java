@@ -8,11 +8,11 @@ import com.example.web.dto.ErrorResponse;
 import jakarta.validation.ConstraintViolationException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.MissingRequestHeaderException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
-import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
 @Slf4j
@@ -20,65 +20,65 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 public class GlobalExceptionHandler {
 
     @ExceptionHandler(MethodArgumentNotValidException.class)
-    @ResponseStatus(HttpStatus.BAD_REQUEST)
-    public ErrorResponse handleValidation(MethodArgumentNotValidException ex) {
+    public ResponseEntity<ErrorResponse> handleValidation(MethodArgumentNotValidException ex) {
         String message = ex.getBindingResult().getFieldErrors().stream()
                 .findFirst()
                 .map(FieldError::getDefaultMessage)
                 .orElse("Validation failed");
-        return ErrorResponse.of("VALIDATION_ERROR", message);
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                .body(ErrorResponse.of("VALIDATION_ERROR", message));
     }
 
     @ExceptionHandler(ConstraintViolationException.class)
-    @ResponseStatus(HttpStatus.BAD_REQUEST)
-    public ErrorResponse handleConstraintViolation(ConstraintViolationException ex) {
+    public ResponseEntity<ErrorResponse> handleConstraintViolation(ConstraintViolationException ex) {
         String message = ex.getConstraintViolations().stream()
                 .map(v -> v.getMessage())
                 .findFirst()
                 .orElse("Invalid input value");
-        return ErrorResponse.of("VALIDATION_ERROR", message);
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                .body(ErrorResponse.of("VALIDATION_ERROR", message));
     }
 
     @ExceptionHandler(MissingRequestHeaderException.class)
-    @ResponseStatus(HttpStatus.UNAUTHORIZED)
-    public ErrorResponse handleMissingHeader(MissingRequestHeaderException ex) {
-        return ErrorResponse.of("UNAUTHORIZED", "Missing or invalid access token");
+    public ResponseEntity<ErrorResponse> handleMissingHeader(MissingRequestHeaderException ex) {
+        return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
+                .body(ErrorResponse.of("UNAUTHORIZED", "Missing or invalid access token"));
     }
 
     @ExceptionHandler(IllegalArgumentException.class)
-    @ResponseStatus(HttpStatus.BAD_REQUEST)
-    public ErrorResponse handleIllegalArgument(IllegalArgumentException ex) {
-        return ErrorResponse.of("INVALID_REVIEW_REQUEST", ex.getMessage());
+    public ResponseEntity<ErrorResponse> handleIllegalArgument(IllegalArgumentException ex) {
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                .body(ErrorResponse.of("INVALID_REVIEW_REQUEST", ex.getMessage()));
     }
 
     @ExceptionHandler(ReviewNotFoundException.class)
-    @ResponseStatus(HttpStatus.NOT_FOUND)
-    public ErrorResponse handleReviewNotFound(ReviewNotFoundException ex) {
-        return ErrorResponse.of("REVIEW_NOT_FOUND", ex.getMessage());
+    public ResponseEntity<ErrorResponse> handleReviewNotFound(ReviewNotFoundException ex) {
+        return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                .body(ErrorResponse.of("REVIEW_NOT_FOUND", ex.getMessage()));
     }
 
     @ExceptionHandler(ReviewAlreadyExistsException.class)
-    @ResponseStatus(HttpStatus.CONFLICT)
-    public ErrorResponse handleReviewAlreadyExists(ReviewAlreadyExistsException ex) {
-        return ErrorResponse.of("REVIEW_ALREADY_EXISTS", ex.getMessage());
+    public ResponseEntity<ErrorResponse> handleReviewAlreadyExists(ReviewAlreadyExistsException ex) {
+        return ResponseEntity.status(HttpStatus.CONFLICT)
+                .body(ErrorResponse.of("REVIEW_ALREADY_EXISTS", ex.getMessage()));
     }
 
     @ExceptionHandler(ProductNotPurchasedException.class)
-    @ResponseStatus(HttpStatus.UNPROCESSABLE_ENTITY)
-    public ErrorResponse handleProductNotPurchased(ProductNotPurchasedException ex) {
-        return ErrorResponse.of("PRODUCT_NOT_PURCHASED", ex.getMessage());
+    public ResponseEntity<ErrorResponse> handleProductNotPurchased(ProductNotPurchasedException ex) {
+        return ResponseEntity.status(HttpStatus.UNPROCESSABLE_ENTITY)
+                .body(ErrorResponse.of("PRODUCT_NOT_PURCHASED", ex.getMessage()));
     }
 
     @ExceptionHandler(ReviewAccessDeniedException.class)
-    @ResponseStatus(HttpStatus.FORBIDDEN)
-    public ErrorResponse handleAccessDenied(ReviewAccessDeniedException ex) {
-        return ErrorResponse.of("ACCESS_DENIED", ex.getMessage());
+    public ResponseEntity<ErrorResponse> handleAccessDenied(ReviewAccessDeniedException ex) {
+        return ResponseEntity.status(HttpStatus.FORBIDDEN)
+                .body(ErrorResponse.of("ACCESS_DENIED", ex.getMessage()));
     }
 
     @ExceptionHandler(Exception.class)
-    @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
-    public ErrorResponse handleUnexpected(Exception ex) {
+    public ResponseEntity<ErrorResponse> handleUnexpected(Exception ex) {
         log.error("Unexpected error", ex);
-        return ErrorResponse.of("INTERNAL_ERROR", "An unexpected error occurred");
+        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                .body(ErrorResponse.of("INTERNAL_ERROR", "An unexpected error occurred"));
     }
 }

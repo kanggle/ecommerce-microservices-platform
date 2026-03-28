@@ -9,9 +9,9 @@ import com.example.notification.application.page.PageQuery;
 import com.example.notification.application.page.PageResult;
 import com.example.notification.application.result.GetNotificationResult;
 import com.example.notification.application.result.GetPreferenceResult;
+import com.example.notification.application.result.ListNotificationsResult;
 import com.example.notification.application.service.NotificationQueryService;
 import com.example.notification.application.service.PreferenceService;
-import com.example.notification.domain.model.Notification;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotBlank;
 import lombok.RequiredArgsConstructor;
@@ -34,7 +34,7 @@ public class NotificationController {
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "20") int size
     ) {
-        PageResult<Notification> notifications = notificationQueryService.getNotifications(
+        PageResult<ListNotificationsResult.NotificationSummary> notifications = notificationQueryService.getNotifications(
                 userId, PageQuery.of(page, size));
         return ResponseEntity.ok(NotificationListResponse.from(notifications));
     }
@@ -44,8 +44,7 @@ public class NotificationController {
             @RequestHeader("X-User-Id") @NotBlank String userId,
             @PathVariable String notificationId
     ) {
-        GetNotificationResult result = GetNotificationResult.from(
-                notificationQueryService.getNotificationDetail(userId, notificationId));
+        GetNotificationResult result = notificationQueryService.getNotificationDetail(userId, notificationId);
         return ResponseEntity.ok(NotificationDetailResponse.from(result));
     }
 

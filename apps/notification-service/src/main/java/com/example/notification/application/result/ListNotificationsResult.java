@@ -1,7 +1,6 @@
 package com.example.notification.application.result;
 
 import com.example.notification.domain.model.Notification;
-import org.springframework.data.domain.Page;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -30,14 +29,5 @@ public record ListNotificationsResult(
                     notification.getCreatedAt()
             );
         }
-    }
-
-    public static ListNotificationsResult from(Page<Notification> page) {
-        return new ListNotificationsResult(
-                page.getContent().stream().map(NotificationSummary::from).toList(),
-                page.getNumber(),
-                page.getSize(),
-                page.getTotalElements()
-        );
     }
 }
