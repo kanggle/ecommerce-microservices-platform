@@ -1,4 +1,4 @@
-package com.example.review.presentation.dto;
+package com.example.review.interfaces.dto;
 
 import java.time.Instant;
 

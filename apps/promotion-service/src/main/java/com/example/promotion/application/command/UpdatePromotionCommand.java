@@ -11,6 +11,7 @@ public record UpdatePromotionCommand(
         long maxDiscountAmount,
         int maxIssuanceCount,
         Instant startDate,
-        Instant endDate
+        Instant endDate,
+        String userRole
 ) {
 }

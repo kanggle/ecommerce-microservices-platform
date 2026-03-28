@@ -8,7 +8,7 @@ notification-service controller 도메인 모델 직접 노출 제거
 
 # Status
 
-ready
+review
 
 # Owner
 

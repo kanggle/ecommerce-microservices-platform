@@ -2,6 +2,7 @@ package com.example.promotion.application;
 
 import com.example.promotion.application.command.ApplyCouponCommand;
 import com.example.promotion.application.command.IssueCouponsCommand;
+import com.example.promotion.application.exception.AccessDeniedException;
 import com.example.promotion.application.port.PromotionEventPublisher;
 import com.example.promotion.application.result.ApplyCouponResult;
 import com.example.promotion.application.result.IssueCouponsResult;
@@ -72,7 +73,7 @@ class CouponCommandServiceTest {
         given(promotionRepository.save(any(Promotion.class))).willAnswer(inv -> inv.getArgument(0));
 
         IssueCouponsCommand command = new IssueCouponsCommand(
-                promotion.getPromotionId(), List.of("user-1", "user-2")
+                promotion.getPromotionId(), List.of("user-1", "user-2"), "ADMIN"
         );
 
         IssueCouponsResult result = service.issueCoupons(command);
@@ -159,7 +160,7 @@ class CouponCommandServiceTest {
 
         given(promotionRepository.findByIdForUpdate("non-existent")).willReturn(Optional.empty());
 
-        IssueCouponsCommand command = new IssueCouponsCommand("non-existent", List.of("user-1"));
+        IssueCouponsCommand command = new IssueCouponsCommand("non-existent", List.of("user-1"), "ADMIN");
 
         assertThatThrownBy(() -> service.issueCoupons(command))
                 .isInstanceOf(PromotionNotFoundException.class);
@@ -182,6 +183,17 @@ class CouponCommandServiceTest {
 
         assertThat(coupon.getStatus()).isEqualTo(CouponStatus.ISSUED);
         verify(couponRepository).save(coupon);
+    }
+
+    @Test
+    @DisplayName("비관리자 역할로 쿠폰 발급 시 AccessDeniedException")
+    void issueCoupons_nonAdminRole_throwsAccessDeniedException() {
+        CouponCommandService service = createService();
+
+        IssueCouponsCommand command = new IssueCouponsCommand("promo-1", List.of("user-1"), "USER");
+
+        assertThatThrownBy(() -> service.issueCoupons(command))
+                .isInstanceOf(AccessDeniedException.class);
     }
 
     @Test

@@ -47,11 +47,10 @@ public class ShippingController {
             @PathVariable String shippingId,
             @Valid @RequestBody UpdateShippingStatusRequest request
     ) {
-        validateAdminRole(userRole);
         ShippingStatus targetStatus = parseStatus(request.status());
 
         UpdateShippingStatusCommand command = new UpdateShippingStatusCommand(
-                shippingId, targetStatus, request.trackingNumber(), request.carrier());
+                shippingId, targetStatus, request.trackingNumber(), request.carrier(), userRole);
         UpdateShippingStatusResult result = shippingCommandService.updateStatus(command);
         return ResponseEntity.ok(UpdateShippingStatusResponse.from(result));
     }
@@ -63,19 +62,12 @@ public class ShippingController {
             @RequestParam(defaultValue = "20") int size,
             @RequestParam(required = false) String status
     ) {
-        validateAdminRole(userRole);
         int safePage = Math.max(page, 0);
         int safeSize = size < 1 ? DEFAULT_PAGE_SIZE : Math.min(size, MAX_PAGE_SIZE);
         ShippingStatus shippingStatus = status != null && !status.isBlank() ? parseStatus(status) : null;
         PageQuery pageQuery = new PageQuery(safePage, safeSize, "createdAt", "DESC");
-        PageResult<ShippingSummary> result = shippingQueryService.listShippings(shippingStatus, pageQuery);
+        PageResult<ShippingSummary> result = shippingQueryService.listShippings(userRole, shippingStatus, pageQuery);
         return ResponseEntity.ok(ShippingListResponse.from(result));
-    }
-
-    private void validateAdminRole(String userRole) {
-        if (!"ADMIN".equalsIgnoreCase(userRole)) {
-            throw new com.example.shipping.interfaces.rest.controller.AccessDeniedException("Admin role required");
-        }
     }
 
     private ShippingStatus parseStatus(String status) {

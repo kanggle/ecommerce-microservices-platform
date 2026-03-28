@@ -8,7 +8,7 @@ review-service 도메인 이벤트에서 Jackson 의존 제거
 
 # Status
 
-ready
+review
 
 # Owner
 

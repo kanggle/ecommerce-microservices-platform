@@ -1,6 +1,6 @@
 package com.example.notification.adapter.in.rest.dto.response;
 
-import com.example.notification.domain.model.UserNotificationPreference;
+import com.example.notification.application.result.GetPreferenceResult;
 
 public record PreferenceResponse(
         String userId,
@@ -8,12 +8,12 @@ public record PreferenceResponse(
         boolean smsEnabled,
         boolean pushEnabled
 ) {
-    public static PreferenceResponse from(UserNotificationPreference pref) {
+    public static PreferenceResponse from(GetPreferenceResult result) {
         return new PreferenceResponse(
-                pref.getUserId(),
-                pref.isEmailEnabled(),
-                pref.isSmsEnabled(),
-                pref.isPushEnabled()
+                result.userId(),
+                result.emailEnabled(),
+                result.smsEnabled(),
+                result.pushEnabled()
         );
     }
 }

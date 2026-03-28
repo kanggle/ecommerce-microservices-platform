@@ -2,6 +2,7 @@ package com.example.notification.application.service;
 
 import com.example.notification.application.command.UpdatePreferenceCommand;
 import com.example.notification.application.port.out.PreferenceRepository;
+import com.example.notification.application.result.GetPreferenceResult;
 import com.example.notification.domain.model.UserNotificationPreference;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -27,21 +28,21 @@ class PreferenceServiceTest {
     private PreferenceRepository preferenceRepository;
 
     @Test
-    @DisplayName("사용자 설정이 없으면 기본 설정을 생성하여 반환한다")
+    @DisplayName("사용자 설정이 없으면 기본 설정을 생성하여 GetPreferenceResult로 반환한다")
     void getPreference_notFound_createsDefault() {
         given(preferenceRepository.findByUserId("user-1")).willReturn(Optional.empty());
         UserNotificationPreference defaultPref = UserNotificationPreference.createDefault("user-1");
         given(preferenceRepository.save(any())).willReturn(defaultPref);
 
-        UserNotificationPreference result = preferenceService.getPreference("user-1");
+        GetPreferenceResult result = preferenceService.getPreference("user-1");
 
-        assertThat(result.isEmailEnabled()).isTrue();
-        assertThat(result.isSmsEnabled()).isFalse();
-        assertThat(result.isPushEnabled()).isTrue();
+        assertThat(result.emailEnabled()).isTrue();
+        assertThat(result.smsEnabled()).isFalse();
+        assertThat(result.pushEnabled()).isTrue();
     }
 
     @Test
-    @DisplayName("사용자 설정을 업데이트한다")
+    @DisplayName("사용자 설정을 업데이트하고 GetPreferenceResult로 반환한다")
     void updatePreference_success() {
         UserNotificationPreference existing = UserNotificationPreference.createDefault("user-1");
         given(preferenceRepository.findByUserId("user-1")).willReturn(Optional.of(existing));
@@ -49,10 +50,10 @@ class PreferenceServiceTest {
 
         UpdatePreferenceCommand command = new UpdatePreferenceCommand("user-1", false, true, false);
 
-        UserNotificationPreference result = preferenceService.updatePreference(command);
+        GetPreferenceResult result = preferenceService.updatePreference(command);
 
-        assertThat(result.isEmailEnabled()).isFalse();
-        assertThat(result.isSmsEnabled()).isTrue();
-        assertThat(result.isPushEnabled()).isFalse();
+        assertThat(result.emailEnabled()).isFalse();
+        assertThat(result.smsEnabled()).isTrue();
+        assertThat(result.pushEnabled()).isFalse();
     }
 }

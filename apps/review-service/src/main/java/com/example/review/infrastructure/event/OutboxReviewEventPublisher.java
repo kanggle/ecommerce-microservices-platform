@@ -3,6 +3,7 @@ package com.example.review.infrastructure.event;
 import com.example.messaging.outbox.OutboxWriter;
 import com.example.review.domain.event.ReviewEvent;
 import com.example.review.domain.event.ReviewEventPublisher;
+import com.example.review.infrastructure.event.dto.ReviewEventMessage;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
@@ -19,21 +20,32 @@ public class OutboxReviewEventPublisher implements ReviewEventPublisher {
 
     @Override
     public void publish(ReviewEvent event) {
-        String payload = serialize(event);
+        ReviewEventMessage message = toMessage(event);
+        String serialized = serialize(message);
         String aggregateId = extractAggregateId(event);
-        outboxWriter.save("Review", aggregateId, event.eventType(), payload);
+        outboxWriter.save("Review", aggregateId, event.eventType(), serialized);
         log.debug("Saved review event to outbox: eventType={}, aggregateId={}", event.eventType(), aggregateId);
+    }
+
+    ReviewEventMessage toMessage(ReviewEvent event) {
+        return new ReviewEventMessage(
+                event.eventId(),
+                event.eventType(),
+                event.occurredAt(),
+                event.source(),
+                event.payload()
+        );
     }
 
     private String extractAggregateId(ReviewEvent event) {
         return event.payload().reviewId();
     }
 
-    private String serialize(ReviewEvent event) {
+    private String serialize(ReviewEventMessage message) {
         try {
-            return objectMapper.writeValueAsString(event);
+            return objectMapper.writeValueAsString(message);
         } catch (JsonProcessingException e) {
-            throw new IllegalStateException("Failed to serialize ReviewEvent", e);
+            throw new IllegalStateException("Failed to serialize ReviewEventMessage", e);
         }
     }
 }

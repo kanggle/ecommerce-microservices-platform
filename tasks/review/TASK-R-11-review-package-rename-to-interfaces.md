@@ -8,7 +8,7 @@ review-service 패키지명 presentation -> interfaces 통일
 
 # Status
 
-ready
+review
 
 # Owner
 

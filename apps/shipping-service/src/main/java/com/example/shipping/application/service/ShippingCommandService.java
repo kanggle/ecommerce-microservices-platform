@@ -2,6 +2,7 @@ package com.example.shipping.application.service;
 
 import com.example.shipping.application.command.CreateShippingCommand;
 import com.example.shipping.application.command.UpdateShippingStatusCommand;
+import com.example.shipping.application.exception.AccessDeniedException;
 import com.example.shipping.application.port.ShippingEventPublisher;
 import com.example.shipping.application.result.UpdateShippingStatusResult;
 import com.example.shipping.domain.exception.ShippingNotFoundException;
@@ -39,6 +40,7 @@ public class ShippingCommandService {
 
     @Transactional
     public UpdateShippingStatusResult updateStatus(UpdateShippingStatusCommand command) {
+        validateAdminRole(command.userRole());
         Shipping shipping = shippingRepository.findById(command.shippingId())
                 .orElseThrow(() -> new ShippingNotFoundException(command.shippingId()));
 
@@ -57,5 +59,11 @@ public class ShippingCommandService {
 
         return new UpdateShippingStatusResult(
                 saved.getShippingId(), saved.getStatus(), saved.getUpdatedAt());
+    }
+
+    private void validateAdminRole(String userRole) {
+        if (!"ADMIN".equalsIgnoreCase(userRole)) {
+            throw new AccessDeniedException("Admin role required");
+        }
     }
 }

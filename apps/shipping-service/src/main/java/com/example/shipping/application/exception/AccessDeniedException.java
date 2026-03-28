@@ -1,4 +1,4 @@
-package com.example.shipping.interfaces.rest.controller;
+package com.example.shipping.application.exception;
 
 public class AccessDeniedException extends RuntimeException {
 

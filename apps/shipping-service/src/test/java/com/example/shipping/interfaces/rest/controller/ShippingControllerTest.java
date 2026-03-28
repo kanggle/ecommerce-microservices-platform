@@ -1,5 +1,6 @@
 package com.example.shipping.interfaces.rest.controller;
 
+import com.example.shipping.application.exception.AccessDeniedException;
 import com.example.shipping.application.exception.UnauthorizedShippingAccessException;
 import com.example.shipping.application.result.ShippingResult;
 import com.example.shipping.application.result.ShippingSummary;
@@ -132,6 +133,9 @@ class ShippingControllerTest {
     @Test
     @DisplayName("비관리자가 상태 업데이트 시 403 반환")
     void updateShippingStatus_nonAdmin_returns403() throws Exception {
+        given(shippingCommandService.updateStatus(any()))
+                .willThrow(new AccessDeniedException("Admin role required"));
+
         mockMvc.perform(put("/api/shippings/ship-1/status")
                         .header("X-User-Role", "USER")
                         .contentType(MediaType.APPLICATION_JSON)
@@ -224,7 +228,7 @@ class ShippingControllerTest {
         ShippingSummary summary = new ShippingSummary(
                 "ship-1", "order-1", ShippingStatus.PREPARING, null, null, NOW, NOW);
         PageResult<ShippingSummary> pageResult = new PageResult<>(List.of(summary), 0, 20, 1, 1);
-        given(shippingQueryService.listShippings(any(), any())).willReturn(pageResult);
+        given(shippingQueryService.listShippings(any(), any(), any())).willReturn(pageResult);
 
         mockMvc.perform(get("/api/shippings")
                         .header("X-User-Role", "ADMIN")
@@ -241,6 +245,9 @@ class ShippingControllerTest {
     @Test
     @DisplayName("비관리자가 배송 목록 조회 시 403 반환")
     void listShippings_nonAdmin_returns403() throws Exception {
+        given(shippingQueryService.listShippings(any(), any(), any()))
+                .willThrow(new AccessDeniedException("Admin role required"));
+
         mockMvc.perform(get("/api/shippings")
                         .header("X-User-Role", "USER"))
                 .andExpect(status().isForbidden())
@@ -259,7 +266,7 @@ class ShippingControllerTest {
     @DisplayName("상태 필터로 배송 목록 조회 성공")
     void listShippings_withStatusFilter_returns200() throws Exception {
         PageResult<ShippingSummary> pageResult = new PageResult<>(List.of(), 0, 20, 0, 0);
-        given(shippingQueryService.listShippings(eq(ShippingStatus.SHIPPED), any())).willReturn(pageResult);
+        given(shippingQueryService.listShippings(any(), eq(ShippingStatus.SHIPPED), any())).willReturn(pageResult);
 
         mockMvc.perform(get("/api/shippings")
                         .header("X-User-Role", "ADMIN")
@@ -283,9 +290,9 @@ class ShippingControllerTest {
     @DisplayName("size가 0이면 기본값 20 사용")
     void listShippings_sizeZero_defaultUsed() throws Exception {
         PageResult<ShippingSummary> pageResult = new PageResult<>(List.of(), 0, 20, 0, 0);
-        given(shippingQueryService.listShippings(any(), any()))
+        given(shippingQueryService.listShippings(any(), any(), any()))
                 .willAnswer(inv -> {
-                    PageQuery pq = inv.getArgument(1, PageQuery.class);
+                    PageQuery pq = inv.getArgument(2, PageQuery.class);
                     return new PageResult<>(List.of(), pq.page(), pq.size(), 0L, 0);
                 });
 
@@ -299,9 +306,9 @@ class ShippingControllerTest {
     @Test
     @DisplayName("size가 최대값(100) 초과 시 100으로 클램핑")
     void listShippings_sizeExceedsMax_clampedTo100() throws Exception {
-        given(shippingQueryService.listShippings(any(), any()))
+        given(shippingQueryService.listShippings(any(), any(), any()))
                 .willAnswer(inv -> {
-                    PageQuery pq = inv.getArgument(1, PageQuery.class);
+                    PageQuery pq = inv.getArgument(2, PageQuery.class);
                     return new PageResult<>(List.of(), pq.page(), pq.size(), 0L, 0);
                 });
 
@@ -315,9 +322,9 @@ class ShippingControllerTest {
     @Test
     @DisplayName("page가 음수이면 0으로 대체")
     void listShippings_pageNegative_replacedWithZero() throws Exception {
-        given(shippingQueryService.listShippings(any(), any()))
+        given(shippingQueryService.listShippings(any(), any(), any()))
                 .willAnswer(inv -> {
-                    PageQuery pq = inv.getArgument(1, PageQuery.class);
+                    PageQuery pq = inv.getArgument(2, PageQuery.class);
                     return new PageResult<>(List.of(), pq.page(), pq.size(), 0L, 0);
                 });
 

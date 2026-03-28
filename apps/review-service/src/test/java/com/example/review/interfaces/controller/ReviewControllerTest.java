@@ -1,4 +1,4 @@
-package com.example.review.presentation.controller;
+package com.example.review.interfaces.controller;
 
 import com.example.review.application.result.CreateReviewResult;
 import com.example.review.application.result.MyReviewListResult;
@@ -11,7 +11,7 @@ import com.example.review.domain.exception.ProductNotPurchasedException;
 import com.example.review.domain.exception.ReviewAccessDeniedException;
 import com.example.review.domain.exception.ReviewAlreadyExistsException;
 import com.example.review.domain.exception.ReviewNotFoundException;
-import com.example.review.presentation.advice.GlobalExceptionHandler;
+import com.example.review.interfaces.advice.GlobalExceptionHandler;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;

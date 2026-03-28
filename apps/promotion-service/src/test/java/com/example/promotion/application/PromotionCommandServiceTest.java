@@ -2,6 +2,7 @@ package com.example.promotion.application;
 
 import com.example.promotion.application.command.CreatePromotionCommand;
 import com.example.promotion.application.command.UpdatePromotionCommand;
+import com.example.promotion.application.exception.AccessDeniedException;
 import com.example.promotion.application.result.CreatePromotionResult;
 import com.example.promotion.application.result.UpdatePromotionResult;
 import com.example.promotion.application.service.PromotionCommandService;
@@ -55,7 +56,8 @@ class PromotionCommandServiceTest {
         CreatePromotionCommand command = new CreatePromotionCommand(
                 "테스트 프로모션", "설명", "FIXED", 5000, 10000, 100,
                 Instant.parse("2026-03-01T00:00:00Z"),
-                Instant.parse("2026-04-01T00:00:00Z")
+                Instant.parse("2026-04-01T00:00:00Z"),
+                "ADMIN"
         );
 
         CreatePromotionResult result = service.createPromotion(command);
@@ -75,7 +77,8 @@ class PromotionCommandServiceTest {
         UpdatePromotionCommand command = new UpdatePromotionCommand(
                 "non-existent", "수정", "설명", "FIXED", 5000, 10000, 100,
                 Instant.parse("2026-03-01T00:00:00Z"),
-                Instant.parse("2026-04-01T00:00:00Z")
+                Instant.parse("2026-04-01T00:00:00Z"),
+                "ADMIN"
         );
 
         assertThatThrownBy(() -> service.updatePromotion(command))
@@ -98,7 +101,7 @@ class PromotionCommandServiceTest {
 
         given(promotionRepository.findById(promotion.getPromotionId())).willReturn(Optional.of(promotion));
 
-        assertThatThrownBy(() -> service.deletePromotion(promotion.getPromotionId()))
+        assertThatThrownBy(() -> service.deletePromotion(promotion.getPromotionId(), "ADMIN"))
                 .isInstanceOf(PromotionHasIssuedCouponsException.class);
     }
 
@@ -110,7 +113,34 @@ class PromotionCommandServiceTest {
 
         given(promotionRepository.findById("non-existent")).willReturn(Optional.empty());
 
-        assertThatThrownBy(() -> service.deletePromotion("non-existent"))
+        assertThatThrownBy(() -> service.deletePromotion("non-existent", "ADMIN"))
                 .isInstanceOf(PromotionNotFoundException.class);
+    }
+
+    @Test
+    @DisplayName("비관리자 역할로 프로모션 생성 시 AccessDeniedException")
+    void createPromotion_nonAdminRole_throwsAccessDeniedException() {
+        PromotionCommandService service = new PromotionCommandService(
+                promotionRepository, couponRepository, clock);
+
+        CreatePromotionCommand command = new CreatePromotionCommand(
+                "프로모션", "설명", "FIXED", 5000, 10000, 100,
+                Instant.parse("2026-03-01T00:00:00Z"),
+                Instant.parse("2026-04-01T00:00:00Z"),
+                "USER"
+        );
+
+        assertThatThrownBy(() -> service.createPromotion(command))
+                .isInstanceOf(AccessDeniedException.class);
+    }
+
+    @Test
+    @DisplayName("비관리자 역할로 프로모션 삭제 시 AccessDeniedException")
+    void deletePromotion_nonAdminRole_throwsAccessDeniedException() {
+        PromotionCommandService service = new PromotionCommandService(
+                promotionRepository, couponRepository, clock);
+
+        assertThatThrownBy(() -> service.deletePromotion("promo-1", "USER"))
+                .isInstanceOf(AccessDeniedException.class);
     }
 }

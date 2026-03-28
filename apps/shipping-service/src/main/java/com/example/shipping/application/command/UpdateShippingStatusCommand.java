@@ -6,5 +6,6 @@ public record UpdateShippingStatusCommand(
         String shippingId,
         ShippingStatus status,
         String trackingNumber,
-        String carrier
+        String carrier,
+        String userRole
 ) {}

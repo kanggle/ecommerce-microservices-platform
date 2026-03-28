@@ -2,6 +2,7 @@ package com.example.shipping.application.service;
 
 import com.example.shipping.application.command.CreateShippingCommand;
 import com.example.shipping.application.command.UpdateShippingStatusCommand;
+import com.example.shipping.application.exception.AccessDeniedException;
 import com.example.shipping.application.port.ShippingEventPublisher;
 import com.example.shipping.application.result.UpdateShippingStatusResult;
 import com.example.shipping.domain.exception.InvalidStatusTransitionException;
@@ -75,7 +76,7 @@ class ShippingCommandServiceTest {
         given(shippingRepository.save(any(Shipping.class))).willAnswer(inv -> inv.getArgument(0));
 
         UpdateShippingStatusCommand command = new UpdateShippingStatusCommand(
-                shipping.getShippingId(), ShippingStatus.SHIPPED, "TRK-001", "CJ대한통운");
+                shipping.getShippingId(), ShippingStatus.SHIPPED, "TRK-001", "CJ대한통운", "ADMIN");
 
         UpdateShippingStatusResult result = shippingCommandService.updateStatus(command);
 
@@ -92,7 +93,7 @@ class ShippingCommandServiceTest {
         given(shippingRepository.findById("nonexistent")).willReturn(Optional.empty());
 
         assertThatThrownBy(() -> shippingCommandService.updateStatus(
-                new UpdateShippingStatusCommand("nonexistent", ShippingStatus.SHIPPED, "TRK", "CJ")))
+                new UpdateShippingStatusCommand("nonexistent", ShippingStatus.SHIPPED, "TRK", "CJ", "ADMIN")))
                 .isInstanceOf(ShippingNotFoundException.class);
     }
 
@@ -103,7 +104,15 @@ class ShippingCommandServiceTest {
         given(shippingRepository.findById(shipping.getShippingId())).willReturn(Optional.of(shipping));
 
         assertThatThrownBy(() -> shippingCommandService.updateStatus(
-                new UpdateShippingStatusCommand(shipping.getShippingId(), ShippingStatus.DELIVERED, null, null)))
+                new UpdateShippingStatusCommand(shipping.getShippingId(), ShippingStatus.DELIVERED, null, null, "ADMIN")))
                 .isInstanceOf(InvalidStatusTransitionException.class);
+    }
+
+    @Test
+    @DisplayName("비관리자 역할로 상태 업데이트 시 AccessDeniedException")
+    void updateStatus_nonAdminRole_throwsAccessDeniedException() {
+        assertThatThrownBy(() -> shippingCommandService.updateStatus(
+                new UpdateShippingStatusCommand("ship-1", ShippingStatus.SHIPPED, "TRK", "CJ", "USER")))
+                .isInstanceOf(AccessDeniedException.class);
     }
 }

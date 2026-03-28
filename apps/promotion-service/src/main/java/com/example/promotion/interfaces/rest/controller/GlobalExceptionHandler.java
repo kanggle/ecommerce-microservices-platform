@@ -1,5 +1,6 @@
 package com.example.promotion.interfaces.rest.controller;
 
+import com.example.promotion.application.exception.AccessDeniedException;
 import com.example.promotion.domain.coupon.CouponAlreadyUsedException;
 import com.example.promotion.domain.coupon.CouponExpiredException;
 import com.example.promotion.domain.coupon.CouponNotFoundException;

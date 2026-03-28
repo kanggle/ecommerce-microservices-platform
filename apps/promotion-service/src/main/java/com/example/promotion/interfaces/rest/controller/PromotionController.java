@@ -49,13 +49,12 @@ public class PromotionController {
             @RequestHeader("X-User-Role") @NotBlank(message = "X-User-Role 헤더는 필수입니다") String role,
             @Valid @RequestBody CreatePromotionRequest request
     ) {
-        validateAdminRole(role);
-
         CreatePromotionCommand command = new CreatePromotionCommand(
                 request.name(), request.description(),
                 request.discountType(), request.discountValue(),
                 request.maxDiscountAmount(), request.maxIssuanceCount(),
-                Instant.parse(request.startDate()), Instant.parse(request.endDate())
+                Instant.parse(request.startDate()), Instant.parse(request.endDate()),
+                role
         );
         CreatePromotionResult result = promotionCommandService.createPromotion(command);
         return ResponseEntity.status(HttpStatus.CREATED).body(CreatePromotionResponse.from(result));
@@ -68,13 +67,11 @@ public class PromotionController {
             @RequestParam(defaultValue = "20") int size,
             @RequestParam(required = false) String status
     ) {
-        validateAdminRole(role);
-
         int safePage = Math.max(page, 0);
         int safeSize = size < 1 ? DEFAULT_PAGE_SIZE : Math.min(size, MAX_PAGE_SIZE);
         PromotionStatus promotionStatus = parsePromotionStatus(status);
 
-        PageResult<PromotionSummary> result = promotionQueryService.getPromotions(safePage, safeSize, promotionStatus);
+        PageResult<PromotionSummary> result = promotionQueryService.getPromotions(safePage, safeSize, promotionStatus, role);
         return ResponseEntity.ok(PromotionListResponse.from(result));
     }
 
@@ -83,9 +80,7 @@ public class PromotionController {
             @RequestHeader("X-User-Role") @NotBlank(message = "X-User-Role 헤더는 필수입니다") String role,
             @PathVariable String promotionId
     ) {
-        validateAdminRole(role);
-
-        PromotionDetail detail = promotionQueryService.getPromotion(promotionId);
+        PromotionDetail detail = promotionQueryService.getPromotion(promotionId, role);
         return ResponseEntity.ok(PromotionDetailResponse.from(detail));
     }
 
@@ -95,13 +90,12 @@ public class PromotionController {
             @PathVariable String promotionId,
             @Valid @RequestBody UpdatePromotionRequest request
     ) {
-        validateAdminRole(role);
-
         UpdatePromotionCommand command = new UpdatePromotionCommand(
                 promotionId, request.name(), request.description(),
                 request.discountType(), request.discountValue(),
                 request.maxDiscountAmount(), request.maxIssuanceCount(),
-                Instant.parse(request.startDate()), Instant.parse(request.endDate())
+                Instant.parse(request.startDate()), Instant.parse(request.endDate()),
+                role
         );
         UpdatePromotionResult result = promotionCommandService.updatePromotion(command);
         return ResponseEntity.ok(UpdatePromotionResponse.from(result));
@@ -112,9 +106,7 @@ public class PromotionController {
             @RequestHeader("X-User-Role") @NotBlank(message = "X-User-Role 헤더는 필수입니다") String role,
             @PathVariable String promotionId
     ) {
-        validateAdminRole(role);
-
-        promotionCommandService.deletePromotion(promotionId);
+        promotionCommandService.deletePromotion(promotionId, role);
         return ResponseEntity.noContent().build();
     }
 
@@ -124,17 +116,9 @@ public class PromotionController {
             @PathVariable String promotionId,
             @Valid @RequestBody IssueCouponsRequest request
     ) {
-        validateAdminRole(role);
-
-        IssueCouponsCommand command = new IssueCouponsCommand(promotionId, request.userIds());
+        IssueCouponsCommand command = new IssueCouponsCommand(promotionId, request.userIds(), role);
         IssueCouponsResult result = couponCommandService.issueCoupons(command);
         return ResponseEntity.status(HttpStatus.CREATED).body(IssueCouponsResponse.from(result));
-    }
-
-    private void validateAdminRole(String role) {
-        if (!"ADMIN".equalsIgnoreCase(role)) {
-            throw new AccessDeniedException();
-        }
     }
 
     private PromotionStatus parsePromotionStatus(String status) {

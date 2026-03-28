@@ -3,6 +3,7 @@ package com.example.promotion.application.service;
 import com.example.promotion.application.command.ApplyCouponCommand;
 import com.example.promotion.application.command.IssueCouponsCommand;
 import com.example.promotion.application.event.CouponUsedEvent;
+import com.example.promotion.application.exception.AccessDeniedException;
 import com.example.promotion.application.port.PromotionEventPublisher;
 import com.example.promotion.application.result.ApplyCouponResult;
 import com.example.promotion.application.result.IssueCouponsResult;
@@ -35,6 +36,7 @@ public class CouponCommandService {
 
     @Transactional
     public IssueCouponsResult issueCoupons(IssueCouponsCommand command) {
+        validateAdminRole(command.userRole());
         Promotion promotion = promotionRepository.findByIdForUpdate(command.promotionId())
                 .orElseThrow(() -> new PromotionNotFoundException(command.promotionId()));
 
@@ -83,6 +85,12 @@ public class CouponCommandService {
         log.info("Coupon applied: couponId={}, orderId={}, discount={}",
                 coupon.getCouponId(), command.orderId(), discountAmount);
         return new ApplyCouponResult(coupon.getCouponId(), discountAmount, finalAmount);
+    }
+
+    private void validateAdminRole(String userRole) {
+        if (!"ADMIN".equalsIgnoreCase(userRole)) {
+            throw new AccessDeniedException();
+        }
     }
 
     @Transactional

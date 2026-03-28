@@ -1,5 +1,6 @@
 package com.example.shipping.application.service;
 
+import com.example.shipping.application.exception.AccessDeniedException;
 import com.example.shipping.application.exception.UnauthorizedShippingAccessException;
 import com.example.shipping.application.result.ShippingResult;
 import com.example.shipping.application.result.ShippingSummary;
@@ -75,7 +76,7 @@ class ShippingQueryServiceTest {
         PageQuery pageQuery = new PageQuery(0, 20, "createdAt", "DESC");
         given(shippingRepository.findAll(pageQuery)).willReturn(page);
 
-        PageResult<ShippingSummary> result = shippingQueryService.listShippings(null, pageQuery);
+        PageResult<ShippingSummary> result = shippingQueryService.listShippings("ADMIN", null, pageQuery);
 
         assertThat(result.content()).hasSize(1);
         assertThat(result.totalElements()).isEqualTo(1);
@@ -88,8 +89,17 @@ class ShippingQueryServiceTest {
         PageQuery pageQuery = new PageQuery(0, 20, "createdAt", "DESC");
         given(shippingRepository.findByStatus(ShippingStatus.SHIPPED, pageQuery)).willReturn(page);
 
-        PageResult<ShippingSummary> result = shippingQueryService.listShippings(ShippingStatus.SHIPPED, pageQuery);
+        PageResult<ShippingSummary> result = shippingQueryService.listShippings("ADMIN", ShippingStatus.SHIPPED, pageQuery);
 
         assertThat(result.content()).isEmpty();
+    }
+
+    @Test
+    @DisplayName("비관리자 역할로 배송 목록 조회 시 AccessDeniedException")
+    void listShippings_nonAdminRole_throwsAccessDeniedException() {
+        PageQuery pageQuery = new PageQuery(0, 20, "createdAt", "DESC");
+
+        assertThatThrownBy(() -> shippingQueryService.listShippings("USER", null, pageQuery))
+                .isInstanceOf(AccessDeniedException.class);
     }
 }

@@ -1,5 +1,6 @@
 package com.example.promotion.interfaces;
 
+import com.example.promotion.application.exception.AccessDeniedException;
 import com.example.promotion.application.result.CreatePromotionResult;
 import com.example.promotion.application.result.PromotionDetail;
 import com.example.promotion.application.result.PromotionSummary;
@@ -72,6 +73,9 @@ class PromotionControllerTest {
     @Test
     @DisplayName("ADMIN 아닌 역할로 요청 시 403이 반환된다")
     void createPromotion_nonAdminRole_returns403() throws Exception {
+        given(promotionCommandService.createPromotion(any()))
+                .willThrow(new AccessDeniedException());
+
         mockMvc.perform(post("/api/promotions")
                         .header("X-User-Role", "USER")
                         .contentType(MediaType.APPLICATION_JSON)
@@ -98,7 +102,7 @@ class PromotionControllerTest {
                 Instant.parse("2026-04-01T00:00:00Z"),
                 PromotionStatus.ACTIVE
         );
-        given(promotionQueryService.getPromotions(0, 20, null))
+        given(promotionQueryService.getPromotions(0, 20, null, "ADMIN"))
                 .willReturn(new PageResult<>(List.of(summary), 0, 20, 1L, 1));
 
         mockMvc.perform(get("/api/promotions")
@@ -120,7 +124,7 @@ class PromotionControllerTest {
                 Instant.parse("2026-02-28T00:00:00Z"),
                 Instant.parse("2026-02-28T00:00:00Z")
         );
-        given(promotionQueryService.getPromotion("promo-1")).willReturn(detail);
+        given(promotionQueryService.getPromotion("promo-1", "ADMIN")).willReturn(detail);
 
         mockMvc.perform(get("/api/promotions/promo-1")
                         .header("X-User-Role", "ADMIN"))
@@ -132,7 +136,7 @@ class PromotionControllerTest {
     @Test
     @DisplayName("존재하지 않는 프로모션 조회 시 404가 반환된다")
     void getPromotion_notFound_returns404() throws Exception {
-        given(promotionQueryService.getPromotion("non-existent"))
+        given(promotionQueryService.getPromotion("non-existent", "ADMIN"))
                 .willThrow(new PromotionNotFoundException("non-existent"));
 
         mockMvc.perform(get("/api/promotions/non-existent")

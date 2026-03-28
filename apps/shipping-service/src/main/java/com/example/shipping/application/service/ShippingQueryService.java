@@ -1,5 +1,6 @@
 package com.example.shipping.application.service;
 
+import com.example.shipping.application.exception.AccessDeniedException;
 import com.example.shipping.application.result.ShippingResult;
 import com.example.shipping.application.result.ShippingSummary;
 import com.example.shipping.domain.exception.ShippingNotFoundException;
@@ -31,7 +32,8 @@ public class ShippingQueryService {
         return ShippingResult.from(shipping);
     }
 
-    public PageResult<ShippingSummary> listShippings(ShippingStatus status, PageQuery pageQuery) {
+    public PageResult<ShippingSummary> listShippings(String userRole, ShippingStatus status, PageQuery pageQuery) {
+        validateAdminRole(userRole);
         PageResult<Shipping> pageResult;
         if (status != null) {
             pageResult = shippingRepository.findByStatus(status, pageQuery);
@@ -46,5 +48,11 @@ public class ShippingQueryService {
                 pageResult.totalElements(),
                 pageResult.totalPages()
         );
+    }
+
+    private void validateAdminRole(String userRole) {
+        if (!"ADMIN".equalsIgnoreCase(userRole)) {
+            throw new AccessDeniedException("Admin role required");
+        }
     }
 }

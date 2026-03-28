@@ -1,4 +1,4 @@
-package com.example.review.presentation.controller;
+package com.example.review.interfaces.controller;
 
 import com.example.review.application.command.CreateReviewCommand;
 import com.example.review.application.command.UpdateReviewCommand;
@@ -9,13 +9,13 @@ import com.example.review.application.result.ReviewSummaryResult;
 import com.example.review.application.result.UpdateReviewResult;
 import com.example.review.application.service.ReviewCommandService;
 import com.example.review.application.service.ReviewQueryService;
-import com.example.review.presentation.dto.CreateReviewRequest;
-import com.example.review.presentation.dto.CreateReviewResponse;
-import com.example.review.presentation.dto.MyReviewListResponse;
-import com.example.review.presentation.dto.ReviewListResponse;
-import com.example.review.presentation.dto.ReviewSummaryResponse;
-import com.example.review.presentation.dto.UpdateReviewRequest;
-import com.example.review.presentation.dto.UpdateReviewResponse;
+import com.example.review.interfaces.dto.CreateReviewRequest;
+import com.example.review.interfaces.dto.CreateReviewResponse;
+import com.example.review.interfaces.dto.MyReviewListResponse;
+import com.example.review.interfaces.dto.ReviewListResponse;
+import com.example.review.interfaces.dto.ReviewSummaryResponse;
+import com.example.review.interfaces.dto.UpdateReviewRequest;
+import com.example.review.interfaces.dto.UpdateReviewResponse;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotBlank;
 import lombok.RequiredArgsConstructor;

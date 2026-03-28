@@ -2,6 +2,7 @@ package com.example.notification.application.service;
 
 import com.example.notification.application.command.UpdatePreferenceCommand;
 import com.example.notification.application.port.out.PreferenceRepository;
+import com.example.notification.application.result.GetPreferenceResult;
 import com.example.notification.domain.model.UserNotificationPreference;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -15,20 +16,22 @@ public class PreferenceService {
     private final PreferenceRepository preferenceRepository;
 
     @Transactional
-    public UserNotificationPreference getPreference(String userId) {
-        return preferenceRepository.findByUserId(userId)
+    public GetPreferenceResult getPreference(String userId) {
+        UserNotificationPreference preference = preferenceRepository.findByUserId(userId)
                 .orElseGet(() -> {
                     UserNotificationPreference defaultPref = UserNotificationPreference.createDefault(userId);
                     return preferenceRepository.save(defaultPref);
                 });
+        return GetPreferenceResult.from(preference);
     }
 
     @Transactional
-    public UserNotificationPreference updatePreference(UpdatePreferenceCommand command) {
+    public GetPreferenceResult updatePreference(UpdatePreferenceCommand command) {
         UserNotificationPreference preference = preferenceRepository.findByUserId(command.userId())
                 .orElseGet(() -> UserNotificationPreference.createDefault(command.userId()));
 
         preference.update(command.emailEnabled(), command.smsEnabled(), command.pushEnabled());
-        return preferenceRepository.save(preference);
+        UserNotificationPreference saved = preferenceRepository.save(preference);
+        return GetPreferenceResult.from(saved);
     }
 }
