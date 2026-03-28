@@ -8,7 +8,7 @@ TASK-R-12
 
 # Status
 
-ready
+review
 
 # Owner
 
