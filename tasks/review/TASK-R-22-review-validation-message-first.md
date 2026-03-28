@@ -8,7 +8,7 @@ review-service validation 메시지 findFirst() 패턴으로 변경
 
 # Status
 
-ready
+review
 
 # Owner
 

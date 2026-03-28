@@ -8,7 +8,7 @@ review-service GlobalExceptionHandler ResponseEntity 패턴 통일
 
 # Status
 
-ready
+review
 
 # Owner
 
