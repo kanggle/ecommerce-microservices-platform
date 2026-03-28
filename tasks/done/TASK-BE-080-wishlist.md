@@ -34,7 +34,7 @@ backend
 - 위시리스트 추가/제거 API
 - 위시리스트 목록 조회 API (페이지네이션)
 - 위시리스트 상품 재고/가격 변동 시 알림 연동 포인트
-- user-service 또는 별도 서비스에 구현
+- user-service에 구현 (확장)
 
 ## Out of Scope
 
@@ -59,7 +59,7 @@ backend
 - `specs/platform/architecture-decision-rule.md`
 - `specs/platform/service-boundaries.md`
 - `specs/services/user-service/architecture.md`
-- (위시리스트 스펙 작성 필요)
+- `specs/services/user-service/architecture.md`
 
 # Related Skills
 
@@ -69,7 +69,7 @@ backend
 
 # Related Contracts
 
-- (wishlist API 계약 작성 필요)
+- `specs/contracts/http/wishlist-api.md`
 - `specs/contracts/http/product-api.md`
 - `specs/contracts/http/user-api.md`
 
@@ -77,20 +77,20 @@ backend
 
 # Target Service
 
-- `user-service` (확장) 또는 별도 서비스
+- `user-service` (확장)
 
 ---
 
 # Architecture
 
-- 서비스 경계 결정 필요
+- Layered Architecture (follows user-service, see `specs/services/user-service/architecture.md`)
 
 ---
 
 # Implementation Notes
 
-- ready로 이동 전 서비스 경계 결정 및 API 계약 작성 필요
-- 상품 삭제 시 위시리스트 항목 처리 방식 결정 필요
+- 삭제된 상품은 wishlist에서 productStatus: "DELETED"로 표시 (soft handling)
+- 상품 정보는 product-service에서 조회 시 fetch 또는 로컬 캐시
 
 ---
 
