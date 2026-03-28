@@ -42,7 +42,7 @@ Create a new promotion.
 **Error responses**
 | Status | Code | Reason |
 |---|---|---|
-| 400 | INVALID_PROMOTION_REQUEST | Missing or invalid field |
+| 400 | VALIDATION_ERROR | Missing or invalid field |
 | 401 | UNAUTHORIZED | Missing or invalid access token |
 | 403 | ACCESS_DENIED | Not an admin user |
 
@@ -144,7 +144,7 @@ Update a promotion.
 **Error responses**
 | Status | Code | Reason |
 |---|---|---|
-| 400 | INVALID_PROMOTION_REQUEST | Missing or invalid field |
+| 400 | VALIDATION_ERROR | Missing or invalid field |
 | 401 | UNAUTHORIZED | Missing or invalid access token |
 | 403 | ACCESS_DENIED | Not an admin user |
 | 404 | PROMOTION_NOT_FOUND | Promotion with given ID does not exist |
