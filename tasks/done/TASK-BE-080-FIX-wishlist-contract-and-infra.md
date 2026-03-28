@@ -8,7 +8,7 @@ TASK-BE-080-FIX-wishlist-contract-and-infra
 
 # Status
 
-ready
+done
 
 # Owner
 
