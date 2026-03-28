@@ -1,4 +1,4 @@
-package com.example.notification.config;
+package com.example.notification.adapter.in.kafka;
 
 import lombok.extern.slf4j.Slf4j;
 import org.apache.kafka.clients.consumer.ConsumerRecord;
