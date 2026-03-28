@@ -8,7 +8,7 @@ promotion-service N+1 쿼리 개선 및 주문 취소 시 쿠폰 복원 구현
 
 # Status
 
-ready
+done
 
 # Owner
 
