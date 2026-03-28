@@ -1,5 +1,6 @@
 package com.example.notification.adapter.in.rest;
 
+import com.example.notification.domain.exception.AdminAccessDeniedException;
 import com.example.notification.domain.exception.NotificationNotFoundException;
 import com.example.notification.domain.exception.TemplateAlreadyExistsException;
 import com.example.notification.domain.exception.TemplateNotFoundException;
@@ -14,6 +15,12 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 @Slf4j
 @RestControllerAdvice
 public class GlobalExceptionHandler {
+
+    @ExceptionHandler(AdminAccessDeniedException.class)
+    public ResponseEntity<ErrorResponse> handleAdminAccessDenied(AdminAccessDeniedException e) {
+        return ResponseEntity.status(HttpStatus.FORBIDDEN)
+                .body(ErrorResponse.of("ACCESS_DENIED", e.getMessage()));
+    }
 
     @ExceptionHandler(NotificationNotFoundException.class)
     public ResponseEntity<ErrorResponse> handleNotificationNotFound(NotificationNotFoundException e) {

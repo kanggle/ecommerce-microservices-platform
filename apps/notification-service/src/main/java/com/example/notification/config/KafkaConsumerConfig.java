@@ -21,7 +21,7 @@ public class KafkaConsumerConfig {
                     log.error("Sending record to DLT. topic={}, offset={}, error={}",
                             record.topic(), record.offset(), ex.getMessage());
                     return new org.apache.kafka.common.TopicPartition(
-                            record.topic() + ".DLT", record.partition());
+                            record.topic() + ".dlq", record.partition());
                 });
 
         ExponentialBackOff backOff = new ExponentialBackOff(1000L, 2.0);
