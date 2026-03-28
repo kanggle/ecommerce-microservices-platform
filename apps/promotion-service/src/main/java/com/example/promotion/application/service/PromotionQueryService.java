@@ -2,7 +2,7 @@ package com.example.promotion.application.service;
 
 import com.example.promotion.application.result.PromotionDetail;
 import com.example.promotion.application.result.PromotionSummary;
-import com.example.promotion.domain.promotion.PageResult;
+import com.example.common.page.PageResult;
 import com.example.promotion.domain.promotion.Promotion;
 import com.example.promotion.domain.promotion.PromotionNotFoundException;
 import com.example.promotion.domain.promotion.PromotionRepository;
@@ -41,7 +41,8 @@ public class PromotionQueryService {
                         .toList(),
                 result.page(),
                 result.size(),
-                result.totalElements()
+                result.totalElements(),
+                result.totalPages()
         );
     }
 }

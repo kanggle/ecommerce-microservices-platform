@@ -4,7 +4,7 @@ import com.example.promotion.application.result.CouponDetail;
 import com.example.promotion.domain.coupon.Coupon;
 import com.example.promotion.domain.coupon.CouponRepository;
 import com.example.promotion.domain.coupon.CouponStatus;
-import com.example.promotion.domain.promotion.PageResult;
+import com.example.common.page.PageResult;
 import com.example.promotion.domain.promotion.Promotion;
 import com.example.promotion.domain.promotion.PromotionRepository;
 import lombok.RequiredArgsConstructor;
@@ -46,7 +46,8 @@ public class CouponQueryService {
                         .toList(),
                 result.page(),
                 result.size(),
-                result.totalElements()
+                result.totalElements(),
+                result.totalPages()
         );
     }
 

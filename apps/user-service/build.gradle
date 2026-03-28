@@ -4,6 +4,9 @@ plugins {
 }
 
 dependencies {
+    // Common
+    implementation project(':libs:java-common')
+
     // Observability
     implementation project(':libs:java-observability')
 

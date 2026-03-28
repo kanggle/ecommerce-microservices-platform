@@ -1,5 +1,6 @@
 package com.example.promotion.domain.promotion;
 
+import com.example.common.page.PageResult;
 import java.util.List;
 import java.util.Optional;
 

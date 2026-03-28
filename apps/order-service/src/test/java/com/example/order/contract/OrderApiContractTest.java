@@ -9,7 +9,7 @@ import com.example.order.application.service.OrderPlacementService;
 import com.example.order.application.service.OrderQueryService;
 import com.example.order.domain.exception.OrderNotFoundException;
 import com.example.order.domain.model.OrderStatus;
-import com.example.order.domain.model.PageResult;
+import com.example.common.page.PageResult;
 import com.example.order.presentation.GlobalExceptionHandler;
 import com.example.order.presentation.OrderController;
 import com.fasterxml.jackson.databind.JsonNode;

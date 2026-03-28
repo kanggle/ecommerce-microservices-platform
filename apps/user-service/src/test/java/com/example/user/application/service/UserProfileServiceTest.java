@@ -6,8 +6,8 @@ import com.example.user.application.result.UserListPageResult;
 import com.example.user.application.result.UserProfileResult;
 import com.example.user.application.result.UserProfileSummaryResult;
 import com.example.user.domain.exception.UserProfileNotFoundException;
-import com.example.user.domain.model.PageQuery;
-import com.example.user.domain.model.PageResult;
+import com.example.common.page.PageQuery;
+import com.example.common.page.PageResult;
 import com.example.user.domain.model.ProfileStatus;
 import com.example.user.domain.model.UserProfile;
 import com.example.user.domain.repository.UserProfileRepository;
@@ -189,7 +189,7 @@ class UserProfileServiceTest {
         @DisplayName("전체 사용자 목록을 페이지네이션하여 반환한다")
         void listUsers_noFilter_returnsAll() {
             UserProfile profile = UserProfile.create(UUID.randomUUID(), "test@example.com", "홍길동");
-            PageResult<UserProfile> pageResult = new PageResult<>(List.of(profile), 1L, 1, 0, 20);
+            PageResult<UserProfile> pageResult = new PageResult<>(List.of(profile), 0, 20, 1L, 1);
             given(userProfileRepository.findAll(any(PageQuery.class))).willReturn(pageResult);
 
             UserListPageResult result = userProfileService.listUsers(null, null, 0, 20);
@@ -202,7 +202,7 @@ class UserProfileServiceTest {
         @DisplayName("status 필터로 사용자 목록을 조회한다")
         void listUsers_statusFilter_filtersByStatus() {
             UserProfile profile = UserProfile.create(UUID.randomUUID(), "test@example.com", "홍길동");
-            PageResult<UserProfile> pageResult = new PageResult<>(List.of(profile), 1L, 1, 0, 20);
+            PageResult<UserProfile> pageResult = new PageResult<>(List.of(profile), 0, 20, 1L, 1);
             given(userProfileRepository.findByStatus(eq(ProfileStatus.ACTIVE), any(PageQuery.class))).willReturn(pageResult);
 
             UserListPageResult result = userProfileService.listUsers(ProfileStatus.ACTIVE, null, 0, 20);
@@ -214,7 +214,7 @@ class UserProfileServiceTest {
         @DisplayName("email 부분 검색으로 사용자 목록을 조회한다")
         void listUsers_emailFilter_filtersByEmail() {
             UserProfile profile = UserProfile.create(UUID.randomUUID(), "test@example.com", "홍길동");
-            PageResult<UserProfile> pageResult = new PageResult<>(List.of(profile), 1L, 1, 0, 20);
+            PageResult<UserProfile> pageResult = new PageResult<>(List.of(profile), 0, 20, 1L, 1);
             given(userProfileRepository.findByEmailContaining(eq("test"), any(PageQuery.class))).willReturn(pageResult);
 
             UserListPageResult result = userProfileService.listUsers(null, "test", 0, 20);
@@ -226,7 +226,7 @@ class UserProfileServiceTest {
         @DisplayName("status와 email 필터를 동시에 적용한다")
         void listUsers_statusAndEmailFilter_filtersByBoth() {
             UserProfile profile = UserProfile.create(UUID.randomUUID(), "test@example.com", "홍길동");
-            PageResult<UserProfile> pageResult = new PageResult<>(List.of(profile), 1L, 1, 0, 20);
+            PageResult<UserProfile> pageResult = new PageResult<>(List.of(profile), 0, 20, 1L, 1);
             given(userProfileRepository.findByStatusAndEmailContaining(
                     eq(ProfileStatus.ACTIVE), eq("test"), any(PageQuery.class))).willReturn(pageResult);
 
@@ -238,7 +238,7 @@ class UserProfileServiceTest {
         @Test
         @DisplayName("음수 페이지 번호는 0으로 보정된다")
         void listUsers_negativePage_correctedToZero() {
-            PageResult<UserProfile> pageResult = new PageResult<>(List.of(), 0L, 0, 0, 20);
+            PageResult<UserProfile> pageResult = new PageResult<>(List.of(), 0, 20, 0L, 0);
             given(userProfileRepository.findAll(any(PageQuery.class))).willReturn(pageResult);
 
             UserListPageResult result = userProfileService.listUsers(null, null, -1, 20);

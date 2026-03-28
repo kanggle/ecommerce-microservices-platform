@@ -11,7 +11,7 @@ import com.example.promotion.application.result.UpdatePromotionResult;
 import com.example.promotion.application.service.CouponCommandService;
 import com.example.promotion.application.service.PromotionCommandService;
 import com.example.promotion.application.service.PromotionQueryService;
-import com.example.promotion.domain.promotion.PageResult;
+import com.example.common.page.PageResult;
 import com.example.promotion.domain.promotion.PromotionStatus;
 import com.example.promotion.interfaces.rest.dto.request.CreatePromotionRequest;
 import com.example.promotion.interfaces.rest.dto.request.IssueCouponsRequest;

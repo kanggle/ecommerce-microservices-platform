@@ -2,8 +2,8 @@ package com.example.order.domain.repository;
 
 import com.example.order.domain.model.Order;
 import com.example.order.domain.model.OrderStatus;
-import com.example.order.domain.model.PageQuery;
-import com.example.order.domain.model.PageResult;
+import com.example.common.page.PageQuery;
+import com.example.common.page.PageResult;
 
 import java.util.Collection;
 import java.util.List;

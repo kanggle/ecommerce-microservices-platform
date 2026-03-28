@@ -1,7 +1,7 @@
 package com.example.shipping.interfaces.rest.dto.response;
 
 import com.example.shipping.application.result.ShippingSummary;
-import com.example.shipping.domain.model.PageResult;
+import com.example.common.page.PageResult;
 
 import java.util.List;
 

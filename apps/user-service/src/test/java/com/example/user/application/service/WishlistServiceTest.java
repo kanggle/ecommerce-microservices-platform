@@ -7,8 +7,8 @@ import com.example.user.application.result.WishlistPageResult;
 import com.example.user.domain.exception.AlreadyInWishlistException;
 import com.example.user.domain.exception.WishlistAccessDeniedException;
 import com.example.user.domain.exception.WishlistItemNotFoundException;
-import com.example.user.domain.model.PageQuery;
-import com.example.user.domain.model.PageResult;
+import com.example.common.page.PageQuery;
+import com.example.common.page.PageResult;
 import com.example.user.domain.model.WishlistItem;
 import com.example.user.domain.repository.WishlistItemRepository;
 import com.example.user.domain.service.ProductInfoProvider;
@@ -88,7 +88,7 @@ class WishlistServiceTest {
         @DisplayName("위시리스트 목록을 조회하면 상품 정보와 함께 반환한다")
         void getWishlist_withItems_returnsPageWithProductInfo() {
             WishlistItem item = WishlistItem.create(USER_ID, PRODUCT_ID);
-            var pageResult = new PageResult<>(List.of(item), 1L, 1, 0, 20);
+            var pageResult = new PageResult<>(List.of(item), 0, 20, 1L, 1);
             given(wishlistItemRepository.findAllByUserId(any(UUID.class), any(PageQuery.class)))
                     .willReturn(pageResult);
 
@@ -109,7 +109,7 @@ class WishlistServiceTest {
         @DisplayName("상품 정보를 가져올 수 없는 경우 DELETED 상태로 반환한다")
         void getWishlist_productNotFound_returnsDELETED() {
             WishlistItem item = WishlistItem.create(USER_ID, PRODUCT_ID);
-            var pageResult = new PageResult<>(List.of(item), 1L, 1, 0, 20);
+            var pageResult = new PageResult<>(List.of(item), 0, 20, 1L, 1);
             given(wishlistItemRepository.findAllByUserId(any(UUID.class), any(PageQuery.class)))
                     .willReturn(pageResult);
             given(productInfoProvider.getProductInfos(anySet())).willReturn(Map.of());
@@ -124,7 +124,7 @@ class WishlistServiceTest {
         @Test
         @DisplayName("빈 위시리스트를 조회하면 빈 목록을 반환한다")
         void getWishlist_empty_returnsEmptyPage() {
-            var pageResult = new PageResult<WishlistItem>(List.of(), 0L, 0, 0, 20);
+            var pageResult = new PageResult<WishlistItem>(List.of(), 0, 20, 0L, 0);
             given(wishlistItemRepository.findAllByUserId(any(UUID.class), any(PageQuery.class)))
                     .willReturn(pageResult);
 
@@ -137,7 +137,7 @@ class WishlistServiceTest {
         @Test
         @DisplayName("page가 음수이면 0으로 보정한다")
         void getWishlist_negativePage_correctedToZero() {
-            var pageResult = new PageResult<WishlistItem>(List.of(), 0L, 0, 0, 20);
+            var pageResult = new PageResult<WishlistItem>(List.of(), 0, 20, 0L, 0);
             given(wishlistItemRepository.findAllByUserId(any(UUID.class), any(PageQuery.class)))
                     .willReturn(pageResult);
 
@@ -149,7 +149,7 @@ class WishlistServiceTest {
         @Test
         @DisplayName("size가 100을 초과하면 100으로 보정한다")
         void getWishlist_sizeOver100_correctedTo100() {
-            var pageResult = new PageResult<WishlistItem>(List.of(), 0L, 0, 0, 100);
+            var pageResult = new PageResult<WishlistItem>(List.of(), 0, 100, 0L, 0);
             given(wishlistItemRepository.findAllByUserId(any(UUID.class), any(PageQuery.class)))
                     .willReturn(pageResult);
 

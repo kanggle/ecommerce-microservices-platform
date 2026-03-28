@@ -3,6 +3,8 @@ package com.example.shipping.application.service;
 import com.example.shipping.application.exception.UnauthorizedShippingAccessException;
 import com.example.shipping.application.result.ShippingResult;
 import com.example.shipping.application.result.ShippingSummary;
+import com.example.common.page.PageQuery;
+import com.example.common.page.PageResult;
 import com.example.shipping.domain.exception.ShippingNotFoundException;
 import com.example.shipping.domain.model.*;
 import com.example.shipping.domain.repository.ShippingRepository;

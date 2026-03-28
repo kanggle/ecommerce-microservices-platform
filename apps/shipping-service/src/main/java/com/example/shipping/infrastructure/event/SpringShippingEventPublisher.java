@@ -2,7 +2,7 @@ package com.example.shipping.infrastructure.event;
 
 import com.example.shipping.application.port.ShippingEventPublisher;
 import com.example.shipping.domain.model.ShippingStatus;
-import com.example.shipping.infrastructure.persistence.OutboxWriter;
+import com.example.messaging.outbox.OutboxWriter;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;

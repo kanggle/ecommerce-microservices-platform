@@ -3,7 +3,7 @@ package com.example.order;
 import com.example.order.domain.model.Order;
 import com.example.order.domain.model.OrderStatus;
 import com.example.order.domain.repository.OrderRepository;
-import com.example.order.infrastructure.persistence.OutboxPublisher;
+import com.example.messaging.outbox.OutboxPublisher;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;

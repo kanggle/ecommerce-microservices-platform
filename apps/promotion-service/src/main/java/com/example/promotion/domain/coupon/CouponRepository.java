@@ -1,6 +1,6 @@
 package com.example.promotion.domain.coupon;
 
-import com.example.promotion.domain.promotion.PageResult;
+import com.example.common.page.PageResult;
 
 import java.time.Instant;
 import java.util.List;

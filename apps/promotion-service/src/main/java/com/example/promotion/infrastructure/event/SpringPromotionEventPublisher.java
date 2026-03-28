@@ -3,7 +3,7 @@ package com.example.promotion.infrastructure.event;
 import com.example.promotion.application.event.CouponExpiredEvent;
 import com.example.promotion.application.event.CouponUsedEvent;
 import com.example.promotion.application.port.PromotionEventPublisher;
-import com.example.promotion.infrastructure.persistence.repository.OutboxWriter;
+import com.example.messaging.outbox.OutboxWriter;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;

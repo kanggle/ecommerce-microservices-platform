@@ -1,7 +1,7 @@
 package com.example.order.infrastructure.event;
 
 import com.example.order.application.port.OrderMetricsPort;
-import com.example.order.infrastructure.persistence.OutboxPublisher;
+import com.example.messaging.outbox.OutboxPublisher;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;

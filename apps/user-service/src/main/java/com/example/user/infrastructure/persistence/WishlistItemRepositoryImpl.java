@@ -1,7 +1,7 @@
 package com.example.user.infrastructure.persistence;
 
-import com.example.user.domain.model.PageQuery;
-import com.example.user.domain.model.PageResult;
+import com.example.common.page.PageQuery;
+import com.example.common.page.PageResult;
 import com.example.user.domain.model.WishlistItem;
 import com.example.user.domain.repository.WishlistItemRepository;
 import lombok.RequiredArgsConstructor;
@@ -44,16 +44,16 @@ public class WishlistItemRepositoryImpl implements WishlistItemRepository {
 
     @Override
     public PageResult<WishlistItem> findAllByUserId(UUID userId, PageQuery pageQuery) {
-        Sort sort = Sort.by(Sort.Direction.fromString(pageQuery.sortDirection()), pageQuery.sortField());
+        Sort sort = Sort.by(Sort.Direction.fromString(pageQuery.sortDirection()), pageQuery.sortBy());
         PageRequest pageRequest = PageRequest.of(pageQuery.page(), pageQuery.size(), sort);
         Page<WishlistItemJpaEntity> page = jpaRepository.findAllByUserId(userId, pageRequest);
 
         return new PageResult<>(
                 page.getContent().stream().map(mapper::toDomain).toList(),
-                page.getTotalElements(),
-                page.getTotalPages(),
                 page.getNumber(),
-                page.getSize()
+                page.getSize(),
+                page.getTotalElements(),
+                page.getTotalPages()
         );
     }
 

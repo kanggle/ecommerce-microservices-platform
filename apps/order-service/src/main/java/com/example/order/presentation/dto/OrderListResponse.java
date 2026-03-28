@@ -1,7 +1,7 @@
 package com.example.order.presentation.dto;
 
 import com.example.order.application.dto.OrderSummary;
-import com.example.order.domain.model.PageResult;
+import com.example.common.page.PageResult;
 
 import java.time.Instant;
 import java.util.List;

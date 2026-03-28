@@ -3,7 +3,7 @@ package com.example.promotion.infrastructure.persistence.repository;
 import com.example.promotion.domain.coupon.Coupon;
 import com.example.promotion.domain.coupon.CouponRepository;
 import com.example.promotion.domain.coupon.CouponStatus;
-import com.example.promotion.domain.promotion.PageResult;
+import com.example.common.page.PageResult;
 import com.example.promotion.infrastructure.persistence.entity.CouponJpaEntity;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -91,7 +91,8 @@ public class CouponRepositoryImpl implements CouponRepository {
                 result.getContent().stream().map(CouponJpaEntity::toDomain).toList(),
                 page,
                 size,
-                result.getTotalElements()
+                result.getTotalElements(),
+                result.getTotalPages()
         );
     }
 }

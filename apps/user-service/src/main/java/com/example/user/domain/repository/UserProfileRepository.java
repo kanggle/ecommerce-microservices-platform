@@ -1,7 +1,7 @@
 package com.example.user.domain.repository;
 
-import com.example.user.domain.model.PageQuery;
-import com.example.user.domain.model.PageResult;
+import com.example.common.page.PageQuery;
+import com.example.common.page.PageResult;
 import com.example.user.domain.model.ProfileStatus;
 import com.example.user.domain.model.UserProfile;
 

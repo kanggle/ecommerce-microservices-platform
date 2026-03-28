@@ -8,7 +8,7 @@ import com.example.promotion.domain.coupon.CouponAlreadyUsedException;
 import com.example.promotion.domain.coupon.CouponNotFoundException;
 import com.example.promotion.domain.coupon.CouponStatus;
 import com.example.promotion.domain.promotion.DiscountType;
-import com.example.promotion.domain.promotion.PageResult;
+import com.example.common.page.PageResult;
 import com.example.promotion.interfaces.rest.controller.CouponController;
 import com.example.promotion.interfaces.rest.controller.GlobalExceptionHandler;
 import org.junit.jupiter.api.DisplayName;
@@ -53,7 +53,7 @@ class CouponControllerTest {
                 Instant.parse("2026-04-01T00:00:00Z")
         );
         given(couponQueryService.getMyCoupons(eq("user-1"), anyInt(), anyInt(), any()))
-                .willReturn(new PageResult<>(List.of(detail), 0, 20, 1));
+                .willReturn(new PageResult<>(List.of(detail), 0, 20, 1L, 1));
 
         mockMvc.perform(get("/api/coupons/me")
                         .header("X-User-Id", "user-1"))

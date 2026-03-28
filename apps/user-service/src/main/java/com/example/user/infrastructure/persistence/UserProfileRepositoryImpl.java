@@ -1,7 +1,7 @@
 package com.example.user.infrastructure.persistence;
 
-import com.example.user.domain.model.PageQuery;
-import com.example.user.domain.model.PageResult;
+import com.example.common.page.PageQuery;
+import com.example.common.page.PageResult;
 import com.example.user.domain.model.ProfileStatus;
 import com.example.user.domain.model.UserProfile;
 import com.example.user.domain.repository.UserProfileRepository;
@@ -72,7 +72,7 @@ public class UserProfileRepositoryImpl implements UserProfileRepository {
         Sort.Direction direction = "ASC".equalsIgnoreCase(pageQuery.sortDirection())
                 ? Sort.Direction.ASC
                 : Sort.Direction.DESC;
-        Sort sort = Sort.by(direction, pageQuery.sortField());
+        Sort sort = Sort.by(direction, pageQuery.sortBy());
         return PageRequest.of(pageQuery.page(), pageQuery.size(), sort);
     }
 
@@ -82,10 +82,10 @@ public class UserProfileRepositoryImpl implements UserProfileRepository {
                 .toList();
         return new PageResult<>(
                 content,
-                page.getTotalElements(),
-                page.getTotalPages(),
                 page.getNumber(),
-                pageQuery.size()
+                pageQuery.size(),
+                page.getTotalElements(),
+                page.getTotalPages()
         );
     }
 }

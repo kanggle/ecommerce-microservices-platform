@@ -4,6 +4,12 @@ plugins {
 }
 
 dependencies {
+    // Common
+    implementation project(':libs:java-common')
+
+    // Messaging (Outbox pattern)
+    implementation project(':libs:java-messaging')
+
     // Observability
     implementation project(':libs:java-observability')
     implementation 'org.springframework.boot:spring-boot-starter-actuator'

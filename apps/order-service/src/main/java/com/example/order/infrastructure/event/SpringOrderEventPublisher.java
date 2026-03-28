@@ -3,7 +3,7 @@ package com.example.order.infrastructure.event;
 import com.example.order.application.event.OrderCancelledEvent;
 import com.example.order.application.event.OrderPlacedEvent;
 import com.example.order.application.port.OrderEventPublisher;
-import com.example.order.infrastructure.persistence.OutboxWriter;
+import com.example.messaging.outbox.OutboxWriter;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;

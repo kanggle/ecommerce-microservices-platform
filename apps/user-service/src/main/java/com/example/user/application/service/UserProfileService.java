@@ -7,8 +7,8 @@ import com.example.user.application.result.UserListPageResult;
 import com.example.user.application.result.UserProfileResult;
 import com.example.user.application.result.UserProfileSummaryResult;
 import com.example.user.domain.exception.UserProfileNotFoundException;
-import com.example.user.domain.model.PageQuery;
-import com.example.user.domain.model.PageResult;
+import com.example.common.page.PageQuery;
+import com.example.common.page.PageResult;
 import com.example.user.domain.model.ProfileStatus;
 import com.example.user.domain.model.UserProfile;
 import com.example.user.domain.repository.UserProfileRepository;
@@ -102,7 +102,7 @@ public class UserProfileService {
         List<UserProfileSummaryResult> content = profiles.content().stream()
                 .map(UserProfileSummaryResult::from)
                 .toList();
-        return new UserListPageResult(content, profiles.totalElements(), profiles.totalPages(), profiles.pageNumber(), profiles.pageSize());
+        return new UserListPageResult(content, profiles.totalElements(), profiles.totalPages(), profiles.page(), profiles.size());
     }
 
     @Transactional

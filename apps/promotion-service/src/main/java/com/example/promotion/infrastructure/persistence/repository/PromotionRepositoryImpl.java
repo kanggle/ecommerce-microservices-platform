@@ -1,6 +1,6 @@
 package com.example.promotion.infrastructure.persistence.repository;
 
-import com.example.promotion.domain.promotion.PageResult;
+import com.example.common.page.PageResult;
 import com.example.promotion.domain.promotion.Promotion;
 import com.example.promotion.domain.promotion.PromotionRepository;
 import com.example.promotion.domain.promotion.PromotionStatus;
@@ -84,7 +84,8 @@ public class PromotionRepositoryImpl implements PromotionRepository {
                 result.getContent().stream().map(PromotionJpaEntity::toDomain).toList(),
                 page,
                 size,
-                result.getTotalElements()
+                result.getTotalElements(),
+                result.getTotalPages()
         );
     }
 }

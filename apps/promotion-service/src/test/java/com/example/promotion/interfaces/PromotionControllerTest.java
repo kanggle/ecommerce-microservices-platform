@@ -7,7 +7,7 @@ import com.example.promotion.application.service.CouponCommandService;
 import com.example.promotion.application.service.PromotionCommandService;
 import com.example.promotion.application.service.PromotionQueryService;
 import com.example.promotion.domain.promotion.DiscountType;
-import com.example.promotion.domain.promotion.PageResult;
+import com.example.common.page.PageResult;
 import com.example.promotion.domain.promotion.PromotionNotFoundException;
 import com.example.promotion.domain.promotion.PromotionStatus;
 import com.example.promotion.interfaces.rest.controller.GlobalExceptionHandler;
@@ -99,7 +99,7 @@ class PromotionControllerTest {
                 PromotionStatus.ACTIVE
         );
         given(promotionQueryService.getPromotions(0, 20, null))
-                .willReturn(new PageResult<>(List.of(summary), 0, 20, 1));
+                .willReturn(new PageResult<>(List.of(summary), 0, 20, 1L, 1));
 
         mockMvc.perform(get("/api/promotions")
                         .header("X-User-Role", "ADMIN"))

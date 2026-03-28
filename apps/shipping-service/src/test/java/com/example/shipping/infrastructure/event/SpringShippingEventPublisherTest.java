@@ -1,7 +1,7 @@
 package com.example.shipping.infrastructure.event;
 
 import com.example.shipping.domain.model.ShippingStatus;
-import com.example.shipping.infrastructure.persistence.OutboxWriter;
+import com.example.messaging.outbox.OutboxWriter;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;

@@ -1,7 +1,7 @@
 package com.example.promotion.interfaces.rest.dto.response;
 
 import com.example.promotion.application.result.PromotionSummary;
-import com.example.promotion.domain.promotion.PageResult;
+import com.example.common.page.PageResult;
 
 import java.util.List;
 

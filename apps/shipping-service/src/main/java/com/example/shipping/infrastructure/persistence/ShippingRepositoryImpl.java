@@ -1,7 +1,7 @@
 package com.example.shipping.infrastructure.persistence;
 
-import com.example.shipping.domain.model.PageQuery;
-import com.example.shipping.domain.model.PageResult;
+import com.example.common.page.PageQuery;
+import com.example.common.page.PageResult;
 import com.example.shipping.domain.model.Shipping;
 import com.example.shipping.domain.model.ShippingStatus;
 import com.example.shipping.domain.model.StatusHistoryEntry;
