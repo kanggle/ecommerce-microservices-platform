@@ -94,7 +94,7 @@ public class Order {
             return false;
         }
         if (this.status != OrderStatus.PENDING) {
-            throw new InvalidOrderException("PENDING 상태에서만 확정할 수 있습니다: " + status);
+            throw new InvalidOrderException("Order can only be confirmed in PENDING status: " + status);
         }
         this.status = OrderStatus.CONFIRMED;
         this.updatedAt = Instant.now(clock);
