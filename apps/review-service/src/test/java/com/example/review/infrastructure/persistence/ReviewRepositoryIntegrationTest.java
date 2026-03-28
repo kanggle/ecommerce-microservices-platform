@@ -8,6 +8,7 @@ import com.example.review.application.result.MyReviewListResult;
 import com.example.review.domain.model.Review;
 import com.example.review.domain.model.ReviewStatus;
 import com.example.review.domain.repository.ReviewRepository;
+import jakarta.persistence.EntityManager;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -61,6 +62,9 @@ class ReviewRepositoryIntegrationTest {
 
     @Autowired
     private ReviewQueryPort reviewQueryPort;
+
+    @Autowired
+    private EntityManager entityManager;
 
     @Test
     @DisplayName("리뷰를 저장하고 조회할 수 있다")
@@ -160,6 +164,49 @@ class ReviewRepositoryIntegrationTest {
         assertThat(summary.ratingDistribution().get(3)).isEqualTo(1L);
         assertThat(summary.ratingDistribution().get(2)).isEqualTo(0L);
         assertThat(summary.ratingDistribution().get(1)).isEqualTo(0L);
+    }
+
+    @Test
+    @DisplayName("소프트 삭제 후 동일 사용자+상품 조합으로 재리뷰를 저장할 수 있다")
+    void saveReview_afterSoftDeleteSameUserAndProduct_succeeds() {
+        UUID userId = UUID.randomUUID();
+        UUID productId = UUID.randomUUID();
+
+        Review firstReview = Review.create(userId, productId, "테스트상품", 4, "첫 리뷰", "첫 번째 리뷰입니다");
+        reviewRepository.save(firstReview);
+
+        firstReview.softDelete();
+        reviewRepository.save(firstReview);
+        entityManager.flush();
+        entityManager.clear();
+
+        Review secondReview = Review.create(userId, productId, "테스트상품", 5, "재리뷰", "재구매 후 다시 작성합니다");
+        Review saved = reviewRepository.save(secondReview);
+
+        assertThat(saved.getId()).isNotEqualTo(firstReview.getId());
+        assertThat(saved.getStatus()).isEqualTo(ReviewStatus.ACTIVE);
+
+        Optional<Review> found = reviewRepository.findActiveById(saved.getId());
+        assertThat(found).isPresent();
+        assertThat(found.get().getUserId()).isEqualTo(userId);
+        assertThat(found.get().getProductId()).isEqualTo(productId);
+        assertThat(found.get().getTitle()).isEqualTo("재리뷰");
+    }
+
+    @Test
+    @DisplayName("소프트 삭제 후 existsByUserIdAndProductId가 false를 반환한다")
+    void existsByUserIdAndProductId_afterSoftDelete_returnsFalse() {
+        UUID userId = UUID.randomUUID();
+        UUID productId = UUID.randomUUID();
+
+        Review review = Review.create(userId, productId, "테스트상품", 5, "좋은 상품", "매우 만족합니다");
+        reviewRepository.save(review);
+        assertThat(reviewRepository.existsByUserIdAndProductId(userId, productId)).isTrue();
+
+        review.softDelete();
+        reviewRepository.save(review);
+
+        assertThat(reviewRepository.existsByUserIdAndProductId(userId, productId)).isFalse();
     }
 
     @Test
