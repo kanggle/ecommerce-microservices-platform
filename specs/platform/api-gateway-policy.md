@@ -37,6 +37,7 @@ Services must not be directly exposed to external traffic.
 - `POST /api/auth/refresh`
 - `GET /api/products/**`
 - `GET /api/search/**`
+- `GET /api/reviews/products/**`
 - `GET /actuator/health`
 
 ---

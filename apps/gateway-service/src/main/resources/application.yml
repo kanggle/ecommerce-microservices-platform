@@ -86,6 +86,17 @@ spring:
                 redis-rate-limiter.burstCapacity: 200
                 key-resolver: "#{@ipKeyResolver}"
 
+        - id: shipping-service
+          uri: ${SHIPPING_SERVICE_URL:http://localhost:8090}
+          predicates:
+            - Path=/api/shippings/**
+          filters:
+            - name: RequestRateLimiter
+              args:
+                redis-rate-limiter.replenishRate: 100
+                redis-rate-limiter.burstCapacity: 200
+                key-resolver: "#{@ipKeyResolver}"
+
 jwt:
   secret: ${JWT_SECRET}
 

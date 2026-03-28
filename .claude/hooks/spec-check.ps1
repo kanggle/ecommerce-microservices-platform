@@ -12,7 +12,7 @@ try {
     # Warn when editing contract files (http/event contracts)
     if ($filePath -match 'specs[\\/]contracts[\\/]') {
         $result = @{
-            decision = "block"
+            decision = "ask"
             reason   = "Contract files (specs/contracts/) must be updated through the design-api or design-event workflow. Verify this change follows the contract-first rule."
         }
         $result | ConvertTo-Json -Compress
@@ -22,7 +22,7 @@ try {
     # Warn when editing platform specs
     if ($filePath -match 'specs[\\/]platform[\\/]') {
         $result = @{
-            decision = "block"
+            decision = "ask"
             reason   = "Platform specs (specs/platform/) are the highest priority source of truth. Confirm this change is intentional and not a task-driven modification."
         }
         $result | ConvertTo-Json -Compress

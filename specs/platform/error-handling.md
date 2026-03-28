@@ -122,6 +122,56 @@ All services must return errors in the following JSON format:
 | DEFAULT_ADDRESS_CANNOT_BE_DELETED | 422 | Cannot delete the default address while other addresses exist |
 | USER_ALREADY_WITHDRAWN | 422 | User has already been withdrawn |
 
+## Promotion
+
+| Code | HTTP | Description |
+|---|---|---|
+| INVALID_PROMOTION_REQUEST | 400 | Promotion request is invalid (missing or invalid fields) |
+| PROMOTION_NOT_FOUND | 404 | Promotion with given ID does not exist |
+| PROMOTION_ALREADY_ENDED | 422 | Cannot update an ended promotion |
+| PROMOTION_HAS_ISSUED_COUPONS | 422 | Cannot delete a promotion with issued coupons |
+| PROMOTION_NOT_ACTIVE | 422 | Promotion is not currently active |
+| COUPON_NOT_FOUND | 404 | Coupon with given ID does not exist |
+| COUPON_ALREADY_USED | 422 | Coupon has already been used |
+| COUPON_EXPIRED | 422 | Coupon has expired |
+| COUPON_NOT_OWNED | 422 | Coupon does not belong to the user |
+| COUPON_LIMIT_EXCEEDED | 422 | Issuance would exceed max issuance count |
+
+## Notification
+
+| Code | HTTP | Description |
+|---|---|---|
+| NOTIFICATION_NOT_FOUND | 404 | Notification with given ID does not exist |
+| INVALID_PREFERENCE_REQUEST | 400 | Notification preference request is invalid |
+| INVALID_TEMPLATE_REQUEST | 400 | Notification template request is invalid |
+| TEMPLATE_NOT_FOUND | 404 | Template with given ID does not exist |
+| TEMPLATE_ALREADY_EXISTS | 409 | Template for this type and channel already exists |
+
+## Review
+
+| Code | HTTP | Description |
+|---|---|---|
+| INVALID_REVIEW_REQUEST | 400 | Review request is invalid (missing or invalid fields) |
+| REVIEW_NOT_FOUND | 404 | Review with given ID does not exist |
+| REVIEW_ALREADY_EXISTS | 409 | User already reviewed this product |
+| PRODUCT_NOT_PURCHASED | 422 | User has not purchased this product |
+
+## Wishlist
+
+| Code | HTTP | Description |
+|---|---|---|
+| INVALID_WISHLIST_REQUEST | 400 | Wishlist request is invalid (missing or invalid fields) |
+| WISHLIST_ITEM_NOT_FOUND | 404 | Wishlist item with given ID does not exist |
+| ALREADY_IN_WISHLIST | 409 | Product is already in the wishlist |
+
+## Shipping
+
+| Code | HTTP | Description |
+|---|---|---|
+| INVALID_SHIPPING_REQUEST | 400 | Shipping request is invalid (missing or invalid fields) |
+| SHIPPING_NOT_FOUND | 404 | Shipping record does not exist |
+| INVALID_STATUS_TRANSITION | 422 | Shipping status transition is not allowed |
+
 ---
 
 ## Promotion

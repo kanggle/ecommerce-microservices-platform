@@ -97,25 +97,32 @@ All events must follow this JSON envelope:
 
 | Producer | Event | Consumer(s) |
 |---|---|---|
-| auth-service | UserSignedUp | user-service, notification-service (future) |
+| auth-service | UserSignedUp | user-service, notification-service |
 | auth-service | UserLoggedIn | audit-service (future), analytics (future) |
 | auth-service | UserLoggedOut | audit-service (future), analytics (future) |
 | auth-service | TokenRefreshed | audit-service (future) |
 | auth-service | LoginFailed | audit-service (future), security-monitoring (future) |
 | auth-service | SessionLimitExceeded | audit-service (future) |
-| order-service | OrderPlaced | payment-service |
+| order-service | OrderPlaced | payment-service, notification-service |
 | order-service | OrderCancelled | payment-service, promotion-service |
-| payment-service | PaymentCompleted | order-service |
+| order-service | OrderConfirmed | shipping-service |
+| payment-service | PaymentCompleted | order-service, notification-service |
 | payment-service | PaymentFailed | order-service |
 | payment-service | PaymentRefunded | order-service |
-| user-service | UserProfileUpdated | admin-dashboard (future), notification-service (future) |
+| promotion-service | CouponUsed | order-service, notification-service (future) |
+| promotion-service | CouponExpired | notification-service (future) |
+| review-service | ReviewCreated | search-service, product-service |
+| review-service | ReviewUpdated | search-service, product-service |
+| review-service | ReviewDeleted | search-service, product-service |
+| shipping-service | ShippingStatusChanged | order-service, notification-service |
+| user-service | UserProfileUpdated | admin-dashboard (future), notification-service |
 | user-service | UserWithdrawn | order-service, auth-service |
 | product-service | ProductCreated | search-service |
 | product-service | ProductUpdated | search-service |
 | product-service | ProductDeleted | search-service |
 | product-service | StockChanged | search-service, order-service |
 
-> **Future/external services**: `notification-service`, `audit-service`, `analytics`, `security-monitoring` appear as consumers in event contracts but do not have service specs yet. They are planned services. Implementations consuming events for these services should not be built until their service specs are created under `specs/services/`. Event contracts mark these consumers as `(future)`.
+> **Future/external services**: `audit-service`, `analytics`, `security-monitoring` appear as consumers in event contracts but do not have service specs yet. They are planned services. Implementations consuming events for these services should not be built until their service specs are created under `specs/services/`. Event contracts mark these consumers as `(future)`.
 
 ---
 

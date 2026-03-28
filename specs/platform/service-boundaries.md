@@ -27,6 +27,10 @@ The constraints below define what each service **must not** own or do:
 | `user-service` | Own authentication credentials; must expose data only through published contracts |
 | `order-service` | Own payment logic |
 | `payment-service` | Own order aggregate state |
+| `promotion-service` | Own order or payment logic |
+| `notification-service` | Own user profile or order data; contain business logic beyond notification delivery |
+| `review-service` | Own product or order data |
+| `shipping-service` | Own order or payment data |
 | `batch-worker` | Own primary domain state; call non-public endpoints |
 
 ---
@@ -50,8 +54,12 @@ All client-facing HTTP requests enter through `gateway-service`.
 | gateway-service | search-service | `search-api.md` | Product search by keyword and filters |
 | gateway-service | order-service | `order-api.md` | Order placement, listing, cancellation |
 | gateway-service | payment-service | `payment-api.md` | Payment status queries |
+| gateway-service | promotion-service | `promotion-api.md` | Promotion and coupon management |
+| gateway-service | notification-service | `notification-api.md` | Notification history and preferences |
 | gateway-service | review-service | `review-api.md` | Product reviews, ratings, user review history |
+| gateway-service | shipping-service | `shipping-api.md` | Shipping status tracking |
 | order-service | product-service | `product-api.md` | Stock validation at order placement |
+| order-service | promotion-service | `promotion-api.md` | Coupon application at order placement |
 | review-service | order-service | `order-api.md` | Purchase verification for review creation |
 
 - No circular synchronous dependencies exist.
