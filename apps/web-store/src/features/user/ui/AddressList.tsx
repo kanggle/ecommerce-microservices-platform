@@ -10,25 +10,19 @@ import { maskPhone } from '@/shared/lib/mask-phone';
 const MAX_ADDRESSES = 10;
 
 const styles = {
-  header: { display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '16px' } as const,
-  count: { color: '#666', fontSize: '14px' } as const,
-  limitWarning: { color: '#e67e22', fontSize: '14px', marginBottom: '12px' } as const,
-  error: { color: 'red', marginBottom: '12px' } as const,
-  list: { display: 'flex', flexDirection: 'column', gap: '12px' } as const,
-  cardHeader: { display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '8px' } as const,
-  labelRow: { display: 'flex', alignItems: 'center', gap: '8px' } as const,
-  badge: { fontSize: '12px', backgroundColor: '#333', color: '#fff', padding: '2px 8px', borderRadius: '4px' } as const,
-  actionRow: { display: 'flex', gap: '8px' } as const,
-  smallBtn: { padding: '4px 8px', fontSize: '13px', border: '1px solid #ddd', borderRadius: '4px', backgroundColor: '#fff', cursor: 'pointer' } as const,
-  detailText: { margin: '4px 0', color: '#555' } as const,
-  addButton: { padding: '8px 16px', backgroundColor: '#333', color: '#fff', border: 'none', borderRadius: '4px', cursor: 'pointer' } as const,
-  addButtonDisabled: { padding: '8px 16px', backgroundColor: '#ccc', color: '#fff', border: 'none', borderRadius: '4px', cursor: 'not-allowed' } as const,
-  cardDefault: { border: '2px solid #333', borderRadius: '8px', padding: '16px' } as const,
-  card: { border: '1px solid #ddd', borderRadius: '8px', padding: '16px' } as const,
-  labelText: { fontWeight: 'bold' } as const,
-  setDefaultBtn: { padding: '4px 8px', fontSize: '13px', border: '1px solid #ddd', borderRadius: '4px', backgroundColor: '#fff', cursor: 'pointer' } as const,
-  setDefaultBtnDisabled: { padding: '4px 8px', fontSize: '13px', border: '1px solid #ddd', borderRadius: '4px', backgroundColor: '#fff', cursor: 'not-allowed' } as const,
-  deleteBtn: { padding: '4px 8px', fontSize: '13px', border: '1px solid #ddd', borderRadius: '4px', backgroundColor: '#fff', cursor: 'pointer', color: 'red' } as const,
+  header: { display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 'var(--space-4)' } as const,
+  count: { color: 'var(--color-text-secondary)', fontSize: 'var(--font-size-sm)' } as const,
+  limitWarning: { color: 'var(--color-warning)', fontSize: 'var(--font-size-sm)', marginBottom: 'var(--space-3)' } as const,
+  error: { color: 'var(--color-error)', marginBottom: 'var(--space-3)' } as const,
+  list: { display: 'flex', flexDirection: 'column', gap: 'var(--space-3)' } as const,
+  cardHeader: { display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 'var(--space-2)' } as const,
+  labelRow: { display: 'flex', alignItems: 'center', gap: 'var(--space-2)' } as const,
+  actionRow: { display: 'flex', gap: 'var(--space-2)' } as const,
+  smallBtn: { fontSize: 'var(--font-size-xs)', padding: 'var(--space-1) var(--space-2)' } as const,
+  detailText: { margin: 'var(--space-1) 0', color: 'var(--color-text-secondary)' } as const,
+  cardDefault: { border: '2px solid var(--color-primary)', borderRadius: 'var(--radius-lg)', padding: 'var(--space-4)' } as const,
+  card: { border: '1px solid var(--color-border)', borderRadius: 'var(--radius-lg)', padding: 'var(--space-4)' } as const,
+  labelText: { fontWeight: 'var(--font-weight-bold)' } as const,
 };
 
 interface AddressListProps {
@@ -86,7 +80,7 @@ export function AddressList({ addresses, onAddClick, onEditClick, onChanged }: A
       <div style={styles.header}>
         <p style={styles.count}>{addresses.length}개 / 최대 {MAX_ADDRESSES}개</p>
         <button onClick={onAddClick} disabled={isAtLimit}
-          style={isAtLimit ? styles.addButtonDisabled : styles.addButton}>
+          className="btn btn-primary">
           배송지 추가
         </button>
       </div>
@@ -101,18 +95,18 @@ export function AddressList({ addresses, onAddClick, onEditClick, onChanged }: A
             <div style={styles.cardHeader}>
               <div style={styles.labelRow}>
                 <span style={styles.labelText}>{address.label}</span>
-                {address.isDefault && <span style={styles.badge}>기본</span>}
+                {address.isDefault && <span className="badge" style={{ backgroundColor: 'var(--color-primary)', color: '#fff' }}>기본</span>}
               </div>
               <div style={styles.actionRow}>
                 {!address.isDefault && (
                   <button onClick={() => handleSetDefault(address.id)} disabled={settingDefaultId === address.id}
                     aria-label={`${address.label} 기본 배송지로 설정`}
-                    style={settingDefaultId === address.id ? styles.setDefaultBtnDisabled : styles.setDefaultBtn}>
+                    className="btn btn-outline" style={styles.smallBtn}>
                     {settingDefaultId === address.id ? '설정 중...' : '기본으로 설정'}
                   </button>
                 )}
-                <button onClick={() => onEditClick(address)} aria-label={`${address.label} 수정`} style={styles.smallBtn}>수정</button>
-                <button onClick={() => setConfirmDeleteId(address.id)} aria-label={`${address.label} 삭제`} style={styles.deleteBtn}>삭제</button>
+                <button onClick={() => onEditClick(address)} aria-label={`${address.label} 수정`} className="btn btn-outline" style={styles.smallBtn}>수정</button>
+                <button onClick={() => setConfirmDeleteId(address.id)} aria-label={`${address.label} 삭제`} className="btn btn-outline" style={{ ...styles.smallBtn, color: 'var(--color-error)' }}>삭제</button>
               </div>
             </div>
             <p style={styles.detailText}>{address.recipientName} / {maskPhone(address.phone)}</p>
