@@ -10,39 +10,85 @@ interface CartItemRowProps {
 export function CartItemRow({ item }: CartItemRowProps) {
   const { updateQuantity, removeItem } = useCart();
 
+  const quantityBtnStyle: React.CSSProperties = {
+    width: '32px',
+    height: '32px',
+    padding: 0,
+    borderRadius: 'var(--radius-full)',
+    fontSize: 'var(--font-size-base)',
+    display: 'inline-flex',
+    alignItems: 'center',
+    justifyContent: 'center',
+  };
+
   return (
     <div
+      className="card"
       style={{
         display: 'flex',
         justifyContent: 'space-between',
         alignItems: 'center',
-        padding: '16px 0',
-        borderBottom: '1px solid #eee',
+        padding: 'var(--space-4) var(--space-5)',
+        marginBottom: 'var(--space-3)',
       }}
     >
-      <div>
-        <p style={{ margin: '0 0 4px', fontWeight: 'bold' }}>{item.productName}</p>
-        <p style={{ margin: 0, fontSize: '14px', color: '#666' }}>{item.optionName}</p>
-        <p style={{ margin: '4px 0 0', fontSize: '14px' }}>
+      <div style={{ flex: 1, minWidth: 0 }}>
+        <p
+          style={{
+            margin: '0 0 var(--space-1)',
+            fontWeight: 'var(--font-weight-semibold)',
+            fontSize: 'var(--font-size-sm)',
+            color: 'var(--color-text)',
+          }}
+        >
+          {item.productName}
+        </p>
+        <p
+          style={{
+            margin: 0,
+            fontSize: 'var(--font-size-xs)',
+            color: 'var(--color-text-secondary)',
+          }}
+        >
+          {item.optionName}
+        </p>
+        <p
+          className="price"
+          style={{
+            margin: 'var(--space-2) 0 0',
+            fontSize: 'var(--font-size-sm)',
+          }}
+        >
           {item.price.toLocaleString()}원
         </p>
       </div>
 
-      <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+      <div style={{ display: 'flex', alignItems: 'center', gap: 'var(--space-2)', flexShrink: 0 }}>
         <button
           type="button"
           onClick={() => updateQuantity(item.productId, item.variantId, item.quantity - 1)}
           aria-label="수량 감소"
-          style={{ width: '32px', height: '32px', fontSize: '16px' }}
+          className="btn btn-outline"
+          style={quantityBtnStyle}
         >
           −
         </button>
-        <span style={{ minWidth: '24px', textAlign: 'center' }}>{item.quantity}</span>
+        <span
+          style={{
+            minWidth: '28px',
+            textAlign: 'center',
+            fontWeight: 'var(--font-weight-semibold)',
+            fontSize: 'var(--font-size-sm)',
+          }}
+        >
+          {item.quantity}
+        </span>
         <button
           type="button"
           onClick={() => updateQuantity(item.productId, item.variantId, item.quantity + 1)}
           aria-label="수량 증가"
-          style={{ width: '32px', height: '32px', fontSize: '16px' }}
+          className="btn btn-outline"
+          style={quantityBtnStyle}
         >
           +
         </button>
@@ -50,7 +96,8 @@ export function CartItemRow({ item }: CartItemRowProps) {
           type="button"
           onClick={() => removeItem(item.productId, item.variantId)}
           aria-label="삭제"
-          style={{ marginLeft: '8px', color: '#e00', background: 'none', border: 'none', cursor: 'pointer' }}
+          className="btn-delete-text"
+          style={{ marginLeft: 'var(--space-2)' }}
         >
           삭제
         </button>
