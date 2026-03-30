@@ -1,6 +1,6 @@
 'use client';
 
-import { LoginForm, useRedirectIfAuthenticated } from '@/features/auth';
+import { AuthCardLayout, LoginForm, useRedirectIfAuthenticated } from '@/features/auth';
 
 export default function LoginPage() {
   const { isReady } = useRedirectIfAuthenticated();
@@ -8,8 +8,8 @@ export default function LoginPage() {
   if (!isReady) return null;
 
   return (
-    <main style={{ maxWidth: '400px', margin: '4rem auto', padding: '0 1rem' }}>
+    <AuthCardLayout>
       <LoginForm />
-    </main>
+    </AuthCardLayout>
   );
 }

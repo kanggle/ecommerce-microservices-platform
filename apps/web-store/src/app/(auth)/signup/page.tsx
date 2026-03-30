@@ -1,6 +1,6 @@
 'use client';
 
-import { SignupForm, useRedirectIfAuthenticated } from '@/features/auth';
+import { AuthCardLayout, SignupForm, useRedirectIfAuthenticated } from '@/features/auth';
 
 export default function SignupPage() {
   const { isReady } = useRedirectIfAuthenticated();
@@ -8,8 +8,8 @@ export default function SignupPage() {
   if (!isReady) return null;
 
   return (
-    <main style={{ maxWidth: '400px', margin: '4rem auto', padding: '0 1rem' }}>
+    <AuthCardLayout>
       <SignupForm />
-    </main>
+    </AuthCardLayout>
   );
 }
