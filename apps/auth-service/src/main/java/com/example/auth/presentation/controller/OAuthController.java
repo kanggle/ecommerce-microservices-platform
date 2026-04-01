@@ -2,6 +2,7 @@ package com.example.auth.presentation.controller;
 
 import com.example.auth.application.dto.LoginResult;
 import com.example.auth.application.dto.OAuthLoginCommand;
+import com.example.auth.application.exception.OAuthUpstreamException;
 import com.example.auth.application.service.GoogleOAuthService;
 import com.example.auth.application.service.GoogleOAuthService.CallbackResult;
 import jakarta.servlet.http.HttpServletResponse;
@@ -68,7 +69,22 @@ public class OAuthController {
         }
 
         OAuthLoginCommand command = new OAuthLoginCommand(code, state);
-        CallbackResult result = googleOAuthService.handleCallback(command);
+        CallbackResult result;
+        try {
+            result = googleOAuthService.handleCallback(command);
+        } catch (OAuthUpstreamException e) {
+            log.error("Google OAuth upstream error during callback", e);
+            if (e.getCallbackUrl() != null) {
+                String redirectUrl = UriComponentsBuilder.fromUriString(e.getCallbackUrl())
+                    .queryParam("error", "oauth_failed")
+                    .build()
+                    .toUriString();
+                response.sendRedirect(redirectUrl);
+                return;
+            }
+            response.sendError(HttpServletResponse.SC_BAD_GATEWAY, "OAuth provider returned an error");
+            return;
+        }
 
         if (!result.success()) {
             String redirectUrl = UriComponentsBuilder.fromUriString(result.callbackUrl())

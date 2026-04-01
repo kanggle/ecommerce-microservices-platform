@@ -2,6 +2,7 @@ package com.example.auth.application.service;
 
 import com.example.auth.application.dto.OAuthLoginCommand;
 import com.example.auth.application.exception.OAuthException;
+import com.example.auth.application.exception.OAuthUpstreamException;
 import com.example.auth.domain.entity.Role;
 import com.example.auth.domain.entity.User;
 import com.example.auth.domain.repository.OAuthStateStore;
@@ -180,8 +181,8 @@ class GoogleOAuthServiceTest {
     }
 
     @Test
-    @DisplayName("handleCallback - Google API 오류 시 failure 결과를 반환한다")
-    void handleCallback_googleApiError_returnsFailure() {
+    @DisplayName("handleCallback - Google API 오류 시 OAuthUpstreamException을 던진다")
+    void handleCallback_googleApiError_throwsOAuthUpstreamException() {
         given(oauthStateStore.getAndDelete("valid-state"))
             .willReturn(Optional.of("http://localhost:3000/oauth/callback"));
         given(oauthCallbackProperties.googleRedirectUri())
@@ -190,10 +191,31 @@ class GoogleOAuthServiceTest {
             .willThrow(new RuntimeException("Google API error"));
 
         OAuthLoginCommand command = new OAuthLoginCommand("code", "valid-state");
-        GoogleOAuthService.CallbackResult result = googleOAuthService.handleCallback(command);
 
-        assertThat(result.success()).isFalse();
-        assertThat(result.callbackUrl()).isEqualTo("http://localhost:3000/oauth/callback");
+        assertThatThrownBy(() -> googleOAuthService.handleCallback(command))
+            .isInstanceOf(OAuthUpstreamException.class)
+            .hasMessageContaining("Google API call failed")
+            .hasCauseInstanceOf(RuntimeException.class);
+    }
+
+    @Test
+    @DisplayName("handleCallback - Google API 오류 시 callbackUrl이 예외에 포함된다")
+    void handleCallback_googleApiError_exceptionContainsCallbackUrl() {
+        given(oauthStateStore.getAndDelete("valid-state"))
+            .willReturn(Optional.of("http://localhost:3000/oauth/callback"));
+        given(oauthCallbackProperties.googleRedirectUri())
+            .willReturn("http://localhost:8080/callback");
+        given(googleOAuthPort.fetchUserInfo(anyString(), anyString()))
+            .willThrow(new RuntimeException("Google API error"));
+
+        OAuthLoginCommand command = new OAuthLoginCommand("code", "valid-state");
+
+        assertThatThrownBy(() -> googleOAuthService.handleCallback(command))
+            .isInstanceOf(OAuthUpstreamException.class)
+            .satisfies(ex -> {
+                OAuthUpstreamException upstreamEx = (OAuthUpstreamException) ex;
+                assertThat(upstreamEx.getCallbackUrl()).isEqualTo("http://localhost:3000/oauth/callback");
+            });
     }
 
     @Test

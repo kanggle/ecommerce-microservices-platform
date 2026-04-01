@@ -16,7 +16,7 @@ General Redis key rules are defined in `specs/platform/naming-conventions.md`.
 | User session set | `session:{userId}` | `session:550e8400-...` |
 | User refresh token index | `user-tokens:{userId}` | `user-tokens:550e8400-...` |
 | Blocked user marker | `blocked-user:{userId}` | `blocked-user:550e8400-...` |
-| OAuth state | `oauth:state:{state}` | `oauth:state:a1b2c3d4-...` |
+| OAuth state | `auth:oauth:state:{state}` | `auth:oauth:state:a1b2c3d4-...` |
 
 ---
 

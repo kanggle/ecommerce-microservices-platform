@@ -4,6 +4,7 @@ import com.example.auth.application.exception.EmailAlreadyExistsException;
 import com.example.auth.application.exception.InvalidCredentialsException;
 import com.example.auth.application.exception.InvalidRefreshTokenException;
 import com.example.auth.application.exception.OAuthException;
+import com.example.auth.application.exception.OAuthUpstreamException;
 import com.example.auth.application.exception.RefreshTokenRevokedException;
 import com.example.web.dto.ErrorResponse;
 import lombok.extern.slf4j.Slf4j;
@@ -38,6 +39,13 @@ public class GlobalExceptionHandler {
             .map(FieldError::getDefaultMessage)
             .collect(java.util.stream.Collectors.joining(", "));
         return ErrorResponse.of("VALIDATION_ERROR", message.isEmpty() ? "Validation failed" : message);
+    }
+
+    @ExceptionHandler(OAuthUpstreamException.class)
+    @ResponseStatus(HttpStatus.BAD_GATEWAY)
+    public ErrorResponse handleOAuthUpstreamException(OAuthUpstreamException ex) {
+        log.error("OAuth upstream error: {}", ex.getMessage(), ex);
+        return ErrorResponse.of("OAUTH_UPSTREAM_ERROR", "OAuth provider returned an error");
     }
 
     @ExceptionHandler(OAuthException.class)
