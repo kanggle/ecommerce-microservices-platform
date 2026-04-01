@@ -4,6 +4,7 @@ import com.example.user.domain.service.ProductInfoProvider;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestTemplate;
 
@@ -16,6 +17,7 @@ import java.util.concurrent.ConcurrentHashMap;
 
 @Slf4j
 @Component
+@Profile("!standalone")
 public class RestProductInfoProvider implements ProductInfoProvider {
 
     private final RestTemplate restTemplate;
