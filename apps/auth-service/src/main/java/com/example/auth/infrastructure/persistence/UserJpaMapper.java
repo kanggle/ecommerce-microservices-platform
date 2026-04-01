@@ -1,5 +1,6 @@
 package com.example.auth.infrastructure.persistence;
 
+import com.example.auth.domain.entity.Role;
 import com.example.auth.domain.entity.User;
 import org.springframework.stereotype.Component;
 
@@ -12,6 +13,8 @@ class UserJpaMapper {
                 entity.getEmail(),
                 entity.getPasswordHash(),
                 entity.getName(),
+                Role.valueOf(entity.getRole()),
+                entity.getOauthProvider(),
                 entity.getCreatedAt(),
                 entity.getUpdatedAt(),
                 entity.isActive()

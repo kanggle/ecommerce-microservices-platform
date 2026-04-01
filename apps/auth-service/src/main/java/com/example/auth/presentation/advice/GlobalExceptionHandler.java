@@ -3,6 +3,7 @@ package com.example.auth.presentation.advice;
 import com.example.auth.application.exception.EmailAlreadyExistsException;
 import com.example.auth.application.exception.InvalidCredentialsException;
 import com.example.auth.application.exception.InvalidRefreshTokenException;
+import com.example.auth.application.exception.OAuthException;
 import com.example.auth.application.exception.RefreshTokenRevokedException;
 import com.example.web.dto.ErrorResponse;
 import lombok.extern.slf4j.Slf4j;
@@ -13,6 +14,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
+import org.springframework.web.bind.MissingServletRequestParameterException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
@@ -23,6 +25,12 @@ public class GlobalExceptionHandler {
 
     private static final String UNIQUE_EMAIL_CONSTRAINT = "uq_users_email";
 
+    @ExceptionHandler(MissingServletRequestParameterException.class)
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    public ErrorResponse handleMissingParam(MissingServletRequestParameterException ex) {
+        return ErrorResponse.of("VALIDATION_ERROR", ex.getParameterName() + " parameter is required");
+    }
+
     @ExceptionHandler(MethodArgumentNotValidException.class)
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     public ErrorResponse handleValidation(MethodArgumentNotValidException ex) {
@@ -30,6 +38,13 @@ public class GlobalExceptionHandler {
             .map(FieldError::getDefaultMessage)
             .collect(java.util.stream.Collectors.joining(", "));
         return ErrorResponse.of("VALIDATION_ERROR", message.isEmpty() ? "Validation failed" : message);
+    }
+
+    @ExceptionHandler(OAuthException.class)
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    public ErrorResponse handleOAuthException(OAuthException ex) {
+        log.warn("OAuth error: {}", ex.getMessage());
+        return ErrorResponse.of("INVALID_STATE", ex.getMessage());
     }
 
     @ExceptionHandler(EmailAlreadyExistsException.class)
