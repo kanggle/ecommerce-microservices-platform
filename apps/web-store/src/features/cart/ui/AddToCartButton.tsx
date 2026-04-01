@@ -44,20 +44,25 @@ export function AddToCartButton({
     };
   }, []);
 
+  const bgColor = disabled
+    ? 'var(--color-text-muted)'
+    : added
+      ? 'var(--color-success)'
+      : 'var(--color-accent)';
+
   return (
     <button
       type="button"
       onClick={handleClick}
       disabled={disabled}
       aria-label={disabled ? '품절' : '장바구니 담기'}
+      className="btn btn-lg"
       style={{
-        padding: '12px 24px',
-        fontSize: '16px',
-        backgroundColor: disabled ? '#ccc' : added ? '#4caf50' : '#333',
-        color: '#fff',
+        backgroundColor: bgColor,
+        color: 'var(--color-white)',
         border: 'none',
-        borderRadius: '4px',
         cursor: disabled ? 'not-allowed' : 'pointer',
+        transition: 'background-color var(--transition-normal)',
       }}
     >
       {disabled ? '품절' : added ? '담았습니다' : '장바구니 담기'}

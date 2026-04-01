@@ -2,6 +2,7 @@
 
 import { useRouter, useSearchParams } from 'next/navigation';
 import { useState, type FormEvent } from 'react';
+import styles from './SearchBar.module.css';
 
 export function SearchBar() {
   const router = useRouter();
@@ -19,32 +20,22 @@ export function SearchBar() {
   }
 
   return (
-    <form onSubmit={handleSubmit} style={{ display: 'flex', gap: '8px' }}>
-      <input
-        type="text"
-        value={query}
-        onChange={(e) => setQuery(e.target.value)}
-        placeholder="상품을 검색하세요"
-        aria-label="상품 검색"
-        style={{
-          flex: 1,
-          padding: '8px 12px',
-          border: '1px solid #ddd',
-          borderRadius: '4px',
-          fontSize: '14px',
-        }}
-      />
+    <form onSubmit={handleSubmit} className={styles.form}>
+      <div className={styles.inputWrap}>
+        <span className={styles.icon} aria-hidden="true">{'\uD83D\uDD0D'}</span>
+        <input
+          type="text"
+          value={query}
+          onChange={(e) => setQuery(e.target.value)}
+          placeholder="상품을 검색하세요"
+          aria-label="상품 검색"
+          className={styles.input}
+        />
+      </div>
       <button
         type="submit"
         aria-label="검색"
-        style={{
-          padding: '8px 16px',
-          backgroundColor: '#333',
-          color: '#fff',
-          border: 'none',
-          borderRadius: '4px',
-          cursor: 'pointer',
-        }}
+        className={styles.button}
       >
         검색
       </button>

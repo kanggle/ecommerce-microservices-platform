@@ -12,9 +12,27 @@ export function ProductImage({ src, alt }: ProductImageProps) {
   const [hasError, setHasError] = useState(false);
 
   return (
-    <div style={{ aspectRatio: '1', backgroundColor: '#f5f5f5', borderRadius: '8px', overflow: 'hidden', position: 'relative' }}>
+    <div
+      style={{
+        aspectRatio: '1',
+        backgroundColor: 'var(--color-bg-tertiary)',
+        borderRadius: 'var(--radius-lg)',
+        overflow: 'hidden',
+        position: 'relative',
+      }}
+    >
       {hasError ? (
-        <div style={{ width: '100%', height: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#999' }}>
+        <div
+          style={{
+            width: '100%',
+            height: '100%',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            color: 'var(--color-text-muted)',
+            fontSize: 'var(--font-size-sm)',
+          }}
+        >
           이미지를 불러올 수 없습니다
         </div>
       ) : (

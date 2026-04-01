@@ -4,11 +4,11 @@ import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { isApiError, ERROR_MESSAGES } from '@repo/types/guards';
-import { useAuthActions } from '../model/auth-context';
+import { useAuth } from '../model/auth-context';
 
 export function SignupForm() {
   const router = useRouter();
-  const { signup } = useAuthActions();
+  const { signup } = useAuth();
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');

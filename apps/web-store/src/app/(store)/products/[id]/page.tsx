@@ -31,9 +31,9 @@ export default async function ProductDetailPage({ params }: Props) {
   }
 
   return (
-    <div style={{ maxWidth: '1200px', margin: '0 auto', padding: '24px' }}>
+    <div className="container" style={{ paddingTop: 'var(--space-8)', paddingBottom: 'var(--space-16)' }}>
       <ProductDetail product={product} />
-      <div style={{ marginTop: '24px' }}>
+      <div style={{ marginTop: 'var(--space-8)' }}>
         <ProductDetailWithCart product={product} />
       </div>
     </div>

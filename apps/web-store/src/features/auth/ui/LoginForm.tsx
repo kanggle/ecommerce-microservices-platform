@@ -41,15 +41,20 @@ export function LoginForm() {
 
   return (
     <form onSubmit={handleSubmit} noValidate>
-      <h1>로그인</h1>
+      <h1 className="auth-title">로그인</h1>
 
-      {error && <p role="alert" style={{ color: 'red' }}>{error}</p>}
+      {error && (
+        <div role="alert" className="alert-error">
+          {error}
+        </div>
+      )}
 
-      <div>
-        <label htmlFor="email">이메일</label>
+      <div className="form-group">
+        <label htmlFor="email" className="label">이메일</label>
         <input
           id="email"
           type="email"
+          className="input"
           value={email}
           onChange={(e) => setEmail(e.target.value)}
           placeholder="email@example.com"
@@ -58,11 +63,12 @@ export function LoginForm() {
         />
       </div>
 
-      <div>
-        <label htmlFor="password">비밀번호</label>
+      <div className="form-group">
+        <label htmlFor="password" className="label">비밀번호</label>
         <input
           id="password"
           type="password"
+          className="input"
           value={password}
           onChange={(e) => setPassword(e.target.value)}
           placeholder="8자 이상"
@@ -72,12 +78,18 @@ export function LoginForm() {
         />
       </div>
 
-      <button type="submit" disabled={!isValid || isSubmitting}>
+      <button
+        type="submit"
+        className="btn btn-primary btn-lg"
+        style={{ width: '100%', marginTop: 'var(--space-2)' }}
+        disabled={!isValid || isSubmitting}
+      >
         {isSubmitting ? '로그인 중...' : '로그인'}
       </button>
 
-      <p>
-        계정이 없으신가요? <Link href="/signup">회원가입</Link>
+      <p className="auth-footer">
+        계정이 없으신가요?{' '}
+        <Link href="/signup">회원가입</Link>
       </p>
     </form>
   );

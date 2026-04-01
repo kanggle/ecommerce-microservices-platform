@@ -10,23 +10,22 @@ export function OrderCard({ order }: OrderCardProps) {
   return (
     <Link
       href={`/orders/${order.orderId}`}
+      className="card"
       style={{
         display: 'block',
-        padding: '16px',
-        border: '1px solid #eee',
-        borderRadius: '8px',
+        padding: 'var(--space-4) var(--space-5)',
         textDecoration: 'none',
         color: 'inherit',
-        marginBottom: '12px',
+        marginBottom: 'var(--space-3)',
       }}
     >
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
         <div>
-          <p style={{ margin: '0 0 4px', fontSize: '14px', color: '#666' }}>
+          <p style={{ margin: '0 0 var(--space-1)', fontSize: 'var(--font-size-xs)', color: 'var(--color-text-secondary)' }}>
             {new Date(order.createdAt).toLocaleDateString('ko-KR')}
           </p>
-          <p style={{ margin: '0 0 8px', fontWeight: 'bold' }}>
-            {order.totalPrice.toLocaleString()}원 · {order.itemCount}개 상품
+          <p style={{ margin: 0, fontWeight: 'var(--font-weight-bold)', fontSize: 'var(--font-size-sm)' }}>
+            {order.totalPrice.toLocaleString()}원 &middot; {order.itemCount}개 상품
           </p>
         </div>
         <OrderStatusBadge status={order.status} />

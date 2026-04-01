@@ -29,16 +29,16 @@ export function Toast({ message, type, onClose, duration = 3000 }: ToastProps) {
       role={type === 'error' ? 'alert' : 'status'}
       style={{
         position: 'fixed',
-        top: '24px',
-        right: '24px',
-        padding: '12px 20px',
-        borderRadius: '8px',
+        top: 'calc(var(--header-height) + var(--space-4))',
+        right: 'var(--space-6)',
+        padding: 'var(--space-3) var(--space-5)',
+        borderRadius: 'var(--radius-md)',
         border: `1px solid ${style.borderColor}`,
         backgroundColor: style.backgroundColor,
-        color: '#333',
-        fontSize: '14px',
+        color: 'var(--color-text)',
+        fontSize: 'var(--font-size-sm)',
         zIndex: 9999,
-        boxShadow: '0 4px 12px rgba(0, 0, 0, 0.15)',
+        boxShadow: 'var(--shadow-lg)',
       }}
     >
       {message}

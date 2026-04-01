@@ -9,9 +9,14 @@ export function CartSummary() {
 
   if (items.length === 0) {
     return (
-      <div style={{ textAlign: 'center', padding: '3rem 0' }}>
-        <p style={{ color: '#666', marginBottom: '16px' }}>장바구니가 비어있습니다.</p>
-        <Link href="/products" style={{ color: '#333' }}>
+      <div style={{ textAlign: 'center', padding: 'var(--space-16) 0' }}>
+        <p style={{ color: 'var(--color-text-secondary)', marginBottom: 'var(--space-4)', fontSize: 'var(--font-size-lg)' }}>
+          장바구니가 비어있습니다.
+        </p>
+        <Link
+          href="/products"
+          className="btn btn-primary btn-lg"
+        >
           상품 보러 가기
         </Link>
       </div>
@@ -20,52 +25,51 @@ export function CartSummary() {
 
   return (
     <div>
-      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '16px' }}>
-        <h1 style={{ margin: 0, fontSize: '24px' }}>장바구니</h1>
+      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 'var(--space-6)' }}>
+        <h1 className="page-title" style={{ margin: 0 }}>장바구니</h1>
         <button
           type="button"
           onClick={clearCart}
           aria-label="장바구니 전체 삭제"
-          style={{ background: 'none', border: 'none', color: '#666', cursor: 'pointer' }}
+          className="btn-delete-text"
         >
           전체 삭제
         </button>
       </div>
 
-      {items.map((item) => (
-        <CartItemRow key={`${item.productId}-${item.variantId}`} item={item} />
-      ))}
+      <div style={{ marginBottom: 'var(--space-6)' }}>
+        {items.map((item) => (
+          <CartItemRow key={`${item.productId}-${item.variantId}`} item={item} />
+        ))}
+      </div>
 
       <div
+        className="card"
         style={{
-          marginTop: '24px',
-          padding: '16px',
-          backgroundColor: '#f9f9f9',
-          borderRadius: '8px',
+          padding: 'var(--space-5) var(--space-6)',
           display: 'flex',
           justifyContent: 'space-between',
           alignItems: 'center',
+          background: 'var(--color-bg-secondary)',
         }}
       >
-        <span style={{ fontSize: '18px', fontWeight: 'bold' }}>합계</span>
-        <span style={{ fontSize: '20px', fontWeight: 'bold' }}>
+        <span style={{ fontSize: 'var(--font-size-lg)', fontWeight: 'var(--font-weight-semibold)' }}>
+          합계
+        </span>
+        <span className="price" style={{ fontSize: 'var(--font-size-xl)' }}>
           {totalAmount.toLocaleString()}원
         </span>
       </div>
 
       <Link
         href="/checkout"
+        className="btn btn-accent btn-lg"
         style={{
           display: 'block',
-          marginTop: '16px',
-          padding: '16px',
+          width: '100%',
+          marginTop: 'var(--space-4)',
           textAlign: 'center',
-          backgroundColor: '#333',
-          color: '#fff',
-          textDecoration: 'none',
-          borderRadius: '4px',
-          fontWeight: 'bold',
-          fontSize: '16px',
+          fontSize: 'var(--font-size-base)',
         }}
       >
         주문하기

@@ -34,8 +34,8 @@ export function ProfileLoader() {
   }, [loadProfile]);
 
   return (
-    <main style={{ maxWidth: '600px', margin: '0 auto', padding: '24px' }}>
-      <h1 style={{ marginBottom: '24px' }}>내 프로필</h1>
+    <div className="container" style={{ paddingTop: 'var(--space-8)', paddingBottom: 'var(--space-16)', maxWidth: '600px' }}>
+      <h1 className="page-title">내 프로필</h1>
 
       {isLoading && <LoadingSpinner />}
       {error && <ErrorMessage message={error} onRetry={loadProfile} />}
@@ -45,6 +45,6 @@ export function ProfileLoader() {
           onUpdated={(updated) => setProfile(updated)}
         />
       )}
-    </main>
+    </div>
   );
 }

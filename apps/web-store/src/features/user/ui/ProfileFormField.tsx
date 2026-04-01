@@ -18,25 +18,24 @@ export function ProfileFormField({
   error,
 }: ProfileFormFieldProps) {
   return (
-    <div>
-      <label htmlFor={id}>{label}</label>
+    <div className="form-group" style={{ marginBottom: 0 }}>
+      <label htmlFor={id} className="label">{label}</label>
       <input
         id={id}
         type={type}
+        className="input"
         value={value}
         onChange={(e) => onChange(e.target.value)}
         placeholder={placeholder}
-        style={{
-          display: 'block',
-          width: '100%',
-          padding: '8px',
-          marginTop: '4px',
-        }}
       />
       {error && (
         <p
           role="alert"
-          style={{ color: 'red', fontSize: '14px', margin: '4px 0 0' }}
+          style={{
+            color: 'var(--color-error)',
+            fontSize: 'var(--font-size-xs)',
+            margin: 'var(--space-1) 0 0',
+          }}
         >
           {error}
         </p>

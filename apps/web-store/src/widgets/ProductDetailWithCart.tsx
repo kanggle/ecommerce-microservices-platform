@@ -17,17 +17,23 @@ export function ProductDetailWithCart({ product }: ProductDetailWithCartProps) {
   const totalPrice = product.price + (selectedVariant?.additionalPrice ?? 0);
 
   return (
-    <div>
+    <div
+      className="card"
+      style={{ padding: 'var(--space-6)' }}
+    >
       {product.variants.length > 0 && (
-        <div style={{ marginBottom: '16px' }}>
-          <label htmlFor="variant-select" style={{ display: 'block', marginBottom: '8px', fontWeight: 'bold' }}>
+        <div style={{ marginBottom: 'var(--space-4)' }}>
+          <label
+            htmlFor="variant-select"
+            className="label"
+          >
             옵션 선택
           </label>
           <select
             id="variant-select"
             value={selectedVariantId}
             onChange={(e) => setSelectedVariantId(e.target.value)}
-            style={{ padding: '8px 12px', fontSize: '14px', width: '100%' }}
+            className="input"
           >
             {product.variants.map((v) => (
               <option key={v.id} value={v.id} disabled={v.stock === 0}>
@@ -40,7 +46,7 @@ export function ProductDetailWithCart({ product }: ProductDetailWithCartProps) {
         </div>
       )}
 
-      <p style={{ fontSize: '20px', fontWeight: 'bold', margin: '0 0 16px' }}>
+      <p className="price" style={{ fontSize: 'var(--font-size-xl)', margin: '0 0 var(--space-4)' }}>
         {totalPrice.toLocaleString()}원
       </p>
 

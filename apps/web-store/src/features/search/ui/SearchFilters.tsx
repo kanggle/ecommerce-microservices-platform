@@ -27,13 +27,14 @@ export function SearchFilters({ categories, priceRanges }: SearchFiltersProps) {
   const currentSort = searchParams.get('sort') ?? 'relevance';
 
   return (
-    <div style={{ display: 'flex', gap: '16px', flexWrap: 'wrap', alignItems: 'center' }}>
+    <div style={{ display: 'flex', gap: 'var(--space-3)', flexWrap: 'wrap', alignItems: 'center' }}>
       {categories && categories.length > 0 && (
         <select
           aria-label="카테고리 필터"
           value={currentCategoryId ?? ''}
           onChange={(e) => updateParam('categoryId', e.target.value || undefined)}
-          style={{ padding: '6px 10px', border: '1px solid #ddd', borderRadius: '4px' }}
+          className="input"
+          style={{ width: 'auto', padding: 'var(--space-2) var(--space-3)' }}
         >
           <option value="">전체 카테고리</option>
           {categories.map((cat) => (
@@ -45,7 +46,7 @@ export function SearchFilters({ categories, priceRanges }: SearchFiltersProps) {
       )}
 
       {priceRanges && priceRanges.length > 0 && (
-        <div style={{ display: 'flex', gap: '8px', alignItems: 'center' }}>
+        <div style={{ display: 'flex', gap: 'var(--space-2)', alignItems: 'center' }}>
           {priceRanges.map((range) => (
             <button
               key={`${range.min}-${range.max}`}
@@ -56,14 +57,8 @@ export function SearchFilters({ categories, priceRanges }: SearchFiltersProps) {
                 params.delete('page');
                 router.push(`/products?${params.toString()}`);
               }}
-              style={{
-                padding: '4px 8px',
-                border: '1px solid #ddd',
-                borderRadius: '4px',
-                backgroundColor: 'transparent',
-                cursor: 'pointer',
-                fontSize: '12px',
-              }}
+              className="btn"
+              style={{ fontSize: 'var(--font-size-xs)', padding: 'var(--space-1) var(--space-2)' }}
             >
               {range.min.toLocaleString()}~{range.max.toLocaleString()}원 ({range.count})
             </button>
@@ -75,7 +70,8 @@ export function SearchFilters({ categories, priceRanges }: SearchFiltersProps) {
         aria-label="정렬 기준"
         value={currentSort}
         onChange={(e) => updateParam('sort', e.target.value)}
-        style={{ padding: '6px 10px', border: '1px solid #ddd', borderRadius: '4px' }}
+        className="input"
+        style={{ width: 'auto', padding: 'var(--space-2) var(--space-3)' }}
       >
         <option value="relevance">관련도순</option>
         <option value="price_asc">낮은 가격순</option>

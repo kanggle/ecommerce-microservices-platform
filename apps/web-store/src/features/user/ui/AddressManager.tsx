@@ -55,8 +55,8 @@ export function AddressManager() {
   }
 
   return (
-    <main style={{ maxWidth: '600px', margin: '0 auto', padding: '24px' }}>
-      <h1 style={{ marginBottom: '24px' }}>배송지 관리</h1>
+    <div className="container" style={{ paddingTop: 'var(--space-8)', paddingBottom: 'var(--space-16)', maxWidth: '600px' }}>
+      <h1 className="page-title">배송지 관리</h1>
 
       {isLoading && <LoadingSpinner />}
       {error && <ErrorMessage message={error} onRetry={loadAddresses} />}
@@ -77,15 +77,7 @@ export function AddressManager() {
               <div style={{ textAlign: 'center' }}>
                 <button
                   onClick={handleAddClick}
-                  style={{
-                    padding: '12px 24px',
-                    fontSize: '16px',
-                    backgroundColor: '#333',
-                    color: '#fff',
-                    border: 'none',
-                    borderRadius: '4px',
-                    cursor: 'pointer',
-                  }}
+                  className="btn btn-primary btn-lg"
                 >
                   첫 배송지 추가하기
                 </button>
@@ -103,6 +95,6 @@ export function AddressManager() {
           )}
         </>
       )}
-    </main>
+    </div>
   );
 }

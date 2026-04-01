@@ -7,19 +7,6 @@ import { isApiError, ERROR_MESSAGES } from '@repo/types/guards';
 import type { CheckoutFormProps } from '../model/types';
 import { submitOrder } from '../api/place-order';
 
-const styles = {
-  section: { marginBottom: '24px' } as const,
-  sectionTitle: { fontSize: '18px', marginBottom: '12px' } as const,
-  error: { color: 'red', marginBottom: '16px' } as const,
-  itemRow: { display: 'flex', justifyContent: 'space-between', padding: '8px 0', borderBottom: '1px solid #eee' } as const,
-  totalRow: { textAlign: 'right', marginTop: '8px', fontWeight: 'bold', fontSize: '18px' } as const,
-  fieldColumn: { display: 'flex', flexDirection: 'column', gap: '12px' } as const,
-  input: { display: 'block', width: '100%', padding: '8px', marginTop: '4px' } as const,
-  title: { marginBottom: '24px' } as const,
-  submitBtn: { width: '100%', padding: '16px', fontSize: '16px', fontWeight: 'bold', backgroundColor: '#333', color: '#fff', border: 'none', borderRadius: '4px', cursor: 'pointer' } as const,
-  submitBtnDisabled: { width: '100%', padding: '16px', fontSize: '16px', fontWeight: 'bold', backgroundColor: '#ccc', color: '#fff', border: 'none', borderRadius: '4px', cursor: 'not-allowed' } as const,
-};
-
 export function CheckoutForm({ items, totalAmount, onOrderComplete }: CheckoutFormProps) {
   const router = useRouter();
   const [error, setError] = useState('');
@@ -63,49 +50,74 @@ export function CheckoutForm({ items, totalAmount, onOrderComplete }: CheckoutFo
 
   return (
     <form onSubmit={handleSubmit} noValidate>
-      <h1 style={styles.title}>주문하기</h1>
+      <h1 className="page-title">주문하기</h1>
 
-      {error && <p role="alert" style={styles.error}>{error}</p>}
+      {error && <div role="alert" className="alert-error">{error}</div>}
 
-      <section style={styles.section}>
-        <h2 style={styles.sectionTitle}>주문 상품</h2>
+      <section style={{ marginBottom: 'var(--space-8)' }}>
+        <h2 className="section-title">주문 상품</h2>
         {items.map((item) => (
-          <div key={`${item.productId}-${item.variantId}`} style={styles.itemRow}>
-            <span>{item.productName} ({item.optionName}) × {item.quantity}</span>
-            <span>{(item.price * item.quantity).toLocaleString()}원</span>
+          <div
+            key={`${item.productId}-${item.variantId}`}
+            style={{
+              display: 'flex',
+              justifyContent: 'space-between',
+              padding: 'var(--space-2) 0',
+              borderBottom: '1px solid var(--color-border-light)',
+              fontSize: 'var(--font-size-sm)',
+            }}
+          >
+            <span>{item.productName} ({item.optionName}) &times; {item.quantity}</span>
+            <span className="price">{(item.price * item.quantity).toLocaleString()}원</span>
           </div>
         ))}
-        <div style={styles.totalRow}>합계: {totalAmount.toLocaleString()}원</div>
+        <div
+          style={{
+            textAlign: 'right',
+            marginTop: 'var(--space-3)',
+            fontWeight: 'var(--font-weight-bold)',
+            fontSize: 'var(--font-size-lg)',
+          }}
+        >
+          합계: {totalAmount.toLocaleString()}원
+        </div>
       </section>
 
-      <section style={styles.section}>
-        <h2 style={styles.sectionTitle}>배송지 정보</h2>
-        <div style={styles.fieldColumn}>
-          <div>
-            <label htmlFor="recipient">수령인</label>
-            <input id="recipient" type="text" value={address.recipient} onChange={(e) => updateField('recipient', e.target.value)} required style={styles.input} />
+      <section style={{ marginBottom: 'var(--space-8)' }}>
+        <h2 className="section-title">배송지 정보</h2>
+        <div style={{ display: 'flex', flexDirection: 'column', gap: 'var(--space-4)' }}>
+          <div className="form-group" style={{ marginBottom: 0 }}>
+            <label htmlFor="recipient" className="label">수령인</label>
+            <input id="recipient" type="text" className="input" value={address.recipient} onChange={(e) => updateField('recipient', e.target.value)} required />
           </div>
-          <div>
-            <label htmlFor="phone">전화번호</label>
-            <input id="phone" type="tel" value={address.phone} onChange={(e) => updateField('phone', e.target.value)} required placeholder="010-0000-0000" style={styles.input} />
+          <div className="form-group" style={{ marginBottom: 0 }}>
+            <label htmlFor="phone" className="label">전화번호</label>
+            <input id="phone" type="tel" className="input" value={address.phone} onChange={(e) => updateField('phone', e.target.value)} required placeholder="010-0000-0000" />
           </div>
-          <div>
-            <label htmlFor="zipCode">우편번호</label>
-            <input id="zipCode" type="text" value={address.zipCode} onChange={(e) => updateField('zipCode', e.target.value)} required style={styles.input} />
+          <div className="form-group" style={{ marginBottom: 0 }}>
+            <label htmlFor="zipCode" className="label">우편번호</label>
+            <input id="zipCode" type="text" className="input" value={address.zipCode} onChange={(e) => updateField('zipCode', e.target.value)} required />
           </div>
-          <div>
-            <label htmlFor="address1">주소</label>
-            <input id="address1" type="text" value={address.address1} onChange={(e) => updateField('address1', e.target.value)} required style={styles.input} />
+          <div className="form-group" style={{ marginBottom: 0 }}>
+            <label htmlFor="address1" className="label">주소</label>
+            <input id="address1" type="text" className="input" value={address.address1} onChange={(e) => updateField('address1', e.target.value)} required />
           </div>
-          <div>
-            <label htmlFor="address2">상세주소</label>
-            <input id="address2" type="text" value={address.address2} onChange={(e) => updateField('address2', e.target.value)} style={styles.input} />
+          <div className="form-group" style={{ marginBottom: 0 }}>
+            <label htmlFor="address2" className="label">상세주소</label>
+            <input id="address2" type="text" className="input" value={address.address2} onChange={(e) => updateField('address2', e.target.value)} />
           </div>
         </div>
       </section>
 
-      <button type="submit" disabled={!isValid || isSubmitting || items.length === 0}
-        style={!isValid || isSubmitting ? styles.submitBtnDisabled : styles.submitBtn}>
+      <button
+        type="submit"
+        disabled={!isValid || isSubmitting || items.length === 0}
+        className="btn btn-accent btn-lg"
+        style={{
+          width: '100%',
+          opacity: !isValid || isSubmitting ? 0.5 : 1,
+        }}
+      >
         {isSubmitting ? '주문 처리 중...' : `${totalAmount.toLocaleString()}원 결제하기`}
       </button>
     </form>

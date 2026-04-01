@@ -23,12 +23,12 @@ export function PaymentStatusBadge({ status }: PaymentStatusBadgeProps) {
     <span
       style={{
         display: 'inline-block',
-        padding: '4px 8px',
-        fontSize: '12px',
-        fontWeight: 'bold',
-        color: '#fff',
+        padding: 'var(--space-1) var(--space-2)',
+        fontSize: 'var(--font-size-xs)',
+        fontWeight: 'var(--font-weight-bold)',
+        color: 'var(--color-white)',
         backgroundColor: STATUS_COLORS[status],
-        borderRadius: '4px',
+        borderRadius: 'var(--radius-sm)',
       }}
     >
       {STATUS_LABELS[status]}

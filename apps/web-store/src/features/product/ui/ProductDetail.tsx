@@ -1,5 +1,6 @@
 import type { ProductDetail as ProductDetailType } from '@repo/types';
 import { ProductImage } from '@/entities/product';
+import styles from './ProductDetail.module.css';
 
 interface ProductDetailProps {
   product: ProductDetailType;
@@ -7,38 +8,30 @@ interface ProductDetailProps {
 
 export function ProductDetail({ product }: ProductDetailProps) {
   return (
-    <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '32px' }}>
+    <div className={styles.layout}>
       <ProductImage
         src={`/images/products/${product.id}.jpg`}
         alt={product.name}
       />
-      <div>
-        <h1 style={{ margin: '0 0 16px', fontSize: '24px' }}>{product.name}</h1>
-        <p style={{ fontSize: '20px', fontWeight: 'bold', margin: '0 0 16px' }}>
+      <div className={styles.info}>
+        <h1 className={styles.name}>{product.name}</h1>
+        <p className={styles.price}>
           {product.price.toLocaleString()}원
         </p>
-        <p style={{ color: '#666', lineHeight: 1.6 }}>{product.description}</p>
+        <p className={styles.description}>{product.description}</p>
 
         {product.variants.length > 0 && (
-          <div style={{ marginTop: '24px' }}>
-            <h3 style={{ fontSize: '14px', marginBottom: '8px' }}>옵션</h3>
-            <ul style={{ listStyle: 'none', padding: 0, margin: 0 }}>
+          <div className={styles.variantsSection}>
+            <h3 className={styles.variantsTitle}>옵션</h3>
+            <ul className={styles.variantList}>
               {product.variants.map((variant) => (
-                <li
-                  key={variant.id}
-                  style={{
-                    display: 'flex',
-                    justifyContent: 'space-between',
-                    padding: '8px 0',
-                    borderBottom: '1px solid #eee',
-                  }}
-                >
+                <li key={variant.id} className={styles.variantItem}>
                   <span>{variant.optionName}</span>
-                  <span style={{ display: 'flex', gap: '12px' }}>
+                  <span className={styles.variantMeta}>
                     {variant.additionalPrice > 0 && (
                       <span>+{variant.additionalPrice.toLocaleString()}원</span>
                     )}
-                    <span style={{ color: variant.stock === 0 ? '#e00' : '#666' }}>
+                    <span className={variant.stock === 0 ? styles.stockOut : styles.stockIn}>
                       {variant.stock === 0 ? '품절' : `재고 ${variant.stock}`}
                     </span>
                   </span>

@@ -47,8 +47,8 @@ export function OrderHistory() {
   }
 
   return (
-    <main style={{ maxWidth: '800px', margin: '0 auto', padding: '24px' }}>
-      <h1 style={{ marginBottom: '24px' }}>주문 내역</h1>
+    <div className="container" style={{ paddingTop: 'var(--space-8)', paddingBottom: 'var(--space-16)', maxWidth: '800px' }}>
+      <h1 className="page-title">주문 내역</h1>
 
       {isLoading && <LoadingSpinner />}
       {error && <ErrorMessage message={error} onRetry={() => loadOrders(page, size)} />}
@@ -60,14 +60,23 @@ export function OrderHistory() {
       ))}
 
       {!isLoading && !error && totalElements > 0 && (
-        <nav aria-label="페이지네이션" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginTop: '24px' }}>
-          <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-            <label htmlFor="pageSize">페이지 크기:</label>
+        <nav
+          aria-label="페이지네이션"
+          style={{
+            display: 'flex',
+            justifyContent: 'space-between',
+            alignItems: 'center',
+            marginTop: 'var(--space-8)',
+          }}
+        >
+          <div style={{ display: 'flex', alignItems: 'center', gap: 'var(--space-2)' }}>
+            <label htmlFor="pageSize" className="label" style={{ marginBottom: 0 }}>페이지 크기:</label>
             <select
               id="pageSize"
               value={size}
               onChange={(e) => handleSizeChange(Number(e.target.value))}
-              style={{ padding: '4px 8px' }}
+              className="input"
+              style={{ width: 'auto', padding: 'var(--space-1) var(--space-2)' }}
             >
               {PAGE_SIZE_OPTIONS.map((opt) => (
                 <option key={opt} value={opt}>{opt}개</option>
@@ -75,41 +84,31 @@ export function OrderHistory() {
             </select>
           </div>
 
-          <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: 'var(--space-2)' }}>
             <button
               type="button"
               onClick={() => handlePageChange(page - 1)}
               disabled={page === 0}
               aria-label="이전 페이지"
-              style={{
-                padding: '8px 12px',
-                border: '1px solid #ddd',
-                borderRadius: '4px',
-                backgroundColor: page === 0 ? '#f5f5f5' : '#fff',
-                cursor: page === 0 ? 'not-allowed' : 'pointer',
-              }}
+              className="btn"
             >
               이전
             </button>
-            <span>{page + 1} / {totalPages}</span>
+            <span style={{ fontSize: 'var(--font-size-sm)', color: 'var(--color-text-secondary)' }}>
+              {page + 1} / {totalPages}
+            </span>
             <button
               type="button"
               onClick={() => handlePageChange(page + 1)}
               disabled={page >= totalPages - 1}
               aria-label="다음 페이지"
-              style={{
-                padding: '8px 12px',
-                border: '1px solid #ddd',
-                borderRadius: '4px',
-                backgroundColor: page >= totalPages - 1 ? '#f5f5f5' : '#fff',
-                cursor: page >= totalPages - 1 ? 'not-allowed' : 'pointer',
-              }}
+              className="btn"
             >
               다음
             </button>
           </div>
         </nav>
       )}
-    </main>
+    </div>
   );
 }

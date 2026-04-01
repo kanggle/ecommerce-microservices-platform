@@ -16,8 +16,8 @@ export function SearchResults({ items, query }: SearchResultsProps) {
     <div
       style={{
         display: 'grid',
-        gridTemplateColumns: 'repeat(auto-fill, minmax(200px, 1fr))',
-        gap: '16px',
+        gridTemplateColumns: 'repeat(auto-fill, minmax(220px, 1fr))',
+        gap: 'var(--space-6)',
       }}
     >
       {items.map((item) => (

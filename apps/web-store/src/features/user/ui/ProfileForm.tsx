@@ -104,16 +104,16 @@ export function ProfileForm({ profile, onUpdated }: ProfileFormProps) {
 
   return (
     <form onSubmit={handleSubmit} noValidate>
-      <section style={{ marginBottom: '24px' }}>
-        <h2 style={{ fontSize: '18px', marginBottom: '12px' }}>기본 정보</h2>
-        <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
+      <section className="card" style={{ padding: 'var(--space-6)', marginBottom: 'var(--space-6)' }}>
+        <h2 className="section-title">기본 정보</h2>
+        <div style={{ display: 'flex', flexDirection: 'column', gap: 'var(--space-3)' }}>
           <div>
-            <span style={{ fontWeight: 'bold' }}>이메일</span>
-            <p style={{ margin: '4px 0 0' }}>{profile.email}</p>
+            <span style={{ fontWeight: 'var(--font-weight-semibold)', fontSize: 'var(--font-size-sm)', color: 'var(--color-text-secondary)' }}>이메일</span>
+            <p style={{ margin: 'var(--space-1) 0 0', fontSize: 'var(--font-size-sm)' }}>{profile.email}</p>
           </div>
           <div>
-            <span style={{ fontWeight: 'bold' }}>이름</span>
-            <p style={{ margin: '4px 0 0' }}>{profile.name}</p>
+            <span style={{ fontWeight: 'var(--font-weight-semibold)', fontSize: 'var(--font-size-sm)', color: 'var(--color-text-secondary)' }}>이름</span>
+            <p style={{ margin: 'var(--space-1) 0 0', fontSize: 'var(--font-size-sm)' }}>{profile.name}</p>
           </div>
         </div>
       </section>
@@ -122,9 +122,9 @@ export function ProfileForm({ profile, onUpdated }: ProfileFormProps) {
         <Toast message={toast.message} type={toast.type} onClose={clearToast} />
       )}
 
-      <section style={{ marginBottom: '24px' }}>
-        <h2 style={{ fontSize: '18px', marginBottom: '12px' }}>프로필 수정</h2>
-        <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
+      <section className="card" style={{ padding: 'var(--space-6)', marginBottom: 'var(--space-6)' }}>
+        <h2 className="section-title">프로필 수정</h2>
+        <div style={{ display: 'flex', flexDirection: 'column', gap: 'var(--space-4)' }}>
           <ProfileFormField
             id="nickname"
             label="닉네임"
@@ -166,17 +166,8 @@ export function ProfileForm({ profile, onUpdated }: ProfileFormProps) {
       <button
         type="submit"
         disabled={!hasChanges || isSubmitting}
-        style={{
-          width: '100%',
-          padding: '16px',
-          fontSize: '16px',
-          fontWeight: 'bold',
-          backgroundColor: !hasChanges || isSubmitting ? '#ccc' : '#333',
-          color: '#fff',
-          border: 'none',
-          borderRadius: '4px',
-          cursor: !hasChanges || isSubmitting ? 'not-allowed' : 'pointer',
-        }}
+        className="btn btn-primary btn-lg"
+        style={{ width: '100%' }}
       >
         {isSubmitting ? '수정 중...' : '프로필 수정'}
       </button>

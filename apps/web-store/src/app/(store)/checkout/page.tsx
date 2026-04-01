@@ -21,12 +21,12 @@ export default function CheckoutPage() {
   if (!isReady || items.length === 0) return null;
 
   return (
-    <main style={{ maxWidth: '600px', margin: '0 auto', padding: '24px' }}>
+    <div className="container" style={{ paddingTop: 'var(--space-8)', paddingBottom: 'var(--space-16)', maxWidth: '600px' }}>
       <CheckoutForm
         items={items}
         totalAmount={totalAmount}
         onOrderComplete={clearCart}
       />
-    </main>
+    </div>
   );
 }

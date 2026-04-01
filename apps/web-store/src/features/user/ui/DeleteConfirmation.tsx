@@ -10,27 +10,26 @@ export function DeleteConfirmation({ isDeleting, onConfirm, onCancel }: DeleteCo
   return (
     <div
       style={{
-        marginTop: '12px',
-        padding: '12px',
-        backgroundColor: '#fef2f2',
-        borderRadius: '4px',
+        marginTop: 'var(--space-3)',
+        padding: 'var(--space-3) var(--space-4)',
+        backgroundColor: 'rgba(231, 76, 60, 0.06)',
+        borderRadius: 'var(--radius-md)',
+        border: '1px solid rgba(231, 76, 60, 0.15)',
       }}
     >
-      <p style={{ marginBottom: '8px' }}>
+      <p style={{ marginBottom: 'var(--space-2)', fontSize: 'var(--font-size-sm)' }}>
         이 배송지를 삭제하시겠습니까?
       </p>
-      <div style={{ display: 'flex', gap: '8px' }}>
+      <div style={{ display: 'flex', gap: 'var(--space-2)' }}>
         <button
           onClick={onConfirm}
           disabled={isDeleting}
           aria-label="삭제 확인"
+          className="btn"
           style={{
-            padding: '6px 12px',
-            backgroundColor: 'red',
-            color: '#fff',
-            border: 'none',
-            borderRadius: '4px',
-            cursor: isDeleting ? 'not-allowed' : 'pointer',
+            backgroundColor: 'var(--color-error)',
+            color: 'var(--color-white)',
+            borderColor: 'var(--color-error)',
           }}
         >
           {isDeleting ? '삭제 중...' : '삭제'}
@@ -38,13 +37,7 @@ export function DeleteConfirmation({ isDeleting, onConfirm, onCancel }: DeleteCo
         <button
           onClick={onCancel}
           aria-label="삭제 취소"
-          style={{
-            padding: '6px 12px',
-            border: '1px solid #ddd',
-            borderRadius: '4px',
-            backgroundColor: '#fff',
-            cursor: 'pointer',
-          }}
+          className="btn"
         >
           취소
         </button>

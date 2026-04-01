@@ -32,26 +32,46 @@ export function Pagination({
 
   return (
     <nav aria-label="pagination">
-      <ul style={{ display: 'flex', gap: '8px', listStyle: 'none', padding: 0 }}>
+      <ul
+        style={{
+          display: 'flex',
+          gap: 'var(--space-2)',
+          listStyle: 'none',
+          padding: 0,
+          justifyContent: 'center',
+          alignItems: 'center',
+        }}
+      >
         {currentPage > 0 && (
           <li>
-            <Link href={buildHref(currentPage - 1)}>이전</Link>
+            <Link href={buildHref(currentPage - 1)} className="btn" style={{ fontSize: 'var(--font-size-sm)' }}>
+              이전
+            </Link>
           </li>
         )}
         {pages.map((item, idx) => (
           <li key={item === '...' ? `ellipsis-${idx}` : item}>
             {item === '...' ? (
-              <span style={{ color: '#6b7280' }}>...</span>
+              <span style={{ color: 'var(--color-text-muted)', padding: '0 var(--space-1)' }}>...</span>
             ) : item === currentPage ? (
-              <span style={{ fontWeight: 'bold' }}>{item + 1}</span>
+              <span
+                className="btn btn-primary"
+                style={{ fontSize: 'var(--font-size-sm)', pointerEvents: 'none', fontWeight: 'bold' }}
+              >
+                {item + 1}
+              </span>
             ) : (
-              <Link href={buildHref(item)}>{item + 1}</Link>
+              <Link href={buildHref(item)} className="btn" style={{ fontSize: 'var(--font-size-sm)' }}>
+                {item + 1}
+              </Link>
             )}
           </li>
         ))}
         {currentPage < totalPages - 1 && (
           <li>
-            <Link href={buildHref(currentPage + 1)}>다음</Link>
+            <Link href={buildHref(currentPage + 1)} className="btn" style={{ fontSize: 'var(--font-size-sm)' }}>
+              다음
+            </Link>
           </li>
         )}
       </ul>
