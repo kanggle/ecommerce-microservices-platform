@@ -3,6 +3,7 @@ package com.example.auth.application.service;
 import com.example.auth.application.dto.LoginResult;
 import com.example.auth.application.dto.OAuthLoginCommand;
 import com.example.auth.application.exception.OAuthException;
+import com.example.auth.application.exception.OAuthUpstreamException;
 import com.example.auth.domain.entity.User;
 import com.example.auth.domain.repository.OAuthStateStore;
 import com.example.auth.domain.repository.RefreshTokenStore;
@@ -75,7 +76,7 @@ public class GoogleOAuthService {
             userInfo = googleOAuthPort.fetchUserInfo(command.code(), oauthCallbackProperties.googleRedirectUri());
         } catch (Exception e) {
             log.error("Failed to fetch Google user info", e);
-            return CallbackResult.failure(callbackUrl);
+            throw new OAuthUpstreamException("Google API call failed", callbackUrl, e);
         }
 
         if (userInfo.email() == null || userInfo.email().isBlank()) {

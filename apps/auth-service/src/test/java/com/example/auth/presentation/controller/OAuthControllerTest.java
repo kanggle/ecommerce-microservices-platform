@@ -2,6 +2,7 @@ package com.example.auth.presentation.controller;
 
 import com.example.auth.application.dto.LoginResult;
 import com.example.auth.application.exception.OAuthException;
+import com.example.auth.application.exception.OAuthUpstreamException;
 import com.example.auth.application.service.GoogleOAuthService;
 import com.example.auth.application.service.GoogleOAuthService.CallbackResult;
 import com.example.auth.domain.repository.AccessTokenBlocklist;
@@ -158,5 +159,33 @@ class OAuthControllerTest {
                 .param("state", "expired-state"))
             .andExpect(status().isBadRequest())
             .andExpect(jsonPath("$.code").value("INVALID_STATE"));
+    }
+
+    @Test
+    @DisplayName("GET /api/auth/oauth/google/callback - OAuthUpstreamException 발생 시 callbackUrl이 있으면 error=oauth_failed로 302 리다이렉트한다")
+    void handleGoogleCallback_upstreamError_redirectsWithError() throws Exception {
+        given(googleOAuthService.handleCallback(any()))
+            .willThrow(new OAuthUpstreamException("Google API call failed",
+                "http://localhost:3000/oauth/callback", new RuntimeException("upstream error")));
+
+        mockMvc.perform(get("/api/auth/oauth/google/callback")
+                .param("code", "auth-code")
+                .param("state", "valid-state"))
+            .andExpect(status().isFound())
+            .andExpect(header().string("Location",
+                "http://localhost:3000/oauth/callback?error=oauth_failed"));
+    }
+
+    @Test
+    @DisplayName("GET /api/auth/oauth/google/callback - OAuthUpstreamException 발생 시 callbackUrl이 없으면 502를 반환한다")
+    void handleGoogleCallback_upstreamErrorNoCallbackUrl_returns502() throws Exception {
+        given(googleOAuthService.handleCallback(any()))
+            .willThrow(new OAuthUpstreamException("Google API call failed",
+                null, new RuntimeException("upstream error")));
+
+        mockMvc.perform(get("/api/auth/oauth/google/callback")
+                .param("code", "auth-code")
+                .param("state", "valid-state"))
+            .andExpect(status().isBadGateway());
     }
 }
