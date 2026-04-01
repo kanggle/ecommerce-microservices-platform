@@ -1,5 +1,6 @@
 package com.example.auth.infrastructure.persistence;
 
+import com.example.auth.domain.entity.Role;
 import com.example.auth.domain.entity.User;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -20,7 +21,7 @@ class UserJpaMapperTest {
         UUID id = UUID.randomUUID();
         Instant now = Instant.now();
         User user = User.reconstitute(id, "test@example.com", "hashed", "홍길동",
-                now, now, true);
+                Role.CUSTOMER, null, now, now, true);
 
         UserJpaEntity entity = mapper.toEntity(user);
 
@@ -39,7 +40,7 @@ class UserJpaMapperTest {
         UUID id = UUID.randomUUID();
         Instant now = Instant.now();
         User original = User.reconstitute(id, "test@example.com", "hashed", "홍길동",
-                now, now, false);
+                Role.CUSTOMER, null, now, now, false);
         UserJpaEntity entity = mapper.toEntity(original);
 
         User restored = mapper.toDomain(entity);

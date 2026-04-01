@@ -73,6 +73,13 @@ All services must return errors in the following JSON format:
 |---|---|---|
 | RATE_LIMIT_EXCEEDED | 429 | Too many login attempts. Try again later. |
 
+## OAuth
+
+| Code | HTTP | Description |
+|---|---|---|
+| INVALID_STATE | 400 | OAuth state is invalid or expired |
+| OAUTH_UPSTREAM_ERROR | 502 | OAuth provider returned an error |
+
 ## General
 
 | Code | HTTP | Description |
