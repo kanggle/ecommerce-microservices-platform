@@ -1,16 +1,21 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import { useRouter } from 'next/navigation';
+import { useRouter, useSearchParams } from 'next/navigation';
 import { useAuth } from '@/shared/hooks';
 import { isApiErrorResponse, getErrorMessage, ERROR_MESSAGES } from '@repo/types/guards';
 
 export function LoginForm() {
   const router = useRouter();
+  const searchParams = useSearchParams();
   const { isAuthenticated, isLoading, login } = useAuth();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-  const [error, setError] = useState('');
+  const [error, setError] = useState(
+    searchParams.get('error') === 'oauth_failed'
+      ? 'Google 로그인에 실패했습니다. 다시 시도해 주세요.'
+      : '',
+  );
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   useEffect(() => {
