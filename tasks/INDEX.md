@@ -75,6 +75,7 @@ Tasks must not be implemented from `backlog/`, `in-progress/`, `review/`, `done/
 | ID | Title | Service | Tags |
 |---|---|---|---|
 | TASK-FE-040 | admin-dashboard Google OAuth 로그인 UI 구현 — 소셜 버튼 및 콜백 페이지 추가 | admin-dashboard | code, test |
+| TASK-FE-048 | TASK-FE-047 리뷰 수정 — LoginForm oauth_failed 쿼리 파라미터 처리 로직 누락 구현 | admin-dashboard | code, test |
 | TASK-BE-082 | auth-service, order-service, user-service 도메인 모델 프레임워크 의존성 분리 — JPA 애노테이션 제거 및 JpaEntity 분리 | auth-service, order-service, user-service | code, test |
 | TASK-BE-083 | 전 서비스 이벤트 envelope snake_case 통일 — order, auth, product, user-service 적용 | order-service, auth-service, product-service, user-service | code, event, test |
 | TASK-BE-085 | user-service Address 도메인 모델 리팩토링 — 반복 검증 로직 추출 및 update 메서드 분해 | user-service | code, test |
@@ -113,6 +114,7 @@ _(없음)_
 
 | ID | Title | Service | Tags |
 |---|---|---|---|
+| TASK-FE-047 | TASK-FE-040에서 발견된 LoginForm oauth_failed 에러 메시지 테스트 누락 수정 | admin-dashboard | code, test |
 | TASK-BE-113-fix-001 | TASK-BE-113 리뷰 수정 — order-service 회원 탈퇴 시 주문 취소 배치 저장 실제 구현 | order-service | code, event, test |
 | TASK-BE-113 | order-service 회원 탈퇴 시 주문 취소 배치 저장 최적화 | order-service | code, event |
 | TASK-BE-109 | order-service 이벤트 발행 Transactional Outbox 패턴 적용 | order-service | code, event |
