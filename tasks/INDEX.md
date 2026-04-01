@@ -74,6 +74,7 @@ Tasks must not be implemented from `backlog/`, `in-progress/`, `review/`, `done/
 
 | ID | Title | Service | Tags |
 |---|---|---|---|
+| TASK-FE-040 | admin-dashboard Google OAuth 로그인 UI 구현 — 소셜 버튼 및 콜백 페이지 추가 | admin-dashboard | code, test |
 | TASK-BE-082 | auth-service, order-service, user-service 도메인 모델 프레임워크 의존성 분리 — JPA 애노테이션 제거 및 JpaEntity 분리 | auth-service, order-service, user-service | code, test |
 | TASK-BE-083 | 전 서비스 이벤트 envelope snake_case 통일 — order, auth, product, user-service 적용 | order-service, auth-service, product-service, user-service | code, event, test |
 | TASK-BE-085 | user-service Address 도메인 모델 리팩토링 — 반복 검증 로직 추출 및 update 메서드 분해 | user-service | code, test |
@@ -101,6 +102,7 @@ _(없음)_
 
 | ID | Title | Service | Tags |
 |---|---|---|---|
+| TASK-BE-114 | auth-service Google OAuth 2.0 로그인 구현 — Authorization Code Flow, 사용자 find-or-create, JWT 발급 | auth-service | code, api, test |
 | TASK-BE-098 | order-service API 컨트랙트 불일치 수정 — POST 요청 필드 차이 및 GET 목록 status 필터 미구현 | order-service | code, api, test |
 | TASK-BE-095 | gateway-service 외부 클라이언트 X-User-Id / X-User-Email 헤더 스푸핑 방어 — 모든 경로에서 수신 헤더 제거 | gateway-service | code, test |
 | TASK-BE-096 | gateway-service rate_limited 메트릭 실제 연동 — RequestRateLimiter 429 응답 시 gateway_rate_limited_total 기록 | gateway-service | code, test |
