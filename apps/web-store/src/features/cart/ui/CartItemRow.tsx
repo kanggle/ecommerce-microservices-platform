@@ -59,7 +59,7 @@ export function CartItemRow({ item }: CartItemRowProps) {
             fontSize: 'var(--font-size-sm)',
           }}
         >
-          {item.price.toLocaleString()}원
+          {item.price.toLocaleString()}<span style={{ fontSize: 'var(--font-size-xs)', fontWeight: 'var(--font-weight-normal)', color: 'var(--color-text-secondary)', marginLeft: '2px' }}>원</span>
         </p>
       </div>
 

@@ -8,5 +8,9 @@ export default function OrdersPage() {
 
   if (!isReady) return null;
 
-  return <OrderHistory />;
+  return (
+    <div style={{ maxWidth: '600px', margin: '0 auto', padding: 'var(--space-8) var(--space-6) var(--space-16)' }}>
+      <OrderHistory />
+    </div>
+  );
 }

@@ -47,7 +47,7 @@ export function OrderHistory() {
   }
 
   return (
-    <div className="container" style={{ paddingTop: 'var(--space-8)', paddingBottom: 'var(--space-16)', maxWidth: '800px' }}>
+    <div>
       <h1 className="page-title">주문 내역</h1>
 
       {isLoading && <LoadingSpinner />}

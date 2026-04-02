@@ -1,0 +1,139 @@
+.banner {
+  position: relative;
+  max-width: var(--max-width);
+  margin: 0 auto;
+  padding: 0 var(--space-6);
+}
+
+.slide {
+  position: relative;
+  color: var(--color-text-inverse);
+  text-align: center;
+  overflow: hidden;
+  border-radius: var(--radius-lg);
+  transition: background 0.6s ease;
+}
+
+.inner {
+  padding: var(--space-16) var(--space-6);
+}
+
+.title {
+  font-size: var(--font-size-4xl);
+  font-weight: var(--font-weight-bold);
+  line-height: var(--line-height-tight);
+  margin: 0 0 var(--space-4);
+}
+
+.subtitle {
+  font-size: var(--font-size-lg);
+  color: rgba(255, 255, 255, 0.7);
+  margin: 0 auto var(--space-8);
+  max-width: 600px;
+}
+
+.cta {
+  display: inline-block;
+  padding: var(--space-3) var(--space-8);
+  font-size: var(--font-size-base);
+  font-weight: var(--font-weight-semibold);
+  color: var(--color-white);
+  background: var(--color-accent);
+  border-radius: var(--radius-md);
+  transition: background var(--transition-fast);
+  text-decoration: none;
+}
+
+.cta:hover {
+  background: var(--color-accent-hover);
+}
+
+/* Arrows */
+.arrow {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 44px;
+  height: 44px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(255, 255, 255, 0.15);
+  border: none;
+  border-radius: var(--radius-full);
+  color: var(--color-white);
+  font-size: var(--font-size-2xl);
+  cursor: pointer;
+  transition: background var(--transition-fast);
+}
+
+.arrow:hover {
+  background: rgba(255, 255, 255, 0.3);
+}
+
+.arrowPrev {
+  left: var(--space-4);
+}
+
+.arrowNext {
+  right: var(--space-4);
+}
+
+/* Dots */
+.dots {
+  position: absolute;
+  bottom: var(--space-4);
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  gap: var(--space-2);
+}
+
+.dot {
+  width: 8px;
+  height: 8px;
+  border-radius: var(--radius-full);
+  border: none;
+  background: rgba(255, 255, 255, 0.4);
+  cursor: pointer;
+  padding: 0;
+  transition: all var(--transition-fast);
+}
+
+.dot:hover {
+  background: rgba(255, 255, 255, 0.7);
+}
+
+.dotActive {
+  background: var(--color-white);
+  width: 20px;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .inner {
+    padding: var(--space-10) var(--space-4);
+  }
+
+  .title {
+    font-size: var(--font-size-2xl);
+  }
+
+  .subtitle {
+    font-size: var(--font-size-base);
+  }
+
+  .arrow {
+    width: 36px;
+    height: 36px;
+    font-size: var(--font-size-xl);
+  }
+
+  .arrowPrev {
+    left: var(--space-3);
+  }
+
+  .arrowNext {
+    right: var(--space-3);
+  }
+}

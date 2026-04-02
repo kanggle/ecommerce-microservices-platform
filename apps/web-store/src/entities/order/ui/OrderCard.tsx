@@ -9,7 +9,7 @@ interface OrderCardProps {
 export function OrderCard({ order }: OrderCardProps) {
   return (
     <Link
-      href={`/orders/${order.orderId}`}
+      href={`/my/orders/${order.orderId}`}
       className="card"
       style={{
         display: 'block',

@@ -20,9 +20,10 @@ const styles = {
   actionRow: { display: 'flex', gap: 'var(--space-2)' } as const,
   smallBtn: { fontSize: 'var(--font-size-xs)', padding: 'var(--space-1) var(--space-2)' } as const,
   detailText: { margin: 'var(--space-1) 0', color: 'var(--color-text-secondary)' } as const,
-  cardDefault: { border: '2px solid var(--color-primary)', borderRadius: 'var(--radius-lg)', padding: 'var(--space-4)' } as const,
+  cardDefault: { border: '2px solid var(--color-primary)', borderRadius: 'var(--radius-lg)', padding: 'var(--space-4)', background: 'rgba(26, 26, 46, 0.03)' } as const,
   card: { border: '1px solid var(--color-border)', borderRadius: 'var(--radius-lg)', padding: 'var(--space-4)' } as const,
   labelText: { fontWeight: 'var(--font-weight-bold)' } as const,
+  badge: { display: 'inline-block', padding: '2px 8px', fontSize: 'var(--font-size-xs)', fontWeight: 'var(--font-weight-semibold)', backgroundColor: 'var(--color-primary)', color: '#fff', borderRadius: 'var(--radius-full)' } as const,
 };
 
 interface AddressListProps {
@@ -30,9 +31,11 @@ interface AddressListProps {
   onAddClick: () => void;
   onEditClick: (address: Address) => void;
   onChanged: () => void;
+  onSetDefault: (addressId: string) => void;
+  onDeleted: (addressId: string) => void;
 }
 
-export function AddressList({ addresses, onAddClick, onEditClick, onChanged }: AddressListProps) {
+export function AddressList({ addresses, onAddClick, onEditClick, onChanged, onSetDefault, onDeleted }: AddressListProps) {
   const [deletingId, setDeletingId] = useState<string | null>(null);
   const [confirmDeleteId, setConfirmDeleteId] = useState<string | null>(null);
   const [settingDefaultId, setSettingDefaultId] = useState<string | null>(null);
@@ -46,7 +49,7 @@ export function AddressList({ addresses, onAddClick, onEditClick, onChanged }: A
     try {
       await deleteAddress(addressId);
       setConfirmDeleteId(null);
-      onChanged();
+      onDeleted(addressId);
     } catch (err) {
       if (isApiError(err)) {
         setError(ERROR_MESSAGES[err.code] ?? err.message ?? '배송지 삭제에 실패했습니다.');
@@ -61,10 +64,11 @@ export function AddressList({ addresses, onAddClick, onEditClick, onChanged }: A
   async function handleSetDefault(addressId: string) {
     setError('');
     setSettingDefaultId(addressId);
+    onSetDefault(addressId);
     try {
       await updateAddress(addressId, { isDefault: true });
-      onChanged();
     } catch (err) {
+      onChanged();
       if (isApiError(err)) {
         setError(err.message ?? '기본 배송지 변경에 실패했습니다.');
       } else {
@@ -95,7 +99,7 @@ export function AddressList({ addresses, onAddClick, onEditClick, onChanged }: A
             <div style={styles.cardHeader}>
               <div style={styles.labelRow}>
                 <span style={styles.labelText}>{address.label}</span>
-                {address.isDefault && <span className="badge" style={{ backgroundColor: 'var(--color-primary)', color: '#fff' }}>기본</span>}
+                {address.isDefault && <span style={styles.badge}>기본 배송지</span>}
               </div>
               <div style={styles.actionRow}>
                 {!address.isDefault && (

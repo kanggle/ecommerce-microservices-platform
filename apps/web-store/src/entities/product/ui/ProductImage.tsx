@@ -1,50 +1,86 @@
 'use client';
 
 import Image from 'next/image';
-import { useState } from 'react';
+import { useCallback, useState } from 'react';
+import styles from '@/features/product/ui/ProductDetail.module.css';
 
 interface ProductImageProps {
-  src: string;
+  images: string[];
   alt: string;
 }
 
-export function ProductImage({ src, alt }: ProductImageProps) {
-  const [hasError, setHasError] = useState(false);
+export function ProductImage({ images, alt }: ProductImageProps) {
+  const [current, setCurrent] = useState(0);
+  const [errorSet, setErrorSet] = useState<Set<number>>(new Set());
+
+  const total = images.length;
+  const hasMultiple = total > 1;
+
+  const prev = useCallback(() => {
+    setCurrent((i) => (i - 1 + total) % total);
+  }, [total]);
+
+  const next = useCallback(() => {
+    setCurrent((i) => (i + 1) % total);
+  }, [total]);
+
+  function handleError(index: number) {
+    setErrorSet((prev) => new Set(prev).add(index));
+  }
 
   return (
-    <div
-      style={{
-        aspectRatio: '1',
-        backgroundColor: 'var(--color-bg-tertiary)',
-        borderRadius: 'var(--radius-lg)',
-        overflow: 'hidden',
-        position: 'relative',
-      }}
-    >
-      {hasError ? (
-        <div
-          style={{
-            width: '100%',
-            height: '100%',
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-            color: 'var(--color-text-muted)',
-            fontSize: 'var(--font-size-sm)',
-          }}
-        >
-          이미지를 불러올 수 없습니다
-        </div>
-      ) : (
-        <Image
-          src={src}
-          alt={alt}
-          fill
-          sizes="(max-width: 768px) 100vw, 50vw"
-          style={{ objectFit: 'cover' }}
-          onError={() => setHasError(true)}
-        />
-      )}
+    <div className={styles.imageGallery}>
+      <div className={styles.imageWrapper}>
+        {errorSet.has(current) ? (
+          <div className={styles.imageFallback}>이미지를 불러올 수 없습니다</div>
+        ) : (
+          <Image
+            src={images[current]}
+            alt={`${alt} ${current + 1}`}
+            fill
+            sizes="480px"
+            className={styles.imageEl}
+            onError={() => handleError(current)}
+            priority={current === 0}
+            unoptimized={images[current].includes('placehold.co')}
+          />
+        )}
+
+        {hasMultiple && (
+          <>
+            <button
+              type="button"
+              className={`${styles.slideBtn} ${styles.slideBtnPrev}`}
+              onClick={prev}
+              aria-label="이전 이미지"
+            >
+              ‹
+            </button>
+            <button
+              type="button"
+              className={`${styles.slideBtn} ${styles.slideBtnNext}`}
+              onClick={next}
+              aria-label="다음 이미지"
+            >
+              ›
+            </button>
+          </>
+        )}
+
+        {hasMultiple && (
+          <div className={styles.dots}>
+            {images.map((_, i) => (
+              <button
+                key={i}
+                type="button"
+                className={`${styles.dot} ${i === current ? styles.dotActive : ''}`}
+                onClick={() => setCurrent(i)}
+                aria-label={`이미지 ${i + 1}`}
+              />
+            ))}
+          </div>
+        )}
+      </div>
     </div>
   );
 }

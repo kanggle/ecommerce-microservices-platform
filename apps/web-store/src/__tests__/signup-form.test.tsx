@@ -72,7 +72,7 @@ describe('SignupForm', () => {
 
     await user.type(screen.getByLabelText('이름'), 'Tester');
     await user.type(screen.getByLabelText('이메일'), 'test@test.com');
-    await user.type(screen.getByLabelText('비밀번호'), 'password123!');
+    await user.type(screen.getByLabelText('비밀번호'), 'password123');
 
     expect(screen.getByRole('button', { name: '회원가입' })).toBeEnabled();
   });
@@ -90,7 +90,7 @@ describe('SignupForm', () => {
 
     await user.type(screen.getByLabelText('이름'), 'Tester');
     await user.type(screen.getByLabelText('이메일'), 'test@test.com');
-    await user.type(screen.getByLabelText('비밀번호'), 'password123!');
+    await user.type(screen.getByLabelText('비밀번호'), 'password123');
     await user.click(screen.getByRole('button', { name: '회원가입' }));
 
     await waitFor(() => {
@@ -111,7 +111,7 @@ describe('SignupForm', () => {
 
     await user.type(screen.getByLabelText('이름'), 'Tester');
     await user.type(screen.getByLabelText('이메일'), 'test@test.com');
-    await user.type(screen.getByLabelText('비밀번호'), 'password123!');
+    await user.type(screen.getByLabelText('비밀번호'), 'password123');
     await user.click(screen.getByRole('button', { name: '회원가입' }));
 
     await waitFor(() => {
@@ -125,7 +125,7 @@ describe('SignupForm', () => {
 
     await user.type(screen.getByLabelText('이름'), '   ');
     await user.type(screen.getByLabelText('이메일'), 'test@test.com');
-    await user.type(screen.getByLabelText('비밀번호'), 'password123!');
+    await user.type(screen.getByLabelText('비밀번호'), 'password123');
 
     expect(screen.getByRole('button', { name: '회원가입' })).toBeDisabled();
   });

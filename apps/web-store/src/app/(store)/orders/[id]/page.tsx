@@ -10,5 +10,9 @@ export default function OrderDetailPage() {
 
   if (!isReady) return null;
 
-  return <OrderDetailView orderId={params.id} />;
+  return (
+    <div style={{ maxWidth: '600px', margin: '0 auto', padding: 'var(--space-8) var(--space-6) var(--space-16)' }}>
+      <OrderDetailView orderId={params.id} />
+    </div>
+  );
 }
