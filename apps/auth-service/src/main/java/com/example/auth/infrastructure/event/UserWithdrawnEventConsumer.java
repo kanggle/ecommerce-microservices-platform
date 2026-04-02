@@ -12,6 +12,7 @@ import org.springframework.stereotype.Component;
 @Slf4j
 @Component
 @RequiredArgsConstructor
+@org.springframework.context.annotation.Profile("!standalone")
 public class UserWithdrawnEventConsumer {
 
     private final UserWithdrawalService userWithdrawalService;

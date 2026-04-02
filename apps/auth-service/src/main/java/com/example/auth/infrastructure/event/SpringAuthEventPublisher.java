@@ -11,6 +11,7 @@ import org.springframework.stereotype.Component;
 @Slf4j
 @Component
 @RequiredArgsConstructor
+@org.springframework.context.annotation.Profile("!standalone")
 public class SpringAuthEventPublisher implements AuthEventPublisher {
 
     private final ApplicationEventPublisher applicationEventPublisher;

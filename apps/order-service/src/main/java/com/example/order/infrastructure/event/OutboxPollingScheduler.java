@@ -8,6 +8,7 @@ import org.springframework.stereotype.Component;
 
 @Slf4j
 @Component
+@org.springframework.context.annotation.Profile("!standalone")
 public class OutboxPollingScheduler extends com.example.messaging.outbox.OutboxPollingScheduler {
 
     static final String TOPIC_ORDER_PLACED = "order.order.placed";

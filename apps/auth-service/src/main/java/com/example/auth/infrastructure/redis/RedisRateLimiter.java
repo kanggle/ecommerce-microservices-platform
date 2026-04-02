@@ -17,6 +17,7 @@ import java.util.List;
  */
 @Slf4j
 @Component
+@org.springframework.context.annotation.Profile("!standalone")
 public class RedisRateLimiter implements RateLimiter {
 
     private static final DefaultRedisScript<Long> RATE_LIMIT_SCRIPT;

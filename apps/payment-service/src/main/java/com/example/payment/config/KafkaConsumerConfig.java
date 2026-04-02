@@ -12,6 +12,7 @@ import org.springframework.util.backoff.FixedBackOff;
 
 @Slf4j
 @Configuration
+@org.springframework.context.annotation.Profile("!standalone")
 public class KafkaConsumerConfig {
 
     @Bean

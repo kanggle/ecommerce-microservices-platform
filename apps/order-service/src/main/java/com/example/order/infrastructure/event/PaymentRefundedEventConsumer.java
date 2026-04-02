@@ -12,6 +12,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 @Slf4j
 @Component
+@org.springframework.context.annotation.Profile("!standalone")
 @RequiredArgsConstructor
 public class PaymentRefundedEventConsumer {
 
