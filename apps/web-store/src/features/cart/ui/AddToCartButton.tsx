@@ -9,6 +9,7 @@ interface AddToCartButtonProps {
   productName: string;
   optionName: string;
   price: number;
+  quantity?: number;
   disabled?: boolean;
 }
 
@@ -18,6 +19,7 @@ export function AddToCartButton({
   productName,
   optionName,
   price,
+  quantity = 1,
   disabled = false,
 }: AddToCartButtonProps) {
   const { addItem } = useCart();
@@ -25,7 +27,7 @@ export function AddToCartButton({
   const timerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   const handleClick = useCallback(() => {
-    addItem({ productId, variantId, productName, optionName, price });
+    addItem({ productId, variantId, productName, optionName, price }, quantity);
     if (timerRef.current) {
       clearTimeout(timerRef.current);
     }
@@ -34,7 +36,7 @@ export function AddToCartButton({
       setAdded(false);
       timerRef.current = null;
     }, 1500);
-  }, [addItem, productId, variantId, productName, optionName, price]);
+  }, [addItem, productId, variantId, productName, optionName, price, quantity]);
 
   useEffect(() => {
     return () => {
@@ -58,6 +60,7 @@ export function AddToCartButton({
       aria-label={disabled ? '품절' : '장바구니 담기'}
       className="btn btn-lg"
       style={{
+        width: '100%',
         backgroundColor: bgColor,
         color: 'var(--color-white)',
         border: 'none',

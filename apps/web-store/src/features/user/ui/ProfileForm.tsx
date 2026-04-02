@@ -1,23 +1,20 @@
 'use client';
 
-import { useState, useCallback } from 'react';
+import { useState, useCallback, useRef } from 'react';
 import type { UserProfile } from '@repo/types';
 import { isApiError, ERROR_MESSAGES } from '@repo/types/guards';
 import type { ProfileFieldErrors } from '../model/types';
 import { updateMyProfile } from '../api/user-profile-api';
 import { Toast } from '@/shared/ui';
 import { ProfileFormField } from './ProfileFormField';
+import { useProfileImage } from '@/shared/context/ProfileImageContext';
 
 interface ProfileFormProps {
   profile: UserProfile;
   onUpdated: (updated: UserProfile) => void;
 }
 
-function validateFields(
-  nickname: string,
-  phone: string,
-  profileImageUrl: string,
-): ProfileFieldErrors {
+function validateFields(nickname: string, phone: string): ProfileFieldErrors {
   const errors: ProfileFieldErrors = {};
 
   if (nickname.length > 0 && nickname.trim().length === 0) {
@@ -28,26 +25,28 @@ function validateFields(
     errors.phone = '전화번호 형식이 올바르지 않습니다.';
   }
 
-  if (profileImageUrl.length > 0) {
-    try {
-      new URL(profileImageUrl);
-    } catch {
-      errors.profileImageUrl = '올바른 URL을 입력해주세요.';
-    }
-  }
-
   return errors;
 }
 
 export function ProfileForm({ profile, onUpdated }: ProfileFormProps) {
   const [nickname, setNickname] = useState(profile.nickname ?? '');
   const [phone, setPhone] = useState(profile.phone ?? '');
-  const [profileImageUrl, setProfileImageUrl] = useState(
-    profile.profileImageUrl ?? '',
-  );
+  const [profileImageUrl, setProfileImageUrl] = useState(profile.profileImageUrl ?? '');
   const [fieldErrors, setFieldErrors] = useState<ProfileFieldErrors>({});
   const [toast, setToast] = useState<{ message: string; type: 'success' | 'error' } | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const fileInputRef = useRef<HTMLInputElement>(null);
+  const { setImageUrl: setGlobalProfileImage } = useProfileImage();
+
+  function handleImageChange(e: React.ChangeEvent<HTMLInputElement>) {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    const reader = new FileReader();
+    reader.onload = () => {
+      setProfileImageUrl(reader.result as string);
+    };
+    reader.readAsDataURL(file);
+  }
 
   const clearToast = useCallback(() => setToast(null), []);
 
@@ -60,7 +59,7 @@ export function ProfileForm({ profile, onUpdated }: ProfileFormProps) {
     e.preventDefault();
     if (isSubmitting || !hasChanges) return;
 
-    const errors = validateFields(nickname, phone, profileImageUrl);
+    const errors = validateFields(nickname, phone);
     setFieldErrors(errors);
     if (Object.keys(errors).length > 0) return;
 
@@ -81,6 +80,7 @@ export function ProfileForm({ profile, onUpdated }: ProfileFormProps) {
 
       const updated = await updateMyProfile(data);
       setToast({ message: '프로필이 수정되었습니다.', type: 'success' });
+      setGlobalProfileImage(updated.profileImageUrl ?? '');
       onUpdated({
         ...profile,
         nickname: updated.nickname,
@@ -106,14 +106,42 @@ export function ProfileForm({ profile, onUpdated }: ProfileFormProps) {
     <form onSubmit={handleSubmit} noValidate>
       <section className="card" style={{ padding: 'var(--space-6)', marginBottom: 'var(--space-6)' }}>
         <h2 className="section-title">기본 정보</h2>
-        <div style={{ display: 'flex', flexDirection: 'column', gap: 'var(--space-3)' }}>
-          <div>
-            <span style={{ fontWeight: 'var(--font-weight-semibold)', fontSize: 'var(--font-size-sm)', color: 'var(--color-text-secondary)' }}>이메일</span>
-            <p style={{ margin: 'var(--space-1) 0 0', fontSize: 'var(--font-size-sm)' }}>{profile.email}</p>
+        <div style={{ display: 'flex', alignItems: 'center', gap: 'var(--space-6)' }}>
+          <div style={{ flexShrink: 0, display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 'var(--space-2)' }}>
+            {profileImageUrl ? (
+              <img
+                src={profileImageUrl}
+                alt="프로필"
+                style={{ width: 80, height: 80, borderRadius: 'var(--radius-full)', objectFit: 'cover', border: '1px solid var(--color-border-light)' }}
+              />
+            ) : (
+              <div
+                style={{ width: 80, height: 80, borderRadius: 'var(--radius-full)', background: 'var(--color-primary)', color: 'var(--color-white)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 'var(--font-size-2xl)', fontWeight: 'var(--font-weight-bold)' }}
+              >
+                {profile.name?.charAt(0).toUpperCase()}
+              </div>
+            )}
+            <input ref={fileInputRef} type="file" accept="image/*" style={{ display: 'none' }} onChange={handleImageChange} />
+            <div style={{ display: 'flex', gap: 'var(--space-1)' }}>
+              <button type="button" className="btn" style={{ fontSize: 'var(--font-size-xs)', padding: 'var(--space-1) var(--space-2)' }} onClick={() => fileInputRef.current?.click()}>
+                선택
+              </button>
+              {profileImageUrl && (
+                <button type="button" className="btn" style={{ fontSize: 'var(--font-size-xs)', padding: 'var(--space-1) var(--space-2)', color: 'var(--color-text-muted)' }} onClick={() => setProfileImageUrl('')}>
+                  삭제
+                </button>
+              )}
+            </div>
           </div>
-          <div>
-            <span style={{ fontWeight: 'var(--font-weight-semibold)', fontSize: 'var(--font-size-sm)', color: 'var(--color-text-secondary)' }}>이름</span>
-            <p style={{ margin: 'var(--space-1) 0 0', fontSize: 'var(--font-size-sm)' }}>{profile.name}</p>
+          <div style={{ display: 'flex', flexDirection: 'column', gap: 'var(--space-3)' }}>
+            <div>
+              <span style={{ fontWeight: 'var(--font-weight-semibold)', fontSize: 'var(--font-size-sm)', color: 'var(--color-text-secondary)' }}>이메일</span>
+              <p style={{ margin: 'var(--space-1) 0 0', fontSize: 'var(--font-size-sm)' }}>{profile.email}</p>
+            </div>
+            <div>
+              <span style={{ fontWeight: 'var(--font-weight-semibold)', fontSize: 'var(--font-size-sm)', color: 'var(--color-text-secondary)' }}>이름</span>
+              <p style={{ margin: 'var(--space-1) 0 0', fontSize: 'var(--font-size-sm)' }}>{profile.name}</p>
+            </div>
           </div>
         </div>
       </section>
@@ -147,18 +175,6 @@ export function ProfileForm({ profile, onUpdated }: ProfileFormProps) {
             }}
             placeholder="010-0000-0000"
             error={fieldErrors.phone}
-          />
-          <ProfileFormField
-            id="profileImageUrl"
-            label="프로필 이미지 URL"
-            type="url"
-            value={profileImageUrl}
-            onChange={(value) => {
-              setProfileImageUrl(value);
-              setFieldErrors((prev) => ({ ...prev, profileImageUrl: undefined }));
-            }}
-            placeholder="https://example.com/image.jpg"
-            error={fieldErrors.profileImageUrl}
           />
         </div>
       </section>

@@ -54,8 +54,18 @@ export function AddressManager() {
     setEditingAddress(null);
   }
 
+  function handleSetDefault(addressId: string) {
+    setAddresses((prev) =>
+      prev.map((a) => ({ ...a, isDefault: a.id === addressId })),
+    );
+  }
+
+  function handleDeleted(addressId: string) {
+    setAddresses((prev) => prev.filter((a) => a.id !== addressId));
+  }
+
   return (
-    <div className="container" style={{ paddingTop: 'var(--space-8)', paddingBottom: 'var(--space-16)', maxWidth: '600px' }}>
+    <div>
       <h1 className="page-title">배송지 관리</h1>
 
       {isLoading && <LoadingSpinner />}
@@ -91,6 +101,8 @@ export function AddressManager() {
               onAddClick={handleAddClick}
               onEditClick={handleEditClick}
               onChanged={loadAddresses}
+              onSetDefault={handleSetDefault}
+              onDeleted={handleDeleted}
             />
           )}
         </>

@@ -5,6 +5,7 @@ import type { Address } from '@repo/types';
 import { isApiError, ERROR_MESSAGES } from '@repo/types/guards';
 import { createAddress, updateAddress } from '../api/address-api';
 import { useAddressFormValidation } from '../model/use-address-form-validation';
+import { AddressSearch } from '@/shared/ui/AddressSearch';
 
 interface AddressFormProps {
   address?: Address;
@@ -73,21 +74,25 @@ export function AddressForm({ address, onSaved, onCancel }: AddressFormProps) {
           <div className="form-group" style={{ marginBottom: 0 }}>
             <label htmlFor="addressPhone" className="label">연락처</label>
             <input id="addressPhone" type="tel" className="input" value={phone} onChange={(e) => { setPhone(e.target.value); clearFieldError('phone'); }} placeholder="010-0000-0000" />
+            {phone.trim().length > 0 && !/^01[016789]-?\d{3,4}-?\d{4}$/.test(phone.trim()) && (
+              <p style={{ color: 'var(--color-error)', fontSize: 'var(--font-size-xs)', margin: 'var(--space-1) 0 0' }}>올바른 휴대폰 번호를 입력해주세요. (예: 010-1234-5678)</p>
+            )}
             {fieldErrors.phone && <p role="alert" style={{ color: 'var(--color-error)', fontSize: 'var(--font-size-xs)', margin: 'var(--space-1) 0 0' }}>{fieldErrors.phone}</p>}
           </div>
           <div className="form-group" style={{ marginBottom: 0 }}>
-            <label htmlFor="zipCode" className="label">우편번호</label>
-            <input id="zipCode" type="text" className="input" value={zipCode} onChange={(e) => { setZipCode(e.target.value); clearFieldError('zipCode'); }} />
-            {fieldErrors.zipCode && <p role="alert" style={{ color: 'var(--color-error)', fontSize: 'var(--font-size-xs)', margin: 'var(--space-1) 0 0' }}>{fieldErrors.zipCode}</p>}
-          </div>
-          <div className="form-group" style={{ marginBottom: 0 }}>
-            <label htmlFor="address1" className="label">주소</label>
-            <input id="address1" type="text" className="input" value={address1} onChange={(e) => { setAddress1(e.target.value); clearFieldError('address1'); }} />
-            {fieldErrors.address1 && <p role="alert" style={{ color: 'var(--color-error)', fontSize: 'var(--font-size-xs)', margin: 'var(--space-1) 0 0' }}>{fieldErrors.address1}</p>}
-          </div>
-          <div className="form-group" style={{ marginBottom: 0 }}>
-            <label htmlFor="address2" className="label">상세주소</label>
-            <input id="address2" type="text" className="input" value={address2} onChange={(e) => setAddress2(e.target.value)} placeholder="상세주소 (선택)" />
+            <label className="label">주소</label>
+            <div style={{ display: 'flex', gap: 'var(--space-2)', marginBottom: 'var(--space-2)' }}>
+              <input id="address1" type="text" className="input" value={address1} readOnly placeholder="주소 검색을 눌러주세요" style={{ flex: 1, background: 'var(--color-bg-secondary)' }} />
+              <AddressSearch onSelect={({ zipCode: z, address1: a }) => {
+                setZipCode(z); setAddress1(a);
+                clearFieldError('zipCode'); clearFieldError('address1');
+              }} />
+            </div>
+            {(fieldErrors.zipCode || fieldErrors.address1) && <p role="alert" style={{ color: 'var(--color-error)', fontSize: 'var(--font-size-xs)', margin: '0 0 var(--space-2)' }}>{fieldErrors.address1 || fieldErrors.zipCode}</p>}
+            <div style={{ display: 'flex', gap: 'var(--space-2)' }}>
+              <input id="address2" type="text" className="input" value={address2} onChange={(e) => setAddress2(e.target.value)} placeholder="상세주소 (선택)" style={{ flex: 1 }} />
+              <input id="zipCode" type="text" className="input" value={zipCode} readOnly placeholder="우편번호" style={{ width: 100, background: 'var(--color-bg-secondary)', textAlign: 'center' }} />
+            </div>
           </div>
           {!isEditMode && (
             <div style={{ display: 'flex', alignItems: 'center', gap: 'var(--space-2)' }}>

@@ -1,5 +1,6 @@
 'use client';
 
+import Link from 'next/link';
 import type { OrderDetail, PaymentResponse } from '@repo/types';
 import { OrderStatusBadge } from '@/entities/order';
 import { PaymentStatusBadge } from '@/entities/payment';
@@ -30,6 +31,9 @@ export function OrderDetailView({ orderId }: Props) {
 
       {order && (
         <div>
+          <Link href="/my/orders" style={{ display: 'inline-block', fontSize: 'var(--font-size-sm)', color: 'var(--color-text-secondary)', marginBottom: 'var(--space-4)', textDecoration: 'none' }}>
+            &larr; 주문내역
+          </Link>
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 'var(--space-8)' }}>
             <h1 className="page-title" style={{ margin: 0 }}>주문 상세</h1>
             <OrderStatusBadge status={order.status} />

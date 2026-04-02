@@ -2,11 +2,14 @@
 
 import { AuthProvider } from '@/features/auth';
 import { CartProvider } from '@/features/cart';
+import { ProfileImageProvider } from '@/shared/context/ProfileImageContext';
 
 export function Providers({ children }: { children: React.ReactNode }) {
   return (
     <AuthProvider>
-      <CartProvider>{children}</CartProvider>
+      <CartProvider>
+        <ProfileImageProvider>{children}</ProfileImageProvider>
+      </CartProvider>
     </AuthProvider>
   );
 }

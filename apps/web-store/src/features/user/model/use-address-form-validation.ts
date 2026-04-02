@@ -18,8 +18,8 @@ function validateFields(
   }
   if (!phone.trim()) {
     errors.phone = '연락처를 입력해주세요.';
-  } else if (!/^[\d-]+$/.test(phone)) {
-    errors.phone = '연락처 형식이 올바르지 않습니다.';
+  } else if (!/^01[016789]-?\d{3,4}-?\d{4}$/.test(phone.trim())) {
+    errors.phone = '올바른 휴대폰 번호를 입력해주세요. (예: 010-1234-5678)';
   }
   if (!zipCode.trim()) {
     errors.zipCode = '우편번호를 입력해주세요.';

@@ -5,11 +5,13 @@ import type { UserProfile } from '@repo/types';
 import { LoadingSpinner, ErrorMessage } from '@repo/ui';
 import { ProfileForm } from './ProfileForm';
 import { getMyProfile } from '../api/user-profile-api';
+import { useProfileImage } from '@/shared/context/ProfileImageContext';
 
 export function ProfileLoader() {
   const [profile, setProfile] = useState<UserProfile | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState('');
+  const { setImageUrl: setGlobalProfileImage } = useProfileImage();
 
   const loadProfile = useCallback(async () => {
     setIsLoading(true);
@@ -17,6 +19,7 @@ export function ProfileLoader() {
     try {
       const data = await getMyProfile();
       setProfile(data);
+      setGlobalProfileImage(data.profileImageUrl ?? '');
     } catch (err) {
       const apiErr = err as { code?: string };
       if (apiErr.code === 'USER_PROFILE_NOT_FOUND') {
@@ -34,7 +37,7 @@ export function ProfileLoader() {
   }, [loadProfile]);
 
   return (
-    <div className="container" style={{ paddingTop: 'var(--space-8)', paddingBottom: 'var(--space-16)', maxWidth: '600px' }}>
+    <div>
       <h1 className="page-title">내 프로필</h1>
 
       {isLoading && <LoadingSpinner />}
