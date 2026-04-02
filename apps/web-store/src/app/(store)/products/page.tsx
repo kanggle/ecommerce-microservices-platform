@@ -1,3 +1,5 @@
+export const revalidate = 60;
+
 import { Suspense } from 'react';
 import { getProducts } from '@/entities/product';
 import { searchProducts, SearchBar, SearchFilters, SearchResults } from '@/features/search';

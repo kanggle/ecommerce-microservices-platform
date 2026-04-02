@@ -1,8 +1,12 @@
+export const revalidate = 60;
+
+import { cache } from 'react';
 import { getProduct } from '@/entities/product';
-import { ProductDetail } from '@/features/product';
 import { ProductDetailWithCart } from '@/widgets/ProductDetailWithCart';
 import { notFound } from 'next/navigation';
 import type { Metadata } from 'next';
+
+const getCachedProduct = cache((id: string) => getProduct(id));
 
 interface Props {
   params: Promise<{ id: string }>;
@@ -10,7 +14,7 @@ interface Props {
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { id } = await params;
-  const product = await getProduct(id);
+  const product = await getCachedProduct(id);
 
   if (!product) {
     return { title: '상품을 찾을 수 없습니다' };
@@ -24,7 +28,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 
 export default async function ProductDetailPage({ params }: Props) {
   const { id } = await params;
-  const product = await getProduct(id);
+  const product = await getCachedProduct(id);
 
   if (!product) {
     notFound();
@@ -32,10 +36,7 @@ export default async function ProductDetailPage({ params }: Props) {
 
   return (
     <div className="container" style={{ paddingTop: 'var(--space-8)', paddingBottom: 'var(--space-16)' }}>
-      <ProductDetail product={product} />
-      <div style={{ marginTop: 'var(--space-8)' }}>
-        <ProductDetailWithCart product={product} />
-      </div>
+      <ProductDetailWithCart product={product} />
     </div>
   );
 }
