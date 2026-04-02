@@ -98,14 +98,14 @@ export function CartSummary() {
                 onChange={() => toggleItem(key)}
                 style={{ flexShrink: 0 }}
               />
-              <div style={{ flex: 1, minWidth: 0 }}>
+              <Link href={`/products/${item.productId}`} style={{ flex: 1, minWidth: 0, textDecoration: 'none', color: 'inherit' }}>
                 <div style={{ fontSize: 'var(--font-size-sm)', fontWeight: 'var(--font-weight-medium)' }}>
                   {item.productName}
                 </div>
                 <div style={{ fontSize: 'var(--font-size-xs)', color: 'var(--color-text-secondary)' }}>
                   {item.optionName}
                 </div>
-              </div>
+              </Link>
               <div style={{ display: 'flex', alignItems: 'center', border: '1px solid var(--color-border)', borderRadius: 'var(--radius-sm)', overflow: 'hidden', flexShrink: 0, width: 88 }}>
                 <button
                   type="button"

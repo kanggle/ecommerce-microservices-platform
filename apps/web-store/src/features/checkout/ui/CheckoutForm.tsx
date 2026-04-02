@@ -85,7 +85,6 @@ export function CheckoutForm({ items, totalAmount, onOrderComplete }: CheckoutFo
       } else {
         setError('주문에 실패했습니다.');
       }
-    } finally {
       setIsSubmitting(false);
     }
   }
