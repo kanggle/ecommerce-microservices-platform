@@ -8,7 +8,7 @@ import type { CheckoutFormProps } from '../model/types';
 import { submitOrder } from '../api/place-order';
 import { AddressSearch } from '@/shared/ui/AddressSearch';
 import { Skeleton } from '@/shared/ui/Skeleton';
-import { getMyAddresses } from '@/features/user/api/address-api';
+import { getMyAddresses } from '@/features/user';
 
 function addressToShipping(addr: Address): ShippingAddress {
   return {
