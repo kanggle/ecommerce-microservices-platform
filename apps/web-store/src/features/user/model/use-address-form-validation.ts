@@ -1,5 +1,6 @@
 import { useState, useCallback } from 'react';
 import type { AddressFieldErrors } from './types';
+import { isValidPhone } from '@/shared/lib/validate-phone';
 
 function validateFields(
   label: string,
@@ -18,7 +19,7 @@ function validateFields(
   }
   if (!phone.trim()) {
     errors.phone = '연락처를 입력해주세요.';
-  } else if (!/^01[016789]-?\d{3,4}-?\d{4}$/.test(phone.trim())) {
+  } else if (!isValidPhone(phone)) {
     errors.phone = '올바른 휴대폰 번호를 입력해주세요. (예: 010-1234-5678)';
   }
   if (!zipCode.trim()) {

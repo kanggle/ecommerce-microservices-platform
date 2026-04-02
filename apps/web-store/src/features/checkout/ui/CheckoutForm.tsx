@@ -9,6 +9,7 @@ import { submitOrder } from '../api/place-order';
 import { AddressSearch } from '@/shared/ui/AddressSearch';
 import { Skeleton } from '@/shared/ui/Skeleton';
 import { getMyAddresses } from '@/features/user';
+import { isValidPhone } from '@/shared/lib/validate-phone';
 
 function addressToShipping(addr: Address): ShippingAddress {
   return {
@@ -54,8 +55,7 @@ export function CheckoutForm({ items, totalAmount, onOrderComplete }: CheckoutFo
     }
   }
 
-  const phoneRegex = /^01[016789]-?\d{3,4}-?\d{4}$/;
-  const phoneValid = phoneRegex.test(address.phone.trim());
+  const phoneValid = isValidPhone(address.phone);
   const isValid =
     address.recipient.trim().length > 0 && phoneValid &&
     address.zipCode.trim().length > 0 && address.address1.trim().length > 0;

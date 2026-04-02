@@ -6,6 +6,7 @@ import { isApiError, ERROR_MESSAGES } from '@repo/types/guards';
 import { createAddress, updateAddress } from '../api/address-api';
 import { useAddressFormValidation } from '../model/use-address-form-validation';
 import { AddressSearch } from '@/shared/ui/AddressSearch';
+import { isValidPhone } from '@/shared/lib/validate-phone';
 
 interface AddressFormProps {
   address?: Address;
@@ -74,7 +75,7 @@ export function AddressForm({ address, onSaved, onCancel }: AddressFormProps) {
           <div className="form-group" style={{ marginBottom: 0 }}>
             <label htmlFor="addressPhone" className="label">연락처</label>
             <input id="addressPhone" type="tel" className="input" value={phone} onChange={(e) => { setPhone(e.target.value); clearFieldError('phone'); }} placeholder="010-0000-0000" />
-            {phone.trim().length > 0 && !/^01[016789]-?\d{3,4}-?\d{4}$/.test(phone.trim()) && (
+            {phone.trim().length > 0 && !isValidPhone(phone) && (
               <p style={{ color: 'var(--color-error)', fontSize: 'var(--font-size-xs)', margin: 'var(--space-1) 0 0' }}>올바른 휴대폰 번호를 입력해주세요. (예: 010-1234-5678)</p>
             )}
             {fieldErrors.phone && <p role="alert" style={{ color: 'var(--color-error)', fontSize: 'var(--font-size-xs)', margin: 'var(--space-1) 0 0' }}>{fieldErrors.phone}</p>}
