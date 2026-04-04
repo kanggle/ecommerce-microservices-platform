@@ -1,6 +1,7 @@
 package com.example.order.presentation;
 
 import com.example.order.application.exception.UnauthorizedOrderAccessException;
+import com.example.web.exception.AccessDeniedException;
 import com.example.order.domain.exception.InvalidOrderException;
 import com.example.order.domain.exception.OrderCannotBeCancelledException;
 import com.example.order.domain.exception.OrderNotFoundException;
@@ -55,6 +56,12 @@ public class GlobalExceptionHandler {
         }
         return ResponseEntity.status(HttpStatus.BAD_REQUEST)
                 .body(ErrorResponse.of("INVALID_ORDER_REQUEST", e.getHeaderName() + " header is required"));
+    }
+
+    @ExceptionHandler(AccessDeniedException.class)
+    public ResponseEntity<ErrorResponse> handleAccessDenied(AccessDeniedException e) {
+        return ResponseEntity.status(HttpStatus.FORBIDDEN)
+                .body(ErrorResponse.of("ACCESS_DENIED", e.getMessage()));
     }
 
     @ExceptionHandler(UnauthorizedOrderAccessException.class)

@@ -40,6 +40,10 @@ export type {
   OrderSummary,
   OrderDetail,
   CancelOrderResponse,
+  AdminOrderSummary,
+  AdminOrderDetail,
+  AdminOrderStatusChangeRequest,
+  AdminOrderStatusChangeResponse,
 } from './order';
 
 // Search
@@ -54,7 +58,12 @@ export type {
 } from './search';
 
 // Payment
-export type { PaymentStatus, PaymentResponse } from './payment';
+export type {
+  PaymentStatus,
+  PaymentResponse,
+  PaymentConfirmRequest,
+  PaymentConfirmResponse,
+} from './payment';
 
 // User
 export type {

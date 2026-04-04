@@ -24,4 +24,8 @@ public interface OrderRepository {
     List<Order> findByUserIdAndStatusIn(String userId, Collection<OrderStatus> statuses);
 
     boolean existsByUserIdAndProductIdAndStatus(String userId, String productId, OrderStatus status);
+
+    PageResult<Order> findAll(PageQuery pageQuery);
+
+    PageResult<Order> findByStatus(OrderStatus status, PageQuery pageQuery);
 }

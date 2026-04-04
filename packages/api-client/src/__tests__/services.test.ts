@@ -132,7 +132,7 @@ describe('Order API', () => {
     const client = createMockClient();
     const api = createOrderApi(client);
     const data = {
-      items: [{ productId: 'p1', variantId: 'v1', quantity: 1 }],
+      items: [{ productId: 'p1', variantId: 'v1', productName: 'Test Product', optionName: '기본', quantity: 1, unitPrice: 10000 }],
       shippingAddress: {
         recipient: 'Test',
         phone: '010-1234-5678',

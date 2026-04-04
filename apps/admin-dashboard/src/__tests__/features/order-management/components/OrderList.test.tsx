@@ -12,8 +12,8 @@ vi.mock('next/navigation', () => ({
 vi.mock('@/features/order-management/api/order-api', () => ({
   getOrders: vi.fn().mockResolvedValue({
     content: [
-      { orderId: 'o1', status: 'PENDING', totalPrice: 30000, itemCount: 2, createdAt: '2026-03-20T10:00:00Z' },
-      { orderId: 'o2', status: 'CANCELLED', totalPrice: 15000, itemCount: 1, createdAt: '2026-03-21T10:00:00Z' },
+      { orderId: 'o1', userId: 'u1', status: 'PENDING', totalPrice: 30000, itemCount: 2, createdAt: '2026-03-20T10:00:00Z' },
+      { orderId: 'o2', userId: 'u2', status: 'CANCELLED', totalPrice: 15000, itemCount: 1, createdAt: '2026-03-21T10:00:00Z' },
     ],
     totalElements: 2,
     page: 0,
@@ -34,9 +34,7 @@ describe('OrderList', () => {
   it('주문 목록을 테이블에 표시한다', async () => {
     render(<OrderList />, { wrapper: createWrapper() });
 
-    expect(await screen.findByText('o1')).toBeInTheDocument();
-    expect(screen.getByText('30,000원')).toBeInTheDocument();
-    expect(screen.getByText('o2')).toBeInTheDocument();
+    expect(await screen.findByText('30,000원')).toBeInTheDocument();
     expect(screen.getByText('15,000원')).toBeInTheDocument();
   });
 
@@ -48,7 +46,7 @@ describe('OrderList', () => {
   it('상태 필터를 표시한다', async () => {
     render(<OrderList />, { wrapper: createWrapper() });
 
-    await screen.findByText('o1');
+    await screen.findByText('30,000원');
     expect(screen.getByRole('combobox')).toBeInTheDocument();
     expect(screen.getByText('전체 상태')).toBeInTheDocument();
   });
@@ -56,7 +54,7 @@ describe('OrderList', () => {
   it('주문 상태 뱃지를 표시한다', async () => {
     render(<OrderList />, { wrapper: createWrapper() });
 
-    await screen.findByText('o1');
+    await screen.findByText('30,000원');
     const pendingBadges = screen.getAllByText('대기');
     expect(pendingBadges.length).toBeGreaterThanOrEqual(2); // FilterBar option + StatusBadge
     const cancelBadges = screen.getAllByText('취소');

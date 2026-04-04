@@ -4,7 +4,7 @@ import { useRouter } from 'next/navigation';
 import { DataTable, StatusBadge, FilterBar, ListError } from '@/shared/ui';
 import type { ColumnDef } from '@/shared/ui';
 import { useOrders } from '../hooks/use-orders';
-import type { OrderSummary } from '@repo/types';
+import type { AdminOrderSummary } from '@repo/types';
 
 const STATUS_OPTIONS = [
   { label: '대기', value: 'PENDING' },
@@ -14,23 +14,30 @@ const STATUS_OPTIONS = [
   { label: '취소', value: 'CANCELLED' },
 ];
 
-const columns: ColumnDef<OrderSummary>[] = [
-  { key: 'orderId', header: '주문번호' },
+const columns: ColumnDef<AdminOrderSummary>[] = [
+  {
+    key: 'orderId',
+    header: '주문번호',
+    render: (order: AdminOrderSummary) => order.orderId.slice(0, 8) + '...',
+  },
+  { key: 'userId', header: '주문자ID',
+    render: (order: AdminOrderSummary) => order.userId.slice(0, 8) + '...',
+  },
   {
     key: 'status',
     header: '상태',
-    render: (order: OrderSummary) => <StatusBadge status={order.status} />,
+    render: (order: AdminOrderSummary) => <StatusBadge status={order.status} />,
   },
   {
     key: 'totalPrice',
     header: '총액',
-    render: (order: OrderSummary) => `${order.totalPrice.toLocaleString()}원`,
+    render: (order: AdminOrderSummary) => `${order.totalPrice.toLocaleString()}원`,
   },
   { key: 'itemCount', header: '상품수' },
   {
     key: 'createdAt',
     header: '주문일',
-    render: (order: OrderSummary) =>
+    render: (order: AdminOrderSummary) =>
       new Date(order.createdAt).toLocaleDateString('ko-KR'),
   },
 ];
@@ -50,7 +57,7 @@ export function OrderList() {
         statusValue={filters.status}
         onStatusChange={(value) => filters.setFilter('status', value)}
       />
-      <DataTable<OrderSummary>
+      <DataTable<AdminOrderSummary>
         columns={columns}
         data={data?.content ?? []}
         pagination={pagination}

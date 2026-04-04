@@ -100,6 +100,20 @@ public class OrderRepositoryImpl implements OrderRepository {
     }
 
     @Override
+    public PageResult<Order> findAll(PageQuery pageQuery) {
+        PageRequest pageable = toPageRequest(pageQuery);
+        Page<OrderJpaEntity> page = jpaRepository.findAll(pageable);
+        return toPageResult(page);
+    }
+
+    @Override
+    public PageResult<Order> findByStatus(OrderStatus status, PageQuery pageQuery) {
+        PageRequest pageable = toPageRequest(pageQuery);
+        Page<OrderJpaEntity> page = jpaRepository.findByStatus(status, pageable);
+        return toPageResult(page);
+    }
+
+    @Override
     public boolean existsByUserIdAndProductIdAndStatus(String userId, String productId, OrderStatus status) {
         return jpaRepository.existsByUserIdAndProductIdAndStatus(userId, productId, status);
     }

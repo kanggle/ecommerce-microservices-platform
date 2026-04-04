@@ -197,6 +197,122 @@ Cancel an order. Only the order owner may cancel.
 }
 ```
 
+---
+
+## Admin Endpoints
+
+All admin endpoints require the `ADMIN` role. Non-admin users receive `403 ACCESS_DENIED`.
+
+### GET /api/admin/orders
+List all orders (admin view).
+
+**Query Parameters**
+- `page` (default: 0) — page number
+- `size` (default: 20) — page size
+- `status` (optional) — filter by order status (one of: `PENDING`, `CONFIRMED`, `SHIPPED`, `DELIVERED`, `CANCELLED`)
+
+**Response 200**
+```json
+{
+  "content": [
+    {
+      "orderId": "string (UUID)",
+      "userId": "string (UUID)",
+      "status": "PENDING",
+      "totalPrice": 30000,
+      "itemCount": 2,
+      "createdAt": "string (ISO 8601)"
+    }
+  ],
+  "page": 0,
+  "size": 20,
+  "totalElements": 5
+}
+```
+
+**Error responses**
+| Status | Code | Reason |
+|---|---|---|
+| 401 | UNAUTHORIZED | Missing or invalid access token |
+| 403 | ACCESS_DENIED | Requires ADMIN role |
+
+---
+
+### GET /api/admin/orders/{orderId}
+Get order detail (admin view). Includes order owner userId.
+
+**Response 200**
+```json
+{
+  "orderId": "string (UUID)",
+  "userId": "string (UUID)",
+  "status": "PENDING",
+  "totalPrice": 30000,
+  "items": [
+    {
+      "productId": "string (UUID)",
+      "variantId": "string (UUID)",
+      "productName": "string",
+      "optionName": "string",
+      "quantity": 2,
+      "unitPrice": 15000
+    }
+  ],
+  "shippingAddress": {
+    "recipient": "string",
+    "phone": "string",
+    "zipCode": "string",
+    "address1": "string",
+    "address2": "string | null"
+  },
+  "createdAt": "string (ISO 8601)",
+  "updatedAt": "string (ISO 8601)"
+}
+```
+
+**Error responses**
+| Status | Code | Reason |
+|---|---|---|
+| 401 | UNAUTHORIZED | Missing or invalid access token |
+| 403 | ACCESS_DENIED | Requires ADMIN role |
+| 404 | ORDER_NOT_FOUND | Order with given ID does not exist |
+
+---
+
+### POST /api/admin/orders/{orderId}/status
+Change order status (admin only).
+
+**Allowed transitions:**
+- `PENDING` → `CONFIRMED`
+- `CONFIRMED` → `SHIPPED`
+- `SHIPPED` → `DELIVERED`
+- `PENDING` or `CONFIRMED` → `CANCELLED`
+
+**Request Body**
+```json
+{
+  "status": "CONFIRMED"
+}
+```
+
+**Response 200**
+```json
+{
+  "orderId": "string (UUID)",
+  "status": "CONFIRMED"
+}
+```
+
+**Error responses**
+| Status | Code | Reason |
+|---|---|---|
+| 400 | INVALID_ORDER_REQUEST | Invalid status value or transition |
+| 401 | UNAUTHORIZED | Missing or invalid access token |
+| 403 | ACCESS_DENIED | Requires ADMIN role |
+| 404 | ORDER_NOT_FOUND | Order with given ID does not exist |
+
+---
+
 ## Notes
 - `userId` is extracted from the authentication token, not from the request body.
 - An order may only be cancelled when its status is `PENDING` or `CONFIRMED`.

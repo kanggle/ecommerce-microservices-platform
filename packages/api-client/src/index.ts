@@ -20,6 +20,7 @@ export { createAuthApi } from './services/auth-api';
 export { createProductApi } from './services/product-api';
 export { createOrderApi } from './services/order-api';
 export { createSearchApi } from './services/search-api';
-export { createPaymentApi } from './services/payment-api';
+export { createPaymentApi, type ConfirmPaymentRequest, type ConfirmPaymentResponse } from './services/payment-api';
 export { createUserApi } from './services/user-api';
 export { createAdminUserApi } from './services/admin-user-api';
+export { createAdminOrderApi } from './services/admin-order-api';

@@ -101,6 +101,30 @@ public class Order {
         return true;
     }
 
+    public boolean ship(Clock clock) {
+        if (this.status == OrderStatus.SHIPPED) {
+            return false;
+        }
+        if (this.status != OrderStatus.CONFIRMED) {
+            throw new InvalidOrderException("Order can only be shipped in CONFIRMED status: " + status);
+        }
+        this.status = OrderStatus.SHIPPED;
+        this.updatedAt = Instant.now(clock);
+        return true;
+    }
+
+    public boolean deliver(Clock clock) {
+        if (this.status == OrderStatus.DELIVERED) {
+            return false;
+        }
+        if (this.status != OrderStatus.SHIPPED) {
+            throw new InvalidOrderException("Order can only be delivered in SHIPPED status: " + status);
+        }
+        this.status = OrderStatus.DELIVERED;
+        this.updatedAt = Instant.now(clock);
+        return true;
+    }
+
     public void cancel(Clock clock) {
         if (!status.isCancellable()) {
             throw new OrderCannotBeCancelledException(

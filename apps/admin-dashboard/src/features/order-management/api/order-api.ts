@@ -1,25 +1,26 @@
 import { apiClient } from '@/shared/config/api';
-import { createOrderApi } from '@repo/api-client';
+import { createAdminOrderApi } from '@repo/api-client';
 import type {
   PaginatedResponse,
   OrderListParams,
-  OrderSummary,
-  OrderDetail,
-  CancelOrderResponse,
+  OrderStatus,
+  AdminOrderSummary,
+  AdminOrderDetail,
+  AdminOrderStatusChangeResponse,
 } from '@repo/types';
 
-const orderApi = createOrderApi(apiClient);
+const adminOrderApi = createAdminOrderApi(apiClient);
 
 export async function getOrders(
   params?: OrderListParams,
-): Promise<PaginatedResponse<OrderSummary>> {
-  return orderApi.getOrders(params);
+): Promise<PaginatedResponse<AdminOrderSummary>> {
+  return adminOrderApi.getOrders(params);
 }
 
-export async function getOrder(orderId: string): Promise<OrderDetail> {
-  return orderApi.getOrder(orderId);
+export async function getOrder(orderId: string): Promise<AdminOrderDetail> {
+  return adminOrderApi.getOrder(orderId);
 }
 
-export async function cancelOrder(orderId: string): Promise<CancelOrderResponse> {
-  return orderApi.cancelOrder(orderId);
+export async function changeOrderStatus(orderId: string, status: OrderStatus): Promise<AdminOrderStatusChangeResponse> {
+  return adminOrderApi.changeStatus(orderId, status);
 }

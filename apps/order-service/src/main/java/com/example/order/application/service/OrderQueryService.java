@@ -1,5 +1,7 @@
 package com.example.order.application.service;
 
+import com.example.order.application.dto.AdminOrderDetail;
+import com.example.order.application.dto.AdminOrderSummary;
 import com.example.order.application.dto.OrderDetail;
 import com.example.order.application.dto.OrderSummary;
 import com.example.order.application.exception.UnauthorizedOrderAccessException;
@@ -37,6 +39,24 @@ public class OrderQueryService {
         }
 
         return OrderDetail.from(order);
+    }
+
+    @Transactional(readOnly = true)
+    public PageResult<AdminOrderSummary> getAllOrders(OrderStatus status, PageQuery pageQuery) {
+        PageResult<Order> orders = (status != null)
+                ? orderRepository.findByStatus(status, pageQuery)
+                : orderRepository.findAll(pageQuery);
+        return new PageResult<>(
+                orders.content().stream().map(AdminOrderSummary::from).toList(),
+                orders.page(), orders.size(), orders.totalElements(), orders.totalPages()
+        );
+    }
+
+    @Transactional(readOnly = true)
+    public AdminOrderDetail getOrderForAdmin(String orderId) {
+        Order order = orderRepository.findById(orderId)
+                .orElseThrow(() -> new OrderNotFoundException(orderId));
+        return AdminOrderDetail.from(order);
     }
 
     @Transactional(readOnly = true)

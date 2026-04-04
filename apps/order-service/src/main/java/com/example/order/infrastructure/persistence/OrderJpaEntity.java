@@ -83,16 +83,9 @@ class OrderJpaEntity {
         this.status = order.getStatus();
         this.totalPrice = order.getTotalPrice();
         this.shippingAddress = ShippingAddressEmbeddable.fromDomain(order.getShippingAddress());
-        this.createdAt = order.getCreatedAt();
         this.updatedAt = order.getUpdatedAt();
         this.paymentId = order.getPaymentId();
         this.paidAt = order.getPaidAt();
         this.refundedAt = order.getRefundedAt();
-
-        this.items.clear();
-        for (OrderItem item : order.getItems()) {
-            OrderItemJpaEntity itemEntity = OrderItemJpaEntity.fromDomain(item, this);
-            this.items.add(itemEntity);
-        }
     }
 }

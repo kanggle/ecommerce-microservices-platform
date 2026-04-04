@@ -19,6 +19,8 @@ interface OrderJpaRepository extends JpaRepository<OrderJpaEntity, String> {
 
     List<OrderJpaEntity> findByUserIdAndStatusIn(String userId, Collection<OrderStatus> statuses);
 
+    Page<OrderJpaEntity> findByStatus(OrderStatus status, Pageable pageable);
+
     @Query("SELECT COUNT(o) > 0 FROM OrderJpaEntity o JOIN o.items i " +
            "WHERE o.userId = :userId AND i.productId = :productId AND o.status = :status")
     boolean existsByUserIdAndProductIdAndStatus(

@@ -13,7 +13,7 @@ vi.mock('next/navigation', () => ({
 
 const mockGetOrders = vi.fn().mockResolvedValue({
   content: [
-    { orderId: 'o1', status: 'PENDING', totalPrice: 30000, itemCount: 2, createdAt: '2026-03-20T10:00:00Z' },
+    { orderId: 'o1', userId: 'u1', status: 'PENDING', totalPrice: 30000, itemCount: 2, createdAt: '2026-03-20T10:00:00Z' },
   ],
   totalElements: 1,
   page: 0,

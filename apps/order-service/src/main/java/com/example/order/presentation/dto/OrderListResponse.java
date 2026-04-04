@@ -15,7 +15,7 @@ public record OrderListResponse(
     public static OrderListResponse from(PageResult<OrderSummary> pageResult) {
         List<OrderSummaryItem> items = pageResult.content().stream()
                 .map(s -> new OrderSummaryItem(
-                        s.orderId(), s.status(), s.totalPrice(), s.itemCount(), s.createdAt()
+                        s.orderId(), s.status(), s.totalPrice(), s.itemCount(), s.firstItemName(), s.createdAt()
                 ))
                 .toList();
         return new OrderListResponse(items, pageResult.page(), pageResult.size(), pageResult.totalElements());
@@ -26,6 +26,7 @@ public record OrderListResponse(
             String status,
             long totalPrice,
             int itemCount,
+            String firstItemName,
             Instant createdAt
     ) {}
 }
