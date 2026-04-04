@@ -11,8 +11,8 @@ vi.mock('next/navigation', () => ({
   useRouter: () => ({ push: mockPush, replace: vi.fn() }),
 }));
 
-vi.mock('@/features/checkout/api/place-order', () => ({
-  submitOrder: vi.fn(),
+vi.mock('@/entities/order', () => ({
+  placeOrder: vi.fn(),
 }));
 
 vi.mock('@/entities/user/api/use-addresses', () => ({
@@ -36,8 +36,8 @@ vi.mock('@/shared/ui/Skeleton', () => ({
   Skeleton: () => null,
 }));
 
-import { submitOrder } from '@/features/checkout/api/place-order';
-const mockSubmitOrder = vi.mocked(submitOrder);
+import { placeOrder } from '@/entities/order';
+const mockSubmitOrder = vi.mocked(placeOrder);
 
 const CART_ITEMS: CheckoutCartItem[] = [
   {

@@ -5,7 +5,7 @@ import type { Address, ShippingAddress } from '@repo/types';
 
 import { isApiError, ERROR_MESSAGES } from '@repo/types/guards';
 import type { CheckoutFormProps } from '../model/types';
-import { submitOrder } from '../api/place-order';
+import { placeOrder } from '@/entities/order';
 import { useTossPayment } from '../model/use-toss-payment';
 import { AddressSearch } from '@/shared/ui/AddressSearch';
 import { Skeleton } from '@/shared/ui/Skeleton';
@@ -81,7 +81,7 @@ export function CheckoutForm({ items, totalAmount, onOrderComplete }: CheckoutFo
         productName: item.productName, optionName: item.optionName,
         quantity: item.quantity, unitPrice: item.price,
       }));
-      const result = await submitOrder({ items: orderItems, shippingAddress: address });
+      const result = await placeOrder({ items: orderItems, shippingAddress: address });
       const orderName = items[0].productName + (items.length > 1 ? ` 외 ${items.length - 1}건` : '');
       onOrderComplete();
       await requestPayment({ orderId: result.orderId, amount: totalAmount, orderName });
