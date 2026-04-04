@@ -2,7 +2,6 @@ package com.example.product.application.service;
 
 import com.example.product.application.command.UpdateProductCommand;
 import com.example.product.domain.event.ProductEvent;
-import com.example.product.domain.event.ProductEventPublisher;
 import com.example.product.domain.event.ProductUpdatedPayload;
 import com.example.product.domain.exception.ProductNotFoundException;
 import com.example.product.domain.model.Price;
@@ -10,19 +9,17 @@ import com.example.product.domain.model.Product;
 import com.example.product.domain.repository.ProductRepository;
 import com.example.product.infrastructure.metrics.ProductMetrics;
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.UUID;
 
-@Slf4j
 @Service
 @RequiredArgsConstructor
 public class UpdateProductService {
 
     private final ProductRepository productRepository;
-    private final ProductEventPublisher productEventPublisher;
+    private final EventPublishingHelper eventPublishingHelper;
     private final ProductMetrics productMetrics;
 
     @Transactional
@@ -46,23 +43,10 @@ public class UpdateProductService {
         productRepository.save(product);
         productMetrics.incrementProductUpdated();
 
-        try {
-            productEventPublisher.publish(ProductEvent.updated(buildPayload(product)));
-        } catch (Exception e) {
-            log.warn("Failed to publish ProductUpdated event for product: {}", product.getId(), e);
-        }
+        eventPublishingHelper.publishSafely(
+                ProductEvent.updated(ProductUpdatedPayload.from(product)),
+                "product", product.getId());
 
         return product.getId();
-    }
-
-    private ProductUpdatedPayload buildPayload(Product product) {
-        return new ProductUpdatedPayload(
-                product.getId().toString(),
-                product.getName(),
-                product.getDescription(),
-                product.getPrice().value(),
-                product.getStatus().name(),
-                product.getCategoryId() != null ? product.getCategoryId().toString() : null
-        );
     }
 }

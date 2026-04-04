@@ -3,7 +3,6 @@ package com.example.product.application.service;
 import com.example.product.application.command.AdjustStockCommand;
 import com.example.product.application.dto.AdjustStockResult;
 import com.example.product.domain.event.ProductEvent;
-import com.example.product.domain.event.ProductEventPublisher;
 import com.example.product.domain.event.StockChangedPayload;
 import com.example.product.domain.exception.ProductNotFoundException;
 import com.example.product.domain.exception.VariantNotFoundException;
@@ -13,20 +12,18 @@ import com.example.product.domain.repository.InventoryRepository;
 import com.example.product.domain.repository.ProductRepository;
 import com.example.product.infrastructure.metrics.ProductMetrics;
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.UUID;
 
-@Slf4j
 @Service
 @RequiredArgsConstructor
 public class AdjustStockService {
 
     private final ProductRepository productRepository;
     private final InventoryRepository inventoryRepository;
-    private final ProductEventPublisher productEventPublisher;
+    private final EventPublishingHelper eventPublishingHelper;
     private final ProductMetrics productMetrics;
 
     @Transactional
@@ -86,18 +83,16 @@ public class AdjustStockService {
 
     private void publishStockChangedEvent(AdjustStockCommand command, UUID variantId,
                                           int previousStock, int currentStock) {
-        try {
-            productEventPublisher.publish(ProductEvent.stockChanged(new StockChangedPayload(
-                    command.productId().toString(),
-                    variantId.toString(),
-                    previousStock,
-                    currentStock,
-                    command.quantity(),
-                    command.reason(),
-                    null // orderId: 수동 재고 조정에는 해당 없음
-            )));
-        } catch (Exception e) {
-            log.warn("Failed to publish StockChanged event for variant: {}", variantId, e);
-        }
+        eventPublishingHelper.publishSafely(
+                ProductEvent.stockChanged(new StockChangedPayload(
+                        command.productId().toString(),
+                        variantId.toString(),
+                        previousStock,
+                        currentStock,
+                        command.quantity(),
+                        command.reason(),
+                        null // orderId: 수동 재고 조정에는 해당 없음
+                )),
+                "variant", variantId);
     }
 }

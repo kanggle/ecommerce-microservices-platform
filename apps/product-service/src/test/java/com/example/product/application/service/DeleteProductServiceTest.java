@@ -15,7 +15,6 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.ArgumentCaptor;
-import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
@@ -44,13 +43,16 @@ class DeleteProductServiceTest {
     @Mock
     private ProductMetrics productMetrics;
 
-    @InjectMocks
+    private EventPublishingHelper eventPublishingHelper;
     private DeleteProductService deleteProductService;
 
     private Product existingProduct;
 
     @BeforeEach
     void setUp() {
+        eventPublishingHelper = new EventPublishingHelper(productEventPublisher);
+        deleteProductService = new DeleteProductService(productRepository, eventPublishingHelper, productMetrics);
+
         existingProduct = Product.create(
                 "삭제할 상품", "설명", new Price(10000L), null,
                 List.of(ProductVariant.create("기본", new StockQuantity(10), new Price(0L))));

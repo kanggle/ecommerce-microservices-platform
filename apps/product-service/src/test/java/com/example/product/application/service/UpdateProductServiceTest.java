@@ -17,7 +17,6 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.ArgumentCaptor;
-import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
@@ -46,13 +45,16 @@ class UpdateProductServiceTest {
     @Mock
     private ProductMetrics productMetrics;
 
-    @InjectMocks
+    private EventPublishingHelper eventPublishingHelper;
     private UpdateProductService updateProductService;
 
     private Product existingProduct;
 
     @BeforeEach
     void setUp() {
+        eventPublishingHelper = new EventPublishingHelper(productEventPublisher);
+        updateProductService = new UpdateProductService(productRepository, eventPublishingHelper, productMetrics);
+
         existingProduct = Product.create(
                 "기존 상품명", "기존 설명", new Price(10000L), null,
                 List.of(ProductVariant.create("기본", new StockQuantity(10), new Price(0L))));

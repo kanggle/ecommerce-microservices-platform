@@ -97,13 +97,6 @@ public class ProductJpaEntity implements Persistable<UUID> {
         );
     }
 
-    public Product toDomainWithoutVariants() {
-        return Product.reconstitute(
-                id, name, description, new Price(price),
-                status, categoryId, createdAt, updatedAt, List.of()
-        );
-    }
-
     public void softDelete(Instant now) {
         this.deletedAt = now;
     }

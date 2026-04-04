@@ -17,11 +17,11 @@ import com.example.product.domain.model.StockQuantity;
 import com.example.product.domain.repository.InventoryRepository;
 import com.example.product.domain.repository.ProductRepository;
 import com.example.product.infrastructure.metrics.ProductMetrics;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.ArgumentCaptor;
-import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
@@ -41,9 +41,6 @@ import static org.mockito.Mockito.verify;
 @DisplayName("AdjustStockService 단위 테스트")
 class AdjustStockServiceTest {
 
-    @InjectMocks
-    private AdjustStockService adjustStockService;
-
     @Mock
     private ProductRepository productRepository;
 
@@ -55,6 +52,16 @@ class AdjustStockServiceTest {
 
     @Mock
     private ProductMetrics productMetrics;
+
+    private EventPublishingHelper eventPublishingHelper;
+    private AdjustStockService adjustStockService;
+
+    @BeforeEach
+    void setUp() {
+        eventPublishingHelper = new EventPublishingHelper(productEventPublisher);
+        adjustStockService = new AdjustStockService(
+                productRepository, inventoryRepository, eventPublishingHelper, productMetrics);
+    }
 
     private Product makeProductWithVariant(UUID productId, UUID variantId, int stock, ProductStatus status) {
         ProductVariant variant = ProductVariant.reconstitute(variantId, productId, "기본", new StockQuantity(stock), new Price(0));
