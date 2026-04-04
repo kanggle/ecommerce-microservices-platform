@@ -1,6 +1,6 @@
 import { getProducts } from '@/entities/product';
 import { ProductList } from '@/features/product';
-import { HeroBanner } from '@/widgets/hero/HeroBanner';
+import { HeroBanner } from '@/widgets/hero';
 import Link from 'next/link';
 import type { ProductSummary } from '@repo/types';
 
