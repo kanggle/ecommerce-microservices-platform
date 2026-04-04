@@ -1,1 +1,1 @@
-export { useAddresses } from '@/entities/user';
+export { useAddresses } from '@/entities/user/api/use-addresses';

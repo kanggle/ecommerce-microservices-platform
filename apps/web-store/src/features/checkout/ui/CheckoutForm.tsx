@@ -9,7 +9,7 @@ import { submitOrder } from '../api/place-order';
 import { useTossPayment } from '../model/use-toss-payment';
 import { AddressSearch } from '@/shared/ui/AddressSearch';
 import { Skeleton } from '@/shared/ui/Skeleton';
-import { useAddresses } from '@/entities/user';
+import { useAddresses } from '@/entities/user/api/use-addresses';
 import { isValidPhone } from '@/shared/lib/validate-phone';
 
 function addressToShipping(addr: Address): ShippingAddress {

@@ -15,7 +15,7 @@ vi.mock('@/features/checkout/api/place-order', () => ({
   submitOrder: vi.fn(),
 }));
 
-vi.mock('@/entities/user', () => ({
+vi.mock('@/entities/user/api/use-addresses', () => ({
   useAddresses: () => ({ data: { addresses: [] }, isLoading: false, invalidate: vi.fn() }),
 }));
 
