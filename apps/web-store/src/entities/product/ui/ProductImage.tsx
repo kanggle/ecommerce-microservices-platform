@@ -2,7 +2,7 @@
 
 import Image from 'next/image';
 import { useCallback, useState } from 'react';
-import styles from '@/features/product/ui/ProductDetail.module.css';
+import styles from './ProductImage.module.css';
 
 interface ProductImageProps {
   images: string[];

@@ -7,7 +7,7 @@ import type { ProductDetail } from '@repo/types';
 import { ProductImage } from '@/entities/product';
 import { useCart } from '@/features/cart';
 import { Toast } from '@/shared/ui';
-import styles from '@/features/product/ui/ProductDetail.module.css';
+import styles from './ProductDetailWithCart.module.css';
 
 interface SelectedItem {
   variantId: string;
