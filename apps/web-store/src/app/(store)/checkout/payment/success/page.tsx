@@ -2,7 +2,7 @@
 
 import { useEffect, useRef } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
-import { useConfirmPayment } from '@/features/checkout/model/use-confirm-payment';
+import { useConfirmPayment } from '@/features/checkout';
 
 export default function PaymentSuccessPage() {
   const router = useRouter();
