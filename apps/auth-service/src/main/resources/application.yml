@@ -78,11 +78,15 @@ auth:
     inactivity-timeout: ${AUTH_SESSION_INACTIVITY_TIMEOUT:604800}
 
 oauth:
+  callback-allowlist: ${OAUTH_CALLBACK_ALLOWLIST:http://localhost:3000/oauth/callback,http://localhost:3001/oauth/callback}
   google:
     client-id: ${GOOGLE_CLIENT_ID:}
     client-secret: ${GOOGLE_CLIENT_SECRET:}
     redirect-uri: ${GOOGLE_REDIRECT_URI:http://localhost:8080/api/auth/oauth/google/callback}
-    callback-allowlist: ${OAUTH_CALLBACK_ALLOWLIST:http://localhost:3000/oauth/callback,http://localhost:3001/oauth/callback}
+  naver:
+    client-id: ${NAVER_CLIENT_ID:}
+    client-secret: ${NAVER_CLIENT_SECRET:}
+    redirect-uri: ${NAVER_REDIRECT_URI:http://localhost:8080/api/auth/oauth/naver/callback}
 
 jwt:
   secret: ${JWT_SECRET}

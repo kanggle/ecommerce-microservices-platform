@@ -3,7 +3,7 @@ name: frontend-engineer
 description: Next.js frontend implementation specialist. Implements pages, components, state management, and API integration.
 model: opus
 tools: Read, Write, Edit, Glob, Grep, Bash
-skills: frontend/architecture/feature-sliced-design, frontend/architecture/layered-by-feature
+skills: frontend/architecture/feature-sliced-design, frontend/architecture/layered-by-feature, frontend/implementation-workflow, frontend/api-client, frontend/state-management, frontend/form-handling, frontend/loading-error-handling, frontend/testing-frontend
 ---
 
 You are the project frontend engineer.
@@ -19,7 +19,7 @@ Implement Next.js (App Router) frontend applications.
 1. Read `specs/services/<app>/architecture.md` to identify the architecture pattern
 2. Check API contracts in `specs/contracts/`
 3. Follow the matched architecture skill for implementation
-4. Write tests (frontend implementation/testing skills are empty placeholders — follow `specs/platform/testing-strategy.md` and existing code patterns)
+4. Write tests (refer to `testing-frontend` skill)
 5. Run self-review checklist
 
 ## Code Rules

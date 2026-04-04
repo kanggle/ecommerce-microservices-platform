@@ -3,7 +3,8 @@
 import { useEffect, useState, useCallback } from 'react';
 import type { OrderSummary } from '@repo/types';
 import { getOrders, OrderCard } from '@/entities/order';
-import { LoadingSpinner, ErrorMessage, EmptyState } from '@repo/ui';
+import { ErrorMessage, EmptyState } from '@repo/ui';
+import { Skeleton } from '@/shared/ui/Skeleton';
 
 const PAGE_SIZE_OPTIONS = [10, 20, 50];
 
@@ -50,7 +51,22 @@ export function OrderHistory() {
     <div>
       <h1 className="page-title">주문 내역</h1>
 
-      {isLoading && <LoadingSpinner />}
+      {isLoading && (
+        <div style={{ display: 'flex', flexDirection: 'column', gap: 'var(--space-3)' }}>
+          {Array.from({ length: 3 }).map((_, i) => (
+            <div key={i} style={{ padding: 'var(--space-4)', border: '1px solid var(--color-border-light)', borderRadius: 'var(--radius-md)' }}>
+              <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 'var(--space-3)' }}>
+                <Skeleton width="40%" height="14px" />
+                <Skeleton width="60px" height="14px" />
+              </div>
+              <Skeleton width="70%" height="14px" />
+              <div style={{ marginTop: 'var(--space-2)' }}>
+                <Skeleton width="30%" height="16px" />
+              </div>
+            </div>
+          ))}
+        </div>
+      )}
       {error && <ErrorMessage message={error} onRetry={() => loadOrders(page, size)} />}
       {!isLoading && !error && orders.length === 0 && (
         <EmptyState message="주문 내역이 없습니다." />

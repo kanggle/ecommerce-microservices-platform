@@ -2,23 +2,3 @@
 > @repo/ui@0.0.0 build C:\Users\kangdow\dev\project\ai-project\first-project\packages\ui
 > tsc
 
-src/__tests__/components.test.tsx(10,12): error TS7016: Could not find a declaration file for module 'react/jsx-runtime'. 'C:/Users/kangdow/dev/project/ai-project/first-project/node_modules/.pnpm/react@19.2.4/node_modules/react/jsx-runtime.js' implicitly has an 'any' type.
-  If the 'react' package actually exposes this module, consider sending a pull request to amend 'https://github.com/DefinitelyTyped/DefinitelyTyped/tree/master/types/react'
-src/__tests__/components.test.tsx(12,40): error TS2339: Property 'toBeInTheDocument' does not exist on type 'Assertion<HTMLElement>'.
-src/__tests__/components.test.tsx(13,41): error TS2339: Property 'toBeInTheDocument' does not exist on type 'Assertion<HTMLElement>'.
-src/__tests__/components.test.tsx(21,39): error TS2339: Property 'toBeInTheDocument' does not exist on type 'Assertion<HTMLElement>'.
-src/__tests__/components.test.tsx(22,45): error TS2339: Property 'toBeInTheDocument' does not exist on type 'Assertion<HTMLElement>'.
-src/__tests__/components.test.tsx(28,45): error TS2339: Property 'toBeInTheDocument' does not exist on type 'Assertion<HTMLElement | null>'.
-src/__tests__/components.test.tsx(36,20): error TS2339: Property 'toBeInTheDocument' does not exist on type 'Assertion<HTMLElement>'.
-src/__tests__/components.test.tsx(46,17): error TS2339: Property 'toHaveStyle' does not exist on type 'Assertion<HTMLElement>'.
-src/__tests__/components.test.tsx(61,44): error TS2339: Property 'toBeInTheDocument' does not exist on type 'Assertion<HTMLElement>'.
-src/EmptyState.tsx(5,17): error TS2742: The inferred type of 'EmptyState' cannot be named without a reference to '.pnpm/@types+react@19.2.14/node_modules/@types/react'. This is likely not portable. A type annotation is necessary.
-src/EmptyState.tsx(7,5): error TS7016: Could not find a declaration file for module 'react/jsx-runtime'. 'C:/Users/kangdow/dev/project/ai-project/first-project/node_modules/.pnpm/react@19.2.4/node_modules/react/jsx-runtime.js' implicitly has an 'any' type.
-  If the 'react' package actually exposes this module, consider sending a pull request to amend 'https://github.com/DefinitelyTyped/DefinitelyTyped/tree/master/types/react'
-src/ErrorMessage.tsx(7,17): error TS2742: The inferred type of 'ErrorMessage' cannot be named without a reference to '.pnpm/@types+react@19.2.14/node_modules/@types/react'. This is likely not portable. A type annotation is necessary.
-src/ErrorMessage.tsx(9,5): error TS7016: Could not find a declaration file for module 'react/jsx-runtime'. 'C:/Users/kangdow/dev/project/ai-project/first-project/node_modules/.pnpm/react@19.2.4/node_modules/react/jsx-runtime.js' implicitly has an 'any' type.
-  If the 'react' package actually exposes this module, consider sending a pull request to amend 'https://github.com/DefinitelyTyped/DefinitelyTyped/tree/master/types/react'
-src/LoadingSpinner.tsx(1,17): error TS2742: The inferred type of 'LoadingSpinner' cannot be named without a reference to '.pnpm/@types+react@19.2.14/node_modules/@types/react'. This is likely not portable. A type annotation is necessary.
-src/LoadingSpinner.tsx(3,5): error TS7016: Could not find a declaration file for module 'react/jsx-runtime'. 'C:/Users/kangdow/dev/project/ai-project/first-project/node_modules/.pnpm/react@19.2.4/node_modules/react/jsx-runtime.js' implicitly has an 'any' type.
-  If the 'react' package actually exposes this module, consider sending a pull request to amend 'https://github.com/DefinitelyTyped/DefinitelyTyped/tree/master/types/react'
- ELIFECYCLE  Command failed with exit code 1.

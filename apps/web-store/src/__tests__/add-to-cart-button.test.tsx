@@ -26,68 +26,42 @@ describe('AddToCartButton', () => {
     price: 10000,
   };
 
-  it('클릭 시 addItem을 호출하고 담았습니다 상태를 표시한다', () => {
+  it('클릭 시 addItem을 호출하고 토스트를 표시한다', () => {
     render(<AddToCartButton {...defaultProps} />);
 
     fireEvent.click(screen.getByRole('button'));
 
-    expect(mockAddItem).toHaveBeenCalledWith({
-      productId: 'p1',
-      variantId: 'v1',
-      productName: '상품A',
-      optionName: '옵션1',
-      price: 10000,
-    });
-    expect(screen.getByRole('button')).toHaveTextContent('담았습니다');
+    expect(mockAddItem).toHaveBeenCalledWith(
+      {
+        productId: 'p1',
+        variantId: 'v1',
+        productName: '상품A',
+        optionName: '옵션1',
+        price: 10000,
+      },
+      1,
+    );
+    expect(screen.getByText('장바구니에 추가되었습니다.')).toBeInTheDocument();
   });
 
-  it('1500ms 후 장바구니 담기 상태로 복원된다', () => {
+  it('3000ms 후 토스트가 사라진다', () => {
     render(<AddToCartButton {...defaultProps} />);
 
     fireEvent.click(screen.getByRole('button'));
-    expect(screen.getByRole('button')).toHaveTextContent('담았습니다');
+    expect(screen.getByText('장바구니에 추가되었습니다.')).toBeInTheDocument();
 
     act(() => {
-      vi.advanceTimersByTime(1500);
+      vi.advanceTimersByTime(3000);
     });
 
-    expect(screen.getByRole('button')).toHaveTextContent('장바구니 담기');
+    expect(screen.queryByText('장바구니에 추가되었습니다.')).not.toBeInTheDocument();
   });
 
-  it('언마운트 시 setTimeout이 정리되어 state update가 발생하지 않는다', () => {
-    const { unmount } = render(<AddToCartButton {...defaultProps} />);
-
-    fireEvent.click(screen.getByRole('button'));
-    unmount();
-
-    // 언마운트 후 타이머가 실행되어도 에러가 발생하지 않아야 한다
-    act(() => {
-      vi.advanceTimersByTime(1500);
-    });
-  });
-
-  it('빠른 연속 클릭 시 이전 타이머가 정리된다', () => {
+  it('클릭 후 버튼 텍스트는 장바구니 담기를 유지한다', () => {
     render(<AddToCartButton {...defaultProps} />);
 
     fireEvent.click(screen.getByRole('button'));
-    act(() => {
-      vi.advanceTimersByTime(500);
-    });
-    // 500ms 후 다시 클릭
-    fireEvent.click(screen.getByRole('button'));
 
-    expect(screen.getByRole('button')).toHaveTextContent('담았습니다');
-
-    // 첫 클릭 기준 1500ms (=추가 1000ms) 경과해도 아직 담았습니다
-    act(() => {
-      vi.advanceTimersByTime(1000);
-    });
-    expect(screen.getByRole('button')).toHaveTextContent('담았습니다');
-
-    // 두 번째 클릭 기준 1500ms 후 복원
-    act(() => {
-      vi.advanceTimersByTime(500);
-    });
     expect(screen.getByRole('button')).toHaveTextContent('장바구니 담기');
   });
 

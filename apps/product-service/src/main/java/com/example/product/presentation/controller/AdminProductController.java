@@ -5,11 +5,15 @@ import com.example.product.application.service.AdjustStockService;
 import com.example.product.application.service.DeleteProductService;
 import com.example.product.application.service.RegisterProductService;
 import com.example.product.application.service.UpdateProductService;
+import com.example.product.application.service.VariantManagementService;
+import com.example.product.presentation.dto.AddVariantRequest;
 import com.example.product.presentation.dto.AdjustStockRequest;
 import com.example.product.presentation.dto.AdjustStockResponse;
 import com.example.product.presentation.dto.RegisterProductRequest;
 import com.example.product.presentation.dto.RegisterProductResponse;
 import com.example.product.presentation.dto.UpdateProductRequest;
+import com.example.product.presentation.dto.UpdateVariantRequest;
+import com.example.product.application.dto.VariantDetail;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -33,6 +37,7 @@ public class AdminProductController {
     private final UpdateProductService updateProductService;
     private final DeleteProductService deleteProductService;
     private final AdjustStockService adjustStockService;
+    private final VariantManagementService variantManagementService;
 
     @PostMapping
     public ResponseEntity<RegisterProductResponse> register(
@@ -52,6 +57,33 @@ public class AdminProductController {
     @DeleteMapping("/{productId}")
     public ResponseEntity<Void> delete(@PathVariable UUID productId) {
         deleteProductService.delete(productId);
+        return ResponseEntity.noContent().build();
+    }
+
+    @PostMapping("/{productId}/variants")
+    public ResponseEntity<VariantDetail> addVariant(
+            @PathVariable UUID productId,
+            @Valid @RequestBody AddVariantRequest request) {
+        VariantDetail variant = variantManagementService.addVariant(
+                productId, request.optionName(), request.stock(), request.additionalPrice());
+        return ResponseEntity.status(HttpStatus.CREATED).body(variant);
+    }
+
+    @PatchMapping("/{productId}/variants/{variantId}")
+    public ResponseEntity<VariantDetail> updateVariant(
+            @PathVariable UUID productId,
+            @PathVariable UUID variantId,
+            @Valid @RequestBody UpdateVariantRequest request) {
+        VariantDetail variant = variantManagementService.updateVariant(
+                productId, variantId, request.optionName(), request.additionalPrice());
+        return ResponseEntity.ok(variant);
+    }
+
+    @DeleteMapping("/{productId}/variants/{variantId}")
+    public ResponseEntity<Void> deleteVariant(
+            @PathVariable UUID productId,
+            @PathVariable UUID variantId) {
+        variantManagementService.removeVariant(productId, variantId);
         return ResponseEntity.noContent().build();
     }
 

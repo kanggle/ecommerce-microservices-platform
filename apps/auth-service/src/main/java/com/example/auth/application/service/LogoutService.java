@@ -70,10 +70,6 @@ public class LogoutService {
         log.info("Logout succeeded: userId={}", command.userId());
         authMetrics.incrementLogout();
         auditLogService.recordLogout(command.userId(), command.email(), command.ipAddress(), command.userAgent());
-        try {
-            eventPublisher.publish(AuthEvent.of(new UserLoggedOut(command.userId(), command.refreshToken())));
-        } catch (Exception e) {
-            log.error("Event publishing failed: UserLoggedOut, userId={}", command.userId(), e);
-        }
+        eventPublisher.publish(AuthEvent.of(new UserLoggedOut(command.userId(), command.refreshToken())));
     }
 }

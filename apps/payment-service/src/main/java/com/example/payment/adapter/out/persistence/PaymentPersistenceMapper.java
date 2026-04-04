@@ -15,7 +15,10 @@ class PaymentPersistenceMapper {
                 entity.getStatus(),
                 entity.getCreatedAt(),
                 entity.getPaidAt(),
-                entity.getRefundedAt()
+                entity.getRefundedAt(),
+                entity.getPaymentKey(),
+                entity.getPaymentMethod(),
+                entity.getReceiptUrl()
         );
     }
 

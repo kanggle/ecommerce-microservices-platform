@@ -68,8 +68,8 @@ class PaymentProcessingIntegrationTest {
     }
 
     @Test
-    @DisplayName("OrderPlaced 이벤트 발행 시 Payment가 COMPLETED 상태로 저장된다")
-    void orderPlaced_createsCompletedPayment() throws Exception {
+    @DisplayName("OrderPlaced 이벤트 발행 시 Payment가 PENDING 상태로 저장된다")
+    void orderPlaced_createsPendingPayment() throws Exception {
         String orderId = "order-" + System.nanoTime();
         String userId = "user-" + System.nanoTime();
 
@@ -77,8 +77,8 @@ class PaymentProcessingIntegrationTest {
 
         var payment = paymentRepository.findByOrderId(orderId);
         assertThat(payment).isPresent();
-        assertThat(payment.get().getStatus()).isEqualTo(PaymentStatus.COMPLETED);
-        assertThat(payment.get().getPaidAt()).isNotNull();
+        assertThat(payment.get().getStatus()).isEqualTo(PaymentStatus.PENDING);
+        assertThat(payment.get().getPaidAt()).isNull();
         assertThat(payment.get().getAmount()).isEqualTo(50000L);
     }
 

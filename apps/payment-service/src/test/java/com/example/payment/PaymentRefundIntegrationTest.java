@@ -1,5 +1,6 @@
 package com.example.payment;
 
+import com.example.payment.application.service.PaymentConfirmService;
 import com.example.payment.domain.model.PaymentStatus;
 import com.example.payment.application.port.out.PaymentRepository;
 import com.example.payment.adapter.in.event.OrderCancelledEventConsumer;
@@ -51,6 +52,9 @@ class PaymentRefundIntegrationTest {
     private OrderCancelledEventConsumer orderCancelledEventConsumer;
 
     @Autowired
+    private PaymentConfirmService paymentConfirmService;
+
+    @Autowired
     private PaymentRepository paymentRepository;
 
     @Autowired
@@ -86,12 +90,18 @@ class PaymentRefundIntegrationTest {
     }
 
     @Test
-    @DisplayName("OrderCancelled 이벤트 수신 시 Payment가 REFUNDED 상태로 변경된다")
+    @DisplayName("OrderCancelled 이벤트 수신 시 COMPLETED 결제가 REFUNDED 상태로 변경된다")
     void orderCancelled_refundsPayment() throws Exception {
         String orderId = "order-" + System.nanoTime();
         String userId = "user-1";
 
+        // PENDING 결제 생성
         orderPlacedEventConsumer.onMessage(buildOrderPlacedJson(orderId, userId, 30000L));
+
+        // PG 승인으로 COMPLETED 전이
+        paymentConfirmService.confirm(userId, "pk_test_" + orderId, orderId, 30000L);
+
+        // 환불
         orderCancelledEventConsumer.onMessage(buildOrderCancelledJson(orderId, userId));
 
         var payment = paymentRepository.findByOrderId(orderId);

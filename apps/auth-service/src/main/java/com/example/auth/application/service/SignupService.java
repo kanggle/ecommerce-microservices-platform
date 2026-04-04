@@ -76,10 +76,6 @@ public class SignupService {
 
     private void publishAuditAndEvent(UUID userId, String email, String name, String ipAddress, String userAgent) {
         auditLogService.recordSignup(userId, email, ipAddress, userAgent);
-        try {
-            eventPublisher.publish(AuthEvent.of(new UserSignedUp(userId, email, name)));
-        } catch (Exception e) {
-            log.error("Event publishing failed: UserSignedUp, userId={}", userId, e);
-        }
+        eventPublisher.publish(AuthEvent.of(new UserSignedUp(userId, email, name)));
     }
 }

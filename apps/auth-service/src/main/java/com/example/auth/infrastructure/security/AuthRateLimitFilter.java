@@ -2,6 +2,7 @@ package com.example.auth.infrastructure.security;
 
 import com.example.auth.domain.service.RateLimiter;
 import com.example.auth.domain.service.AuthMetricsRecorder;
+import com.example.auth.presentation.support.ClientIpResolver;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -26,11 +27,13 @@ public class AuthRateLimitFilter extends OncePerRequestFilter {
 
     private final RateLimiter loginRateLimiter;
     private final AuthMetricsRecorder authMetrics;
+    private final ClientIpResolver clientIpResolver;
     private final Map<String, PathLimit> pathLimits;
 
     public AuthRateLimitFilter(
             RateLimiter loginRateLimiter,
             AuthMetricsRecorder authMetrics,
+            ClientIpResolver clientIpResolver,
             @Value("${app.rate-limit.login.max-requests:20}") int loginMax,
             @Value("${app.rate-limit.login.window-seconds:60}") long loginWindow,
             @Value("${app.rate-limit.signup.max-requests:10}") int signupMax,
@@ -39,6 +42,7 @@ public class AuthRateLimitFilter extends OncePerRequestFilter {
             @Value("${app.rate-limit.refresh.window-seconds:60}") long refreshWindow) {
         this.loginRateLimiter = loginRateLimiter;
         this.authMetrics = authMetrics;
+        this.clientIpResolver = clientIpResolver;
         this.pathLimits = Map.of(
             "/api/auth/login",   new PathLimit(loginMax, loginWindow),
             "/api/auth/signup",  new PathLimit(signupMax, signupWindow),
@@ -52,7 +56,7 @@ public class AuthRateLimitFilter extends OncePerRequestFilter {
         String path = request.getRequestURI();
         PathLimit limit = pathLimits.get(path);
         if (limit != null) {
-            String clientIp = resolveClientIp(request);
+            String clientIp = clientIpResolver.resolve(request);
             String clientKey = clientIp + ":" + path;
             if (loginRateLimiter.isRateLimited(clientKey, limit.maxRequests(), limit.windowSeconds())) {
                 log.warn("Rate limit exceeded: ip={}, path={}", clientIp, path);
@@ -67,11 +71,4 @@ public class AuthRateLimitFilter extends OncePerRequestFilter {
         filterChain.doFilter(request, response);
     }
 
-    private String resolveClientIp(HttpServletRequest request) {
-        String xff = request.getHeader("X-Forwarded-For");
-        if (xff != null && !xff.isBlank()) {
-            return xff.split(",")[0].trim();
-        }
-        return request.getRemoteAddr();
-    }
 }

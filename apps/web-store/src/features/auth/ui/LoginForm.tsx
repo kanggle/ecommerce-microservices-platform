@@ -115,6 +115,20 @@ export function LoginForm() {
           type="button"
           onClick={() => {
             const callbackUrl = `${window.location.origin}/oauth/callback`;
+            window.location.href = `http://localhost:8081/api/auth/oauth/naver?callbackUrl=${encodeURIComponent(callbackUrl)}`;
+          }}
+          className="btn btn-lg"
+          style={{ width: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 'var(--space-2)', backgroundColor: '#03C75A', color: '#fff', border: 'none' }}
+        >
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor">
+            <path d="M16.273 12.845L7.376 0H0v24h7.727V11.155L16.624 24H24V0h-7.727z"/>
+          </svg>
+          네이버로 로그인
+        </button>
+        <button
+          type="button"
+          onClick={() => {
+            const callbackUrl = `${window.location.origin}/oauth/callback`;
             window.location.href = `http://localhost:8081/api/auth/oauth/instagram?callbackUrl=${encodeURIComponent(callbackUrl)}`;
           }}
           className="btn btn-lg"

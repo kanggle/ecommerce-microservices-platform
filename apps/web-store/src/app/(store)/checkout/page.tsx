@@ -12,6 +12,7 @@ export default function CheckoutPage() {
   const { isReady } = useRequireAuth();
   const { items, removeItem } = useCart();
   const completedRef = useRef(false);
+  const snapshotRef = useRef<typeof items | null>(null);
 
   const selectedKeys = useMemo(() => {
     const raw = searchParams.get('items');
@@ -20,6 +21,7 @@ export default function CheckoutPage() {
   }, [searchParams]);
 
   const checkoutItems = useMemo(() => {
+    if (snapshotRef.current) return snapshotRef.current;
     if (!selectedKeys) return items;
     return items.filter((i) => selectedKeys.has(`${i.productId}:${i.variantId}`));
   }, [items, selectedKeys]);
@@ -39,6 +41,7 @@ export default function CheckoutPage() {
         totalAmount={totalAmount}
         onOrderComplete={() => {
           completedRef.current = true;
+          snapshotRef.current = checkoutItems;
           checkoutItems.forEach((item) => removeItem(item.productId, item.variantId));
         }}
       />

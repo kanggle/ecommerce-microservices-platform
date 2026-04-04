@@ -2,6 +2,7 @@ package com.example.payment.application.service;
 
 import com.example.payment.application.event.PaymentRefundedEvent;
 import com.example.payment.application.port.out.PaymentEventPublisher;
+import com.example.payment.application.port.out.PaymentGatewayPort;
 import com.example.payment.application.port.out.PaymentMetricRecorder;
 import com.example.payment.domain.model.Payment;
 import com.example.payment.domain.model.PaymentStatus;
@@ -21,6 +22,7 @@ public class PaymentRefundService {
     private final PaymentRepository paymentRepository;
     private final PaymentEventPublisher paymentEventPublisher;
     private final PaymentMetricRecorder paymentMetricRecorder;
+    private final PaymentGatewayPort paymentGateway;
 
     @Transactional
     public void refundPayment(String orderId) {
@@ -34,6 +36,12 @@ public class PaymentRefundService {
         if (payment.getStatus() == PaymentStatus.REFUNDED) {
             log.warn("Duplicate refund attempt for orderId={}, paymentId={}", orderId, payment.getPaymentId());
             return;
+        }
+
+        if (payment.getPaymentKey() != null) {
+            paymentGateway.cancelPayment(payment.getPaymentKey(), "Order cancelled");
+        } else {
+            log.info("No paymentKey for orderId={}, skipping PG cancel", orderId);
         }
 
         payment.refund();

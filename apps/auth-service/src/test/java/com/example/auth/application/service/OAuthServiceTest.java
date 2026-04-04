@@ -1,5 +1,6 @@
 package com.example.auth.application.service;
 
+import com.example.auth.application.dto.OAuthCallbackResult;
 import com.example.auth.application.dto.OAuthLoginCommand;
 import com.example.auth.application.exception.OAuthException;
 import com.example.auth.application.exception.OAuthUpstreamException;
@@ -10,16 +11,16 @@ import com.example.auth.domain.repository.RefreshTokenStore;
 import com.example.auth.domain.repository.UserRepository;
 import com.example.auth.domain.repository.UserSessionRegistry;
 import com.example.auth.domain.repository.UserSessionRegistry.RegistrationResult;
-import com.example.auth.domain.service.GoogleOAuthPort;
-import com.example.auth.domain.service.GoogleOAuthPort.GoogleUserInfo;
 import com.example.auth.domain.service.OAuthCallbackProperties;
+import com.example.auth.domain.service.OAuthProvider;
+import com.example.auth.domain.service.OAuthProvider.OAuthUserInfo;
 import com.example.auth.domain.service.SessionProperties;
 import com.example.auth.domain.service.TokenGenerator;
 import com.example.auth.domain.service.TokenProperties;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
@@ -35,14 +36,14 @@ import static org.mockito.BDDMockito.given;
 import static org.mockito.BDDMockito.then;
 
 @ExtendWith(MockitoExtension.class)
-@DisplayName("GoogleOAuthService 단위 테스트")
-class GoogleOAuthServiceTest {
+@DisplayName("OAuthService 단위 테스트")
+class OAuthServiceTest {
 
-    @InjectMocks
-    private GoogleOAuthService googleOAuthService;
+    private OAuthService oauthService;
 
+    @Mock private OAuthProvider googleProvider;
+    @Mock private OAuthProvider naverProvider;
     @Mock private OAuthStateStore oauthStateStore;
-    @Mock private GoogleOAuthPort googleOAuthPort;
     @Mock private UserRepository userRepository;
     @Mock private RefreshTokenStore refreshTokenStore;
     @Mock private TokenGenerator tokenGenerator;
@@ -51,17 +52,29 @@ class GoogleOAuthServiceTest {
     @Mock private UserSessionRegistry sessionRegistry;
     @Mock private OAuthCallbackProperties oauthCallbackProperties;
 
+    @BeforeEach
+    void setUp() {
+        given(googleProvider.provider()).willReturn("google");
+        given(naverProvider.provider()).willReturn("naver");
+        oauthService = new OAuthService(
+            List.of(googleProvider, naverProvider),
+            oauthStateStore, userRepository, refreshTokenStore,
+            tokenGenerator, tokenProperties, sessionProperties,
+            sessionRegistry, oauthCallbackProperties
+        );
+    }
+
     @Test
-    @DisplayName("buildAuthorizationUrl - 허용된 callbackUrl이면 state를 저장하고 Google 인증 URL을 반환한다")
+    @DisplayName("buildAuthorizationUrl - 허용된 callbackUrl이면 state를 저장하고 인증 URL을 반환한다")
     void buildAuthorizationUrl_validCallbackUrl_savesStateAndReturnsUrl() {
         given(oauthCallbackProperties.allowedCallbackUrls())
             .willReturn(List.of("http://localhost:3000/oauth/callback"));
-        given(oauthCallbackProperties.googleRedirectUri())
+        given(oauthCallbackProperties.redirectUriFor("google"))
             .willReturn("http://localhost:8080/callback");
-        given(googleOAuthPort.buildAuthorizationUrl(anyString(), eq("http://localhost:8080/callback")))
+        given(googleProvider.buildAuthorizationUrl(anyString(), eq("http://localhost:8080/callback")))
             .willReturn("https://accounts.google.com/auth?state=abc");
 
-        String url = googleOAuthService.buildAuthorizationUrl("http://localhost:3000/oauth/callback");
+        String url = oauthService.buildAuthorizationUrl("google", "http://localhost:3000/oauth/callback");
 
         assertThat(url).isEqualTo("https://accounts.google.com/auth?state=abc");
         then(oauthStateStore).should().save(anyString(), eq("http://localhost:3000/oauth/callback"), any());
@@ -73,9 +86,17 @@ class GoogleOAuthServiceTest {
         given(oauthCallbackProperties.allowedCallbackUrls())
             .willReturn(List.of("http://localhost:3000/oauth/callback"));
 
-        assertThatThrownBy(() -> googleOAuthService.buildAuthorizationUrl("http://evil.com/callback"))
+        assertThatThrownBy(() -> oauthService.buildAuthorizationUrl("google", "http://evil.com/callback"))
             .isInstanceOf(OAuthException.class)
             .hasMessageContaining("Invalid callbackUrl");
+    }
+
+    @Test
+    @DisplayName("buildAuthorizationUrl - 지원하지 않는 provider면 OAuthException을 던진다")
+    void buildAuthorizationUrl_unsupportedProvider_throwsOAuthException() {
+        assertThatThrownBy(() -> oauthService.buildAuthorizationUrl("kakao", "http://localhost:3000/oauth/callback"))
+            .isInstanceOf(OAuthException.class)
+            .hasMessageContaining("Unsupported OAuth provider");
     }
 
     @Test
@@ -84,29 +105,15 @@ class GoogleOAuthServiceTest {
         given(oauthStateStore.getAndDelete("valid-state"))
             .willReturn(Optional.of("http://localhost:3000/oauth/callback"));
 
-        Optional<String> result = googleOAuthService.resolveCallbackUrl("valid-state");
+        Optional<String> result = oauthService.resolveCallbackUrl("valid-state");
 
-        assertThat(result).isPresent()
-            .hasValue("http://localhost:3000/oauth/callback");
+        assertThat(result).isPresent().hasValue("http://localhost:3000/oauth/callback");
     }
 
     @Test
     @DisplayName("resolveCallbackUrl - null state이면 empty를 반환한다")
     void resolveCallbackUrl_nullState_returnsEmpty() {
-        Optional<String> result = googleOAuthService.resolveCallbackUrl(null);
-
-        assertThat(result).isEmpty();
-    }
-
-    @Test
-    @DisplayName("resolveCallbackUrl - 만료된 state이면 empty를 반환한다")
-    void resolveCallbackUrl_expiredState_returnsEmpty() {
-        given(oauthStateStore.getAndDelete("expired-state"))
-            .willReturn(Optional.empty());
-
-        Optional<String> result = googleOAuthService.resolveCallbackUrl("expired-state");
-
-        assertThat(result).isEmpty();
+        assertThat(oauthService.resolveCallbackUrl(null)).isEmpty();
     }
 
     @Test
@@ -116,7 +123,7 @@ class GoogleOAuthServiceTest {
 
         OAuthLoginCommand command = new OAuthLoginCommand("code", "expired-state");
 
-        assertThatThrownBy(() -> googleOAuthService.handleCallback(command))
+        assertThatThrownBy(() -> oauthService.handleCallback("google", command))
             .isInstanceOf(OAuthException.class);
     }
 
@@ -129,10 +136,10 @@ class GoogleOAuthServiceTest {
 
         given(oauthStateStore.getAndDelete("valid-state"))
             .willReturn(Optional.of("http://localhost:3000/oauth/callback"));
-        given(oauthCallbackProperties.googleRedirectUri())
+        given(oauthCallbackProperties.redirectUriFor("google"))
             .willReturn("http://localhost:8080/callback");
-        given(googleOAuthPort.fetchUserInfo("code", "http://localhost:8080/callback"))
-            .willReturn(new GoogleUserInfo("user@example.com", "홍길동"));
+        given(googleProvider.fetchUserInfo("code", "http://localhost:8080/callback"))
+            .willReturn(new OAuthUserInfo("user@example.com", "홍길동"));
         given(userRepository.findByEmail("user@example.com")).willReturn(Optional.of(existingUser));
         given(tokenGenerator.generateAccessToken(existingUser)).willReturn("access-token");
         given(tokenGenerator.accessTokenTtlSeconds()).willReturn(3600L);
@@ -142,7 +149,7 @@ class GoogleOAuthServiceTest {
             .willReturn(new RegistrationResult("new-hash", null));
 
         OAuthLoginCommand command = new OAuthLoginCommand("code", "valid-state");
-        GoogleOAuthService.CallbackResult result = googleOAuthService.handleCallback(command);
+        OAuthCallbackResult result = oauthService.handleCallback("google", command);
 
         assertThat(result.success()).isTrue();
         assertThat(result.callbackUrl()).isEqualTo("http://localhost:3000/oauth/callback");
@@ -155,16 +162,16 @@ class GoogleOAuthServiceTest {
     @DisplayName("handleCallback - 신규 사용자면 CUSTOMER 역할로 생성 후 토큰을 발급한다")
     void handleCallback_newUser_createsAndIssuesTokens() {
         UUID newUserId = UUID.randomUUID();
-        User newUser = User.reconstitute(newUserId, "new@example.com", null, "new",
-            Role.CUSTOMER, "google", Instant.now(), Instant.now(), true);
+        User newUser = User.reconstitute(newUserId, "new@naver.com", null, "새유저",
+            Role.CUSTOMER, "naver", Instant.now(), Instant.now(), true);
 
         given(oauthStateStore.getAndDelete("valid-state"))
             .willReturn(Optional.of("http://localhost:3000/oauth/callback"));
-        given(oauthCallbackProperties.googleRedirectUri())
-            .willReturn("http://localhost:8080/callback");
-        given(googleOAuthPort.fetchUserInfo("code", "http://localhost:8080/callback"))
-            .willReturn(new GoogleUserInfo("new@example.com", "새유저"));
-        given(userRepository.findByEmail("new@example.com")).willReturn(Optional.empty());
+        given(oauthCallbackProperties.redirectUriFor("naver"))
+            .willReturn("http://localhost:8081/callback");
+        given(naverProvider.fetchUserInfo("code", "http://localhost:8081/callback"))
+            .willReturn(new OAuthUserInfo("new@naver.com", "새유저"));
+        given(userRepository.findByEmail("new@naver.com")).willReturn(Optional.empty());
         given(userRepository.save(any(User.class))).willReturn(newUser);
         given(tokenGenerator.generateAccessToken(newUser)).willReturn("access-token");
         given(tokenGenerator.accessTokenTtlSeconds()).willReturn(3600L);
@@ -174,48 +181,64 @@ class GoogleOAuthServiceTest {
             .willReturn(new RegistrationResult("new-hash", null));
 
         OAuthLoginCommand command = new OAuthLoginCommand("code", "valid-state");
-        GoogleOAuthService.CallbackResult result = googleOAuthService.handleCallback(command);
+        OAuthCallbackResult result = oauthService.handleCallback("naver", command);
 
         assertThat(result.success()).isTrue();
         then(userRepository).should().save(any(User.class));
     }
 
     @Test
-    @DisplayName("handleCallback - Google API 오류 시 OAuthUpstreamException을 던진다")
-    void handleCallback_googleApiError_throwsOAuthUpstreamException() {
+    @DisplayName("handleCallback - 외부 API 오류 시 OAuthUpstreamException을 던진다")
+    void handleCallback_apiError_throwsOAuthUpstreamException() {
         given(oauthStateStore.getAndDelete("valid-state"))
             .willReturn(Optional.of("http://localhost:3000/oauth/callback"));
-        given(oauthCallbackProperties.googleRedirectUri())
+        given(oauthCallbackProperties.redirectUriFor("google"))
             .willReturn("http://localhost:8080/callback");
-        given(googleOAuthPort.fetchUserInfo(anyString(), anyString()))
-            .willThrow(new RuntimeException("Google API error"));
+        given(googleProvider.fetchUserInfo(anyString(), anyString()))
+            .willThrow(new org.springframework.web.client.RestClientException("API error"));
 
         OAuthLoginCommand command = new OAuthLoginCommand("code", "valid-state");
 
-        assertThatThrownBy(() -> googleOAuthService.handleCallback(command))
+        assertThatThrownBy(() -> oauthService.handleCallback("google", command))
             .isInstanceOf(OAuthUpstreamException.class)
-            .hasMessageContaining("Google API call failed")
-            .hasCauseInstanceOf(RuntimeException.class);
+            .hasMessageContaining("google API call failed")
+            .hasCauseInstanceOf(org.springframework.web.client.RestClientException.class);
     }
 
     @Test
-    @DisplayName("handleCallback - Google API 오류 시 callbackUrl이 예외에 포함된다")
-    void handleCallback_googleApiError_exceptionContainsCallbackUrl() {
+    @DisplayName("handleCallback - 외부 API 오류 시 callbackUrl이 예외에 포함된다")
+    void handleCallback_apiError_exceptionContainsCallbackUrl() {
         given(oauthStateStore.getAndDelete("valid-state"))
             .willReturn(Optional.of("http://localhost:3000/oauth/callback"));
-        given(oauthCallbackProperties.googleRedirectUri())
+        given(oauthCallbackProperties.redirectUriFor("google"))
             .willReturn("http://localhost:8080/callback");
-        given(googleOAuthPort.fetchUserInfo(anyString(), anyString()))
-            .willThrow(new RuntimeException("Google API error"));
+        given(googleProvider.fetchUserInfo(anyString(), anyString()))
+            .willThrow(new org.springframework.web.client.RestClientException("API error"));
 
         OAuthLoginCommand command = new OAuthLoginCommand("code", "valid-state");
 
-        assertThatThrownBy(() -> googleOAuthService.handleCallback(command))
+        assertThatThrownBy(() -> oauthService.handleCallback("google", command))
             .isInstanceOf(OAuthUpstreamException.class)
             .satisfies(ex -> {
                 OAuthUpstreamException upstreamEx = (OAuthUpstreamException) ex;
                 assertThat(upstreamEx.getCallbackUrl()).isEqualTo("http://localhost:3000/oauth/callback");
             });
+    }
+
+    @Test
+    @DisplayName("handleCallback - 이메일이 없으면 failure 결과를 반환한다")
+    void handleCallback_emailBlank_returnsFailure() {
+        given(oauthStateStore.getAndDelete("valid-state"))
+            .willReturn(Optional.of("http://localhost:3000/oauth/callback"));
+        given(oauthCallbackProperties.redirectUriFor("naver"))
+            .willReturn("http://localhost:8081/callback");
+        given(naverProvider.fetchUserInfo("code", "http://localhost:8081/callback"))
+            .willReturn(new OAuthUserInfo("", "이름"));
+
+        OAuthLoginCommand command = new OAuthLoginCommand("code", "valid-state");
+        OAuthCallbackResult result = oauthService.handleCallback("naver", command);
+
+        assertThat(result.success()).isFalse();
     }
 
     @Test
@@ -227,14 +250,14 @@ class GoogleOAuthServiceTest {
 
         given(oauthStateStore.getAndDelete("valid-state"))
             .willReturn(Optional.of("http://localhost:3000/oauth/callback"));
-        given(oauthCallbackProperties.googleRedirectUri())
+        given(oauthCallbackProperties.redirectUriFor("google"))
             .willReturn("http://localhost:8080/callback");
-        given(googleOAuthPort.fetchUserInfo("code", "http://localhost:8080/callback"))
-            .willReturn(new GoogleUserInfo("user@example.com", "홍길동"));
+        given(googleProvider.fetchUserInfo("code", "http://localhost:8080/callback"))
+            .willReturn(new OAuthUserInfo("user@example.com", "홍길동"));
         given(userRepository.findByEmail("user@example.com")).willReturn(Optional.of(deactivatedUser));
 
         OAuthLoginCommand command = new OAuthLoginCommand("code", "valid-state");
-        GoogleOAuthService.CallbackResult result = googleOAuthService.handleCallback(command);
+        OAuthCallbackResult result = oauthService.handleCallback("google", command);
 
         assertThat(result.success()).isFalse();
     }

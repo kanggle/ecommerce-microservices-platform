@@ -1,7 +1,8 @@
 'use client';
 
-import { useCallback, useEffect, useRef, useState } from 'react';
+import { useCallback, useState } from 'react';
 import { useCart } from '../model/cart-context';
+import { Toast } from '@/shared/ui';
 
 interface AddToCartButtonProps {
   productId: string;
@@ -23,52 +24,41 @@ export function AddToCartButton({
   disabled = false,
 }: AddToCartButtonProps) {
   const { addItem } = useCart();
-  const [added, setAdded] = useState(false);
-  const timerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const [showToast, setShowToast] = useState(false);
 
   const handleClick = useCallback(() => {
     addItem({ productId, variantId, productName, optionName, price }, quantity);
-    if (timerRef.current) {
-      clearTimeout(timerRef.current);
-    }
-    setAdded(true);
-    timerRef.current = setTimeout(() => {
-      setAdded(false);
-      timerRef.current = null;
-    }, 1500);
+    setShowToast(true);
   }, [addItem, productId, variantId, productName, optionName, price, quantity]);
 
-  useEffect(() => {
-    return () => {
-      if (timerRef.current) {
-        clearTimeout(timerRef.current);
-      }
-    };
-  }, []);
+  const clearToast = useCallback(() => setShowToast(false), []);
 
   const bgColor = disabled
     ? 'var(--color-text-muted)'
-    : added
-      ? 'var(--color-success)'
-      : 'var(--color-accent)';
+    : 'var(--color-accent)';
 
   return (
-    <button
-      type="button"
-      onClick={handleClick}
-      disabled={disabled}
-      aria-label={disabled ? '품절' : '장바구니 담기'}
-      className="btn btn-lg"
-      style={{
-        width: '100%',
-        backgroundColor: bgColor,
-        color: 'var(--color-white)',
-        border: 'none',
-        cursor: disabled ? 'not-allowed' : 'pointer',
-        transition: 'background-color var(--transition-normal)',
-      }}
-    >
-      {disabled ? '품절' : added ? '담았습니다' : '장바구니 담기'}
-    </button>
+    <>
+      {showToast && (
+        <Toast message="장바구니에 추가되었습니다." type="success" onClose={clearToast} />
+      )}
+      <button
+        type="button"
+        onClick={handleClick}
+        disabled={disabled}
+        aria-label={disabled ? '품절' : '장바구니 담기'}
+        className="btn btn-lg"
+        style={{
+          width: '100%',
+          backgroundColor: bgColor,
+          color: 'var(--color-white)',
+          border: 'none',
+          cursor: disabled ? 'not-allowed' : 'pointer',
+          transition: 'background-color var(--transition-normal)',
+        }}
+      >
+        {disabled ? '품절' : '장바구니 담기'}
+      </button>
+    </>
   );
 }

@@ -31,6 +31,7 @@ public class JwtTokenGenerator implements TokenGenerator {
         return Jwts.builder()
             .subject(user.getId().toString())
             .claim("email", user.getEmail().value())
+            .claim("role", user.getRole().name())
             .issuer(issuer)
             .audience().add(audience).and()
             .issuedAt(Date.from(now))

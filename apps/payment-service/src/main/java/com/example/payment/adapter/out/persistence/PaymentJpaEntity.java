@@ -40,6 +40,15 @@ class PaymentJpaEntity {
     @Column(name = "refunded_at")
     private LocalDateTime refundedAt;
 
+    @Column(name = "payment_key")
+    private String paymentKey;
+
+    @Column(name = "payment_method")
+    private String paymentMethod;
+
+    @Column(name = "receipt_url")
+    private String receiptUrl;
+
     static PaymentJpaEntity fromDomain(com.example.payment.domain.model.Payment payment) {
         PaymentJpaEntity entity = new PaymentJpaEntity();
         entity.paymentId = payment.getPaymentId();
@@ -50,6 +59,9 @@ class PaymentJpaEntity {
         entity.createdAt = payment.getCreatedAt();
         entity.paidAt = payment.getPaidAt();
         entity.refundedAt = payment.getRefundedAt();
+        entity.paymentKey = payment.getPaymentKey();
+        entity.paymentMethod = payment.getPaymentMethod();
+        entity.receiptUrl = payment.getReceiptUrl();
         return entity;
     }
 }

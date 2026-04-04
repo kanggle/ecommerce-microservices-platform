@@ -1,7 +1,5 @@
 package com.example.payment.application.service;
 
-import com.example.payment.application.event.PaymentCompletedEvent;
-import com.example.payment.application.port.out.PaymentEventPublisher;
 import com.example.payment.application.port.out.PaymentMetricRecorder;
 import com.example.payment.domain.model.Payment;
 import com.example.payment.application.port.out.PaymentRepository;
@@ -16,7 +14,6 @@ import org.springframework.transaction.annotation.Transactional;
 public class PaymentProcessingService {
 
     private final PaymentRepository paymentRepository;
-    private final PaymentEventPublisher paymentEventPublisher;
     private final PaymentMetricRecorder paymentMetricRecorder;
 
     @Transactional
@@ -28,13 +25,8 @@ public class PaymentProcessingService {
 
         Payment payment = Payment.create(orderId, userId, amount);
         paymentMetricRecorder.incrementPaymentCreated();
-        payment.complete(); // 시뮬레이션: 항상 성공
         paymentRepository.save(payment);
-        paymentMetricRecorder.incrementPaymentCompleted();
-        paymentMetricRecorder.addPaymentAmount(amount);
 
-        paymentEventPublisher.publishPaymentCompleted(PaymentCompletedEvent.from(payment));
-
-        log.info("Payment completed: paymentId={}, orderId={}", payment.getPaymentId(), orderId);
+        log.info("Payment created (PENDING): paymentId={}, orderId={}", payment.getPaymentId(), orderId);
     }
 }

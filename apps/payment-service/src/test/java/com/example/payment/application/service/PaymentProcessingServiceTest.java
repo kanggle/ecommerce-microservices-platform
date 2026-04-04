@@ -1,7 +1,5 @@
 package com.example.payment.application.service;
 
-import com.example.payment.application.event.PaymentCompletedEvent;
-import com.example.payment.application.port.out.PaymentEventPublisher;
 import com.example.payment.application.port.out.PaymentMetricRecorder;
 import com.example.payment.domain.model.Payment;
 import com.example.payment.domain.model.PaymentStatus;
@@ -31,21 +29,18 @@ class PaymentProcessingServiceTest {
     private PaymentRepository paymentRepository;
 
     @Mock
-    private PaymentEventPublisher paymentEventPublisher;
-
-    @Mock
     private PaymentMetricRecorder paymentMetricRecorder;
 
     @BeforeEach
     void setUp() {
         paymentProcessingService = new PaymentProcessingService(
-                paymentRepository, paymentEventPublisher, paymentMetricRecorder
+                paymentRepository, paymentMetricRecorder
         );
     }
 
     @Test
-    @DisplayName("OrderPlaced 처리 시 Payment가 COMPLETED 상태로 저장되고 이벤트가 발행된다")
-    void processPayment_newOrder_savesCompletedPaymentAndPublishesEvent() {
+    @DisplayName("OrderPlaced 처리 시 Payment가 PENDING 상태로 저장된다")
+    void processPayment_newOrder_savesPendingPayment() {
         given(paymentRepository.findByOrderId("order-1")).willReturn(Optional.empty());
         given(paymentRepository.save(any())).willAnswer(inv -> inv.getArgument(0));
 
@@ -53,13 +48,11 @@ class PaymentProcessingServiceTest {
 
         ArgumentCaptor<Payment> paymentCaptor = ArgumentCaptor.forClass(Payment.class);
         verify(paymentRepository).save(paymentCaptor.capture());
-        assertThat(paymentCaptor.getValue().getStatus()).isEqualTo(PaymentStatus.COMPLETED);
+        assertThat(paymentCaptor.getValue().getStatus()).isEqualTo(PaymentStatus.PENDING);
         assertThat(paymentCaptor.getValue().getOrderId()).isEqualTo("order-1");
 
-        ArgumentCaptor<PaymentCompletedEvent> eventCaptor = ArgumentCaptor.forClass(PaymentCompletedEvent.class);
-        verify(paymentEventPublisher).publishPaymentCompleted(eventCaptor.capture());
-        assertThat(eventCaptor.getValue().eventType()).isEqualTo("PaymentCompleted");
-        assertThat(eventCaptor.getValue().payload().orderId()).isEqualTo("order-1");
+        verify(paymentMetricRecorder).incrementPaymentCreated();
+        verify(paymentMetricRecorder, never()).incrementPaymentCompleted();
     }
 
     @Test
@@ -71,6 +64,5 @@ class PaymentProcessingServiceTest {
         paymentProcessingService.processPayment("order-1", "user-1", 30000L);
 
         verify(paymentRepository, never()).save(any());
-        verify(paymentEventPublisher, never()).publishPaymentCompleted(any());
     }
 }

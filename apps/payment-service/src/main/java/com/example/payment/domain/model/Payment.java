@@ -15,6 +15,9 @@ public class Payment {
     private LocalDateTime createdAt;
     private LocalDateTime paidAt;
     private LocalDateTime refundedAt;
+    private String paymentKey;
+    private String paymentMethod;
+    private String receiptUrl;
 
     private Payment() {
     }
@@ -33,7 +36,9 @@ public class Payment {
     public static Payment reconstitute(String paymentId, String orderId, String userId,
                                         long amount, PaymentStatus status,
                                         LocalDateTime createdAt, LocalDateTime paidAt,
-                                        LocalDateTime refundedAt) {
+                                        LocalDateTime refundedAt,
+                                        String paymentKey, String paymentMethod,
+                                        String receiptUrl) {
         Payment payment = new Payment();
         payment.paymentId = paymentId;
         payment.orderId = orderId;
@@ -43,12 +48,19 @@ public class Payment {
         payment.createdAt = createdAt;
         payment.paidAt = paidAt;
         payment.refundedAt = refundedAt;
+        payment.paymentKey = paymentKey;
+        payment.paymentMethod = paymentMethod;
+        payment.receiptUrl = receiptUrl;
         return payment;
     }
 
+    /**
+     * @deprecated Use {@link #confirm(String, String, String)} instead.
+     */
+    @Deprecated
     public void complete() {
         if (this.status == PaymentStatus.COMPLETED) {
-            return; // 멱등: 이미 완료된 결제
+            return;
         }
         if (this.status != PaymentStatus.PENDING) {
             throw new InvalidPaymentException("PENDING 상태에서만 결제를 완료할 수 있습니다: " + status);
@@ -57,9 +69,27 @@ public class Payment {
         this.paidAt = LocalDateTime.now();
     }
 
+    public void confirm(String paymentKey, String paymentMethod, String receiptUrl) {
+        if (this.status != PaymentStatus.PENDING) {
+            throw new InvalidPaymentException("PENDING 상태에서만 결제를 승인할 수 있습니다: " + status);
+        }
+        this.paymentKey = paymentKey;
+        this.paymentMethod = paymentMethod;
+        this.receiptUrl = receiptUrl;
+        this.status = PaymentStatus.COMPLETED;
+        this.paidAt = LocalDateTime.now();
+    }
+
+    public void fail() {
+        if (this.status != PaymentStatus.PENDING) {
+            throw new InvalidPaymentException("PENDING 상태에서만 FAILED로 전이할 수 있습니다: " + status);
+        }
+        this.status = PaymentStatus.FAILED;
+    }
+
     public void refund() {
         if (this.status == PaymentStatus.REFUNDED) {
-            return; // 멱등: 이미 환불된 결제
+            return;
         }
         if (this.status != PaymentStatus.COMPLETED) {
             throw new InvalidPaymentException("Refund is only allowed in COMPLETED status: " + status);
@@ -98,5 +128,17 @@ public class Payment {
 
     public LocalDateTime getRefundedAt() {
         return refundedAt;
+    }
+
+    public String getPaymentKey() {
+        return paymentKey;
+    }
+
+    public String getPaymentMethod() {
+        return paymentMethod;
+    }
+
+    public String getReceiptUrl() {
+        return receiptUrl;
     }
 }

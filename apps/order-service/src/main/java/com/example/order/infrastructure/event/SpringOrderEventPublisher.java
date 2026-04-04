@@ -12,6 +12,7 @@ import org.springframework.stereotype.Component;
 
 @Slf4j
 @Component
+@org.springframework.context.annotation.Profile("!standalone")
 @RequiredArgsConstructor
 public class SpringOrderEventPublisher implements OrderEventPublisher {
 

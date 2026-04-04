@@ -2,7 +2,8 @@
 
 import { useEffect, useState, useCallback } from 'react';
 import type { Address } from '@repo/types';
-import { LoadingSpinner, ErrorMessage, EmptyState } from '@repo/ui';
+import { ErrorMessage, EmptyState } from '@repo/ui';
+import { Skeleton } from '@/shared/ui/Skeleton';
 import { AddressList } from './AddressList';
 import { AddressForm } from './AddressForm';
 import { getMyAddresses } from '../api/address-api';
@@ -68,7 +69,22 @@ export function AddressManager() {
     <div>
       <h1 className="page-title">배송지 관리</h1>
 
-      {isLoading && <LoadingSpinner />}
+      {isLoading && (
+        <div style={{ display: 'flex', flexDirection: 'column', gap: 'var(--space-3)' }}>
+          {Array.from({ length: 2 }).map((_, i) => (
+            <div key={i} style={{ padding: 'var(--space-4)', border: '1px solid var(--color-border-light)', borderRadius: 'var(--radius-md)' }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: 'var(--space-2)', marginBottom: 'var(--space-2)' }}>
+                <Skeleton width="60px" height="14px" />
+                <Skeleton width="40px" height="18px" borderRadius="var(--radius-full)" />
+              </div>
+              <Skeleton width="50%" height="12px" />
+              <div style={{ marginTop: 'var(--space-2)' }}>
+                <Skeleton width="80%" height="12px" />
+              </div>
+            </div>
+          ))}
+        </div>
+      )}
       {error && <ErrorMessage message={error} onRetry={loadAddresses} />}
 
       {!isLoading && !error && (

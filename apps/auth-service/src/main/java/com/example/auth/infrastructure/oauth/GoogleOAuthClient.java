@@ -1,6 +1,6 @@
 package com.example.auth.infrastructure.oauth;
 
-import com.example.auth.domain.service.GoogleOAuthPort;
+import com.example.auth.domain.service.OAuthProvider;
 import com.example.auth.infrastructure.config.GoogleOAuthProperties;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
@@ -11,7 +11,9 @@ import java.util.Map;
 
 @Slf4j
 @Component
-public class GoogleOAuthClient implements GoogleOAuthPort {
+public class GoogleOAuthClient implements OAuthProvider {
+
+    private static final String PROVIDER = "google";
 
     private static final String AUTH_ENDPOINT = "https://accounts.google.com/o/oauth2/v2/auth";
     private static final String TOKEN_ENDPOINT = "https://oauth2.googleapis.com/token";
@@ -24,6 +26,11 @@ public class GoogleOAuthClient implements GoogleOAuthPort {
     public GoogleOAuthClient(GoogleOAuthProperties props) {
         this.props = props;
         this.restClient = RestClient.create();
+    }
+
+    @Override
+    public String provider() {
+        return PROVIDER;
     }
 
     @Override
@@ -41,7 +48,7 @@ public class GoogleOAuthClient implements GoogleOAuthPort {
     }
 
     @Override
-    public GoogleUserInfo fetchUserInfo(String code, String redirectUri) {
+    public OAuthUserInfo fetchUserInfo(String code, String redirectUri) {
         // Step 1: code -> access_token
         @SuppressWarnings("unchecked")
         Map<String, Object> tokenResponse = restClient.post()
@@ -75,6 +82,6 @@ public class GoogleOAuthClient implements GoogleOAuthPort {
 
         String email = (String) userInfo.get("email");
         String name = (String) userInfo.get("name");
-        return new GoogleUserInfo(email, name);
+        return new OAuthUserInfo(email, name);
     }
 }

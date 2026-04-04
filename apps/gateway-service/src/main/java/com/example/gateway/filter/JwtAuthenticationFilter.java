@@ -88,6 +88,7 @@ public class JwtAuthenticationFilter implements GlobalFilter, Ordered {
                 .headers(h -> {
                     h.remove("X-User-Id");
                     h.remove("X-User-Email");
+                    h.remove("X-User-Role");
                 })
                 .build();
     }
@@ -102,16 +103,20 @@ public class JwtAuthenticationFilter implements GlobalFilter, Ordered {
             Claims claims = jwtParser.parseSignedClaims(token).getPayload();
             String userId = claims.getSubject();
             String email = claims.get("email", String.class);
+            String role = claims.get("role", String.class);
 
             if (userId == null || userId.isBlank() || email == null || email.isBlank()) {
                 gatewayMetrics.incrementJwtValidationFailure("invalid");
                 return writeUnauthorized(exchange, "Invalid or expired access token");
             }
 
-            ServerHttpRequest mutatedRequest = strippedRequest.mutate()
+            ServerHttpRequest.Builder requestBuilder = strippedRequest.mutate()
                     .header("X-User-Id", userId)
-                    .header("X-User-Email", email)
-                    .build();
+                    .header("X-User-Email", email);
+            if (role != null && !role.isBlank()) {
+                requestBuilder.header("X-User-Role", role);
+            }
+            ServerHttpRequest mutatedRequest = requestBuilder.build();
 
             String targetService = routeService.resolveTargetService(path);
             gatewayMetrics.incrementRequestsRouted(targetService);

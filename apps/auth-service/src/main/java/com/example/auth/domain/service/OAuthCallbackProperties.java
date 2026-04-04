@@ -6,5 +6,5 @@ public interface OAuthCallbackProperties {
 
     List<String> allowedCallbackUrls();
 
-    String googleRedirectUri();
+    String redirectUriFor(String provider);
 }

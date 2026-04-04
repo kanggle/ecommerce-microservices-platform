@@ -1,10 +1,10 @@
 package com.example.auth.presentation.controller;
 
 import com.example.auth.application.dto.LoginResult;
+import com.example.auth.application.dto.OAuthCallbackResult;
 import com.example.auth.application.dto.OAuthLoginCommand;
 import com.example.auth.application.exception.OAuthUpstreamException;
-import com.example.auth.application.service.GoogleOAuthService;
-import com.example.auth.application.service.GoogleOAuthService.CallbackResult;
+import com.example.auth.application.service.OAuthService;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -23,31 +23,33 @@ import java.util.Optional;
 @RequiredArgsConstructor
 public class OAuthController {
 
-    private final GoogleOAuthService googleOAuthService;
+    private final OAuthService oauthService;
 
-    @GetMapping("/google")
-    public ResponseEntity<Void> initiateGoogleLogin(
+    @GetMapping("/{provider}")
+    public ResponseEntity<Void> initiateLogin(
+            @PathVariable String provider,
             @RequestParam String callbackUrl) {
 
-        String authorizationUrl = googleOAuthService.buildAuthorizationUrl(callbackUrl);
+        String authorizationUrl = oauthService.buildAuthorizationUrl(provider, callbackUrl);
 
         return ResponseEntity.status(HttpStatus.FOUND)
             .location(URI.create(authorizationUrl))
             .build();
     }
 
-    @GetMapping("/google/callback")
-    public void handleGoogleCallback(
+    @GetMapping("/{provider}/callback")
+    public void handleCallback(
+            @PathVariable String provider,
             @RequestParam(required = false) String code,
             @RequestParam(required = false) String state,
             @RequestParam(required = false) String error,
             HttpServletResponse response) throws IOException {
 
         if (error != null) {
-            log.warn("Google OAuth callback error: error={}, state={}", error,
+            log.warn("{} OAuth callback error: error={}, state={}", provider, error,
                 state != null ? "[present]" : null);
 
-            Optional<String> callbackUrlOpt = googleOAuthService.resolveCallbackUrl(state);
+            Optional<String> callbackUrlOpt = oauthService.resolveCallbackUrl(state);
             if (callbackUrlOpt.isPresent()) {
                 String redirectUrl = UriComponentsBuilder.fromUriString(callbackUrlOpt.get())
                     .queryParam("error", "oauth_failed")
@@ -62,18 +64,18 @@ public class OAuthController {
         }
 
         if (code == null || state == null) {
-            log.warn("Google OAuth callback missing parameters: code={}, state={}",
+            log.warn("{} OAuth callback missing parameters: code={}, state={}", provider,
                 code != null ? "[present]" : null, state != null ? "[present]" : null);
             response.sendError(HttpServletResponse.SC_BAD_REQUEST, "OAuth callback missing required parameters");
             return;
         }
 
         OAuthLoginCommand command = new OAuthLoginCommand(code, state);
-        CallbackResult result;
+        OAuthCallbackResult result;
         try {
-            result = googleOAuthService.handleCallback(command);
+            result = oauthService.handleCallback(provider, command);
         } catch (OAuthUpstreamException e) {
-            log.error("Google OAuth upstream error during callback", e);
+            log.error("{} OAuth upstream error during callback", provider, e);
             if (e.getCallbackUrl() != null) {
                 String redirectUrl = UriComponentsBuilder.fromUriString(e.getCallbackUrl())
                     .queryParam("error", "oauth_failed")

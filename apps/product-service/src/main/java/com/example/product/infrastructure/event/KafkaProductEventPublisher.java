@@ -5,11 +5,13 @@ import com.example.product.domain.event.ProductEventPublisher;
 import com.example.product.infrastructure.metrics.ProductMetrics;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.context.annotation.Profile;
 import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.stereotype.Component;
 
 @Slf4j
 @Component
+@Profile("!standalone")
 @RequiredArgsConstructor
 public class KafkaProductEventPublisher implements ProductEventPublisher {
 

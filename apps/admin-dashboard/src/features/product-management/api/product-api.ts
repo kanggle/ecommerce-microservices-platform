@@ -43,3 +43,22 @@ export async function adjustStock(
 ): Promise<StockAdjustmentResponse> {
   return productApi.adjustStock(productId, data);
 }
+
+export async function addVariant(
+  productId: string,
+  data: { optionName: string; stock: number; additionalPrice: number },
+) {
+  return productApi.addVariant(productId, data);
+}
+
+export async function updateVariant(
+  productId: string,
+  variantId: string,
+  data: { optionName: string; additionalPrice: number },
+) {
+  return productApi.updateVariant(productId, variantId, data);
+}
+
+export async function deleteVariant(productId: string, variantId: string) {
+  return productApi.deleteVariant(productId, variantId);
+}

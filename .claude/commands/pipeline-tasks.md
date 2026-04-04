@@ -23,11 +23,11 @@ Run the full task lifecycle: implement all tasks in `tasks/ready/`, then review 
 
 ```
 Main context (coordinate only)
-  ├─ Phase 1: Implement  (/implement-all-tasks)
+  ├─ Phase 1: Implement  (/implement-task)
   │    ├─ Discovery → Analysis → Dependencies → Plan
   │    ├─ Execute via worktree-isolated subagents (parallel/sequential rounds)
   │    └─ Merge completed branches → tasks move to review/
-  ├─ Phase 2: Review  (/review-all-tasks)
+  ├─ Phase 2: Review  (/review-task)
   │    ├─ Discovery (tasks/review/)
   │    ├─ Execute via worktree-isolated subagents (all parallel)
   │    └─ Merge → approved tasks move to done/, fix tasks created in ready/
@@ -40,7 +40,7 @@ Main context never reads specs, skills, or source code directly — subagents do
 
 ### Phase 1: Implement
 
-Follow the full `/implement-all-tasks` procedure:
+Follow the full `/implement-task` batch mode procedure:
 
 1. Read `CLAUDE.md`
 2. List all task files in `tasks/ready/` (exclude `.gitkeep`)
@@ -51,7 +51,7 @@ Follow the full `/implement-all-tasks` procedure:
 7. Resolve dependencies: build dependency graph, output topological ordering in execution rounds
 8. Present execution plan
 9. If `--dry-run`, show plan and continue to Phase 2 dry-run (do not execute)
-10. Execute via worktree-isolated subagents following `/implement-all-tasks` Phase 5 rules:
+10. Execute via worktree-isolated subagents following `/implement-task` batch mode Phase 5 rules:
     - Parallel rounds for independent tasks, `subagent_type` per task type (`"backend-engineer"` / `"frontend-engineer"`)
     - Sequential rounds for dependent tasks
     - Merge worktree branches between rounds
@@ -60,13 +60,13 @@ Follow the full `/implement-all-tasks` procedure:
 
 ### Phase 2: Review
 
-After Phase 1 completes, follow the full `/review-all-tasks` procedure:
+After Phase 1 completes, follow the full `/review-task` batch mode procedure:
 
 1. List all task files in `tasks/review/` (includes tasks from Phase 1 + any pre-existing review tasks)
 2. If argument is a service name, filter to tasks matching that Target Service
 3. If no tasks found, skip to Phase 3
 4. If `--dry-run`, show review targets and skip to Phase 3
-5. Launch all review agents in parallel with `isolation: "worktree"` and `subagent_type: "code-reviewer"` following `/review-all-tasks` Phase 2 rules:
+5. Launch all review agents in parallel with `isolation: "worktree"` and `subagent_type: "code-reviewer"` following `/review-task` batch mode rules:
     - Each agent reviews one task against specs, architecture, code quality, and testing checklists
     - No issues → move to `tasks/done/`
     - Issues found → create fix task in `tasks/ready/`, move original to `tasks/done/`

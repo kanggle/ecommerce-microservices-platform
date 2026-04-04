@@ -10,6 +10,9 @@ public record PaymentDetailResponse(
         String userId,
         long amount,
         String status,
+        String paymentKey,
+        String paymentMethod,
+        String receiptUrl,
         LocalDateTime createdAt,
         LocalDateTime paidAt,
         LocalDateTime refundedAt
@@ -21,6 +24,9 @@ public record PaymentDetailResponse(
                 payment.getUserId(),
                 payment.getAmount(),
                 payment.getStatus().name(),
+                payment.getPaymentKey(),
+                payment.getPaymentMethod(),
+                payment.getReceiptUrl(),
                 payment.getCreatedAt(),
                 payment.getPaidAt(),
                 payment.getRefundedAt()

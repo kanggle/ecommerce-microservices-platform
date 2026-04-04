@@ -126,10 +126,6 @@ public class RefreshTokenService {
         log.info("Token rotated: userId={}", userId);
         authMetrics.incrementTokenRefreshSuccess();
         auditLogService.recordTokenRefresh(userId, email, command.ipAddress(), command.userAgent());
-        try {
-            eventPublisher.publish(AuthEvent.of(new TokenRefreshed(userId, newRefreshToken)));
-        } catch (Exception e) {
-            log.error("Event publishing failed: TokenRefreshed, userId={}", userId, e);
-        }
+        eventPublisher.publish(AuthEvent.of(new TokenRefreshed(userId, newRefreshToken)));
     }
 }

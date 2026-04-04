@@ -63,6 +63,11 @@ app:
       payment-completed: payment.payment.completed
       payment-refunded: payment.payment.refunded
 
+toss:
+  payments:
+    secret-key: ${TOSS_PAYMENTS_SECRET_KEY:test_sk_placeholder}
+    base-url: ${TOSS_PAYMENTS_BASE_URL:https://api.tosspayments.com}
+
 logging:
   level:
     com.example.payment: INFO

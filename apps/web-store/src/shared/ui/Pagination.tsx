@@ -1,7 +1,23 @@
 'use client';
 
 import Link from 'next/link';
-import { buildPageNumbers } from '@repo/utils';
+type PageItem = number | '...';
+
+function buildPageNumbers(current: number, total: number): PageItem[] {
+  if (total <= 0) return [];
+  if (total < 10) return Array.from({ length: total }, (_, i) => i);
+  const pages = new Set<number>([0, total - 1]);
+  for (let i = current - 2; i <= current + 2; i++) {
+    if (i >= 0 && i < total) pages.add(i);
+  }
+  const sorted = [...pages].sort((a, b) => a - b);
+  const result: PageItem[] = [];
+  for (let i = 0; i < sorted.length; i++) {
+    if (i > 0 && sorted[i] - sorted[i - 1] > 1) result.push('...');
+    result.push(sorted[i]);
+  }
+  return result;
+}
 
 interface PaginationProps {
   currentPage: number;

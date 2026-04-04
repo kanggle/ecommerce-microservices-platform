@@ -53,7 +53,7 @@ describe('AddToCartButton', () => {
     expect(screen.getByText('품절')).toBeDisabled();
   });
 
-  it('클릭 시 담았습니다 텍스트를 표시한다', async () => {
+  it('클릭 시 장바구니 추가 토스트를 표시한다', async () => {
     const user = userEvent.setup();
     renderWithCart(
       <AddToCartButton
@@ -67,7 +67,7 @@ describe('AddToCartButton', () => {
 
     await user.click(screen.getByText('장바구니 담기'));
 
-    expect(screen.getByText('담았습니다')).toBeInTheDocument();
+    expect(screen.getByText('장바구니에 추가되었습니다.')).toBeInTheDocument();
   });
 });
 

@@ -4,7 +4,8 @@ import Link from 'next/link';
 import type { OrderDetail, PaymentResponse } from '@repo/types';
 import { OrderStatusBadge } from '@/entities/order';
 import { PaymentStatusBadge } from '@/entities/payment';
-import { LoadingSpinner, ErrorMessage } from '@repo/ui';
+import { ErrorMessage } from '@repo/ui';
+import { Skeleton } from '@/shared/ui/Skeleton';
 import { maskPhone } from '@/shared/lib/mask-phone';
 import { useOrderDetail, CANCELLABLE_STATUSES } from '../model/use-order-detail';
 
@@ -26,7 +27,50 @@ export function OrderDetailView({ orderId }: Props) {
 
   return (
     <main className="container" style={{ maxWidth: '800px', paddingTop: 'var(--space-8)', paddingBottom: 'var(--space-16)' }}>
-      {isLoading && <LoadingSpinner />}
+      {isLoading && (
+        <div>
+          <Skeleton width="80px" height="14px" borderRadius="var(--radius-sm)" />
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginTop: 'var(--space-4)', marginBottom: 'var(--space-8)' }}>
+            <Skeleton width="120px" height="28px" />
+            <Skeleton width="72px" height="24px" borderRadius="var(--radius-full)" />
+          </div>
+
+          <section style={{ marginBottom: 'var(--space-8)' }}>
+            <Skeleton width="100px" height="18px" />
+            {Array.from({ length: 3 }).map((_, i) => (
+              <div key={i} style={{ display: 'flex', justifyContent: 'space-between', padding: 'var(--space-2) 0', borderBottom: '1px solid var(--color-border-light)' }}>
+                <Skeleton width="60%" height="14px" />
+                <Skeleton width="80px" height="14px" />
+              </div>
+            ))}
+            <div style={{ textAlign: 'right', marginTop: 'var(--space-2)' }}>
+              <Skeleton width="140px" height="18px" borderRadius="var(--radius-sm)" />
+            </div>
+          </section>
+
+          <section style={{ marginBottom: 'var(--space-8)' }}>
+            <Skeleton width="110px" height="18px" />
+            <div style={{ marginTop: 'var(--space-2)', display: 'flex', flexDirection: 'column', gap: 'var(--space-1)' }}>
+              <Skeleton width="80px" height="14px" />
+              <Skeleton width="120px" height="14px" />
+              <Skeleton width="70%" height="14px" />
+            </div>
+          </section>
+
+          <section style={{ marginBottom: 'var(--space-8)' }}>
+            <Skeleton width="100px" height="18px" />
+            <div style={{ marginTop: 'var(--space-2)', display: 'flex', flexDirection: 'column', gap: 'var(--space-1)' }}>
+              <Skeleton width="140px" height="14px" />
+              <Skeleton width="120px" height="14px" />
+            </div>
+          </section>
+
+          <div style={{ display: 'flex', flexDirection: 'column', gap: 'var(--space-1)' }}>
+            <Skeleton width="180px" height="12px" />
+            <Skeleton width="200px" height="12px" />
+          </div>
+        </div>
+      )}
       {error && <ErrorMessage message={error} onRetry={retryLoad} />}
 
       {order && (
@@ -47,11 +91,11 @@ export function OrderDetailView({ orderId }: Props) {
                 style={{ display: 'flex', justifyContent: 'space-between', padding: 'var(--space-2) 0', borderBottom: '1px solid var(--color-border-light)' }}
               >
                 <span>{item.productName} ({item.optionName}) × {item.quantity}</span>
-                <span className="price">{(item.unitPrice * item.quantity).toLocaleString()}원</span>
+                <span className="price">{(item.unitPrice * item.quantity).toLocaleString()}<span style={{ fontSize: 'var(--font-size-xs)', fontWeight: 'var(--font-weight-normal)', color: 'var(--color-text-secondary)', marginLeft: '2px' }}>원</span></span>
               </div>
             ))}
             <div style={{ textAlign: 'right', marginTop: 'var(--space-2)', fontWeight: 'var(--font-weight-bold)', fontSize: 'var(--font-size-lg)' }}>
-              합계: {order.totalPrice.toLocaleString()}원
+              합계: {order.totalPrice.toLocaleString()}<span style={{ fontSize: 'var(--font-size-sm)', fontWeight: 'var(--font-weight-normal)', color: 'var(--color-text-secondary)', marginLeft: '2px' }}>원</span>
             </div>
           </section>
 
@@ -76,7 +120,7 @@ export function OrderDetailView({ orderId }: Props) {
                     <PaymentStatusBadge status={payment.status} />
                   </div>
                   <p style={{ margin: 'var(--space-1) 0', color: 'var(--color-text-secondary)' }}>
-                    결제 금액: {payment.amount.toLocaleString()}원
+                    결제 금액: {payment.amount.toLocaleString()}<span style={{ fontSize: 'var(--font-size-xs)', fontWeight: 'var(--font-weight-normal)', color: 'var(--color-text-secondary)', marginLeft: '2px' }}>원</span>
                   </p>
                   {payment.paidAt && (
                     <p style={{ margin: 'var(--space-1) 0', color: 'var(--color-text-secondary)' }}>

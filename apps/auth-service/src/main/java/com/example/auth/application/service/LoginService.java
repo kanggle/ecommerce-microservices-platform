@@ -104,9 +104,8 @@ public class LoginService {
         authMetrics.incrementLoginFailure(metricsReason);
         auditLogService.recordLoginFailure(
             normalizedEmail, command.ipAddress(), command.userAgent(), auditReason);
-        publishEventSafely(
-            AuthEvent.of(new LoginFailed(normalizedEmail, command.ipAddress(), auditReason)),
-            "LoginFailed");
+        eventPublisher.publish(
+            AuthEvent.of(new LoginFailed(normalizedEmail, command.ipAddress(), auditReason)));
         throw new InvalidCredentialsException();
     }
 
@@ -118,23 +117,13 @@ public class LoginService {
         if (sessionResult != null && sessionResult.evictedSessionId() != null) {
             log.info("Session limit exceeded: oldest session evicted, userId={}", user.getId());
             authMetrics.incrementSessionEviction();
-            publishEventSafely(
+            eventPublisher.publish(
                 AuthEvent.of(new SessionLimitExceeded(
-                    user.getId(), sessionResult.evictedSessionId(), sessionResult.newSessionId())),
-                "SessionLimitExceeded");
+                    user.getId(), sessionResult.evictedSessionId(), sessionResult.newSessionId())));
         }
         auditLogService.recordLoginSuccess(
             user.getId(), user.getEmail().value(), command.ipAddress(), command.userAgent());
-        publishEventSafely(
-            AuthEvent.of(new UserLoggedIn(user.getId(), user.getEmail().value(), command.ipAddress(), command.userAgent())),
-            "UserLoggedIn");
-    }
-
-    private void publishEventSafely(AuthEvent event, String eventName) {
-        try {
-            eventPublisher.publish(event);
-        } catch (Exception e) {
-            log.error("Event publishing failed: {}", eventName, e);
-        }
+        eventPublisher.publish(
+            AuthEvent.of(new UserLoggedIn(user.getId(), user.getEmail().value(), command.ipAddress(), command.userAgent())));
     }
 }

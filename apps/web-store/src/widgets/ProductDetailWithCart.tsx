@@ -6,6 +6,7 @@ import { useRouter } from 'next/navigation';
 import type { ProductDetail } from '@repo/types';
 import { ProductImage } from '@/entities/product';
 import { useCart } from '@/features/cart';
+import { Toast } from '@/shared/ui';
 import styles from '@/features/product/ui/ProductDetail.module.css';
 
 interface SelectedItem {
@@ -21,16 +22,9 @@ export function ProductDetailWithCart({ product }: ProductDetailWithCartProps) {
   const router = useRouter();
   const { addItem } = useCart();
   const [selectedItems, setSelectedItems] = useState<SelectedItem[]>([]);
-  const [added, setAdded] = useState(false);
+  const [showToast, setShowToast] = useState(false);
   const [dropdownOpen, setDropdownOpen] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
-  const timerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
-
-  useEffect(() => {
-    return () => {
-      if (timerRef.current) clearTimeout(timerRef.current);
-    };
-  }, []);
 
   useEffect(() => {
     function handleClickOutside(e: MouseEvent) {
@@ -91,12 +85,7 @@ export function ProductDetailWithCart({ product }: ProductDetailWithCartProps) {
         item.quantity,
       );
     }
-    if (timerRef.current) clearTimeout(timerRef.current);
-    setAdded(true);
-    timerRef.current = setTimeout(() => {
-      setAdded(false);
-      timerRef.current = null;
-    }, 1500);
+    setShowToast(true);
     setSelectedItems([]);
   }, [selectedItems, variantMap, addItem, product]);
 
@@ -121,13 +110,13 @@ export function ProductDetailWithCart({ product }: ProductDetailWithCartProps) {
 
   const canAdd = selectedItems.length > 0;
 
-  const cartBtnClass = [
-    styles.cartBtn,
-    added ? styles.cartBtnAdded : '',
-  ].filter(Boolean).join(' ');
+  const clearToast = useCallback(() => setShowToast(false), []);
 
   return (
     <>
+      {showToast && (
+        <Toast message="장바구니에 추가되었습니다." type="success" onClose={clearToast} />
+      )}
       <nav className={styles.breadcrumb}>
         <Link href="/">홈</Link>
         <span className={styles.breadcrumbSep}>&rsaquo;</span>
@@ -266,10 +255,10 @@ export function ProductDetailWithCart({ product }: ProductDetailWithCartProps) {
                 type="button"
                 onClick={handleAddToCart}
                 disabled={!canAdd}
-                className={cartBtnClass}
+                className={styles.cartBtn}
                 style={{ flex: 1 }}
               >
-                {!canAdd ? '옵션을 선택하세요' : added ? '담았습니다' : '장바구니 담기'}
+                {canAdd ? '장바구니 담기' : '옵션을 선택하세요'}
               </button>
               <button
                 type="button"

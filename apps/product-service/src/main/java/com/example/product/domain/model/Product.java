@@ -89,6 +89,26 @@ public class Product {
         this.updatedAt = Instant.now();
     }
 
+    public void updateVariant(UUID variantId, String optionName, Price additionalPrice) {
+        ProductVariant variant = variants.stream()
+                .filter(v -> v.getId().equals(variantId))
+                .findFirst()
+                .orElseThrow(() -> new IllegalArgumentException("Variant not found: " + variantId));
+        variant.updateOption(optionName, additionalPrice);
+        this.updatedAt = Instant.now();
+    }
+
+    public void removeVariant(UUID variantId) {
+        if (variants.size() <= 1) {
+            throw new IllegalStateException("Product must have at least one variant");
+        }
+        boolean removed = variants.removeIf(v -> v.getId().equals(variantId));
+        if (!removed) {
+            throw new IllegalArgumentException("Variant not found: " + variantId);
+        }
+        this.updatedAt = Instant.now();
+    }
+
     public void updateName(String name) {
         validateName(name);
         this.name = name.trim();

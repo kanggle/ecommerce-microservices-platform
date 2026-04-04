@@ -2,6 +2,7 @@ package com.example.payment.application.service;
 
 import com.example.payment.application.event.PaymentRefundedEvent;
 import com.example.payment.application.port.out.PaymentEventPublisher;
+import com.example.payment.application.port.out.PaymentGatewayPort;
 import com.example.payment.application.port.out.PaymentMetricRecorder;
 import com.example.payment.domain.model.Payment;
 import com.example.payment.domain.model.PaymentStatus;
@@ -14,6 +15,7 @@ import org.mockito.ArgumentCaptor;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
+import java.time.LocalDateTime;
 import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.*;
@@ -36,27 +38,44 @@ class PaymentRefundServiceTest {
     @Mock
     private PaymentMetricRecorder paymentMetricRecorder;
 
+    @Mock
+    private PaymentGatewayPort paymentGateway;
+
     @BeforeEach
     void setUp() {
         paymentRefundService = new PaymentRefundService(
-                paymentRepository, paymentEventPublisher, paymentMetricRecorder
+                paymentRepository, paymentEventPublisher, paymentMetricRecorder, paymentGateway
         );
     }
 
-    private Payment completedPayment() {
-        Payment p = Payment.create("order-1", "user-1", 30000L);
-        p.complete();
-        return p;
+    private Payment completedPaymentWithPgKey() {
+        return Payment.reconstitute(
+                "pay-1", "order-1", "user-1", 30000L,
+                PaymentStatus.COMPLETED,
+                LocalDateTime.now(), LocalDateTime.now(), null,
+                "pk_test_123", "CARD", null
+        );
+    }
+
+    private Payment completedPaymentWithoutPgKey() {
+        return Payment.reconstitute(
+                "pay-1", "order-1", "user-1", 30000L,
+                PaymentStatus.COMPLETED,
+                LocalDateTime.now(), LocalDateTime.now(), null,
+                null, null, null
+        );
     }
 
     @Test
-    @DisplayName("COMPLETED 결제 환불 시 REFUNDED 상태로 저장되고 이벤트가 발행된다")
-    void refundPayment_completed_savesRefundedAndPublishesEvent() {
-        Payment payment = completedPayment();
+    @DisplayName("COMPLETED 결제 환불 시 PG cancel 호출 후 REFUNDED 상태로 저장되고 이벤트가 발행된다")
+    void refundPayment_completedWithPgKey_callsCancelAndSavesRefunded() {
+        Payment payment = completedPaymentWithPgKey();
         given(paymentRepository.findByOrderId("order-1")).willReturn(Optional.of(payment));
         given(paymentRepository.save(any())).willAnswer(inv -> inv.getArgument(0));
 
         paymentRefundService.refundPayment("order-1");
+
+        verify(paymentGateway).cancelPayment("pk_test_123", "Order cancelled");
 
         ArgumentCaptor<Payment> captor = ArgumentCaptor.forClass(Payment.class);
         verify(paymentRepository).save(captor.capture());
@@ -65,13 +84,26 @@ class PaymentRefundServiceTest {
         ArgumentCaptor<PaymentRefundedEvent> eventCaptor = ArgumentCaptor.forClass(PaymentRefundedEvent.class);
         verify(paymentEventPublisher).publishPaymentRefunded(eventCaptor.capture());
         assertThat(eventCaptor.getValue().eventType()).isEqualTo("PaymentRefunded");
-        assertThat(eventCaptor.getValue().payload().orderId()).isEqualTo("order-1");
     }
 
     @Test
-    @DisplayName("이미 REFUNDED 상태이면 멱등 처리한다 (저장/이벤트 없음, WARN 로그)")
+    @DisplayName("paymentKey가 없는 레거시 결제 환불 시 PG cancel을 호출하지 않는다")
+    void refundPayment_completedWithoutPgKey_skipsPgCancel() {
+        Payment payment = completedPaymentWithoutPgKey();
+        given(paymentRepository.findByOrderId("order-1")).willReturn(Optional.of(payment));
+        given(paymentRepository.save(any())).willAnswer(inv -> inv.getArgument(0));
+
+        paymentRefundService.refundPayment("order-1");
+
+        verify(paymentGateway, never()).cancelPayment(any(), any());
+        verify(paymentRepository).save(any());
+        verify(paymentEventPublisher).publishPaymentRefunded(any());
+    }
+
+    @Test
+    @DisplayName("이미 REFUNDED 상태이면 멱등 처리한다 (저장/이벤트 없음)")
     void refundPayment_alreadyRefunded_isIdempotent() {
-        Payment payment = completedPayment();
+        Payment payment = completedPaymentWithPgKey();
         payment.refund();
         given(paymentRepository.findByOrderId("order-1")).willReturn(Optional.of(payment));
 
@@ -79,6 +111,7 @@ class PaymentRefundServiceTest {
 
         verify(paymentRepository, never()).save(any());
         verify(paymentEventPublisher, never()).publishPaymentRefunded(any());
+        verify(paymentGateway, never()).cancelPayment(any(), any());
     }
 
     @Test

@@ -1,6 +1,8 @@
 package com.example.payment.application.service;
 
 import com.example.payment.application.port.out.PaymentEventPublisher;
+import com.example.payment.application.port.out.PaymentGatewayConfirmResult;
+import com.example.payment.application.port.out.PaymentGatewayPort;
 import com.example.payment.domain.model.Payment;
 import com.example.payment.application.port.out.PaymentRepository;
 import com.example.payment.adapter.out.metrics.PaymentMetrics;
@@ -31,17 +33,23 @@ class PaymentTopicConfigTest {
     @Mock
     private PaymentMetrics paymentMetrics;
 
+    @Mock
+    private PaymentGatewayPort paymentGateway;
+
     @Test
-    @DisplayName("PaymentProcessingService는 PaymentEventPublisher.publishPaymentCompleted를 호출한다")
-    void processPayment_delegatesToEventPublisher() {
-        PaymentProcessingService service = new PaymentProcessingService(
-                paymentRepository, paymentEventPublisher, paymentMetrics
+    @DisplayName("PaymentConfirmService는 PaymentEventPublisher.publishPaymentCompleted를 호출한다")
+    void confirmPayment_delegatesToEventPublisher() {
+        PaymentConfirmService service = new PaymentConfirmService(
+                paymentRepository, paymentGateway, paymentEventPublisher, paymentMetrics
         );
 
-        given(paymentRepository.findByOrderId("order-1")).willReturn(Optional.empty());
+        Payment payment = Payment.create("order-1", "user-1", 10000L);
+        given(paymentRepository.findByOrderId("order-1")).willReturn(Optional.of(payment));
+        given(paymentGateway.confirmPayment("pk_test", "order-1", 10000L))
+                .willReturn(new PaymentGatewayConfirmResult("CARD", null));
         given(paymentRepository.save(any())).willAnswer(inv -> inv.getArgument(0));
 
-        service.processPayment("order-1", "user-1", 10000L);
+        service.confirm("user-1", "pk_test", "order-1", 10000L);
 
         ArgumentCaptor<com.example.payment.application.event.PaymentCompletedEvent> captor =
                 ArgumentCaptor.forClass(com.example.payment.application.event.PaymentCompletedEvent.class);
@@ -53,11 +61,11 @@ class PaymentTopicConfigTest {
     @DisplayName("PaymentRefundService는 PaymentEventPublisher.publishPaymentRefunded를 호출한다")
     void refundPayment_delegatesToEventPublisher() {
         PaymentRefundService service = new PaymentRefundService(
-                paymentRepository, paymentEventPublisher, paymentMetrics
+                paymentRepository, paymentEventPublisher, paymentMetrics, paymentGateway
         );
 
         Payment payment = Payment.create("order-1", "user-1", 10000L);
-        payment.complete();
+        payment.confirm("pk_test", "CARD", null);
         given(paymentRepository.findByOrderId("order-1")).willReturn(Optional.of(payment));
         given(paymentRepository.save(any())).willAnswer(inv -> inv.getArgument(0));
 

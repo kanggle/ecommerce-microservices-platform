@@ -35,5 +35,20 @@ export function createProductApi(client: ApiClient) {
         `/api/admin/products/${productId}/stock`,
         data,
       ),
+
+    addVariant: (productId: string, data: { optionName: string; stock: number; additionalPrice: number }) =>
+      client.post<{ id: string; optionName: string; stock: number; additionalPrice: number }>(
+        `/api/admin/products/${productId}/variants`,
+        data,
+      ),
+
+    updateVariant: (productId: string, variantId: string, data: { optionName: string; additionalPrice: number }) =>
+      client.patch<{ id: string; optionName: string; stock: number; additionalPrice: number }>(
+        `/api/admin/products/${productId}/variants/${variantId}`,
+        data,
+      ),
+
+    deleteVariant: (productId: string, variantId: string) =>
+      client.delete<void>(`/api/admin/products/${productId}/variants/${variantId}`),
   };
 }

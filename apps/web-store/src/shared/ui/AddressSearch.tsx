@@ -14,15 +14,20 @@ interface AddressSearchProps {
   onSelect: (data: { zipCode: string; address1: string }) => void;
 }
 
+function isDaumLoaded(): boolean {
+  return typeof window !== 'undefined' && !!(window as any).daum?.Postcode;
+}
+
 export function AddressSearch({ onSelect }: AddressSearchProps) {
   const [open, setOpen] = useState(false);
-  const [scriptLoaded, setScriptLoaded] = useState(false);
+  const [scriptLoaded, setScriptLoaded] = useState(isDaumLoaded);
   const embedRef = useRef<HTMLDivElement>(null);
   const onSelectRef = useRef(onSelect);
   onSelectRef.current = onSelect;
 
   const handleOpen = useCallback(() => {
-    if (scriptLoaded) {
+    if (scriptLoaded || isDaumLoaded()) {
+      setScriptLoaded(true);
       setOpen(true);
     }
   }, [scriptLoaded]);

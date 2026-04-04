@@ -51,6 +51,15 @@ public class ProductVariant {
         this.productId = productId;
     }
 
+    public void updateOption(String optionName, Price additionalPrice) {
+        validateOptionName(optionName);
+        if (additionalPrice == null) {
+            throw new IllegalArgumentException("Additional price must not be null");
+        }
+        this.optionName = optionName.trim();
+        this.additionalPrice = additionalPrice;
+    }
+
     private static void validateOptionName(String optionName) {
         if (optionName == null || optionName.isBlank()) {
             throw new IllegalArgumentException("Option name must not be blank");

@@ -23,10 +23,68 @@ class PaymentTest {
         assertThat(payment.getStatus()).isEqualTo(PaymentStatus.PENDING);
         assertThat(payment.getPaidAt()).isNull();
         assertThat(payment.getRefundedAt()).isNull();
+        assertThat(payment.getPaymentKey()).isNull();
+        assertThat(payment.getPaymentMethod()).isNull();
+        assertThat(payment.getReceiptUrl()).isNull();
     }
 
     @Test
-    @DisplayName("PENDING 상태에서 complete 호출 시 COMPLETED로 전이된다")
+    @DisplayName("PENDING 상태에서 confirm 호출 시 COMPLETED로 전이되고 PG 필드가 설정된다")
+    void confirm_pendingPayment_becomesCompletedWithPgFields() {
+        Payment payment = Payment.create("order-1", "user-1", 30000L);
+
+        payment.confirm("pk_test_123", "CARD", "https://receipt.url");
+
+        assertThat(payment.getStatus()).isEqualTo(PaymentStatus.COMPLETED);
+        assertThat(payment.getPaidAt()).isNotNull();
+        assertThat(payment.getPaymentKey()).isEqualTo("pk_test_123");
+        assertThat(payment.getPaymentMethod()).isEqualTo("CARD");
+        assertThat(payment.getReceiptUrl()).isEqualTo("https://receipt.url");
+    }
+
+    @Test
+    @DisplayName("COMPLETED 상태에서 confirm 호출 시 예외가 발생한다")
+    void confirm_completedPayment_throwsException() {
+        Payment payment = Payment.create("order-1", "user-1", 30000L);
+        payment.confirm("pk_test_123", "CARD", null);
+
+        assertThatThrownBy(() -> payment.confirm("pk_test_456", "CARD", null))
+                .isInstanceOf(InvalidPaymentException.class);
+    }
+
+    @Test
+    @DisplayName("PENDING 상태에서 fail 호출 시 FAILED로 전이된다")
+    void fail_pendingPayment_becomesFailed() {
+        Payment payment = Payment.create("order-1", "user-1", 30000L);
+
+        payment.fail();
+
+        assertThat(payment.getStatus()).isEqualTo(PaymentStatus.FAILED);
+    }
+
+    @Test
+    @DisplayName("COMPLETED 상태에서 fail 호출 시 예외가 발생한다")
+    void fail_completedPayment_throwsException() {
+        Payment payment = Payment.create("order-1", "user-1", 30000L);
+        payment.confirm("pk_test_123", "CARD", null);
+
+        assertThatThrownBy(payment::fail)
+                .isInstanceOf(InvalidPaymentException.class);
+    }
+
+    @Test
+    @DisplayName("FAILED 상태에서 confirm 호출 시 예외가 발생한다")
+    void confirm_failedPayment_throwsException() {
+        Payment payment = Payment.create("order-1", "user-1", 30000L);
+        payment.fail();
+
+        assertThatThrownBy(() -> payment.confirm("pk_test_123", "CARD", null))
+                .isInstanceOf(InvalidPaymentException.class);
+    }
+
+    @SuppressWarnings("deprecation")
+    @Test
+    @DisplayName("PENDING 상태에서 complete 호출 시 COMPLETED로 전이된다 (레거시 호환)")
     void complete_pendingPayment_becomesCompleted() {
         Payment payment = Payment.create("order-1", "user-1", 30000L);
 
@@ -36,6 +94,7 @@ class PaymentTest {
         assertThat(payment.getPaidAt()).isNotNull();
     }
 
+    @SuppressWarnings("deprecation")
     @Test
     @DisplayName("COMPLETED 상태에서 complete 호출 시 멱등 처리된다")
     void complete_alreadyCompleted_isIdempotent() {
@@ -46,11 +105,11 @@ class PaymentTest {
         assertThat(payment.getStatus()).isEqualTo(PaymentStatus.COMPLETED);
     }
 
+    @SuppressWarnings("deprecation")
     @Test
-    @DisplayName("FAILED 상태에서 complete 호출 시 예외가 발생한다")
-    void complete_failedPayment_throwsInvalidPaymentException() {
+    @DisplayName("REFUNDED 상태에서 complete 호출 시 예외가 발생한다")
+    void complete_refundedPayment_throwsInvalidPaymentException() {
         Payment payment = Payment.create("order-1", "user-1", 30000L);
-        // FAILED 상태로 강제 전이할 방법이 없으므로 REFUNDED 이후 complete 시도
         payment.complete();
         payment.refund();
 
@@ -62,7 +121,7 @@ class PaymentTest {
     @DisplayName("COMPLETED 상태에서 refund 호출 시 REFUNDED로 전이된다")
     void refund_completedPayment_becomesRefunded() {
         Payment payment = Payment.create("order-1", "user-1", 30000L);
-        payment.complete();
+        payment.confirm("pk_test_123", "CARD", null);
 
         payment.refund();
 
@@ -74,7 +133,7 @@ class PaymentTest {
     @DisplayName("REFUNDED 상태에서 refund 호출 시 멱등 처리된다")
     void refund_alreadyRefunded_isIdempotent() {
         Payment payment = Payment.create("order-1", "user-1", 30000L);
-        payment.complete();
+        payment.confirm("pk_test_123", "CARD", null);
         payment.refund();
         LocalDateTime firstRefundedAt = payment.getRefundedAt();
 
@@ -98,7 +157,8 @@ class PaymentTest {
         LocalDateTime now = LocalDateTime.now();
         Payment payment = Payment.reconstitute(
                 "pay-1", "order-1", "user-1", 50000L,
-                PaymentStatus.COMPLETED, now, now.plusMinutes(1), null
+                PaymentStatus.COMPLETED, now, now.plusMinutes(1), null,
+                "pk_test_123", "CARD", "https://receipt.url"
         );
 
         assertThat(payment.getPaymentId()).isEqualTo("pay-1");
@@ -109,6 +169,9 @@ class PaymentTest {
         assertThat(payment.getCreatedAt()).isEqualTo(now);
         assertThat(payment.getPaidAt()).isEqualTo(now.plusMinutes(1));
         assertThat(payment.getRefundedAt()).isNull();
+        assertThat(payment.getPaymentKey()).isEqualTo("pk_test_123");
+        assertThat(payment.getPaymentMethod()).isEqualTo("CARD");
+        assertThat(payment.getReceiptUrl()).isEqualTo("https://receipt.url");
     }
 
     @Test

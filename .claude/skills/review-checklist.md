@@ -1,7 +1,7 @@
 # Review Checklist
 
 Standard review checklist for task implementation verification.
-All review commands (`review-task`, `review-all-tasks`) must use this checklist as the single source of truth.
+All review commands (`review-task`) must use this checklist as the single source of truth.
 
 ## Prerequisite Specs
 
