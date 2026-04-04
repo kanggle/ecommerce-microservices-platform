@@ -22,10 +22,23 @@ export function OrderCard({ order }: OrderCardProps) {
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
         <div>
           <p style={{ margin: '0 0 var(--space-1)', fontSize: 'var(--font-size-xs)', color: 'var(--color-text-secondary)' }}>
-            {new Date(order.createdAt).toLocaleDateString('ko-KR')}
+            {new Date(order.createdAt).toLocaleString('ko-KR')}
           </p>
-          <p style={{ margin: 0, fontWeight: 'var(--font-weight-bold)', fontSize: 'var(--font-size-sm)' }}>
-            {order.totalPrice.toLocaleString()}원 &middot; {order.itemCount}개 상품
+          {order.firstItemName && (
+            <p style={{
+              margin: '0 0 var(--space-1)',
+              fontSize: 'var(--font-size-sm)',
+              fontWeight: 'var(--font-weight-semibold)',
+              overflow: 'hidden',
+              textOverflow: 'ellipsis',
+              whiteSpace: 'nowrap',
+              maxWidth: '280px',
+            }}>
+              {order.firstItemName}{order.itemCount > 1 ? ` 외 ${order.itemCount - 1}건` : ''}
+            </p>
+          )}
+          <p style={{ margin: 0, fontSize: 'var(--font-size-sm)', color: 'var(--color-text-secondary)' }}>
+            {order.totalPrice.toLocaleString()}원
           </p>
         </div>
         <OrderStatusBadge status={order.status} />

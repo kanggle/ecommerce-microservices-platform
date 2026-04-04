@@ -14,6 +14,22 @@ vi.mock('@/features/checkout/api/place-order', () => ({
   submitOrder: vi.fn(),
 }));
 
+vi.mock('@/entities/user', () => ({
+  getMyAddresses: vi.fn().mockResolvedValue({ addresses: [] }),
+}));
+
+vi.mock('@/shared/ui/AddressSearch', () => ({
+  AddressSearch: ({ onSelect }: { onSelect: (data: { zipCode: string; address1: string }) => void }) => (
+    <button type="button" onClick={() => onSelect({ zipCode: '12345', address1: '서울시 강남구' })}>
+      주소 검색
+    </button>
+  ),
+}));
+
+vi.mock('@/shared/ui/Skeleton', () => ({
+  Skeleton: () => null,
+}));
+
 import { submitOrder } from '@/features/checkout/api/place-order';
 const mockSubmitOrder = vi.mocked(submitOrder);
 
@@ -41,10 +57,12 @@ function renderCheckoutForm(items = CART_ITEMS, totalAmount = 1500000) {
 }
 
 async function fillRequiredFields(user: ReturnType<typeof userEvent.setup>) {
+  await waitFor(() => {
+    expect(screen.getByLabelText('수령인')).toBeInTheDocument();
+  });
   await user.type(screen.getByLabelText('수령인'), '홍길동');
   await user.type(screen.getByLabelText('전화번호'), '010-1234-5678');
-  await user.type(screen.getByLabelText('우편번호'), '12345');
-  await user.type(screen.getByLabelText('주소'), '서울시 강남구');
+  await user.click(screen.getByRole('button', { name: '주소 검색' }));
 }
 
 describe('CheckoutForm', () => {
@@ -52,22 +70,26 @@ describe('CheckoutForm', () => {
     vi.clearAllMocks();
   });
 
-  it('주문 상품 정보를 표시한다', () => {
+  it('주문 상품 정보를 표시한다', async () => {
     renderCheckoutForm();
 
-    expect(screen.getByText(/노트북/)).toBeInTheDocument();
-    const priceElements = screen.getAllByText(/1,500,000원/);
+    await waitFor(() => {
+      expect(screen.getByText(/노트북/)).toBeInTheDocument();
+    });
+    const priceElements = screen.getAllByText(/1,500,000/);
     expect(priceElements.length).toBeGreaterThanOrEqual(1);
   });
 
-  it('배송지 입력 필드를 표시한다', () => {
+  it('배송지 입력 필드를 표시한다', async () => {
     renderCheckoutForm();
 
-    expect(screen.getByLabelText('수령인')).toBeInTheDocument();
+    await waitFor(() => {
+      expect(screen.getByLabelText('수령인')).toBeInTheDocument();
+    });
     expect(screen.getByLabelText('전화번호')).toBeInTheDocument();
-    expect(screen.getByLabelText('우편번호')).toBeInTheDocument();
-    expect(screen.getByLabelText('주소')).toBeInTheDocument();
-    expect(screen.getByLabelText('상세주소')).toBeInTheDocument();
+    expect(screen.getByPlaceholderText('주소 검색을 눌러주세요')).toBeInTheDocument();
+    expect(screen.getByPlaceholderText('우편번호')).toBeInTheDocument();
+    expect(screen.getByPlaceholderText('상세주소 입력')).toBeInTheDocument();
   });
 
   it('필수 필드가 비어있으면 결제 버튼이 비활성화된다', () => {
@@ -87,7 +109,7 @@ describe('CheckoutForm', () => {
     expect(button).toBeEnabled();
   });
 
-  it('주문 성공 시 주문 상세 페이지로 이동한다', async () => {
+  it('주문 성공 시 결제 페이지로 이동한다', async () => {
     mockSubmitOrder.mockResolvedValueOnce({ orderId: 'order-1' });
 
     const user = userEvent.setup();
@@ -97,7 +119,9 @@ describe('CheckoutForm', () => {
     await user.click(screen.getByRole('button', { name: /결제하기/ }));
 
     await waitFor(() => {
-      expect(mockPush).toHaveBeenCalledWith('/orders/order-1');
+      expect(mockPush).toHaveBeenCalledWith(
+        expect.stringContaining('/checkout/payment?orderId=order-1'),
+      );
     });
   });
 
@@ -122,7 +146,7 @@ describe('CheckoutForm', () => {
     renderCheckoutForm();
 
     await fillRequiredFields(user);
-    await user.type(screen.getByLabelText('상세주소'), '101호');
+    await user.type(screen.getByPlaceholderText('상세주소 입력'), '101호');
     await user.click(screen.getByRole('button', { name: /결제하기/ }));
 
     await waitFor(() => {
@@ -186,13 +210,15 @@ describe('CheckoutForm', () => {
     const button = screen.getByRole('button', { name: /결제하기/ });
     await user.click(button);
 
-    expect(screen.getByRole('button', { name: /주문 처리 중/ })).toBeDisabled();
+    expect(screen.getByRole('button', { name: /결제 진행 중/ })).toBeDisabled();
     expect(mockSubmitOrder).toHaveBeenCalledTimes(1);
 
     resolveOrder!({ orderId: 'order-1' });
 
     await waitFor(() => {
-      expect(mockPush).toHaveBeenCalledWith('/orders/order-1');
+      expect(mockPush).toHaveBeenCalledWith(
+        expect.stringContaining('/checkout/payment?orderId=order-1'),
+      );
     });
   });
 

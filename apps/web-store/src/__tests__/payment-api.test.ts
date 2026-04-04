@@ -1,7 +1,8 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 
-const { mockGetPayment } = vi.hoisted(() => ({
+const { mockGetPayment, mockConfirmPayment } = vi.hoisted(() => ({
   mockGetPayment: vi.fn(),
+  mockConfirmPayment: vi.fn(),
 }));
 
 vi.mock('@/shared/config/api', () => ({
@@ -11,10 +12,11 @@ vi.mock('@/shared/config/api', () => ({
 vi.mock('@repo/api-client', () => ({
   createPaymentApi: vi.fn(() => ({
     getPayment: mockGetPayment,
+    confirmPayment: mockConfirmPayment,
   })),
 }));
 
-import { getPayment } from '@/entities/payment/api/payment-api';
+import { getPayment, confirmPayment } from '@/entities/payment/api/payment-api';
 
 describe('payment-api', () => {
   beforeEach(() => {
@@ -53,6 +55,42 @@ describe('payment-api', () => {
       mockGetPayment.mockRejectedValueOnce(error);
 
       await expect(getPayment('order-1')).rejects.toEqual(error);
+    });
+  });
+
+  describe('confirmPayment', () => {
+    const confirmRequest = {
+      paymentKey: 'pk_test_123',
+      orderId: 'order-1',
+      amount: 30000,
+    };
+
+    it('결제 승인 요청에 성공한다', async () => {
+      const response = {
+        paymentId: 'pay-1',
+        orderId: 'order-1',
+        status: 'COMPLETED',
+      };
+      mockConfirmPayment.mockResolvedValueOnce(response);
+
+      const result = await confirmPayment(confirmRequest);
+
+      expect(mockConfirmPayment).toHaveBeenCalledWith(confirmRequest);
+      expect(result).toEqual(response);
+    });
+
+    it('결제 승인 실패 시 에러를 전파한다', async () => {
+      const error = { code: 'PAYMENT_FAILED', message: 'Payment failed' };
+      mockConfirmPayment.mockRejectedValueOnce(error);
+
+      await expect(confirmPayment(confirmRequest)).rejects.toEqual(error);
+    });
+
+    it('중복 결제 시 409 에러를 전파한다', async () => {
+      const error = { code: 'PAYMENT_ALREADY_COMPLETED', message: 'Payment already processed', status: 409 };
+      mockConfirmPayment.mockRejectedValueOnce(error);
+
+      await expect(confirmPayment(confirmRequest)).rejects.toEqual(error);
     });
   });
 });

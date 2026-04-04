@@ -1,14 +1,15 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import { useRouter } from 'next/navigation';
 import type { Address, ShippingAddress } from '@repo/types';
+
 import { isApiError, ERROR_MESSAGES } from '@repo/types/guards';
 import type { CheckoutFormProps } from '../model/types';
 import { submitOrder } from '../api/place-order';
+import { useTossPayment } from '../model/use-toss-payment';
 import { AddressSearch } from '@/shared/ui/AddressSearch';
 import { Skeleton } from '@/shared/ui/Skeleton';
-import { getMyAddresses } from '@/features/user';
+import { getMyAddresses } from '@/entities/user';
 import { isValidPhone } from '@/shared/lib/validate-phone';
 
 function addressToShipping(addr: Address): ShippingAddress {
@@ -22,7 +23,7 @@ function addressToShipping(addr: Address): ShippingAddress {
 }
 
 export function CheckoutForm({ items, totalAmount, onOrderComplete }: CheckoutFormProps) {
-  const router = useRouter();
+  const { isReady: paymentReady, requestPayment } = useTossPayment();
   const [error, setError] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [savedAddresses, setSavedAddresses] = useState<Address[]>([]);
@@ -74,11 +75,14 @@ export function CheckoutForm({ items, totalAmount, onOrderComplete }: CheckoutFo
 
     try {
       const orderItems = items.map((item) => ({
-        productId: item.productId, variantId: item.variantId, quantity: item.quantity,
+        productId: item.productId, variantId: item.variantId,
+        productName: item.productName, optionName: item.optionName,
+        quantity: item.quantity, unitPrice: item.price,
       }));
       const result = await submitOrder({ items: orderItems, shippingAddress: address });
-      router.replace(`/checkout/complete?orderId=${result.orderId}`);
+      const orderName = items[0].productName + (items.length > 1 ? ` 외 ${items.length - 1}건` : '');
       onOrderComplete();
+      await requestPayment({ orderId: result.orderId, amount: totalAmount, orderName });
     } catch (err) {
       if (isApiError(err)) {
         setError(ERROR_MESSAGES[err.code] ?? err.message ?? '주문에 실패했습니다.');
