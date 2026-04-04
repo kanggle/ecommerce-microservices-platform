@@ -26,16 +26,12 @@ public class AdminOrderStatusService {
 
         OrderStatus previousStatus = order.getStatus();
 
-        if (targetStatus == OrderStatus.CONFIRMED) {
-            order.confirm(clock);
-        } else if (targetStatus == OrderStatus.SHIPPED) {
-            order.ship(clock);
-        } else if (targetStatus == OrderStatus.DELIVERED) {
-            order.deliver(clock);
-        } else if (targetStatus == OrderStatus.CANCELLED) {
-            order.cancel(clock);
-        } else {
-            throw new IllegalArgumentException("Unsupported target status: " + targetStatus);
+        switch (targetStatus) {
+            case CONFIRMED -> order.confirm(clock);
+            case SHIPPED -> order.ship(clock);
+            case DELIVERED -> order.deliver(clock);
+            case CANCELLED -> order.cancel(clock);
+            default -> throw new IllegalArgumentException("Unsupported target status: " + targetStatus);
         }
 
         orderRepository.save(order);

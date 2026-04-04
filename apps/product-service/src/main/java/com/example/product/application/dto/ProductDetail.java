@@ -1,5 +1,6 @@
 package com.example.product.application.dto;
 
+import com.example.product.domain.model.Product;
 import com.example.product.domain.model.ProductStatus;
 
 import java.util.List;
@@ -13,4 +14,19 @@ public record ProductDetail(
         long price,
         UUID categoryId,
         List<VariantDetail> variants
-) {}
+) {
+    public static ProductDetail from(Product product) {
+        List<VariantDetail> variants = product.getVariants().stream()
+                .map(VariantDetail::from)
+                .toList();
+
+        return new ProductDetail(
+                product.getId(),
+                product.getName(),
+                product.getDescription(),
+                product.getStatus(),
+                product.getPrice().value(),
+                product.getCategoryId(),
+                variants);
+    }
+}

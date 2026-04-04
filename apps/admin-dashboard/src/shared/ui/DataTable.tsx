@@ -1,5 +1,6 @@
 'use client';
 
+import { useState, useMemo } from 'react';
 import { LoadingSpinner } from '@repo/ui';
 import { EmptyState } from '@repo/ui';
 import { buildPageNumbers } from '@repo/utils';
@@ -17,6 +18,8 @@ interface PaginationState {
   onPageChange: (page: number) => void;
 }
 
+type SortDirection = 'asc' | 'desc';
+
 interface DataTableProps<T> {
   columns: ColumnDef<T>[];
   data: T[];
@@ -25,6 +28,29 @@ interface DataTableProps<T> {
   emptyMessage?: string;
   onRowClick?: (item: T) => void;
   rowKey?: (item: T, index: number) => string;
+}
+
+function SortIcon({ direction, active }: { direction?: SortDirection; active: boolean }) {
+  return (
+    <span
+      style={{
+        marginLeft: '6px',
+        display: 'inline-flex',
+        flexDirection: 'column',
+        gap: '1px',
+        verticalAlign: 'middle',
+        position: 'relative',
+        top: '-1px',
+      }}
+    >
+      <svg width="8" height="5" viewBox="0 0 8 5" fill={active && direction === 'asc' ? '#111827' : '#d1d5db'}>
+        <path d="M4 0L7.5 5H0.5L4 0Z" />
+      </svg>
+      <svg width="8" height="5" viewBox="0 0 8 5" fill={active && direction === 'desc' ? '#111827' : '#d1d5db'}>
+        <path d="M4 5L0.5 0H7.5L4 5Z" />
+      </svg>
+    </span>
+  );
 }
 
 export function DataTable<T>({
@@ -36,6 +62,36 @@ export function DataTable<T>({
   onRowClick,
   rowKey,
 }: DataTableProps<T>) {
+  const [sortKey, setSortKey] = useState<string | null>(null);
+  const [sortDirection, setSortDirection] = useState<SortDirection>('asc');
+
+  const handleSort = (key: string) => {
+    if (sortKey === key) {
+      setSortDirection((prev) => (prev === 'asc' ? 'desc' : 'asc'));
+    } else {
+      setSortKey(key);
+      setSortDirection('asc');
+    }
+  };
+
+  const sortedData = useMemo(() => {
+    if (!sortKey) return data;
+    return [...data].sort((a, b) => {
+      const aVal = (a as Record<string, unknown>)[sortKey];
+      const bVal = (b as Record<string, unknown>)[sortKey];
+      if (aVal == null && bVal == null) return 0;
+      if (aVal == null) return 1;
+      if (bVal == null) return -1;
+      let cmp = 0;
+      if (typeof aVal === 'number' && typeof bVal === 'number') {
+        cmp = aVal - bVal;
+      } else {
+        cmp = String(aVal).localeCompare(String(bVal), 'ko');
+      }
+      return sortDirection === 'asc' ? cmp : -cmp;
+    });
+  }, [data, sortKey, sortDirection]);
+
   if (isLoading) {
     return <LoadingSpinner />;
   }
@@ -67,6 +123,7 @@ export function DataTable<T>({
             {columns.map((col) => (
               <th
                 key={col.key}
+                onClick={col.sortable ? () => handleSort(col.key) : undefined}
                 style={{
                   padding: '10px 20px',
                   textAlign: 'left',
@@ -76,15 +133,18 @@ export function DataTable<T>({
                   color: '#6b7280',
                   textTransform: 'uppercase' as const,
                   letterSpacing: '0.03em',
+                  cursor: col.sortable ? 'pointer' : 'default',
+                  userSelect: col.sortable ? 'none' : undefined,
                 }}
               >
                 {col.header}
+                {col.sortable && <SortIcon direction={sortDirection} active={sortKey === col.key} />}
               </th>
             ))}
           </tr>
         </thead>
         <tbody>
-          {data.map((item, index) => (
+          {sortedData.map((item, index) => (
             <tr
               key={getRowKey(item, index)}
               onClick={() => onRowClick?.(item)}

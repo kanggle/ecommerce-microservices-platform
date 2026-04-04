@@ -2,6 +2,7 @@ package com.example.product.application.service;
 
 import com.example.product.application.command.AdjustStockCommand;
 import com.example.product.application.dto.AdjustStockResult;
+import com.example.product.application.dto.StockAdjustmentType;
 import com.example.product.domain.event.ProductEvent;
 import com.example.product.domain.event.StockChangedPayload;
 import com.example.product.domain.exception.ProductNotFoundException;
@@ -21,6 +22,8 @@ import java.util.UUID;
 @RequiredArgsConstructor
 public class AdjustStockService {
 
+    private record StockSnapshot(int previousStock, int currentStock) {}
+
     private final ProductRepository productRepository;
     private final InventoryRepository inventoryRepository;
     private final EventPublishingHelper eventPublishingHelper;
@@ -30,12 +33,10 @@ public class AdjustStockService {
     public AdjustStockResult adjust(AdjustStockCommand command) {
         validateQuantity(command);
         Product product = findProductAndValidateVariant(command.productId(), command.variantId());
-        int[] stocks = adjustInventoryStock(command.variantId(), command.quantity());
-        int previousStock = stocks[0];
-        int currentStock = stocks[1];
-        recordStockMetrics(command, currentStock, product);
-        publishStockChangedEvent(command, command.variantId(), previousStock, currentStock);
-        return new AdjustStockResult(command.variantId(), currentStock);
+        StockSnapshot snapshot = adjustInventoryStock(command.variantId(), command.quantity());
+        recordStockMetrics(command, snapshot.currentStock(), product);
+        publishStockChangedEvent(command, command.variantId(), snapshot.previousStock(), snapshot.currentStock());
+        return new AdjustStockResult(command.variantId(), snapshot.currentStock());
     }
 
     private void validateQuantity(AdjustStockCommand command) {
@@ -55,21 +56,18 @@ public class AdjustStockService {
         return product;
     }
 
-    private int[] adjustInventoryStock(UUID variantId, int quantity) {
+    private StockSnapshot adjustInventoryStock(UUID variantId, int quantity) {
         Inventory inventory = inventoryRepository.findByVariantId(variantId)
                 .orElseThrow(() -> new VariantNotFoundException(variantId));
         int previousStock = inventory.currentStock().value();
         inventory.adjustStock(quantity);
         int currentStock = inventory.currentStock().value();
         inventoryRepository.save(inventory);
-        return new int[]{previousStock, currentStock};
+        return new StockSnapshot(previousStock, currentStock);
     }
 
     private void recordStockMetrics(AdjustStockCommand command, int currentStock, Product product) {
-        String adjustType = command.quantity() > 0 ? "increase" : "decrease";
-        if (command.reason() != null && command.reason().contains("reserve")) {
-            adjustType = "reserve";
-        }
+        StockAdjustmentType adjustType = StockAdjustmentType.of(command.quantity(), command.reason());
         productMetrics.incrementStockAdjusted(adjustType);
 
         boolean statusChanged = product.adjustStatusByStock(currentStock);

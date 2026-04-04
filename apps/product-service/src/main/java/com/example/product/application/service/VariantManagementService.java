@@ -31,8 +31,7 @@ public class VariantManagementService {
         productRepository.save(product);
 
         log.info("Variant added: productId={}, variantId={}", productId, variant.getId());
-        return new VariantDetail(variant.getId(), variant.getOptionName(),
-                variant.getStock().value(), variant.getAdditionalPrice().value());
+        return VariantDetail.from(variant);
     }
 
     @Transactional
@@ -40,17 +39,11 @@ public class VariantManagementService {
         Product product = productRepository.findById(productId)
                 .orElseThrow(() -> new ProductNotFoundException(productId));
 
-        product.updateVariant(variantId, optionName, new Price(additionalPrice));
+        ProductVariant updated = product.updateVariant(variantId, optionName, new Price(additionalPrice));
         productRepository.save(product);
 
-        ProductVariant updated = product.getVariants().stream()
-                .filter(v -> v.getId().equals(variantId))
-                .findFirst()
-                .orElseThrow();
-
         log.info("Variant updated: productId={}, variantId={}", productId, variantId);
-        return new VariantDetail(updated.getId(), updated.getOptionName(),
-                updated.getStock().value(), updated.getAdditionalPrice().value());
+        return VariantDetail.from(updated);
     }
 
     @Transactional

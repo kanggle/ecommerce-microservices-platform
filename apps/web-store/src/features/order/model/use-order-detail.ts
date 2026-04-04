@@ -1,8 +1,10 @@
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
+import { useQuery, useQueryClient } from '@tanstack/react-query';
 import type { OrderDetail, PaymentResponse } from '@repo/types';
 import { isApiError } from '@repo/types/guards';
 import { getOrder, cancelOrder } from '@/entities/order';
 import { getPayment } from '@/entities/payment';
+import { orderKeys, paymentKeys } from './query-keys';
 
 export const CANCELLABLE_STATUSES = new Set(['PENDING', 'CONFIRMED']);
 
@@ -18,62 +20,51 @@ export interface UseOrderDetailReturn {
 }
 
 export function useOrderDetail(orderId: string): UseOrderDetailReturn {
-  const [order, setOrder] = useState<OrderDetail | null>(null);
-  const [payment, setPayment] = useState<PaymentResponse | null>(null);
-  const [paymentError, setPaymentError] = useState('');
-  const [isLoading, setIsLoading] = useState(true);
-  const [error, setError] = useState('');
+  const queryClient = useQueryClient();
+  const [cancelError, setCancelError] = useState('');
   const [isCancelling, setIsCancelling] = useState(false);
 
-  useEffect(() => {
-    if (orderId) {
-      loadOrder(orderId);
-    }
-  }, [orderId]);
+  const orderQuery = useQuery({
+    queryKey: orderKeys.detail(orderId),
+    queryFn: () => getOrder(orderId),
+    enabled: !!orderId,
+  });
 
-  async function loadOrder(id: string) {
-    setIsLoading(true);
-    setError('');
-    try {
-      const result = await getOrder(id);
-      setOrder(result);
-      loadPayment(id);
-    } catch (err) {
-      if (isApiError(err) && err.code === 'ORDER_NOT_FOUND') {
-        setError('주문을 찾을 수 없습니다.');
-      } else {
-        setError('주문 정보를 불러오는데 실패했습니다.');
-      }
-    } finally {
-      setIsLoading(false);
-    }
-  }
+  const paymentQuery = useQuery({
+    queryKey: paymentKeys.detail(orderId),
+    queryFn: () => getPayment(orderId),
+    enabled: !!orderId && !!orderQuery.data,
+    retry: false,
+  });
 
-  async function loadPayment(id: string) {
-    setPaymentError('');
-    try {
-      const result = await getPayment(id);
-      setPayment(result);
-    } catch (err) {
-      setPayment(null);
-      if (isApiError(err) && err.code === 'PAYMENT_NOT_FOUND') {
-        return;
-      }
-      setPaymentError('결제 정보를 불러오는데 실패했습니다.');
-    }
-  }
+  const orderError = orderQuery.error
+    ? isApiError(orderQuery.error) && orderQuery.error.code === 'ORDER_NOT_FOUND'
+      ? '주문을 찾을 수 없습니다.'
+      : '주문 정보를 불러오는데 실패했습니다.'
+    : '';
+
+  const paymentError = paymentQuery.error
+    ? isApiError(paymentQuery.error) && paymentQuery.error.code === 'PAYMENT_NOT_FOUND'
+      ? ''
+      : '결제 정보를 불러오는데 실패했습니다.'
+    : '';
 
   async function handleCancel() {
-    if (!order || isCancelling) return;
+    if (!orderQuery.data || isCancelling) return;
+    setCancelError('');
     setIsCancelling(true);
     try {
-      await cancelOrder(order.orderId);
-      setOrder({ ...order, status: 'CANCELLED' });
+      await cancelOrder(orderQuery.data.orderId);
+      queryClient.setQueryData(orderKeys.detail(orderId), {
+        ...orderQuery.data,
+        status: 'CANCELLED',
+      });
+      queryClient.invalidateQueries({ queryKey: orderKeys.lists() });
     } catch (err) {
       if (isApiError(err)) {
-        setError(err.message ?? '주문 취소에 실패했습니다.');
+        setCancelError(err.message ?? '주문 취소에 실패했습니다.');
       } else {
-        setError('주문 취소에 실패했습니다.');
+        setCancelError('주문 취소에 실패했습니다.');
       }
     } finally {
       setIsCancelling(false);
@@ -81,15 +72,15 @@ export function useOrderDetail(orderId: string): UseOrderDetailReturn {
   }
 
   function retryLoad() {
-    loadOrder(orderId);
+    orderQuery.refetch();
   }
 
   return {
-    order,
-    payment,
+    order: orderQuery.data ?? null,
+    payment: paymentQuery.data ?? null,
     paymentError,
-    isLoading,
-    error,
+    isLoading: orderQuery.isLoading,
+    error: cancelError || orderError,
     isCancelling,
     handleCancel,
     retryLoad,

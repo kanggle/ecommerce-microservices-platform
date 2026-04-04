@@ -28,4 +28,8 @@ public interface OrderRepository {
     PageResult<Order> findAll(PageQuery pageQuery);
 
     PageResult<Order> findByStatus(OrderStatus status, PageQuery pageQuery);
+
+    PageResult<Order> findAllWithItems(PageQuery pageQuery);
+
+    PageResult<Order> findByStatusWithItems(OrderStatus status, PageQuery pageQuery);
 }

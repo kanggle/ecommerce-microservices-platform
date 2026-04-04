@@ -75,6 +75,7 @@ export interface AdminOrderSummary {
   status: OrderStatus;
   totalPrice: number;
   itemCount: number;
+  firstItemName: string | null;
   createdAt: string;
 }
 

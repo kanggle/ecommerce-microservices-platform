@@ -5,3 +5,7 @@ export { AddressList } from './ui/AddressList';
 export { AddressForm } from './ui/AddressForm';
 export { getMyAddresses } from './api/address-api';
 export { AddressManager } from './ui/AddressManager';
+export { useProfile } from './model/use-profile';
+export { useUpdateProfile } from './model/use-update-profile';
+export { useAddresses } from './model/use-addresses';
+export { userKeys } from './model/query-keys';

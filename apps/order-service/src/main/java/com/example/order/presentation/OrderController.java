@@ -8,10 +8,8 @@ import com.example.order.application.dto.PlaceOrderResult;
 import com.example.order.application.service.OrderCancellationService;
 import com.example.order.application.service.OrderPlacementService;
 import com.example.order.application.service.OrderQueryService;
-import com.example.order.domain.model.OrderStatus;
 import com.example.common.page.PageQuery;
 import com.example.common.page.PageResult;
-import com.example.order.presentation.exception.InvalidOrderStatusException;
 import com.example.order.presentation.dto.CancelOrderResponse;
 import com.example.order.presentation.dto.OrderDetailResponse;
 import com.example.order.presentation.dto.OrderListResponse;
@@ -34,9 +32,6 @@ import java.util.List;
 @RequiredArgsConstructor
 @RequestMapping("/api/orders")
 public class OrderController {
-
-    private static final int MAX_PAGE_SIZE = 100;
-    private static final int DEFAULT_PAGE_SIZE = 20;
 
     private final OrderPlacementService orderPlacementService;
     private final OrderQueryService orderQueryService;
@@ -71,23 +66,9 @@ public class OrderController {
             @RequestParam(defaultValue = "20") int size,
             @RequestParam(required = false) String status
     ) {
-        int safePage = Math.max(page, 0);
-        int safeSize = size < 1 ? DEFAULT_PAGE_SIZE : Math.min(size, MAX_PAGE_SIZE);
-        OrderStatus orderStatus = parseStatus(status);
-        PageQuery pageQuery = new PageQuery(safePage, safeSize, "createdAt", "DESC");
-        PageResult<OrderSummary> result = orderQueryService.getOrders(userId, orderStatus, pageQuery);
+        PageQuery pageQuery = OrderControllerUtils.buildPageQuery(page, size, status);
+        PageResult<OrderSummary> result = orderQueryService.getOrders(userId, OrderControllerUtils.parseStatus(status), pageQuery);
         return ResponseEntity.ok(OrderListResponse.from(result));
-    }
-
-    private OrderStatus parseStatus(String status) {
-        if (status == null || status.isBlank()) {
-            return null;
-        }
-        try {
-            return OrderStatus.valueOf(status);
-        } catch (IllegalArgumentException e) {
-            throw new InvalidOrderStatusException(status);
-        }
     }
 
     @GetMapping("/verify-purchase")

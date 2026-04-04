@@ -14,7 +14,7 @@ const orderApi = createOrderApi(apiClient);
 
 interface MockOrder extends OrderSummary {
   items: OrderItemDetail[];
-  shippingAddress: { recipient: string; phone: string; zipCode: string; address1: string; address2: string };
+  shippingAddress: { recipient: string; phone: string; zipCode: string; address1: string; address2: string | null };
 }
 
 const MOCK_ORDERS: MockOrder[] = [
@@ -23,6 +23,7 @@ const MOCK_ORDERS: MockOrder[] = [
     status: 'DELIVERED',
     totalPrice: 108000,
     itemCount: 2,
+    firstItemName: '클래식 화이트 티셔츠',
     createdAt: '2026-03-25T10:23:00Z',
     items: [
       { productId: 'mock-1', variantId: 'v1-2', productName: '클래식 화이트 티셔츠', optionName: 'M', quantity: 1, unitPrice: 29000 },
@@ -35,6 +36,7 @@ const MOCK_ORDERS: MockOrder[] = [
     status: 'SHIPPED',
     totalPrice: 79000,
     itemCount: 1,
+    firstItemName: '캐주얼 후드 집업',
     createdAt: '2026-03-28T15:10:00Z',
     items: [
       { productId: 'mock-3', variantId: 'v3-1', productName: '캐주얼 후드 집업', optionName: 'S / 네이비', quantity: 1, unitPrice: 79000 },
@@ -46,6 +48,7 @@ const MOCK_ORDERS: MockOrder[] = [
     status: 'CONFIRMED',
     totalPrice: 45000,
     itemCount: 1,
+    firstItemName: '레더 크로스백',
     createdAt: '2026-04-01T09:00:00Z',
     items: [
       { productId: 'mock-4', variantId: 'v4-1', productName: '레더 크로스백', optionName: '블랙', quantity: 1, unitPrice: 45000 },
@@ -64,6 +67,7 @@ export async function placeOrder(data: PlaceOrderRequest): Promise<PlaceOrderRes
       status: 'CONFIRMED',
       totalPrice: data.items.reduce((sum, i) => sum + i.quantity * 10000, 0),
       itemCount: data.items.reduce((sum, i) => sum + i.quantity, 0),
+      firstItemName: '주문 상품',
       createdAt: new Date().toISOString(),
       items: data.items.map((i) => ({
         productId: i.productId,

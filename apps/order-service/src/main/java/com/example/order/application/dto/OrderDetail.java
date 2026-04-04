@@ -16,28 +16,31 @@ public record OrderDetail(
         Instant updatedAt
 ) {
     public static OrderDetail from(Order order) {
-        List<OrderItemDetail> items = order.getItems().stream()
+        return new OrderDetail(
+                order.getOrderId(),
+                order.getStatus().name(),
+                order.getTotalPrice(),
+                mapItems(order),
+                mapAddress(order.getShippingAddress()),
+                order.getCreatedAt(),
+                order.getUpdatedAt()
+        );
+    }
+
+    public static List<OrderItemDetail> mapItems(Order order) {
+        return order.getItems().stream()
                 .map(i -> new OrderItemDetail(
                         i.getProductId(), i.getVariantId(),
                         i.getProductName(), i.getOptionName(),
                         i.getQuantity(), i.getUnitPrice()
                 ))
                 .toList();
+    }
 
-        ShippingAddress addr = order.getShippingAddress();
-        ShippingAddressDetail addrDetail = new ShippingAddressDetail(
+    public static ShippingAddressDetail mapAddress(ShippingAddress addr) {
+        return new ShippingAddressDetail(
                 addr.getRecipient(), addr.getPhone(), addr.getZipCode(),
                 addr.getAddress1(), addr.getAddress2()
-        );
-
-        return new OrderDetail(
-                order.getOrderId(),
-                order.getStatus().name(),
-                order.getTotalPrice(),
-                items,
-                addrDetail,
-                order.getCreatedAt(),
-                order.getUpdatedAt()
         );
     }
 

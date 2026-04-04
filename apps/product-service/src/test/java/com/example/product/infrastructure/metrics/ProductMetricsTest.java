@@ -1,5 +1,6 @@
 package com.example.product.infrastructure.metrics;
 
+import com.example.product.application.dto.StockAdjustmentType;
 import io.micrometer.core.instrument.MeterRegistry;
 import io.micrometer.core.instrument.simple.SimpleMeterRegistry;
 import org.junit.jupiter.api.BeforeEach;
@@ -46,10 +47,10 @@ class ProductMetricsTest {
     @Test
     @DisplayName("재고 조정 시 type별 product_stock_adjusted_total이 증가한다")
     void incrementStockAdjusted_incrementsCounterByType() {
-        productMetrics.incrementStockAdjusted("increase");
-        productMetrics.incrementStockAdjusted("decrease");
-        productMetrics.incrementStockAdjusted("reserve");
-        productMetrics.incrementStockAdjusted("increase");
+        productMetrics.incrementStockAdjusted(StockAdjustmentType.INCREASE);
+        productMetrics.incrementStockAdjusted(StockAdjustmentType.DECREASE);
+        productMetrics.incrementStockAdjusted(StockAdjustmentType.RESERVE);
+        productMetrics.incrementStockAdjusted(StockAdjustmentType.INCREASE);
 
         assertThat(registry.counter("product_stock_adjusted_total", "type", "increase").count()).isEqualTo(2.0);
         assertThat(registry.counter("product_stock_adjusted_total", "type", "decrease").count()).isEqualTo(1.0);
@@ -68,7 +69,7 @@ class ProductMetricsTest {
     @DisplayName("incrementStockAdjusted 1000회 반복 호출 시 동일 태그 조합에 대해 Counter가 중복 등록되지 않는다")
     void incrementStockAdjusted_repeated_noCounterLeak() {
         for (int i = 0; i < 1000; i++) {
-            productMetrics.incrementStockAdjusted("increase");
+            productMetrics.incrementStockAdjusted(StockAdjustmentType.INCREASE);
         }
 
         long meterCount = registry.getMeters().stream()

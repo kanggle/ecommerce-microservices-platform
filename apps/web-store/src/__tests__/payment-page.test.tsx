@@ -1,5 +1,6 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { render, screen, waitFor } from '@testing-library/react';
+import { TestQueryProvider } from './test-utils';
 
 const mockPush = vi.fn();
 const mockReplace = vi.fn();
@@ -57,7 +58,7 @@ describe('PaymentSuccessPage', () => {
       amount: '30000',
     });
 
-    render(<PaymentSuccessPage />);
+    render(<TestQueryProvider><PaymentSuccessPage /></TestQueryProvider>);
 
     await waitFor(() => {
       expect(mockConfirmPayment).toHaveBeenCalledWith({
@@ -83,7 +84,7 @@ describe('PaymentSuccessPage', () => {
       amount: '30000',
     });
 
-    render(<PaymentSuccessPage />);
+    render(<TestQueryProvider><PaymentSuccessPage /></TestQueryProvider>);
 
     await waitFor(() => {
       expect(screen.getByRole('alert')).toHaveTextContent('결제 승인에 실패했습니다.');

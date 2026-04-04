@@ -36,13 +36,12 @@ public class UserWithdrawnEventConsumer {
             return;
         }
 
-        String userId = event.payload().userId();
-        if (userId == null || userId.isBlank()) {
+        if (EventFieldParser.isBlank(event.payload().userId())) {
             log.warn("UserWithdrawn event has no userId, skipping. eventId={}", event.eventId());
             return;
         }
 
-        userWithdrawalOrderService.cancelOrdersForWithdrawnUser(userId);
-        log.info("UserWithdrawn event processed successfully: userId={}, eventId={}", userId, event.eventId());
+        userWithdrawalOrderService.cancelOrdersForWithdrawnUser(event.payload().userId());
+        log.info("UserWithdrawn event processed successfully: userId={}, eventId={}", event.payload().userId(), event.eventId());
     }
 }

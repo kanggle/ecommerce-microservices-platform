@@ -4,27 +4,24 @@ import { useRouter } from 'next/navigation';
 import { DataTable, StatusBadge, FilterBar, ListError } from '@/shared/ui';
 import type { ColumnDef } from '@/shared/ui';
 import { useProducts } from '../hooks/use-products';
+import { PRODUCT_STATUS_OPTIONS } from '@/shared/lib/status-options';
 import type { ProductSummary } from '@repo/types';
 
-const STATUS_OPTIONS = [
-  { label: '판매중', value: 'ON_SALE' },
-  { label: '품절', value: 'SOLD_OUT' },
-  { label: '숨김', value: 'HIDDEN' },
-];
-
 const columns: ColumnDef<ProductSummary>[] = [
-  { key: 'name', header: '상품명' },
+  { key: 'name', header: '상품명', sortable: true },
   {
     key: 'price',
     header: '가격',
+    sortable: true,
     render: (product: ProductSummary) => `${product.price.toLocaleString()}원`,
   },
   {
     key: 'status',
     header: '상태',
+    sortable: true,
     render: (product: ProductSummary) => <StatusBadge status={product.status} />,
   },
-  { key: 'categoryId', header: '카테고리' },
+  { key: 'categoryId', header: '카테고리', sortable: true },
 ];
 
 export function ProductList() {
@@ -41,7 +38,7 @@ export function ProductList() {
         searchPlaceholder="상품명 검색..."
         searchValue={filters.name ?? ''}
         onSearchChange={(value) => filters.setFilter('name', value || undefined)}
-        statusOptions={STATUS_OPTIONS}
+        statusOptions={PRODUCT_STATUS_OPTIONS}
         statusValue={filters.status}
         onStatusChange={(value) => filters.setFilter('status', value)}
       />

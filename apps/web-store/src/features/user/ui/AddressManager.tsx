@@ -1,38 +1,22 @@
 'use client';
 
-import { useEffect, useState, useCallback } from 'react';
+import { useState } from 'react';
 import type { Address } from '@repo/types';
 import { ErrorMessage, EmptyState } from '@repo/ui';
 import { Skeleton } from '@/shared/ui/Skeleton';
 import { AddressList } from './AddressList';
 import { AddressForm } from './AddressForm';
-import { getMyAddresses } from '../api/address-api';
+import { useAddresses } from '../model/use-addresses';
 
 type ViewMode = 'list' | 'add' | 'edit';
 
 export function AddressManager() {
-  const [addresses, setAddresses] = useState<Address[]>([]);
-  const [isLoading, setIsLoading] = useState(true);
-  const [error, setError] = useState('');
+  const { data, isLoading, isError, refetch, invalidate } = useAddresses();
   const [viewMode, setViewMode] = useState<ViewMode>('list');
   const [editingAddress, setEditingAddress] = useState<Address | null>(null);
 
-  const loadAddresses = useCallback(async () => {
-    setIsLoading(true);
-    setError('');
-    try {
-      const data = await getMyAddresses();
-      setAddresses(data.addresses);
-    } catch {
-      setError('배송지 목록을 불러오는데 실패했습니다.');
-    } finally {
-      setIsLoading(false);
-    }
-  }, []);
-
-  useEffect(() => {
-    loadAddresses();
-  }, [loadAddresses]);
+  const addresses = data?.addresses ?? [];
+  const error = isError ? '배송지 목록을 불러오는데 실패했습니다.' : '';
 
   function handleAddClick() {
     setViewMode('add');
@@ -47,7 +31,7 @@ export function AddressManager() {
   function handleSaved() {
     setViewMode('list');
     setEditingAddress(null);
-    loadAddresses();
+    invalidate();
   }
 
   function handleCancel() {
@@ -55,14 +39,12 @@ export function AddressManager() {
     setEditingAddress(null);
   }
 
-  function handleSetDefault(addressId: string) {
-    setAddresses((prev) =>
-      prev.map((a) => ({ ...a, isDefault: a.id === addressId })),
-    );
+  function handleSetDefault(_addressId: string) {
+    invalidate();
   }
 
-  function handleDeleted(addressId: string) {
-    setAddresses((prev) => prev.filter((a) => a.id !== addressId));
+  function handleDeleted(_addressId: string) {
+    invalidate();
   }
 
   return (
@@ -85,7 +67,7 @@ export function AddressManager() {
           ))}
         </div>
       )}
-      {error && <ErrorMessage message={error} onRetry={loadAddresses} />}
+      {error && <ErrorMessage message={error} onRetry={() => refetch()} />}
 
       {!isLoading && !error && (
         <>
@@ -116,7 +98,7 @@ export function AddressManager() {
               addresses={addresses}
               onAddClick={handleAddClick}
               onEditClick={handleEditClick}
-              onChanged={loadAddresses}
+              onChanged={() => invalidate()}
               onSetDefault={handleSetDefault}
               onDeleted={handleDeleted}
             />

@@ -89,13 +89,14 @@ public class Product {
         this.updatedAt = Instant.now();
     }
 
-    public void updateVariant(UUID variantId, String optionName, Price additionalPrice) {
+    public ProductVariant updateVariant(UUID variantId, String optionName, Price additionalPrice) {
         ProductVariant variant = variants.stream()
                 .filter(v -> v.getId().equals(variantId))
                 .findFirst()
                 .orElseThrow(() -> new IllegalArgumentException("Variant not found: " + variantId));
         variant.updateOption(optionName, additionalPrice);
         this.updatedAt = Instant.now();
+        return variant;
     }
 
     public void removeVariant(UUID variantId) {

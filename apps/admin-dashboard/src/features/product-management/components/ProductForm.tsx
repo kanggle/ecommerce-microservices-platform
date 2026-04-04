@@ -119,7 +119,7 @@ export function ProductForm({ product }: Props) {
       </Section>
 
       {!isEdit && (
-        <VariantEditor variants={variants} onChange={setVariants} initialKeyCount={product?.variants.length ?? 1} />
+        <VariantEditor variants={variants} onChange={setVariants} initialKeyCount={variants.length} />
       )}
 
       <div style={styles.buttonRow}>

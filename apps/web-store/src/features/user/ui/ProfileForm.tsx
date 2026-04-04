@@ -4,14 +4,14 @@ import { useState, useCallback, useRef } from 'react';
 import type { UserProfile } from '@repo/types';
 import { isApiError, ERROR_MESSAGES } from '@repo/types/guards';
 import type { ProfileFieldErrors } from '../model/types';
-import { updateMyProfile } from '../api/user-profile-api';
+import { useUpdateProfile } from '../model/use-update-profile';
 import { Toast } from '@/shared/ui';
 import { ProfileFormField } from './ProfileFormField';
 import { useProfileImage } from '@/shared/context/ProfileImageContext';
 
 interface ProfileFormProps {
   profile: UserProfile;
-  onUpdated: (updated: UserProfile) => void;
+  onUpdated: () => void;
 }
 
 function validateFields(nickname: string, phone: string): ProfileFieldErrors {
@@ -34,9 +34,10 @@ export function ProfileForm({ profile, onUpdated }: ProfileFormProps) {
   const [profileImageUrl, setProfileImageUrl] = useState(profile.profileImageUrl ?? '');
   const [fieldErrors, setFieldErrors] = useState<ProfileFieldErrors>({});
   const [toast, setToast] = useState<{ message: string; type: 'success' | 'error' } | null>(null);
-  const [isSubmitting, setIsSubmitting] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
   const { setImageUrl: setGlobalProfileImage } = useProfileImage();
+  const updateMutation = useUpdateProfile();
+  const isSubmitting = updateMutation.isPending;
 
   function handleImageChange(e: React.ChangeEvent<HTMLInputElement>) {
     const file = e.target.files?.[0];
@@ -64,42 +65,35 @@ export function ProfileForm({ profile, onUpdated }: ProfileFormProps) {
     if (Object.keys(errors).length > 0) return;
 
     setToast(null);
-    setIsSubmitting(true);
 
-    try {
-      const data: Record<string, string> = {};
-      if (nickname !== (profile.nickname ?? '')) {
-        data.nickname = nickname || '';
-      }
-      if (phone !== (profile.phone ?? '')) {
-        data.phone = phone || '';
-      }
-      if (profileImageUrl !== (profile.profileImageUrl ?? '')) {
-        data.profileImageUrl = profileImageUrl || '';
-      }
-
-      const updated = await updateMyProfile(data);
-      setToast({ message: '프로필이 수정되었습니다.', type: 'success' });
-      setGlobalProfileImage(updated.profileImageUrl ?? '');
-      onUpdated({
-        ...profile,
-        nickname: updated.nickname,
-        phone: updated.phone,
-        profileImageUrl: updated.profileImageUrl,
-        updatedAt: updated.updatedAt,
-      });
-    } catch (err) {
-      if (isApiError(err)) {
-        setToast({
-          message: ERROR_MESSAGES[err.code] ?? err.message ?? '프로필 수정에 실패했습니다.',
-          type: 'error',
-        });
-      } else {
-        setToast({ message: '프로필 수정에 실패했습니다.', type: 'error' });
-      }
-    } finally {
-      setIsSubmitting(false);
+    const data: Record<string, string> = {};
+    if (nickname !== (profile.nickname ?? '')) {
+      data.nickname = nickname || '';
     }
+    if (phone !== (profile.phone ?? '')) {
+      data.phone = phone || '';
+    }
+    if (profileImageUrl !== (profile.profileImageUrl ?? '')) {
+      data.profileImageUrl = profileImageUrl || '';
+    }
+
+    updateMutation.mutate(data, {
+      onSuccess: (updated) => {
+        setToast({ message: '프로필이 수정되었습니다.', type: 'success' });
+        setGlobalProfileImage(updated.profileImageUrl ?? '');
+        onUpdated();
+      },
+      onError: (err) => {
+        if (isApiError(err)) {
+          setToast({
+            message: ERROR_MESSAGES[err.code] ?? err.message ?? '프로필 수정에 실패했습니다.',
+            type: 'error',
+          });
+        } else {
+          setToast({ message: '프로필 수정에 실패했습니다.', type: 'error' });
+        }
+      },
+    });
   }
 
   return (

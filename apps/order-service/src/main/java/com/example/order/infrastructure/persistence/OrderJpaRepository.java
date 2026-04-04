@@ -21,6 +21,14 @@ interface OrderJpaRepository extends JpaRepository<OrderJpaEntity, String> {
 
     Page<OrderJpaEntity> findByStatus(OrderStatus status, Pageable pageable);
 
+    @Query(value = "SELECT o FROM OrderJpaEntity o LEFT JOIN FETCH o.items WHERE o.status = :status",
+           countQuery = "SELECT COUNT(o) FROM OrderJpaEntity o WHERE o.status = :status")
+    Page<OrderJpaEntity> findByStatusWithItems(@Param("status") OrderStatus status, Pageable pageable);
+
+    @Query(value = "SELECT o FROM OrderJpaEntity o LEFT JOIN FETCH o.items",
+           countQuery = "SELECT COUNT(o) FROM OrderJpaEntity o")
+    Page<OrderJpaEntity> findAllWithItems(Pageable pageable);
+
     @Query("SELECT COUNT(o) > 0 FROM OrderJpaEntity o JOIN o.items i " +
            "WHERE o.userId = :userId AND i.productId = :productId AND o.status = :status")
     boolean existsByUserIdAndProductIdAndStatus(

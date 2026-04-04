@@ -4,6 +4,7 @@ import userEvent from '@testing-library/user-event';
 import { CheckoutForm } from '@/features/checkout/ui/CheckoutForm';
 import type { ApiErrorResponse } from '@repo/types';
 import type { CheckoutCartItem } from '@/features/checkout/model/types';
+import { TestQueryProvider } from './test-utils';
 
 const mockPush = vi.fn();
 vi.mock('next/navigation', () => ({
@@ -14,8 +15,13 @@ vi.mock('@/features/checkout/api/place-order', () => ({
   submitOrder: vi.fn(),
 }));
 
-vi.mock('@/entities/user', () => ({
-  getMyAddresses: vi.fn().mockResolvedValue({ addresses: [] }),
+vi.mock('@/features/user', () => ({
+  useAddresses: () => ({ data: { addresses: [] }, isLoading: false, invalidate: vi.fn() }),
+}));
+
+const mockRequestPayment = vi.fn();
+vi.mock('@/features/checkout/model/use-toss-payment', () => ({
+  useTossPayment: () => ({ isReady: true, requestPayment: mockRequestPayment }),
 }));
 
 vi.mock('@/shared/ui/AddressSearch', () => ({
@@ -48,11 +54,13 @@ const mockOnOrderComplete = vi.fn();
 
 function renderCheckoutForm(items = CART_ITEMS, totalAmount = 1500000) {
   return render(
-    <CheckoutForm
-      items={items}
-      totalAmount={totalAmount}
-      onOrderComplete={mockOnOrderComplete}
-    />,
+    <TestQueryProvider>
+      <CheckoutForm
+        items={items}
+        totalAmount={totalAmount}
+        onOrderComplete={mockOnOrderComplete}
+      />
+    </TestQueryProvider>,
   );
 }
 
@@ -109,7 +117,7 @@ describe('CheckoutForm', () => {
     expect(button).toBeEnabled();
   });
 
-  it('주문 성공 시 결제 페이지로 이동한다', async () => {
+  it('주문 성공 시 결제를 요청한다', async () => {
     mockSubmitOrder.mockResolvedValueOnce({ orderId: 'order-1' });
 
     const user = userEvent.setup();
@@ -119,8 +127,8 @@ describe('CheckoutForm', () => {
     await user.click(screen.getByRole('button', { name: /결제하기/ }));
 
     await waitFor(() => {
-      expect(mockPush).toHaveBeenCalledWith(
-        expect.stringContaining('/checkout/payment?orderId=order-1'),
+      expect(mockRequestPayment).toHaveBeenCalledWith(
+        expect.objectContaining({ orderId: 'order-1', amount: 1500000 }),
       );
     });
   });
@@ -151,7 +159,7 @@ describe('CheckoutForm', () => {
 
     await waitFor(() => {
       expect(mockSubmitOrder).toHaveBeenCalledWith({
-        items: [{ productId: 'p1', variantId: 'v1', quantity: 1 }],
+        items: [{ productId: 'p1', variantId: 'v1', productName: '노트북', optionName: '실버', quantity: 1, unitPrice: 1500000 }],
         shippingAddress: {
           recipient: '홍길동',
           phone: '010-1234-5678',
@@ -210,14 +218,14 @@ describe('CheckoutForm', () => {
     const button = screen.getByRole('button', { name: /결제하기/ });
     await user.click(button);
 
-    expect(screen.getByRole('button', { name: /결제 진행 중/ })).toBeDisabled();
+    expect(screen.getByRole('button', { name: /주문 처리 중/ })).toBeDisabled();
     expect(mockSubmitOrder).toHaveBeenCalledTimes(1);
 
     resolveOrder!({ orderId: 'order-1' });
 
     await waitFor(() => {
-      expect(mockPush).toHaveBeenCalledWith(
-        expect.stringContaining('/checkout/payment?orderId=order-1'),
+      expect(mockRequestPayment).toHaveBeenCalledWith(
+        expect.objectContaining({ orderId: 'order-1' }),
       );
     });
   });

@@ -85,7 +85,7 @@ class OrderApiContractTest {
     @Test
     @DisplayName("GET /api/orders 응답은 {content, page, size, totalElements}만 포함한다")
     void getOrders_response_containsSpecFields() throws Exception {
-        OrderSummary summary = new OrderSummary("order-1", OrderStatus.PENDING.name(), 1000L, 1, Instant.now());
+        OrderSummary summary = new OrderSummary("order-1", OrderStatus.PENDING.name(), 1000L, 1, "상품A", Instant.now());
         given(orderQueryService.getOrders(eq("user-1"), any(), any()))
                 .willReturn(new PageResult<>(List.of(summary), 0, 20, 1L, 1));
 

@@ -11,21 +11,21 @@ public record AdminOrderDetailResponse(
         String userId,
         String status,
         long totalPrice,
-        List<ItemDetail> items,
-        ShippingAddressDetail shippingAddress,
+        List<OrderDetailResponse.OrderItemDetail> items,
+        OrderDetailResponse.ShippingAddressDetail shippingAddress,
         Instant createdAt,
         Instant updatedAt
 ) {
     public static AdminOrderDetailResponse from(AdminOrderDetail detail) {
-        List<ItemDetail> items = detail.items().stream()
-                .map(i -> new ItemDetail(
+        List<OrderDetailResponse.OrderItemDetail> items = detail.items().stream()
+                .map(i -> new OrderDetailResponse.OrderItemDetail(
                         i.productId(), i.variantId(), i.productName(),
                         i.optionName(), i.quantity(), i.unitPrice()
                 ))
                 .toList();
 
         OrderDetail.ShippingAddressDetail addr = detail.shippingAddress();
-        ShippingAddressDetail addrItem = new ShippingAddressDetail(
+        OrderDetailResponse.ShippingAddressDetail addrItem = new OrderDetailResponse.ShippingAddressDetail(
                 addr.recipient(), addr.phone(), addr.zipCode(), addr.address1(), addr.address2()
         );
 
@@ -34,14 +34,4 @@ public record AdminOrderDetailResponse(
                 items, addrItem, detail.createdAt(), detail.updatedAt()
         );
     }
-
-    public record ItemDetail(
-            String productId, String variantId, String productName,
-            String optionName, int quantity, long unitPrice
-    ) {}
-
-    public record ShippingAddressDetail(
-            String recipient, String phone, String zipCode,
-            String address1, String address2
-    ) {}
 }

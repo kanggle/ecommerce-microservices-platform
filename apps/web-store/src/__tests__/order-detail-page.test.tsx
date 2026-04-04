@@ -2,6 +2,7 @@ import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { render, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import type { OrderDetail, ApiErrorResponse, PaymentResponse } from '@repo/types';
+import { TestQueryProvider } from './test-utils';
 
 const mockReplace = vi.fn();
 vi.mock('next/navigation', () => ({
@@ -86,26 +87,27 @@ describe('OrderDetailPage', () => {
     });
     mockUseRequireAuth.mockReturnValue({ isReady: true });
     mockUseParams.mockReturnValue({ id: 'order-1' });
+    mockGetPayment.mockRejectedValue({ code: 'PAYMENT_NOT_FOUND', message: 'Not found' });
   });
 
   it('주문 상세 정보를 표시한다', async () => {
     mockGetOrder.mockResolvedValueOnce(MOCK_ORDER);
 
-    render(<OrderDetailPage />);
+    render(<TestQueryProvider><OrderDetailPage /></TestQueryProvider>);
 
     await waitFor(() => {
       expect(screen.getByText('주문 상세')).toBeInTheDocument();
+      expect(screen.getByText(/노트북/)).toBeInTheDocument();
+      expect(screen.getAllByText(/30,000/).length).toBeGreaterThanOrEqual(1);
+      expect(screen.getByText(/홍길동/)).toBeInTheDocument();
+      expect(screen.getByText(/010-\*\*\*\*-5678/)).toBeInTheDocument();
     });
-    expect(screen.getByText(/노트북/)).toBeInTheDocument();
-    expect(screen.getAllByText(/30,000원/).length).toBeGreaterThanOrEqual(1);
-    expect(screen.getByText(/홍길동/)).toBeInTheDocument();
-    expect(screen.getByText(/010-\*\*\*\*-5678/)).toBeInTheDocument();
   });
 
   it('updatedAt을 표시한다', async () => {
     mockGetOrder.mockResolvedValueOnce(MOCK_ORDER);
 
-    render(<OrderDetailPage />);
+    render(<TestQueryProvider><OrderDetailPage /></TestQueryProvider>);
 
     await waitFor(() => {
       expect(screen.getByText(/최종 수정일/)).toBeInTheDocument();
@@ -122,7 +124,7 @@ describe('OrderDetailPage', () => {
     };
     mockGetOrder.mockResolvedValueOnce(orderWith2Items);
 
-    render(<OrderDetailPage />);
+    render(<TestQueryProvider><OrderDetailPage /></TestQueryProvider>);
 
     await waitFor(() => {
       expect(screen.getByText(/노트북/)).toBeInTheDocument();
@@ -133,7 +135,7 @@ describe('OrderDetailPage', () => {
   it('주문 상태 배지를 표시한다', async () => {
     mockGetOrder.mockResolvedValueOnce(MOCK_ORDER);
 
-    render(<OrderDetailPage />);
+    render(<TestQueryProvider><OrderDetailPage /></TestQueryProvider>);
 
     await waitFor(() => {
       expect(screen.getByTestId('status-badge')).toHaveTextContent('PENDING');
@@ -143,7 +145,7 @@ describe('OrderDetailPage', () => {
   it('PENDING 상태에서 취소 버튼이 표시된다', async () => {
     mockGetOrder.mockResolvedValueOnce(MOCK_ORDER);
 
-    render(<OrderDetailPage />);
+    render(<TestQueryProvider><OrderDetailPage /></TestQueryProvider>);
 
     await waitFor(() => {
       expect(screen.getByRole('button', { name: '주문 취소' })).toBeInTheDocument();
@@ -153,7 +155,7 @@ describe('OrderDetailPage', () => {
   it('CONFIRMED 상태에서도 취소 버튼이 표시된다', async () => {
     mockGetOrder.mockResolvedValueOnce({ ...MOCK_ORDER, status: 'CONFIRMED' });
 
-    render(<OrderDetailPage />);
+    render(<TestQueryProvider><OrderDetailPage /></TestQueryProvider>);
 
     await waitFor(() => {
       expect(screen.getByRole('button', { name: '주문 취소' })).toBeInTheDocument();
@@ -163,7 +165,7 @@ describe('OrderDetailPage', () => {
   it('SHIPPED 상태에서 취소 버튼이 표시되지 않는다', async () => {
     mockGetOrder.mockResolvedValueOnce({ ...MOCK_ORDER, status: 'SHIPPED' });
 
-    render(<OrderDetailPage />);
+    render(<TestQueryProvider><OrderDetailPage /></TestQueryProvider>);
 
     await waitFor(() => {
       expect(screen.getByText('주문 상세')).toBeInTheDocument();
@@ -174,7 +176,7 @@ describe('OrderDetailPage', () => {
   it('DELIVERED 상태에서 취소 버튼이 표시되지 않는다', async () => {
     mockGetOrder.mockResolvedValueOnce({ ...MOCK_ORDER, status: 'DELIVERED' });
 
-    render(<OrderDetailPage />);
+    render(<TestQueryProvider><OrderDetailPage /></TestQueryProvider>);
 
     await waitFor(() => {
       expect(screen.getByText('주문 상세')).toBeInTheDocument();
@@ -185,7 +187,7 @@ describe('OrderDetailPage', () => {
   it('CANCELLED 상태에서 취소 버튼이 표시되지 않는다', async () => {
     mockGetOrder.mockResolvedValueOnce({ ...MOCK_ORDER, status: 'CANCELLED' });
 
-    render(<OrderDetailPage />);
+    render(<TestQueryProvider><OrderDetailPage /></TestQueryProvider>);
 
     await waitFor(() => {
       expect(screen.getByText('주문 상세')).toBeInTheDocument();
@@ -198,7 +200,7 @@ describe('OrderDetailPage', () => {
     mockCancelOrder.mockResolvedValueOnce({ orderId: 'order-1', status: 'CANCELLED' });
 
     const user = userEvent.setup();
-    render(<OrderDetailPage />);
+    render(<TestQueryProvider><OrderDetailPage /></TestQueryProvider>);
 
     await waitFor(() => {
       expect(screen.getByRole('button', { name: '주문 취소' })).toBeInTheDocument();
@@ -221,7 +223,7 @@ describe('OrderDetailPage', () => {
     );
 
     const user = userEvent.setup();
-    render(<OrderDetailPage />);
+    render(<TestQueryProvider><OrderDetailPage /></TestQueryProvider>);
 
     await waitFor(() => {
       expect(screen.getByRole('button', { name: '주문 취소' })).toBeInTheDocument();
@@ -248,7 +250,7 @@ describe('OrderDetailPage', () => {
     mockCancelOrder.mockRejectedValueOnce(apiError);
 
     const user = userEvent.setup();
-    render(<OrderDetailPage />);
+    render(<TestQueryProvider><OrderDetailPage /></TestQueryProvider>);
 
     await waitFor(() => {
       expect(screen.getByRole('button', { name: '주문 취소' })).toBeInTheDocument();
@@ -267,7 +269,7 @@ describe('OrderDetailPage', () => {
     mockCancelOrder.mockRejectedValueOnce(new Error('unknown'));
 
     const user = userEvent.setup();
-    render(<OrderDetailPage />);
+    render(<TestQueryProvider><OrderDetailPage /></TestQueryProvider>);
 
     await waitFor(() => {
       expect(screen.getByRole('button', { name: '주문 취소' })).toBeInTheDocument();
@@ -289,7 +291,7 @@ describe('OrderDetailPage', () => {
     };
     mockGetOrder.mockRejectedValueOnce(apiError);
 
-    render(<OrderDetailPage />);
+    render(<TestQueryProvider><OrderDetailPage /></TestQueryProvider>);
 
     await waitFor(() => {
       expect(screen.getByTestId('error-message')).toBeInTheDocument();
@@ -300,7 +302,7 @@ describe('OrderDetailPage', () => {
   it('일반 로드 에러 시 기본 메시지를 표시한다', async () => {
     mockGetOrder.mockRejectedValueOnce(new Error('network error'));
 
-    render(<OrderDetailPage />);
+    render(<TestQueryProvider><OrderDetailPage /></TestQueryProvider>);
 
     await waitFor(() => {
       expect(screen.getByTestId('error-message')).toBeInTheDocument();
@@ -314,17 +316,18 @@ describe('OrderDetailPage', () => {
       return { isReady: false };
     });
 
-    render(<OrderDetailPage />);
+    render(<TestQueryProvider><OrderDetailPage /></TestQueryProvider>);
 
     expect(mockReplace).toHaveBeenCalledWith('/login');
   });
 
-  it('로딩 중일 때 로딩 스피너를 표시한다', () => {
+  it('로딩 중일 때 주문 내용이 표시되지 않는다', () => {
     mockGetOrder.mockReturnValue(new Promise(() => {}));
 
-    render(<OrderDetailPage />);
+    render(<TestQueryProvider><OrderDetailPage /></TestQueryProvider>);
 
-    expect(screen.getByTestId('loading-spinner')).toBeInTheDocument();
+    expect(screen.queryByText('주문 상세')).not.toBeInTheDocument();
+    expect(screen.queryByText('주문 상품')).not.toBeInTheDocument();
   });
 
   describe('결제 정보', () => {
@@ -346,7 +349,7 @@ describe('OrderDetailPage', () => {
       mockGetOrder.mockResolvedValueOnce(MOCK_ORDER);
       mockGetPayment.mockResolvedValueOnce(MOCK_PAYMENT);
 
-      render(<OrderDetailPage />);
+      render(<TestQueryProvider><OrderDetailPage /></TestQueryProvider>);
 
       await waitFor(() => {
         expect(screen.getByText('결제 정보')).toBeInTheDocument();
@@ -359,7 +362,7 @@ describe('OrderDetailPage', () => {
       mockGetOrder.mockResolvedValueOnce(MOCK_ORDER);
       mockGetPayment.mockResolvedValueOnce(MOCK_PAYMENT);
 
-      render(<OrderDetailPage />);
+      render(<TestQueryProvider><OrderDetailPage /></TestQueryProvider>);
 
       await waitFor(() => {
         expect(screen.getByText(/결제일:/)).toBeInTheDocument();
@@ -374,7 +377,7 @@ describe('OrderDetailPage', () => {
         refundedAt: '2026-03-24T10:00:00Z',
       });
 
-      render(<OrderDetailPage />);
+      render(<TestQueryProvider><OrderDetailPage /></TestQueryProvider>);
 
       await waitFor(() => {
         expect(screen.getByText(/환불일:/)).toBeInTheDocument();
@@ -389,7 +392,7 @@ describe('OrderDetailPage', () => {
         paidAt: null,
       });
 
-      render(<OrderDetailPage />);
+      render(<TestQueryProvider><OrderDetailPage /></TestQueryProvider>);
 
       await waitFor(() => {
         expect(screen.getByText('결제 정보')).toBeInTheDocument();
@@ -401,7 +404,7 @@ describe('OrderDetailPage', () => {
       mockGetOrder.mockResolvedValueOnce(MOCK_ORDER);
       mockGetPayment.mockRejectedValueOnce({ code: 'PAYMENT_NOT_FOUND', message: 'Not found' });
 
-      render(<OrderDetailPage />);
+      render(<TestQueryProvider><OrderDetailPage /></TestQueryProvider>);
 
       await waitFor(() => {
         expect(screen.getByText('주문 상세')).toBeInTheDocument();
@@ -413,7 +416,7 @@ describe('OrderDetailPage', () => {
       mockGetOrder.mockResolvedValueOnce(MOCK_ORDER);
       mockGetPayment.mockRejectedValueOnce(new Error('network error'));
 
-      render(<OrderDetailPage />);
+      render(<TestQueryProvider><OrderDetailPage /></TestQueryProvider>);
 
       await waitFor(() => {
         expect(screen.getByText('결제 정보를 불러오는데 실패했습니다.')).toBeInTheDocument();

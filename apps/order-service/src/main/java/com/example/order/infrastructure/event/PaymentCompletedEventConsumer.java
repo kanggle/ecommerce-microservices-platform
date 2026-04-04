@@ -36,17 +36,18 @@ public class PaymentCompletedEventConsumer {
             return;
         }
 
-        String orderId = event.payload().orderId();
-        if (orderId == null || orderId.isBlank()) {
+        if (EventFieldParser.isBlank(event.payload().orderId())) {
             log.warn("PaymentCompleted event has no orderId, skipping. eventId={}", event.eventId());
             return;
         }
 
-        String paymentId = event.payload().paymentId();
-        if (paymentId == null || paymentId.isBlank()) {
+        if (EventFieldParser.isBlank(event.payload().paymentId())) {
             log.warn("PaymentCompleted event has no paymentId, skipping. eventId={}", event.eventId());
             return;
         }
+
+        String orderId = event.payload().orderId();
+        String paymentId = event.payload().paymentId();
 
         paymentConfirmationService.markPaymentCompleted(
                 orderId, paymentId, EventFieldParser.parseInstant(event.payload().paidAt(), "paidAt"));

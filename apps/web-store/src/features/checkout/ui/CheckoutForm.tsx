@@ -9,7 +9,7 @@ import { submitOrder } from '../api/place-order';
 import { useTossPayment } from '../model/use-toss-payment';
 import { AddressSearch } from '@/shared/ui/AddressSearch';
 import { Skeleton } from '@/shared/ui/Skeleton';
-import { getMyAddresses } from '@/entities/user';
+import { useAddresses } from '@/features/user';
 import { isValidPhone } from '@/shared/lib/validate-phone';
 
 function addressToShipping(addr: Address): ShippingAddress {
@@ -26,23 +26,25 @@ export function CheckoutForm({ items, totalAmount, onOrderComplete }: CheckoutFo
   const { isReady: paymentReady, requestPayment } = useTossPayment();
   const [error, setError] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const [savedAddresses, setSavedAddresses] = useState<Address[]>([]);
   const [selectedAddressId, setSelectedAddressId] = useState<string>('');
-  const [addressLoading, setAddressLoading] = useState(true);
   const [address, setAddress] = useState<ShippingAddress>({
     recipient: '', phone: '', zipCode: '', address1: '', address2: '',
   });
 
+  const { data: addressData, isLoading: addressLoading } = useAddresses();
+
+  const savedAddresses = addressData?.addresses ?? [];
+
   useEffect(() => {
-    getMyAddresses().then((data) => {
-      setSavedAddresses(data.addresses);
-      const defaultAddr = data.addresses.find((a) => a.isDefault) ?? data.addresses[0];
+    if (addressData && !selectedAddressId) {
+      const addrs = addressData.addresses;
+      const defaultAddr = addrs.find((a) => a.isDefault) ?? addrs[0];
       if (defaultAddr) {
         setSelectedAddressId(defaultAddr.id);
         setAddress(addressToShipping(defaultAddr));
       }
-    }).catch(() => {}).finally(() => setAddressLoading(false));
-  }, []);
+    }
+  }, [addressData, selectedAddressId]);
 
   function handleAddressSelect(id: string) {
     setSelectedAddressId(id);
@@ -237,7 +239,7 @@ export function CheckoutForm({ items, totalAmount, onOrderComplete }: CheckoutFo
                 }} />
               </div>
               <div style={{ display: 'flex', gap: 'var(--space-2)' }}>
-                <input id="address2" type="text" className="input" value={address.address2} onChange={(e) => updateField('address2', e.target.value)} placeholder="상세주소 입력" style={{ flex: 1 }} />
+                <input id="address2" type="text" className="input" value={address.address2 ?? ''} onChange={(e) => updateField('address2', e.target.value)} placeholder="상세주소 입력" style={{ flex: 1 }} />
                 <input id="zipCode" type="text" className="input" value={address.zipCode} readOnly placeholder="우편번호" style={{ width: 100, background: 'var(--color-bg-secondary)', textAlign: 'center' }} />
               </div>
             </div>

@@ -151,7 +151,7 @@ class OrderControllerTest {
     @Test
     @DisplayName("주문 목록 조회 시 200과 페이지네이션 응답 반환")
     void getOrders_validRequest_returns200() throws Exception {
-        OrderSummary summary = new OrderSummary("order-1", OrderStatus.PENDING.name(), 1000L, 1, Instant.now());
+        OrderSummary summary = new OrderSummary("order-1", OrderStatus.PENDING.name(), 1000L, 1, "상품A", Instant.now());
         given(orderQueryService.getOrders(eq("user1"), any(), any()))
                 .willReturn(new PageResult<>(List.of(summary), 0, 20, 1L, 1));
 
@@ -165,7 +165,7 @@ class OrderControllerTest {
     @Test
     @DisplayName("status 파라미터 지정 시 해당 상태의 주문만 조회한다")
     void getOrders_withStatus_returns200() throws Exception {
-        OrderSummary summary = new OrderSummary("order-1", OrderStatus.CONFIRMED.name(), 2000L, 1, Instant.now());
+        OrderSummary summary = new OrderSummary("order-1", OrderStatus.CONFIRMED.name(), 2000L, 1, "상품A", Instant.now());
         given(orderQueryService.getOrders(eq("user1"), eq(OrderStatus.CONFIRMED), any()))
                 .willReturn(new PageResult<>(List.of(summary), 0, 20, 1L, 1));
 
@@ -180,7 +180,7 @@ class OrderControllerTest {
     @Test
     @DisplayName("status가 빈 문자열이면 전체 주문을 조회한다")
     void getOrders_emptyStatus_returnsAll() throws Exception {
-        OrderSummary summary = new OrderSummary("order-1", OrderStatus.PENDING.name(), 1000L, 1, Instant.now());
+        OrderSummary summary = new OrderSummary("order-1", OrderStatus.PENDING.name(), 1000L, 1, "상품A", Instant.now());
         given(orderQueryService.getOrders(eq("user1"), any(), any()))
                 .willReturn(new PageResult<>(List.of(summary), 0, 20, 1L, 1));
 

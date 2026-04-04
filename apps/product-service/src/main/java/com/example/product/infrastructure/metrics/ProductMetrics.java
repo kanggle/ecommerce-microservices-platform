@@ -1,6 +1,7 @@
 package com.example.product.infrastructure.metrics;
 
 import com.example.observability.metrics.EventMetricNames;
+import com.example.product.application.dto.StockAdjustmentType;
 import io.micrometer.core.instrument.Counter;
 import io.micrometer.core.instrument.MeterRegistry;
 import org.springframework.stereotype.Component;
@@ -66,11 +67,11 @@ public class ProductMetrics {
         productDeletedTotal.increment();
     }
 
-    public void incrementStockAdjusted(String type) {
+    public void incrementStockAdjusted(StockAdjustmentType type) {
         switch (type) {
-            case "increase" -> stockAdjustedIncrease.increment();
-            case "reserve" -> stockAdjustedReserve.increment();
-            default -> stockAdjustedDecrease.increment();
+            case INCREASE -> stockAdjustedIncrease.increment();
+            case RESERVE -> stockAdjustedReserve.increment();
+            case DECREASE -> stockAdjustedDecrease.increment();
         }
     }
 

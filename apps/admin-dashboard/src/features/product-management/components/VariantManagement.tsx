@@ -3,7 +3,7 @@
 import { useState } from 'react';
 import type { ProductVariant } from '@repo/types';
 import { getErrorMessage } from '@repo/types/guards';
-import { addVariant, updateVariant, deleteVariant } from '../api/product-api';
+import { useAddVariant, useUpdateVariant, useDeleteVariant } from '../hooks/use-variant-mutations';
 
 interface Props {
   productId: string;
@@ -27,45 +27,43 @@ export function VariantManagement({ productId, variants, onChanged }: Props) {
   const [editing, setEditing] = useState<EditState | null>(null);
   const [adding, setAdding] = useState<AddState | null>(null);
   const [error, setError] = useState('');
-  const [loading, setLoading] = useState(false);
+
+  const addMutation = useAddVariant(productId);
+  const updateMutation = useUpdateVariant(productId);
+  const deleteMutation = useDeleteVariant(productId);
+
+  const isMutating = addMutation.isPending || updateMutation.isPending || deleteMutation.isPending;
 
   async function handleUpdate() {
     if (!editing || !editing.optionName.trim()) return;
     setError('');
-    setLoading(true);
     try {
-      await updateVariant(productId, editing.variantId, {
-        optionName: editing.optionName.trim(),
-        additionalPrice: editing.additionalPrice,
+      await updateMutation.mutateAsync({
+        variantId: editing.variantId,
+        data: { optionName: editing.optionName.trim(), additionalPrice: editing.additionalPrice },
       });
       setEditing(null);
       onChanged();
     } catch (err) {
       setError(getErrorMessage(err, '옵션 수정에 실패했습니다.'));
-    } finally {
-      setLoading(false);
     }
   }
 
   async function handleDelete(variantId: string) {
     setError('');
-    setLoading(true);
     try {
-      await deleteVariant(productId, variantId);
+      await deleteMutation.mutateAsync(variantId);
       onChanged();
     } catch (err) {
       setError(getErrorMessage(err, '옵션 삭제에 실패했습니다.'));
-    } finally {
-      setLoading(false);
     }
   }
 
   async function handleAdd() {
     if (!adding || !adding.optionName.trim()) return;
     setError('');
-    setLoading(true);
     try {
-      await addVariant(productId, {
+      await addMutation.mutateAsync({
         optionName: adding.optionName.trim(),
         stock: adding.stock,
         additionalPrice: adding.additionalPrice,
@@ -74,8 +72,6 @@ export function VariantManagement({ productId, variants, onChanged }: Props) {
       onChanged();
     } catch (err) {
       setError(getErrorMessage(err, '옵션 추가에 실패했습니다.'));
-    } finally {
-      setLoading(false);
     }
   }
 
@@ -120,7 +116,7 @@ export function VariantManagement({ productId, variants, onChanged }: Props) {
                   <td style={{ padding: '8px 16px', fontSize: '0.875rem', color: '#6b7280' }}>{v.stock}</td>
                   <td style={{ padding: '8px 16px', textAlign: 'right' }}>
                     <div style={{ display: 'flex', gap: '6px', justifyContent: 'flex-end' }}>
-                      <button onClick={handleUpdate} disabled={loading}
+                      <button onClick={handleUpdate} disabled={isMutating}
                         style={{ padding: '5px 12px', fontSize: '0.75rem', border: 'none', borderRadius: '6px', backgroundColor: '#1A1A2E', color: '#fff', cursor: 'pointer', fontWeight: 500 }}>
                         저장
                       </button>
@@ -148,7 +144,7 @@ export function VariantManagement({ productId, variants, onChanged }: Props) {
                       {variants.length > 1 && (
                         <button
                           onClick={() => handleDelete(v.id)}
-                          disabled={loading}
+                          disabled={isMutating}
                           style={{ padding: '5px 12px', fontSize: '0.75rem', border: '1px solid #ccc', borderRadius: '6px', backgroundColor: '#fff', color: '#333', cursor: 'pointer' }}>
                           삭제
                         </button>
@@ -190,7 +186,7 @@ export function VariantManagement({ productId, variants, onChanged }: Props) {
               </td>
               <td style={{ padding: '8px 16px', textAlign: 'right' }}>
                 <div style={{ display: 'flex', gap: '6px', justifyContent: 'flex-end' }}>
-                  <button onClick={handleAdd} disabled={loading || !adding.optionName.trim()}
+                  <button onClick={handleAdd} disabled={isMutating || !adding.optionName.trim()}
                     style={{ padding: '5px 12px', fontSize: '0.75rem', border: 'none', borderRadius: '6px', backgroundColor: '#1A1A2E', color: '#fff', cursor: 'pointer', fontWeight: 500 }}>
                     추가
                   </button>

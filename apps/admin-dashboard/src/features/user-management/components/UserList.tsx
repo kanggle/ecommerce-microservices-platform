@@ -4,26 +4,23 @@ import { useRouter } from 'next/navigation';
 import { DataTable, StatusBadge, FilterBar, ListError } from '@/shared/ui';
 import type { ColumnDef } from '@/shared/ui';
 import { useUsers } from '../hooks/use-users';
+import { USER_STATUS_OPTIONS } from '@/shared/lib/status-options';
 import type { AdminUserSummary } from '@repo/types';
 
-const STATUS_OPTIONS = [
-  { label: '활성', value: 'ACTIVE' },
-  { label: '정지', value: 'SUSPENDED' },
-  { label: '탈퇴', value: 'WITHDRAWN' },
-];
-
 const columns: ColumnDef<AdminUserSummary>[] = [
-  { key: 'email', header: '이메일' },
-  { key: 'name', header: '이름' },
-  { key: 'nickname', header: '닉네임' },
+  { key: 'email', header: '이메일', sortable: true },
+  { key: 'name', header: '이름', sortable: true },
+  { key: 'nickname', header: '닉네임', sortable: true },
   {
     key: 'status',
     header: '상태',
+    sortable: true,
     render: (user: AdminUserSummary) => <StatusBadge status={user.status} />,
   },
   {
     key: 'createdAt',
     header: '가입일',
+    sortable: true,
     render: (user: AdminUserSummary) =>
       new Date(user.createdAt).toLocaleDateString('ko-KR'),
   },
@@ -43,7 +40,7 @@ export function UserList() {
         searchPlaceholder="이메일 검색..."
         searchValue={filters.email ?? ''}
         onSearchChange={(value) => filters.setFilter('email', value || undefined)}
-        statusOptions={STATUS_OPTIONS}
+        statusOptions={USER_STATUS_OPTIONS}
         statusValue={filters.status}
         onStatusChange={(value) => filters.setFilter('status', value)}
       />

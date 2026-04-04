@@ -1,0 +1,30 @@
+import type { ProductStatus, OrderStatus, UserStatus } from '@repo/types';
+
+export interface StatusOption<T extends string = string> {
+  label: string;
+  value: T;
+}
+
+export const PRODUCT_STATUS_OPTIONS: StatusOption<ProductStatus>[] = [
+  { label: '판매중', value: 'ON_SALE' },
+  { label: '품절', value: 'SOLD_OUT' },
+  { label: '숨김', value: 'HIDDEN' },
+];
+
+export const ORDER_STATUS_OPTIONS: StatusOption<OrderStatus>[] = [
+  { label: '대기', value: 'PENDING' },
+  { label: '확인', value: 'CONFIRMED' },
+  { label: '배송중', value: 'SHIPPED' },
+  { label: '배송완료', value: 'DELIVERED' },
+  { label: '취소', value: 'CANCELLED' },
+];
+
+export const USER_STATUS_OPTIONS: StatusOption<UserStatus>[] = [
+  { label: '활성', value: 'ACTIVE' },
+  { label: '정지', value: 'SUSPENDED' },
+  { label: '탈퇴', value: 'WITHDRAWN' },
+];
+
+export const VALID_PRODUCT_STATUSES: readonly ProductStatus[] = PRODUCT_STATUS_OPTIONS.map((o) => o.value);
+export const VALID_ORDER_STATUSES: readonly OrderStatus[] = ORDER_STATUS_OPTIONS.map((o) => o.value);
+export const VALID_USER_STATUSES: readonly UserStatus[] = USER_STATUS_OPTIONS.map((o) => o.value);

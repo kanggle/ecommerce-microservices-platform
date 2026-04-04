@@ -2,6 +2,7 @@ import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { render, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import type { OrderSummary, PaginatedResponse } from '@repo/types';
+import { TestQueryProvider } from './test-utils';
 
 const mockReplace = vi.fn();
 vi.mock('next/navigation', () => ({
@@ -48,8 +49,8 @@ const mockUseRequireAuth = vi.mocked(useRequireAuth);
 const mockGetOrders = vi.mocked(getOrders);
 
 const MOCK_ORDERS: OrderSummary[] = [
-  { orderId: 'order-1', status: 'PENDING', totalPrice: 30000, itemCount: 2, createdAt: '2026-03-23T10:00:00Z' },
-  { orderId: 'order-2', status: 'CONFIRMED', totalPrice: 50000, itemCount: 1, createdAt: '2026-03-22T10:00:00Z' },
+  { orderId: 'order-1', status: 'PENDING', totalPrice: 30000, itemCount: 2, firstItemName: '테스트 상품', createdAt: '2026-03-23T10:00:00Z' },
+  { orderId: 'order-2', status: 'CONFIRMED', totalPrice: 50000, itemCount: 1, firstItemName: '테스트 상품2', createdAt: '2026-03-22T10:00:00Z' },
 ];
 
 function createPaginatedResponse(
@@ -75,18 +76,19 @@ describe('OrdersPage', () => {
     mockUseRequireAuth.mockReturnValue({ isReady: true });
   });
 
-  it('로딩 중일 때 로딩 스피너를 표시한다', () => {
+  it('로딩 중일 때 주문 내용이 표시되지 않는다', () => {
     mockGetOrders.mockReturnValue(new Promise(() => {}));
 
-    render(<OrdersPage />);
+    render(<TestQueryProvider><OrdersPage /></TestQueryProvider>);
 
-    expect(screen.getByTestId('loading-spinner')).toBeInTheDocument();
+    expect(screen.queryAllByTestId('order-card')).toHaveLength(0);
+    expect(screen.queryByTestId('empty-state')).not.toBeInTheDocument();
   });
 
   it('주문 목록을 렌더링한다', async () => {
     mockGetOrders.mockResolvedValueOnce(createPaginatedResponse(MOCK_ORDERS));
 
-    render(<OrdersPage />);
+    render(<TestQueryProvider><OrdersPage /></TestQueryProvider>);
 
     await waitFor(() => {
       expect(screen.getAllByTestId('order-card')).toHaveLength(2);
@@ -98,7 +100,7 @@ describe('OrdersPage', () => {
   it('주문이 없으면 빈 상태를 표시한다', async () => {
     mockGetOrders.mockResolvedValueOnce(createPaginatedResponse([]));
 
-    render(<OrdersPage />);
+    render(<TestQueryProvider><OrdersPage /></TestQueryProvider>);
 
     await waitFor(() => {
       expect(screen.getByTestId('empty-state')).toBeInTheDocument();
@@ -109,7 +111,7 @@ describe('OrdersPage', () => {
   it('에러 발생 시 에러 메시지를 표시한다', async () => {
     mockGetOrders.mockRejectedValueOnce(new Error('fail'));
 
-    render(<OrdersPage />);
+    render(<TestQueryProvider><OrdersPage /></TestQueryProvider>);
 
     await waitFor(() => {
       expect(screen.getByTestId('error-message')).toBeInTheDocument();
@@ -121,7 +123,7 @@ describe('OrdersPage', () => {
     mockGetOrders.mockRejectedValueOnce(new Error('fail'));
 
     const user = userEvent.setup();
-    render(<OrdersPage />);
+    render(<TestQueryProvider><OrdersPage /></TestQueryProvider>);
 
     await waitFor(() => {
       expect(screen.getByTestId('error-message')).toBeInTheDocument();
@@ -141,7 +143,7 @@ describe('OrdersPage', () => {
       return { isReady: false };
     });
 
-    render(<OrdersPage />);
+    render(<TestQueryProvider><OrdersPage /></TestQueryProvider>);
 
     expect(mockReplace).toHaveBeenCalledWith('/login');
   });
@@ -150,7 +152,7 @@ describe('OrdersPage', () => {
     it('페이지네이션 컨트롤을 표시한다', async () => {
       mockGetOrders.mockResolvedValueOnce(createPaginatedResponse(MOCK_ORDERS, 0, 20, 50));
 
-      render(<OrdersPage />);
+      render(<TestQueryProvider><OrdersPage /></TestQueryProvider>);
 
       await waitFor(() => {
         expect(screen.getByText('1 / 3')).toBeInTheDocument();
@@ -162,7 +164,7 @@ describe('OrdersPage', () => {
     it('첫 페이지에서 이전 버튼이 비활성화된다', async () => {
       mockGetOrders.mockResolvedValueOnce(createPaginatedResponse(MOCK_ORDERS, 0, 20, 50));
 
-      render(<OrdersPage />);
+      render(<TestQueryProvider><OrdersPage /></TestQueryProvider>);
 
       await waitFor(() => {
         expect(screen.getByText('이전')).toBeDisabled();
@@ -173,7 +175,7 @@ describe('OrdersPage', () => {
       mockGetOrders.mockResolvedValueOnce(createPaginatedResponse(MOCK_ORDERS, 0, 20, 50));
 
       const user = userEvent.setup();
-      render(<OrdersPage />);
+      render(<TestQueryProvider><OrdersPage /></TestQueryProvider>);
 
       await waitFor(() => {
         expect(screen.getByText('다음')).toBeEnabled();
@@ -190,7 +192,7 @@ describe('OrdersPage', () => {
     it('마지막 페이지에서 다음 버튼이 비활성화된다', async () => {
       mockGetOrders.mockResolvedValueOnce(createPaginatedResponse(MOCK_ORDERS, 2, 20, 50));
 
-      render(<OrdersPage />);
+      render(<TestQueryProvider><OrdersPage /></TestQueryProvider>);
 
       // 마지막 페이지로 이동하기 위해 직접 state를 세팅할 수 없으므로
       // 다음 버튼 클릭으로 이동
@@ -203,7 +205,7 @@ describe('OrdersPage', () => {
       mockGetOrders.mockResolvedValueOnce(createPaginatedResponse(MOCK_ORDERS, 0, 20, 50));
 
       const user = userEvent.setup();
-      render(<OrdersPage />);
+      render(<TestQueryProvider><OrdersPage /></TestQueryProvider>);
 
       await waitFor(() => {
         expect(screen.getByLabelText('페이지 크기:')).toBeInTheDocument();

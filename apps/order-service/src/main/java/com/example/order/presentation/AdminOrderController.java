@@ -25,8 +25,6 @@ import org.springframework.web.bind.annotation.*;
 public class AdminOrderController {
 
     private static final String ROLE_ADMIN = "ADMIN";
-    private static final int MAX_PAGE_SIZE = 100;
-    private static final int DEFAULT_PAGE_SIZE = 20;
 
     private final OrderQueryService orderQueryService;
     private final AdminOrderStatusService adminOrderStatusService;
@@ -39,11 +37,8 @@ public class AdminOrderController {
             @RequestParam(required = false) String status
     ) {
         validateAdminRole(userRole);
-        int safePage = Math.max(page, 0);
-        int safeSize = size < 1 ? DEFAULT_PAGE_SIZE : Math.min(size, MAX_PAGE_SIZE);
-        OrderStatus orderStatus = parseStatus(status);
-        PageQuery pageQuery = new PageQuery(safePage, safeSize, "createdAt", "DESC");
-        PageResult<AdminOrderSummary> result = orderQueryService.getAllOrders(orderStatus, pageQuery);
+        PageQuery pageQuery = OrderControllerUtils.buildPageQuery(page, size, status);
+        PageResult<AdminOrderSummary> result = orderQueryService.getAllOrders(OrderControllerUtils.parseStatus(status), pageQuery);
         return ResponseEntity.ok(AdminOrderListResponse.from(result));
     }
 
@@ -64,7 +59,7 @@ public class AdminOrderController {
             @Valid @RequestBody AdminOrderStatusChangeRequest request
     ) {
         validateAdminRole(userRole);
-        OrderStatus targetStatus = parseStatus(request.status());
+        OrderStatus targetStatus = OrderControllerUtils.parseStatus(request.status());
         if (targetStatus == null) {
             throw new InvalidOrderStatusException(request.status());
         }
@@ -78,14 +73,4 @@ public class AdminOrderController {
         }
     }
 
-    private OrderStatus parseStatus(String status) {
-        if (status == null || status.isBlank()) {
-            return null;
-        }
-        try {
-            return OrderStatus.valueOf(status);
-        } catch (IllegalArgumentException e) {
-            throw new InvalidOrderStatusException(status);
-        }
-    }
 }

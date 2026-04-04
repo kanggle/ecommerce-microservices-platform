@@ -29,6 +29,7 @@ describe('OrderCard', () => {
     status: 'CONFIRMED',
     totalPrice: 50000,
     itemCount: 2,
+    firstItemName: '테스트 상품',
     createdAt: '2026-03-23T10:00:00Z',
   };
 
@@ -36,7 +37,7 @@ describe('OrderCard', () => {
     render(<OrderCard order={order} />);
 
     expect(screen.getByText(/50,000원/)).toBeInTheDocument();
-    expect(screen.getByText(/2개 상품/)).toBeInTheDocument();
+    expect(screen.getByText(/테스트 상품 외 1건/)).toBeInTheDocument();
   });
 
   it('주문 상태를 표시한다', () => {
@@ -49,7 +50,7 @@ describe('OrderCard', () => {
     render(<OrderCard order={order} />);
 
     const link = screen.getByRole('link');
-    expect(link).toHaveAttribute('href', '/orders/order-1');
+    expect(link).toHaveAttribute('href', '/my/orders/order-1');
   });
 
   it('주문 날짜를 표시한다', () => {

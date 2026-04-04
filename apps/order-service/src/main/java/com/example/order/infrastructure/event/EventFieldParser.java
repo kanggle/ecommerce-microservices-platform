@@ -7,6 +7,10 @@ class EventFieldParser {
     private EventFieldParser() {
     }
 
+    static boolean isBlank(String value) {
+        return value == null || value.isBlank();
+    }
+
     static Instant parseInstant(String value, String fieldName) {
         if (value == null || value.isBlank()) {
             throw new IllegalArgumentException(fieldName + " is required but was null or blank");

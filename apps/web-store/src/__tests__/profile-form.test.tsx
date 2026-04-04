@@ -3,6 +3,7 @@ import { render, screen, waitFor, act } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { ProfileForm } from '@/features/user/ui/ProfileForm';
 import type { UserProfile, ApiErrorResponse } from '@repo/types';
+import { TestQueryProvider } from './test-utils';
 
 vi.mock('@/features/user/api/user-profile-api', () => ({
   updateMyProfile: vi.fn(),
@@ -26,7 +27,7 @@ const MOCK_PROFILE: UserProfile = {
 const mockOnUpdated = vi.fn();
 
 function renderProfileForm(profile = MOCK_PROFILE) {
-  return render(<ProfileForm profile={profile} onUpdated={mockOnUpdated} />);
+  return render(<TestQueryProvider><ProfileForm profile={profile} onUpdated={mockOnUpdated} /></TestQueryProvider>);
 }
 
 describe('ProfileForm', () => {
@@ -41,14 +42,11 @@ describe('ProfileForm', () => {
     expect(screen.getByText('홍길동')).toBeInTheDocument();
   });
 
-  it('프로필 필드(닉네임, 전화번호, 프로필 이미지 URL)를 입력 필드로 표시한다', () => {
+  it('프로필 필드(닉네임, 전화번호)를 입력 필드로 표시한다', () => {
     renderProfileForm();
 
     expect(screen.getByLabelText('닉네임')).toHaveValue('길동이');
     expect(screen.getByLabelText('전화번호')).toHaveValue('010-1234-5678');
-    expect(screen.getByLabelText('프로필 이미지 URL')).toHaveValue(
-      'https://example.com/image.jpg',
-    );
   });
 
   it('변경사항이 없으면 수정 버튼이 비활성화된다', () => {
@@ -93,9 +91,6 @@ describe('ProfileForm', () => {
     });
 
     expect(mockOnUpdated).toHaveBeenCalledTimes(1);
-    expect(mockOnUpdated).toHaveBeenCalledWith(
-      expect.objectContaining({ nickname: '새닉네임' }),
-    );
   });
 
   it('변경된 필드만 PATCH 요청에 포함한다', async () => {
@@ -132,20 +127,6 @@ describe('ProfileForm', () => {
 
     expect(
       screen.getByText('전화번호 형식이 올바르지 않습니다.'),
-    ).toBeInTheDocument();
-    expect(mockUpdateMyProfile).not.toHaveBeenCalled();
-  });
-
-  it('유효하지 않은 URL을 입력하면 에러를 표시한다', async () => {
-    const user = userEvent.setup();
-    renderProfileForm();
-
-    await user.clear(screen.getByLabelText('프로필 이미지 URL'));
-    await user.type(screen.getByLabelText('프로필 이미지 URL'), 'not-a-url');
-    await user.click(screen.getByRole('button', { name: '프로필 수정' }));
-
-    expect(
-      screen.getByText('올바른 URL을 입력해주세요.'),
     ).toBeInTheDocument();
     expect(mockUpdateMyProfile).not.toHaveBeenCalled();
   });
@@ -293,6 +274,5 @@ describe('ProfileForm', () => {
 
     expect(screen.getByLabelText('닉네임')).toHaveValue('');
     expect(screen.getByLabelText('전화번호')).toHaveValue('');
-    expect(screen.getByLabelText('프로필 이미지 URL')).toHaveValue('');
   });
 });

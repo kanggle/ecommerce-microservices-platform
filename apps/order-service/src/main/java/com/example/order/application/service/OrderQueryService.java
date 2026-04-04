@@ -44,8 +44,8 @@ public class OrderQueryService {
     @Transactional(readOnly = true)
     public PageResult<AdminOrderSummary> getAllOrders(OrderStatus status, PageQuery pageQuery) {
         PageResult<Order> orders = (status != null)
-                ? orderRepository.findByStatus(status, pageQuery)
-                : orderRepository.findAll(pageQuery);
+                ? orderRepository.findByStatusWithItems(status, pageQuery)
+                : orderRepository.findAllWithItems(pageQuery);
         return new PageResult<>(
                 orders.content().stream().map(AdminOrderSummary::from).toList(),
                 orders.page(), orders.size(), orders.totalElements(), orders.totalPages()

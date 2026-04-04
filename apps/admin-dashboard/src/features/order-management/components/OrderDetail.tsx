@@ -1,12 +1,10 @@
 'use client';
 
-import { useState } from 'react';
-import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { PageLayout, StatusBadge, DescriptionList, Section } from '@/shared/ui';
 import { ErrorMessage } from '@repo/ui';
+import { getErrorMessage } from '@repo/types/guards';
 import { useOrder } from '../hooks/use-order';
-import { changeOrderStatus } from '../api/order-api';
-import { orderKeys } from '../hooks/query-keys';
+import { useChangeOrderStatus } from '../hooks/use-change-order-status';
 import type { OrderStatus } from '@repo/types';
 
 interface Props {
@@ -23,21 +21,7 @@ const CANCELLABLE: OrderStatus[] = ['PENDING', 'CONFIRMED'];
 
 export function OrderDetail({ orderId }: Props) {
   const { data: order, isLoading, isError, refetch } = useOrder(orderId);
-  const queryClient = useQueryClient();
-  const [error, setError] = useState('');
-
-  const mutation = useMutation({
-    mutationFn: (status: OrderStatus) => changeOrderStatus(orderId, status),
-    onSuccess: () => {
-      setError('');
-      queryClient.invalidateQueries({ queryKey: orderKeys.detail(orderId) });
-      queryClient.invalidateQueries({ queryKey: orderKeys.all });
-    },
-    onError: (err: unknown) => {
-      const msg = err && typeof err === 'object' && 'message' in err ? String(err.message) : '상태 변경에 실패했습니다.';
-      setError(msg);
-    },
-  });
+  const mutation = useChangeOrderStatus(orderId);
 
   if (isLoading || !order) {
     return <PageLayout.Skeleton />;
@@ -104,8 +88,10 @@ export function OrderDetail({ orderId }: Props) {
             )}
           </div>
         )}
-        {error && (
-          <p style={{ color: '#ef4444', fontSize: '0.8125rem', marginTop: '8px' }}>{error}</p>
+        {mutation.error && (
+          <p style={{ color: '#ef4444', fontSize: '0.8125rem', marginTop: '8px' }}>
+            {getErrorMessage(mutation.error, '상태 변경에 실패했습니다.')}
+          </p>
         )}
       </Section>
 

@@ -12,8 +12,9 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.Clock;
-import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 @Slf4j
 @Service
@@ -36,18 +37,18 @@ public class UserWithdrawalOrderService {
             return;
         }
 
-        List<String> previousStatuses = new ArrayList<>(activeOrders.size());
+        Map<String, String> previousStatusByOrderId = activeOrders.stream()
+                .collect(Collectors.toMap(Order::getOrderId, o -> o.getStatus().name()));
+
         for (Order order : activeOrders) {
-            previousStatuses.add(order.getStatus().name());
             order.cancel(clock);
         }
 
         orderRepository.saveAll(activeOrders);
 
-        for (int i = 0; i < activeOrders.size(); i++) {
-            Order order = activeOrders.get(i);
+        for (Order order : activeOrders) {
             orderMetrics.recordOrderCancelled("user_withdrawn");
-            orderMetrics.recordStatusTransition(previousStatuses.get(i), order.getStatus().name());
+            orderMetrics.recordStatusTransition(previousStatusByOrderId.get(order.getOrderId()), order.getStatus().name());
 
             orderEventPublisher.publishOrderCancelled(
                     OrderCancelledEvent.of(order.getOrderId(), order.getUserId(),

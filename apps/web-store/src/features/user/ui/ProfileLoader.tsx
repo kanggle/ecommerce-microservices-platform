@@ -1,41 +1,27 @@
 'use client';
 
-import { useEffect, useState, useCallback } from 'react';
-import type { UserProfile } from '@repo/types';
+import { useEffect } from 'react';
 import { ErrorMessage } from '@repo/ui';
 import { Skeleton } from '@/shared/ui/Skeleton';
 import { ProfileForm } from './ProfileForm';
-import { getMyProfile } from '../api/user-profile-api';
+import { useProfile } from '../model/use-profile';
 import { useProfileImage } from '@/shared/context/ProfileImageContext';
 
 export function ProfileLoader() {
-  const [profile, setProfile] = useState<UserProfile | null>(null);
-  const [isLoading, setIsLoading] = useState(true);
-  const [error, setError] = useState('');
+  const { data: profile, isLoading, isError, error: queryError, refetch } = useProfile();
   const { setImageUrl: setGlobalProfileImage } = useProfileImage();
 
-  const loadProfile = useCallback(async () => {
-    setIsLoading(true);
-    setError('');
-    try {
-      const data = await getMyProfile();
-      setProfile(data);
-      setGlobalProfileImage(data.profileImageUrl ?? '');
-    } catch (err) {
-      const apiErr = err as { code?: string };
-      if (apiErr.code === 'USER_PROFILE_NOT_FOUND') {
-        setError('프로필을 찾을 수 없습니다.');
-      } else {
-        setError('프로필을 불러오는데 실패했습니다.');
-      }
-    } finally {
-      setIsLoading(false);
-    }
-  }, []);
-
   useEffect(() => {
-    loadProfile();
-  }, [loadProfile]);
+    if (profile) {
+      setGlobalProfileImage(profile.profileImageUrl ?? '');
+    }
+  }, [profile, setGlobalProfileImage]);
+
+  const error = isError
+    ? (queryError as { code?: string })?.code === 'USER_PROFILE_NOT_FOUND'
+      ? '프로필을 찾을 수 없습니다.'
+      : '프로필을 불러오는데 실패했습니다.'
+    : '';
 
   return (
     <div>
@@ -55,11 +41,11 @@ export function ProfileLoader() {
           <Skeleton width="100%" height="40px" />
         </div>
       )}
-      {error && <ErrorMessage message={error} onRetry={loadProfile} />}
+      {error && <ErrorMessage message={error} onRetry={() => refetch()} />}
       {!isLoading && !error && profile && (
         <ProfileForm
           profile={profile}
-          onUpdated={(updated) => setProfile(updated)}
+          onUpdated={() => refetch()}
         />
       )}
     </div>

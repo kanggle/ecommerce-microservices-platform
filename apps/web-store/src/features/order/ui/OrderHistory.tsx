@@ -1,38 +1,22 @@
 'use client';
 
-import { useEffect, useState, useCallback } from 'react';
-import type { OrderSummary } from '@repo/types';
-import { getOrders, OrderCard } from '@/entities/order';
+import { useState } from 'react';
+import { OrderCard } from '@/entities/order';
 import { ErrorMessage, EmptyState } from '@repo/ui';
 import { Skeleton } from '@/shared/ui/Skeleton';
+import { useOrders } from '../model/use-orders';
 
 const PAGE_SIZE_OPTIONS = [10, 20, 50];
 
 export function OrderHistory() {
-  const [orders, setOrders] = useState<OrderSummary[]>([]);
-  const [isLoading, setIsLoading] = useState(true);
-  const [error, setError] = useState('');
   const [page, setPage] = useState(0);
   const [size, setSize] = useState(20);
-  const [totalElements, setTotalElements] = useState(0);
 
-  const loadOrders = useCallback(async (currentPage: number, currentSize: number) => {
-    setIsLoading(true);
-    setError('');
-    try {
-      const result = await getOrders(currentPage, currentSize);
-      setOrders(result.content);
-      setTotalElements(result.totalElements);
-    } catch {
-      setError('주문 목록을 불러오는데 실패했습니다.');
-    } finally {
-      setIsLoading(false);
-    }
-  }, []);
+  const { data, isLoading, isError, refetch } = useOrders(page, size);
 
-  useEffect(() => {
-    loadOrders(page, size);
-  }, [page, size, loadOrders]);
+  const orders = data?.content ?? [];
+  const totalElements = data?.totalElements ?? 0;
+  const error = isError ? '주문 목록을 불러오는데 실패했습니다.' : '';
 
   const totalPages = Math.max(1, Math.ceil(totalElements / size));
 
@@ -67,7 +51,7 @@ export function OrderHistory() {
           ))}
         </div>
       )}
-      {error && <ErrorMessage message={error} onRetry={() => loadOrders(page, size)} />}
+      {error && <ErrorMessage message={error} onRetry={() => refetch()} />}
       {!isLoading && !error && orders.length === 0 && (
         <EmptyState message="주문 내역이 없습니다." />
       )}

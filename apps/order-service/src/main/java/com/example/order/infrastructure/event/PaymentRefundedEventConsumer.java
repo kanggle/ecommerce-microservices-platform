@@ -36,13 +36,12 @@ public class PaymentRefundedEventConsumer {
             return;
         }
 
-        String orderId = event.payload().orderId();
-        if (orderId == null || orderId.isBlank()) {
+        if (EventFieldParser.isBlank(event.payload().orderId())) {
             log.warn("PaymentRefunded event has no orderId, skipping. eventId={}", event.eventId());
             return;
         }
 
         paymentRefundConfirmationService.markRefunded(
-                orderId, EventFieldParser.parseInstant(event.payload().refundedAt(), "refundedAt"));
+                event.payload().orderId(), EventFieldParser.parseInstant(event.payload().refundedAt(), "refundedAt"));
     }
 }
