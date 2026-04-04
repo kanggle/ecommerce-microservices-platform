@@ -1,5 +1,6 @@
 package com.example.payment.adapter.in.rest;
 
+import com.example.payment.application.service.PaymentProcessingService;
 import com.example.payment.application.service.PaymentQueryService;
 import com.example.payment.application.exception.UnauthorizedPaymentAccessException;
 import com.example.payment.domain.exception.InvalidPaymentException;
@@ -28,6 +29,9 @@ class PaymentControllerTest {
 
     @MockitoBean
     private PaymentQueryService paymentQueryService;
+
+    @MockitoBean
+    private PaymentProcessingService paymentProcessingService;
 
     @Test
     @DisplayName("정상 조회 시 200과 결제 정보를 반환한다")
@@ -70,6 +74,6 @@ class PaymentControllerTest {
 
         mockMvc.perform(get("/api/payments/orders/order-1").header("X-User-Id", "attacker"))
                 .andExpect(status().isForbidden())
-                .andExpect(jsonPath("$.code").value("UNAUTHORIZED"));
+                .andExpect(jsonPath("$.code").value("ACCESS_DENIED"));
     }
 }

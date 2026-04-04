@@ -94,6 +94,8 @@ Tasks must not be implemented from `backlog/`, `in-progress/`, `review/`, `done/
 | TASK-BE-107 | order-service OrderController 페이지 사이즈 상한 제한 추가 — 과도한 size 파라미터에 의한 DB 과부하 방지 | order-service | code, api, test |
 | TASK-BE-108 | 전 서비스 컨트랙트 준수 자동 검증 테스트 추가 — API 응답 스키마 및 이벤트 페이로드 스펙 일치 검증 | order-service, auth-service, user-service, product-service, payment-service, search-service | code, api, event, test |
 | TASK-BE-113-fix-002 | TASK-BE-113-fix-001 리뷰 수정 — saveAll() N+1 쿼리 제거 및 회원 탈퇴 배치 저장 통합 테스트 추가 | order-service | code, test |
+| TASK-BE-115 | payment-service 토스페이먼츠 PG 연동 — 결제 승인 API, PG 어댑터, DB 스키마 확장 | payment-service | code, api, test |
+| TASK-FE-049 | web-store 토스페이먼츠 결제 UI — SDK 위젯 연동 및 결제 콜백 처리 | web-store | code, test |
 
 ## in-progress
 

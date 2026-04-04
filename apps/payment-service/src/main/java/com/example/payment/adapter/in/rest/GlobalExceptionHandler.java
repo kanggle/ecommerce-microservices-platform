@@ -29,7 +29,7 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(UnauthorizedPaymentAccessException.class)
     public ResponseEntity<ErrorResponse> handleUnauthorized(UnauthorizedPaymentAccessException e) {
         return ResponseEntity.status(HttpStatus.FORBIDDEN)
-                .body(ErrorResponse.of("UNAUTHORIZED", e.getMessage()));
+                .body(ErrorResponse.of("ACCESS_DENIED", e.getMessage()));
     }
 
     @ExceptionHandler(Exception.class)

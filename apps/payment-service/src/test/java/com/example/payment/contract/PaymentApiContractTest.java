@@ -1,5 +1,6 @@
 package com.example.payment.contract;
 
+import com.example.payment.application.service.PaymentProcessingService;
 import com.example.payment.application.service.PaymentQueryService;
 import com.example.payment.domain.exception.PaymentNotFoundException;
 import com.example.payment.domain.model.Payment;
@@ -36,6 +37,9 @@ class PaymentApiContractTest {
 
     @MockitoBean
     private PaymentQueryService paymentQueryService;
+
+    @MockitoBean
+    private PaymentProcessingService paymentProcessingService;
 
     private static final String SPEC_REF = "specs/contracts/http/payment-api.md";
 

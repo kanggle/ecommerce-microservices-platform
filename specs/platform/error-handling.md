@@ -118,6 +118,10 @@ All services must return errors in the following JSON format:
 |---|---|---|
 | PAYMENT_NOT_FOUND | 404 | Payment for given order does not exist |
 | INVALID_PAYMENT_REQUEST | 400 | Payment request is invalid (missing X-User-Id header) |
+| AMOUNT_MISMATCH | 400 | Confirm amount does not match PENDING payment amount |
+| PAYMENT_ALREADY_COMPLETED | 409 | Payment is not in PENDING status |
+| PG_CONFIRM_FAILED | 502 | Toss Payments confirmation API returned an error |
+| ACCESS_DENIED | 403 | Not the payment owner (reuses Authorization/ACCESS_DENIED) |
 
 ## User
 
