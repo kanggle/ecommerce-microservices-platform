@@ -4,28 +4,31 @@ import type { AddressListResponse, Address } from '@repo/types';
 
 const userApi = createUserApi(apiClient);
 
-let mockAddresses: Address[] = [
-  {
-    id: 'addr-1',
-    label: '집',
-    recipientName: '홍길동',
-    phone: '010-1234-5678',
-    zipCode: '06234',
-    address1: '서울특별시 강남구 테헤란로 427',
-    address2: '위워크 타워 10층',
-    isDefault: true,
-  },
-  {
-    id: 'addr-2',
-    label: '회사',
-    recipientName: '홍길동',
-    phone: '010-1234-5678',
-    zipCode: '03925',
-    address1: '서울특별시 마포구 월드컵북로 21',
-    address2: null,
-    isDefault: false,
-  },
-];
+export const mockAddressState = {
+  addresses: [
+    {
+      id: 'addr-1',
+      label: '집',
+      recipientName: '홍길동',
+      phone: '010-1234-5678',
+      zipCode: '06234',
+      address1: '서울특별시 강남구 테헤란로 427',
+      address2: '위워크 타워 10층',
+      isDefault: true,
+    },
+    {
+      id: 'addr-2',
+      label: '회사',
+      recipientName: '홍길동',
+      phone: '010-1234-5678',
+      zipCode: '03925',
+      address1: '서울특별시 마포구 월드컵북로 21',
+      address2: null,
+      isDefault: false,
+    },
+  ] as Address[],
+  idCounter: 3,
+};
 
 export async function getMyAddresses(): Promise<AddressListResponse> {
   try {
@@ -41,6 +44,6 @@ export async function getMyAddresses(): Promise<AddressListResponse> {
     });
     return data;
   } catch {
-    return { addresses: [...mockAddresses] };
+    return { addresses: [...mockAddressState.addresses] };
   }
 }
