@@ -28,8 +28,8 @@ const styles = {
   cancelBtn: { padding: '10px 24px', borderRadius: '6px', border: '1px solid #d1d5db', backgroundColor: '#fff', cursor: 'pointer' } as const,
   categoryInputEditing: { width: '100%', padding: '8px 12px', border: '1px solid #d1d5db', borderRadius: '6px', backgroundColor: '#f3f4f6' } as const,
   categoryInputCreating: { width: '100%', padding: '8px 12px', border: '1px solid #d1d5db', borderRadius: '6px', backgroundColor: '#fff' } as const,
-  submitBtn: { padding: '10px 24px', borderRadius: '6px', border: 'none', backgroundColor: '#2563eb', color: '#fff', cursor: 'pointer', opacity: 1, fontWeight: 600 } as const,
-  submitBtnDisabled: { padding: '10px 24px', borderRadius: '6px', border: 'none', backgroundColor: '#2563eb', color: '#fff', cursor: 'not-allowed', opacity: 0.5, fontWeight: 600 } as const,
+  submitBtn: { padding: '10px 24px', borderRadius: '6px', border: 'none', backgroundColor: '#1A1A2E', color: '#fff', cursor: 'pointer', opacity: 1, fontWeight: 600 } as const,
+  submitBtnDisabled: { padding: '10px 24px', borderRadius: '6px', border: 'none', backgroundColor: '#1A1A2E', color: '#fff', cursor: 'not-allowed', opacity: 0.5, fontWeight: 600 } as const,
 };
 
 export function ProductForm({ product }: Props) {
@@ -51,7 +51,7 @@ export function ProductForm({ product }: Props) {
   const [error, setError] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
 
-  const isValid = name.trim().length > 0 && price > 0 && categoryId.trim().length > 0;
+  const isValid = name.trim().length > 0 && price > 0;
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
@@ -67,7 +67,7 @@ export function ProductForm({ product }: Props) {
         router.push(`/products/${product.id}`);
       } else {
         const data: CreateProductRequest = {
-          name: name.trim(), description: description.trim(), price, categoryId: categoryId.trim(),
+          name: name.trim(), description: description.trim(), price, categoryId: '',
           variants: variants.filter((v) => v.optionName.trim().length > 0)
             .map((v) => ({ optionName: v.optionName.trim(), stock: v.stock, additionalPrice: v.additionalPrice })),
         };
@@ -99,11 +99,12 @@ export function ProductForm({ product }: Props) {
             <label htmlFor="price" style={styles.label}>가격 *</label>
             <input id="price" type="number" value={price} onChange={(e) => setPrice(Number(e.target.value))} min={0} required style={styles.input} />
           </div>
-          <div>
-            <label htmlFor="categoryId" style={styles.label}>카테고리 ID *</label>
-            <input id="categoryId" type="text" value={categoryId} onChange={(e) => setCategoryId(e.target.value)} required disabled={isEdit}
-              style={isEdit ? styles.categoryInputEditing : styles.categoryInputCreating} />
-          </div>
+          {isEdit && categoryId && (
+            <div>
+              <label htmlFor="categoryId" style={styles.label}>카테고리 ID</label>
+              <input id="categoryId" type="text" value={categoryId} disabled style={styles.categoryInputEditing} />
+            </div>
+          )}
           {isEdit && (
             <div>
               <label htmlFor="status" style={styles.label}>상태</label>

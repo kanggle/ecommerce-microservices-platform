@@ -5,6 +5,11 @@ let mockPathname = '/dashboard';
 
 vi.mock('next/navigation', () => ({
   usePathname: () => mockPathname,
+  useRouter: () => ({ push: vi.fn() }),
+}));
+
+vi.mock('@/shared/hooks', () => ({
+  useAuth: () => ({ user: { email: 'admin@test.com' }, logout: vi.fn() }),
 }));
 
 describe('Sidebar', () => {
@@ -27,7 +32,7 @@ describe('Sidebar', () => {
     render(<Sidebar />);
 
     const productLink = screen.getByText('상품 관리');
-    expect(productLink).toHaveStyle({ color: '#fff', backgroundColor: '#374151' });
+    expect(productLink).toHaveStyle({ color: '#fff' });
   });
 
   it('비활성 메뉴에 비활성 스타일을 적용한다', () => {
@@ -35,7 +40,7 @@ describe('Sidebar', () => {
     render(<Sidebar />);
 
     const dashboardLink = screen.getByText('대시보드');
-    expect(dashboardLink).toHaveStyle({ color: '#9ca3af' });
+    expect(dashboardLink).toHaveStyle({ color: '#888' });
   });
 
   it('네비게이션 링크가 올바른 href를 가진다', () => {

@@ -56,7 +56,7 @@ export function LoginForm() {
         alignItems: 'center',
         justifyContent: 'center',
         minHeight: '100vh',
-        backgroundColor: '#f9fafb',
+        backgroundColor: '#f5f5f5',
       }}
     >
       <form
@@ -64,25 +64,42 @@ export function LoginForm() {
         noValidate
         style={{
           backgroundColor: '#fff',
-          padding: '32px',
-          borderRadius: '8px',
-          boxShadow: '0 1px 3px rgba(0,0,0,0.1)',
+          padding: '40px',
+          borderRadius: '16px',
+          boxShadow: '0 4px 24px rgba(0,0,0,0.08)',
           width: '100%',
-          maxWidth: '400px',
+          maxWidth: '420px',
         }}
       >
-        <h1 style={{ fontSize: '1.5rem', fontWeight: 700, marginBottom: '24px', textAlign: 'center' }}>
-          Admin 로그인
-        </h1>
+        <div style={{ textAlign: 'center', marginBottom: '32px' }}>
+          <h1 style={{ fontSize: '1.5rem', fontWeight: 800, color: '#111827', marginBottom: '8px', letterSpacing: '-0.02em' }}>
+            <span style={{ color: '#1A1A2E' }}>Admin</span> Login
+          </h1>
+          <p style={{ fontSize: '0.875rem', color: '#9ca3af', margin: 0 }}>
+            관리자 계정으로 로그인하세요
+          </p>
+        </div>
 
         {error && (
-          <p role="alert" style={{ color: 'red', marginBottom: '16px', textAlign: 'center' }}>
+          <div
+            role="alert"
+            style={{
+              color: '#333',
+              backgroundColor: '#f5f5f5',
+              border: '1px solid #ddd',
+              borderRadius: '8px',
+              padding: '10px 14px',
+              marginBottom: '20px',
+              textAlign: 'center',
+              fontSize: '0.8125rem',
+            }}
+          >
             {error}
-          </p>
+          </div>
         )}
 
-        <div style={{ marginBottom: '16px' }}>
-          <label htmlFor="email" style={{ display: 'block', marginBottom: '4px', fontWeight: 500 }}>
+        <div style={{ marginBottom: '20px' }}>
+          <label htmlFor="email" style={{ display: 'block', marginBottom: '6px', fontWeight: 500, fontSize: '0.875rem', color: '#374151' }}>
             이메일
           </label>
           <input
@@ -95,16 +112,20 @@ export function LoginForm() {
             autoComplete="email"
             style={{
               width: '100%',
-              padding: '10px 12px',
-              border: '1px solid #d1d5db',
-              borderRadius: '6px',
+              padding: '11px 14px',
+              border: '1px solid #e5e7eb',
+              borderRadius: '8px',
               boxSizing: 'border-box',
+              fontSize: '0.875rem',
+              backgroundColor: '#f9fafb',
+              outline: 'none',
+              transition: 'border-color 0.15s',
             }}
           />
         </div>
 
-        <div style={{ marginBottom: '24px' }}>
-          <label htmlFor="password" style={{ display: 'block', marginBottom: '4px', fontWeight: 500 }}>
+        <div style={{ marginBottom: '28px' }}>
+          <label htmlFor="password" style={{ display: 'block', marginBottom: '6px', fontWeight: 500, fontSize: '0.875rem', color: '#374151' }}>
             비밀번호
           </label>
           <input
@@ -118,10 +139,14 @@ export function LoginForm() {
             autoComplete="current-password"
             style={{
               width: '100%',
-              padding: '10px 12px',
-              border: '1px solid #d1d5db',
-              borderRadius: '6px',
+              padding: '11px 14px',
+              border: '1px solid #e5e7eb',
+              borderRadius: '8px',
               boxSizing: 'border-box',
+              fontSize: '0.875rem',
+              backgroundColor: '#f9fafb',
+              outline: 'none',
+              transition: 'border-color 0.15s',
             }}
           />
         </div>
@@ -131,14 +156,16 @@ export function LoginForm() {
           disabled={!isValid || isSubmitting}
           style={{
             width: '100%',
-            padding: '10px',
-            borderRadius: '6px',
+            padding: '12px',
+            borderRadius: '8px',
             border: 'none',
-            backgroundColor: '#2563eb',
+            backgroundColor: '#1A1A2E',
             color: '#fff',
             fontWeight: 600,
+            fontSize: '0.9375rem',
             cursor: isValid && !isSubmitting ? 'pointer' : 'not-allowed',
             opacity: isValid && !isSubmitting ? 1 : 0.5,
+            transition: 'opacity 0.15s',
           }}
         >
           {isSubmitting ? '로그인 중...' : '로그인'}

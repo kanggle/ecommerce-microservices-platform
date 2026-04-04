@@ -23,8 +23,8 @@ const styles = {
   input: { width: '100%', padding: '8px 12px', border: '1px solid #d1d5db', borderRadius: '6px' } as const,
   buttonRow: { display: 'flex', justifyContent: 'flex-end', gap: '8px' } as const,
   cancelBtn: { padding: '8px 16px', borderRadius: '6px', border: '1px solid #d1d5db', backgroundColor: '#fff', cursor: 'pointer' } as const,
-  submitBtn: { padding: '8px 16px', borderRadius: '6px', border: 'none', backgroundColor: '#2563eb', color: '#fff', cursor: 'pointer', opacity: 1 } as const,
-  submitBtnDisabled: { padding: '8px 16px', borderRadius: '6px', border: 'none', backgroundColor: '#2563eb', color: '#fff', cursor: 'not-allowed', opacity: 0.5 } as const,
+  submitBtn: { padding: '8px 16px', borderRadius: '6px', border: 'none', backgroundColor: '#1A1A2E', color: '#fff', cursor: 'pointer', opacity: 1 } as const,
+  submitBtnDisabled: { padding: '8px 16px', borderRadius: '6px', border: 'none', backgroundColor: '#1A1A2E', color: '#fff', cursor: 'not-allowed', opacity: 0.5 } as const,
 };
 
 export function StockAdjustmentForm({ productId, variant, onClose }: Props) {

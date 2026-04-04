@@ -25,7 +25,7 @@ const styles = {
   input: { padding: '8px 12px', border: '1px solid #d1d5db', borderRadius: '6px' } as const,
   numberInput: { padding: '8px 12px', border: '1px solid #d1d5db', borderRadius: '6px', width: '100px' } as const,
   priceInput: { padding: '8px 12px', border: '1px solid #d1d5db', borderRadius: '6px', width: '120px' } as const,
-  removeBtn: { padding: '8px 12px', border: '1px solid #dc2626', borderRadius: '6px', color: '#dc2626', backgroundColor: '#fff', cursor: 'pointer' } as const,
+  removeBtn: { padding: '8px 12px', border: '1px solid #ccc', borderRadius: '6px', color: '#333', backgroundColor: '#fff', cursor: 'pointer' } as const,
 };
 
 export function VariantEditor({ variants, onChange, initialKeyCount }: VariantEditorProps) {

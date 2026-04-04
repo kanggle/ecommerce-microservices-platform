@@ -32,7 +32,7 @@ export default function GlobalError({ error, reset }: ErrorProps) {
           padding: '10px 24px',
           borderRadius: '6px',
           border: 'none',
-          backgroundColor: '#2563eb',
+          backgroundColor: '#1A1A2E',
           color: '#fff',
           fontWeight: 600,
           cursor: 'pointer',

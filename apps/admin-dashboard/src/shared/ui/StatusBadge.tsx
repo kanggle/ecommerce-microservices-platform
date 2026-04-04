@@ -1,22 +1,22 @@
 'use client';
 
-const STATUS_STYLES: Record<string, { backgroundColor: string; color: string }> = {
-  ON_SALE: { backgroundColor: '#dcfce7', color: '#166534' },
-  SOLD_OUT: { backgroundColor: '#fee2e2', color: '#991b1b' },
-  HIDDEN: { backgroundColor: '#f3f4f6', color: '#374151' },
-  ACTIVE: { backgroundColor: '#dcfce7', color: '#166534' },
-  INACTIVE: { backgroundColor: '#f3f4f6', color: '#374151' },
-  DRAFT: { backgroundColor: '#fef9c3', color: '#854d0e' },
-  PENDING: { backgroundColor: '#fef9c3', color: '#854d0e' },
-  CONFIRMED: { backgroundColor: '#dbeafe', color: '#1e40af' },
-  SHIPPED: { backgroundColor: '#e0e7ff', color: '#3730a3' },
-  DELIVERED: { backgroundColor: '#dcfce7', color: '#166534' },
-  CANCELLED: { backgroundColor: '#fee2e2', color: '#991b1b' },
-  COMPLETED: { backgroundColor: '#dcfce7', color: '#166534' },
-  FAILED: { backgroundColor: '#fee2e2', color: '#991b1b' },
-  REFUNDED: { backgroundColor: '#fce7f3', color: '#9d174d' },
-  SUSPENDED: { backgroundColor: '#fef9c3', color: '#854d0e' },
-  WITHDRAWN: { backgroundColor: '#fee2e2', color: '#991b1b' },
+const STATUS_STYLES: Record<string, { backgroundColor: string; color: string; border?: string }> = {
+  ON_SALE: { backgroundColor: '#10b981', color: '#fff' },
+  SOLD_OUT: { backgroundColor: '#ef4444', color: '#fff' },
+  HIDDEN: { backgroundColor: '#6b7280', color: '#fff' },
+  ACTIVE: { backgroundColor: '#10b981', color: '#fff' },
+  INACTIVE: { backgroundColor: '#6b7280', color: '#fff' },
+  DRAFT: { backgroundColor: '#fff', color: '#666', border: '1px solid #d0d0d0' },
+  PENDING: { backgroundColor: '#f59e0b', color: '#fff' },
+  CONFIRMED: { backgroundColor: '#3b82f6', color: '#fff' },
+  SHIPPED: { backgroundColor: '#8b5cf6', color: '#fff' },
+  DELIVERED: { backgroundColor: '#10b981', color: '#fff' },
+  CANCELLED: { backgroundColor: '#ef4444', color: '#fff' },
+  COMPLETED: { backgroundColor: '#1A1A2E', color: '#fff' },
+  FAILED: { backgroundColor: '#f5f5f5', color: '#999', border: '1px solid #e0e0e0' },
+  REFUNDED: { backgroundColor: '#fff', color: '#666', border: '1px solid #d0d0d0' },
+  SUSPENDED: { backgroundColor: '#f59e0b', color: '#fff' },
+  WITHDRAWN: { backgroundColor: '#ef4444', color: '#fff' },
 };
 
 const STATUS_LABELS: Record<string, string> = {
@@ -43,17 +43,21 @@ interface StatusBadgeProps {
 }
 
 export function StatusBadge({ status }: StatusBadgeProps) {
-  const style = STATUS_STYLES[status] ?? { backgroundColor: '#f3f4f6', color: '#374151' };
+  const style = STATUS_STYLES[status] ?? { backgroundColor: '#f5f5f5', color: '#999', border: '1px solid #e0e0e0' };
   const label = STATUS_LABELS[status] ?? status;
 
   return (
     <span
       style={{
         ...style,
-        padding: '2px 8px',
-        borderRadius: '4px',
+        display: 'inline-flex',
+        alignItems: 'center',
+        padding: '3px 10px',
+        borderRadius: '9999px',
         fontSize: '0.75rem',
         fontWeight: 600,
+        lineHeight: '1.25rem',
+        letterSpacing: '0.01em',
       }}
     >
       {label}
