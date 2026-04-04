@@ -5,6 +5,7 @@ import { PageLayout, StatusBadge, DescriptionList, Section } from '@/shared/ui';
 import { ErrorMessage } from '@repo/ui';
 import { useProduct } from '../hooks/use-product';
 import { StockAdjustmentForm } from './StockAdjustmentForm';
+import { VariantManagement } from './VariantManagement';
 import type { ProductVariant } from '@repo/types';
 
 interface Props {
@@ -27,6 +28,7 @@ export function ProductDetail({ productId }: Props) {
     <PageLayout
       title={product.name}
       actions={[
+        { label: '← 상품 관리', href: '/products', variant: 'secondary' as const },
         { label: '수정', href: `/products/${productId}/edit` },
       ]}
     >
@@ -42,56 +44,31 @@ export function ProductDetail({ productId }: Props) {
       </Section>
 
       <Section title="옵션 / 재고">
-        {product.variants.length === 0 ? (
-          <p style={{ color: '#6b7280' }}>등록된 옵션이 없습니다.</p>
-        ) : (
-          <table style={{ width: '100%', borderCollapse: 'collapse' }}>
-            <thead>
-              <tr>
-                <th style={{ padding: '8px 16px', textAlign: 'left', borderBottom: '2px solid #e5e7eb' }}>
-                  옵션명
-                </th>
-                <th style={{ padding: '8px 16px', textAlign: 'left', borderBottom: '2px solid #e5e7eb' }}>
-                  추가 가격
-                </th>
-                <th style={{ padding: '8px 16px', textAlign: 'left', borderBottom: '2px solid #e5e7eb' }}>
-                  재고
-                </th>
-                <th style={{ padding: '8px 16px', textAlign: 'left', borderBottom: '2px solid #e5e7eb' }}>
-                  작업
-                </th>
-              </tr>
-            </thead>
-            <tbody>
-              {product.variants.map((variant) => (
-                <tr key={variant.id} style={{ borderBottom: '1px solid #e5e7eb' }}>
-                  <td style={{ padding: '8px 16px' }}>{variant.optionName}</td>
-                  <td style={{ padding: '8px 16px' }}>
-                    {variant.additionalPrice > 0
-                      ? `+${variant.additionalPrice.toLocaleString()}원`
-                      : '-'}
-                  </td>
-                  <td style={{ padding: '8px 16px' }}>{variant.stock}</td>
-                  <td style={{ padding: '8px 16px' }}>
-                    <button
-                      onClick={() => setSelectedVariant(variant)}
-                      style={{
-                        padding: '4px 12px',
-                        fontSize: '0.75rem',
-                        border: '1px solid #d1d5db',
-                        borderRadius: '4px',
-                        backgroundColor: '#fff',
-                        cursor: 'pointer',
-                      }}
-                    >
-                      재고 조정
-                    </button>
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        )}
+        <VariantManagement
+          productId={productId}
+          variants={product.variants}
+          onChanged={() => refetch()}
+        />
+        <div style={{ marginTop: '16px', borderTop: '1px solid #eee', paddingTop: '12px' }}>
+          {product.variants.map((variant) => (
+            <button
+              key={variant.id}
+              onClick={() => setSelectedVariant(variant)}
+              style={{
+                padding: '6px 14px',
+                fontSize: '0.75rem',
+                border: '1px solid #d1d5db',
+                borderRadius: '6px',
+                backgroundColor: '#fff',
+                cursor: 'pointer',
+                marginRight: '8px',
+                marginBottom: '4px',
+              }}
+            >
+              {variant.optionName} 재고 조정
+            </button>
+          ))}
+        </div>
       </Section>
 
       {selectedVariant && (

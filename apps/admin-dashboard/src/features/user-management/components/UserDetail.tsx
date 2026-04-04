@@ -28,7 +28,7 @@ export function UserDetail({ userId }: Props) {
   }
 
   return (
-    <PageLayout title={user.name}>
+    <PageLayout title={user.name} actions={[{ label: '← 사용자 관리', href: '/users', variant: 'secondary' as const }]}>
       <Section title="기본 정보">
         <DescriptionList
           items={[
