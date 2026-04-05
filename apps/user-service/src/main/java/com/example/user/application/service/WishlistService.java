@@ -63,28 +63,7 @@ public class WishlistService {
                 : productInfoProvider.getProductInfos(productIds);
 
         List<WishlistItemResult> content = pageResult.content().stream()
-                .map(item -> {
-                    ProductInfo info = productInfos.get(item.getProductId());
-                    if (info != null) {
-                        return new WishlistItemResult(
-                                item.getId(),
-                                item.getProductId(),
-                                info.name(),
-                                info.price(),
-                                info.status(),
-                                item.getAddedAt()
-                        );
-                    } else {
-                        return new WishlistItemResult(
-                                item.getId(),
-                                item.getProductId(),
-                                null,
-                                0,
-                                "DELETED",
-                                item.getAddedAt()
-                        );
-                    }
-                })
+                .map(item -> toWishlistItemResult(item, productInfos.get(item.getProductId())))
                 .toList();
 
         return new WishlistPageResult(content, safePage, safeSize, pageResult.totalElements());
@@ -101,6 +80,27 @@ public class WishlistService {
 
         wishlistItemRepository.delete(item);
         log.info("Wishlist item removed: wishlistItemId={}, userId={}", wishlistItemId, userId);
+    }
+
+    private WishlistItemResult toWishlistItemResult(WishlistItem item, ProductInfo info) {
+        if (info != null) {
+            return new WishlistItemResult(
+                    item.getId(),
+                    item.getProductId(),
+                    info.name(),
+                    info.price(),
+                    info.status(),
+                    item.getAddedAt()
+            );
+        }
+        return new WishlistItemResult(
+                item.getId(),
+                item.getProductId(),
+                null,
+                0,
+                "DELETED",
+                item.getAddedAt()
+        );
     }
 
     public WishlistCheckResult checkItem(UUID userId, UUID productId) {

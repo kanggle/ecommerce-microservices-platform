@@ -33,11 +33,6 @@ public class WishlistItemRepositoryImpl implements WishlistItemRepository {
     }
 
     @Override
-    public Optional<WishlistItem> findByUserIdAndProductId(UUID userId, UUID productId) {
-        return jpaRepository.findByUserIdAndProductId(userId, productId).map(mapper::toDomain);
-    }
-
-    @Override
     public boolean existsByUserIdAndProductId(UUID userId, UUID productId) {
         return jpaRepository.existsByUserIdAndProductId(userId, productId);
     }

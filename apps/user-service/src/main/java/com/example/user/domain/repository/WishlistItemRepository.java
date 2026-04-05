@@ -13,8 +13,6 @@ public interface WishlistItemRepository {
 
     Optional<WishlistItem> findById(UUID id);
 
-    Optional<WishlistItem> findByUserIdAndProductId(UUID userId, UUID productId);
-
     boolean existsByUserIdAndProductId(UUID userId, UUID productId);
 
     PageResult<WishlistItem> findAllByUserId(UUID userId, PageQuery pageQuery);
