@@ -1,11 +1,10 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import { useRouter, useSearchParams } from 'next/navigation';
+import { useSearchParams } from 'next/navigation';
 import { saveTokens } from '@repo/api-client';
 
 export default function OAuthCallbackPage() {
-  const router = useRouter();
   const searchParams = useSearchParams();
   const [error, setError] = useState('');
 
@@ -25,7 +24,7 @@ export default function OAuthCallbackPage() {
     } else {
       setError('로그인 정보를 받지 못했습니다.');
     }
-  }, [searchParams, router]);
+  }, [searchParams]);
 
   if (error) {
     return (
