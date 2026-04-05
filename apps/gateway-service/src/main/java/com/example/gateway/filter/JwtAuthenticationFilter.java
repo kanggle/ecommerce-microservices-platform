@@ -68,11 +68,26 @@ public class JwtAuthenticationFilter implements GlobalFilter, Ordered {
         ServerHttpRequest strippedRequest = stripSpoofHeaders(request);
 
         if (routeService.isPublicRoute(method, path)) {
-            String targetService = routeService.resolveTargetService(path);
-            gatewayMetrics.incrementRequestsRouted(targetService);
-            return chain.filter(exchange.mutate().request(strippedRequest).build());
+            return handlePublicRoute(exchange, strippedRequest, chain, path);
         }
 
+        return handleProtectedRoute(exchange, strippedRequest, chain, path);
+    }
+
+    private Mono<Void> handlePublicRoute(
+            ServerWebExchange exchange,
+            ServerHttpRequest strippedRequest,
+            GatewayFilterChain chain,
+            String path) {
+        gatewayMetrics.incrementRequestsRouted(routeService.resolveTargetService(path));
+        return chain.filter(exchange.mutate().request(strippedRequest).build());
+    }
+
+    private Mono<Void> handleProtectedRoute(
+            ServerWebExchange exchange,
+            ServerHttpRequest strippedRequest,
+            GatewayFilterChain chain,
+            String path) {
         String authHeader = strippedRequest.getHeaders().getFirst(HttpHeaders.AUTHORIZATION);
         if (authHeader == null || !authHeader.startsWith("Bearer ")) {
             gatewayMetrics.incrementJwtValidationFailure("missing");

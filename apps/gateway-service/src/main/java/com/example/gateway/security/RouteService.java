@@ -11,14 +11,14 @@ public class RouteService {
 
     public boolean isPublicRoute(HttpMethod method, String path) {
         if (HttpMethod.POST.equals(method)) {
-            if ("/api/auth/signup".equals(path)) return true;
-            if ("/api/auth/login".equals(path)) return true;
-            if ("/api/auth/refresh".equals(path)) return true;
+            return "/api/auth/signup".equals(path)
+                    || "/api/auth/login".equals(path)
+                    || "/api/auth/refresh".equals(path);
         }
         if (HttpMethod.GET.equals(method)) {
-            if (PATH_MATCHER.match("/api/products/**", path)) return true;
-            if (PATH_MATCHER.match("/api/search/**", path)) return true;
-            if ("/actuator/health".equals(path)) return true;
+            return PATH_MATCHER.match("/api/products/**", path)
+                    || PATH_MATCHER.match("/api/search/**", path)
+                    || "/actuator/health".equals(path);
         }
         return false;
     }
@@ -30,6 +30,7 @@ public class RouteService {
         if (path.startsWith("/api/search")) return "search-service";
         if (path.startsWith("/api/orders")) return "order-service";
         if (path.startsWith("/api/payments")) return "payment-service";
+        if (path.startsWith("/api/shippings")) return "shipping-service";
         return "unknown";
     }
 }
