@@ -1,8 +1,9 @@
 'use client';
 
-import { useState, useRef, useEffect } from 'react';
+import { useCallback, useState, useRef } from 'react';
 import Link from 'next/link';
 import { useProfileImage } from '@/shared/context/ProfileImageContext';
+import { useClickOutside } from '@/shared/hooks/useClickOutside';
 import styles from './Header.module.css';
 
 interface ProfileDropdownProps {
@@ -14,16 +15,7 @@ export function ProfileDropdown({ userName, onLogout }: ProfileDropdownProps) {
   const { imageUrl: profileImageUrl } = useProfileImage();
   const [dropdownOpen, setDropdownOpen] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
-
-  useEffect(() => {
-    function handleClickOutside(e: MouseEvent) {
-      if (dropdownRef.current && !dropdownRef.current.contains(e.target as Node)) {
-        setDropdownOpen(false);
-      }
-    }
-    document.addEventListener('mousedown', handleClickOutside);
-    return () => document.removeEventListener('mousedown', handleClickOutside);
-  }, []);
+  useClickOutside(dropdownRef, useCallback(() => setDropdownOpen(false), []));
 
   return (
     <div ref={dropdownRef} className={styles.profileWrapper}>

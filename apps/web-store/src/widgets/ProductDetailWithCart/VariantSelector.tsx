@@ -1,6 +1,7 @@
-import { useRef, useEffect } from 'react';
+import { useRef } from 'react';
 import type { ProductDetail } from '@repo/types';
 import type { SelectedItem } from './types';
+import { useClickOutside } from '@/shared/hooks/useClickOutside';
 import styles from '../ProductDetailWithCart.module.css';
 
 interface VariantSelectorProps {
@@ -21,16 +22,7 @@ export function VariantSelector({
   onDropdownClose,
 }: VariantSelectorProps) {
   const dropdownRef = useRef<HTMLDivElement>(null);
-
-  useEffect(() => {
-    function handleClickOutside(e: MouseEvent) {
-      if (dropdownRef.current && !dropdownRef.current.contains(e.target as Node)) {
-        onDropdownClose();
-      }
-    }
-    document.addEventListener('mousedown', handleClickOutside);
-    return () => document.removeEventListener('mousedown', handleClickOutside);
-  }, [onDropdownClose]);
+  useClickOutside(dropdownRef, onDropdownClose);
 
   return (
     <div>
