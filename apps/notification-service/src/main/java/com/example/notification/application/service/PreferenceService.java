@@ -1,6 +1,7 @@
 package com.example.notification.application.service;
 
 import com.example.notification.application.command.UpdatePreferenceCommand;
+import com.example.notification.application.port.in.ManagePreferenceUseCase;
 import com.example.notification.application.port.out.PreferenceRepository;
 import com.example.notification.application.result.GetPreferenceResult;
 import com.example.notification.domain.model.UserNotificationPreference;
@@ -11,7 +12,7 @@ import org.springframework.transaction.annotation.Transactional;
 @Service
 @RequiredArgsConstructor
 @Transactional(readOnly = true)
-public class PreferenceService {
+public class PreferenceService implements ManagePreferenceUseCase {
 
     private final PreferenceRepository preferenceRepository;
 

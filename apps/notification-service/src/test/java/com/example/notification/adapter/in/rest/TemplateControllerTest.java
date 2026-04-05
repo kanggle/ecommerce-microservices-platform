@@ -2,7 +2,7 @@ package com.example.notification.adapter.in.rest;
 
 import com.example.notification.application.page.PageResult;
 import com.example.notification.application.result.TemplateResult;
-import com.example.notification.application.service.TemplateService;
+import com.example.notification.application.port.in.ManageTemplateUseCase;
 import com.example.notification.domain.exception.TemplateAlreadyExistsException;
 import com.example.notification.domain.exception.TemplateNotFoundException;
 import com.example.notification.domain.model.NotificationChannel;
@@ -35,7 +35,7 @@ class TemplateControllerTest {
     private ObjectMapper objectMapper;
 
     @MockitoBean
-    private TemplateService templateService;
+    private ManageTemplateUseCase templateService;
 
     @Test
     @DisplayName("GET /api/notifications/templates - 템플릿 목록 조회 성공")

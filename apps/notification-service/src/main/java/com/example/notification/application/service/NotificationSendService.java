@@ -1,6 +1,7 @@
 package com.example.notification.application.service;
 
 import com.example.notification.application.command.SendNotificationCommand;
+import com.example.notification.application.port.in.SendNotificationUseCase;
 import com.example.notification.application.port.out.NotificationRepository;
 import com.example.notification.application.port.out.NotificationSender;
 import com.example.notification.application.port.out.PreferenceRepository;
@@ -23,7 +24,7 @@ import java.util.stream.Collectors;
 @Slf4j
 @Service
 @RequiredArgsConstructor
-public class NotificationSendService {
+public class NotificationSendService implements SendNotificationUseCase {
 
     private static final int MAX_RETRIES = 3;
 

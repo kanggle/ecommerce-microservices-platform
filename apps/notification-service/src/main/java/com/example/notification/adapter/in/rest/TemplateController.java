@@ -9,7 +9,7 @@ import com.example.notification.application.command.UpdateTemplateCommand;
 import com.example.notification.application.page.PageQuery;
 import com.example.notification.application.page.PageResult;
 import com.example.notification.application.result.TemplateResult;
-import com.example.notification.application.service.TemplateService;
+import com.example.notification.application.port.in.ManageTemplateUseCase;
 import com.example.notification.domain.exception.AdminAccessDeniedException;
 import com.example.notification.domain.model.NotificationChannel;
 import com.example.notification.domain.model.NotificationTemplate;
@@ -27,7 +27,7 @@ public class TemplateController {
 
     private static final String ADMIN_ROLE = "ADMIN";
 
-    private final TemplateService templateService;
+    private final ManageTemplateUseCase templateService;
 
     @GetMapping
     public ResponseEntity<TemplateListResponse> getTemplates(

@@ -1,7 +1,7 @@
 package com.example.notification.adapter.in.event;
 
 import com.example.notification.application.command.SendNotificationCommand;
-import com.example.notification.application.service.NotificationSendService;
+import com.example.notification.application.port.in.SendNotificationUseCase;
 import com.example.notification.domain.model.TemplateType;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -18,7 +18,7 @@ import java.util.Map;
 @RequiredArgsConstructor
 public class ShippingStatusChangedEventConsumer {
 
-    private final NotificationSendService notificationSendService;
+    private final SendNotificationUseCase notificationSendService;
     private final ObjectMapper objectMapper;
 
     @KafkaListener(topics = "shipping.shipping.status-changed", groupId = "notification-service")

@@ -1,6 +1,6 @@
 package com.example.notification.adapter.in.event;
 
-import com.example.notification.application.service.NotificationSendService;
+import com.example.notification.application.port.in.SendNotificationUseCase;
 import com.example.notification.domain.model.TemplateType;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.DisplayName;
@@ -23,7 +23,7 @@ class UserSignedUpEventConsumerTest {
     private UserSignedUpEventConsumer consumer;
 
     @Mock
-    private NotificationSendService notificationSendService;
+    private SendNotificationUseCase notificationSendService;
 
     @Spy
     private ObjectMapper objectMapper = new ObjectMapper();

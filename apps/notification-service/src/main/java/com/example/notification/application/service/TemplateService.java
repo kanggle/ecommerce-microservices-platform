@@ -4,6 +4,7 @@ import com.example.notification.application.command.CreateTemplateCommand;
 import com.example.notification.application.command.UpdateTemplateCommand;
 import com.example.notification.application.page.PageQuery;
 import com.example.notification.application.page.PageResult;
+import com.example.notification.application.port.in.ManageTemplateUseCase;
 import com.example.notification.application.port.out.TemplateRepository;
 import com.example.notification.application.result.TemplateResult;
 import com.example.notification.domain.exception.TemplateAlreadyExistsException;
@@ -16,7 +17,7 @@ import org.springframework.transaction.annotation.Transactional;
 @Service
 @RequiredArgsConstructor
 @Transactional(readOnly = true)
-public class TemplateService {
+public class TemplateService implements ManageTemplateUseCase {
 
     private final TemplateRepository templateRepository;
 

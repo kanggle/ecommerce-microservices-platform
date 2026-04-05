@@ -10,8 +10,8 @@ import com.example.notification.application.page.PageResult;
 import com.example.notification.application.result.GetNotificationResult;
 import com.example.notification.application.result.GetPreferenceResult;
 import com.example.notification.application.result.ListNotificationsResult;
-import com.example.notification.application.service.NotificationQueryService;
-import com.example.notification.application.service.PreferenceService;
+import com.example.notification.application.port.in.ManagePreferenceUseCase;
+import com.example.notification.application.port.in.QueryNotificationUseCase;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotBlank;
 import lombok.RequiredArgsConstructor;
@@ -25,8 +25,8 @@ import org.springframework.web.bind.annotation.*;
 @RequestMapping("/api/notifications")
 public class NotificationController {
 
-    private final NotificationQueryService notificationQueryService;
-    private final PreferenceService preferenceService;
+    private final QueryNotificationUseCase notificationQueryService;
+    private final ManagePreferenceUseCase preferenceService;
 
     @GetMapping("/me")
     public ResponseEntity<NotificationListResponse> getMyNotifications(

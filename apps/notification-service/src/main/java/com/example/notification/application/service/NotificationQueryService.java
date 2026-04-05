@@ -2,6 +2,7 @@ package com.example.notification.application.service;
 
 import com.example.notification.application.page.PageQuery;
 import com.example.notification.application.page.PageResult;
+import com.example.notification.application.port.in.QueryNotificationUseCase;
 import com.example.notification.application.port.out.NotificationRepository;
 import com.example.notification.application.result.GetNotificationResult;
 import com.example.notification.application.result.ListNotificationsResult;
@@ -15,7 +16,7 @@ import org.springframework.transaction.annotation.Transactional;
 @Service
 @RequiredArgsConstructor
 @Transactional(readOnly = true)
-public class NotificationQueryService {
+public class NotificationQueryService implements QueryNotificationUseCase {
 
     private final NotificationRepository notificationRepository;
 

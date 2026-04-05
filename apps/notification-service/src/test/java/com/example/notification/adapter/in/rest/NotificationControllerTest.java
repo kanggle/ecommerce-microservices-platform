@@ -4,8 +4,8 @@ import com.example.notification.application.page.PageResult;
 import com.example.notification.application.result.GetNotificationResult;
 import com.example.notification.application.result.GetPreferenceResult;
 import com.example.notification.application.result.ListNotificationsResult;
-import com.example.notification.application.service.NotificationQueryService;
-import com.example.notification.application.service.PreferenceService;
+import com.example.notification.application.port.in.ManagePreferenceUseCase;
+import com.example.notification.application.port.in.QueryNotificationUseCase;
 import com.example.notification.domain.exception.NotificationNotFoundException;
 import com.example.notification.domain.exception.UnauthorizedNotificationAccessException;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -37,10 +37,10 @@ class NotificationControllerTest {
     private ObjectMapper objectMapper;
 
     @MockitoBean
-    private NotificationQueryService notificationQueryService;
+    private QueryNotificationUseCase notificationQueryService;
 
     @MockitoBean
-    private PreferenceService preferenceService;
+    private ManagePreferenceUseCase preferenceService;
 
     @Test
     @DisplayName("GET /api/notifications/me - 알림 목록 조회 성공")
