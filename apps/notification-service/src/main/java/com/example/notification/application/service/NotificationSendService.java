@@ -55,44 +55,50 @@ public class NotificationSendService implements SendNotificationUseCase {
         Map<NotificationChannel, NotificationSender> senderMap = getSenderMap();
 
         for (NotificationChannel channel : NotificationChannel.values()) {
-            if (!preference.isChannelEnabled(channel)) {
-                log.debug("Channel {} is disabled for user {}", channel, command.userId());
-                continue;
-            }
-
-            if (!senderMap.containsKey(channel)) {
-                log.debug("No sender available for channel {}", channel);
-                continue;
-            }
-
-            Optional<NotificationTemplate> templateOpt = templateRepository
-                    .findByTypeAndChannel(command.templateType(), channel);
-
-            if (templateOpt.isEmpty()) {
-                log.debug("No template found for type={}, channel={}", command.templateType(), channel);
-                continue;
-            }
-
-            NotificationTemplate template = templateOpt.get();
-            String renderedSubject = template.renderSubject(command.variables());
-            String renderedBody = template.renderBody(command.variables());
-
-            Notification notification = Notification.create(
-                    command.userId(), channel, renderedSubject, renderedBody, command.eventId());
-
-            try {
-                senderMap.get(channel).send(command.userId(), renderedSubject, renderedBody);
-                notification.markSent();
-                log.info("Notification sent. userId={}, channel={}, eventId={}",
-                        command.userId(), channel, command.eventId());
-            } catch (Exception e) {
-                notification.markFailed();
-                log.error("Failed to send notification. userId={}, channel={}, eventId={}, error={}",
-                        command.userId(), channel, command.eventId(), e.getMessage());
-            }
-
-            notificationRepository.save(notification);
+            sendViaChannel(command, channel, preference, senderMap);
         }
+    }
+
+    private void sendViaChannel(SendNotificationCommand command, NotificationChannel channel,
+                                UserNotificationPreference preference,
+                                Map<NotificationChannel, NotificationSender> senderMap) {
+        if (!preference.isChannelEnabled(channel)) {
+            log.debug("Channel {} is disabled for user {}", channel, command.userId());
+            return;
+        }
+
+        if (!senderMap.containsKey(channel)) {
+            log.debug("No sender available for channel {}", channel);
+            return;
+        }
+
+        Optional<NotificationTemplate> templateOpt = templateRepository
+                .findByTypeAndChannel(command.templateType(), channel);
+
+        if (templateOpt.isEmpty()) {
+            log.debug("No template found for type={}, channel={}", command.templateType(), channel);
+            return;
+        }
+
+        NotificationTemplate template = templateOpt.get();
+        String renderedSubject = template.renderSubject(command.variables());
+        String renderedBody = template.renderBody(command.variables());
+
+        Notification notification = Notification.create(
+                command.userId(), channel, renderedSubject, renderedBody, command.eventId());
+
+        try {
+            senderMap.get(channel).send(command.userId(), renderedSubject, renderedBody);
+            notification.markSent();
+            log.info("Notification sent. userId={}, channel={}, eventId={}",
+                    command.userId(), channel, command.eventId());
+        } catch (Exception e) {
+            notification.markFailed();
+            log.error("Failed to send notification. userId={}, channel={}, eventId={}, error={}",
+                    command.userId(), channel, command.eventId(), e.getMessage());
+        }
+
+        notificationRepository.save(notification);
     }
 
 }
