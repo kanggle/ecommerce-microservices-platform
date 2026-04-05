@@ -3,9 +3,9 @@ package com.example.notification.adapter.out.persistence.entity;
 import com.example.notification.domain.model.NotificationChannel;
 import com.example.notification.domain.model.TemplateType;
 import jakarta.persistence.*;
-import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 import java.time.LocalDateTime;
 
@@ -13,7 +13,8 @@ import java.time.LocalDateTime;
 @Table(name = "notification_templates",
         uniqueConstraints = @UniqueConstraint(columnNames = {"type", "channel"}))
 @Getter
-@NoArgsConstructor(access = AccessLevel.PROTECTED)
+@Setter
+@NoArgsConstructor
 public class NotificationTemplateJpaEntity {
 
     @Id
@@ -39,17 +40,4 @@ public class NotificationTemplateJpaEntity {
 
     @Column(name = "updated_at", nullable = false)
     private LocalDateTime updatedAt;
-
-    public static NotificationTemplateJpaEntity fromDomain(
-            com.example.notification.domain.model.NotificationTemplate template) {
-        NotificationTemplateJpaEntity entity = new NotificationTemplateJpaEntity();
-        entity.templateId = template.getTemplateId();
-        entity.type = template.getType();
-        entity.channel = template.getChannel();
-        entity.subject = template.getSubject();
-        entity.body = template.getBody();
-        entity.createdAt = template.getCreatedAt();
-        entity.updatedAt = template.getUpdatedAt();
-        return entity;
-    }
 }

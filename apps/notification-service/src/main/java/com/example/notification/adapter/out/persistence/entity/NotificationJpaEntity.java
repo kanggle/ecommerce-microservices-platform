@@ -3,16 +3,17 @@ package com.example.notification.adapter.out.persistence.entity;
 import com.example.notification.domain.model.NotificationChannel;
 import com.example.notification.domain.model.NotificationStatus;
 import jakarta.persistence.*;
-import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 import java.time.LocalDateTime;
 
 @Entity
 @Table(name = "notifications")
 @Getter
-@NoArgsConstructor(access = AccessLevel.PROTECTED)
+@Setter
+@NoArgsConstructor
 public class NotificationJpaEntity {
 
     @Id
@@ -47,19 +48,4 @@ public class NotificationJpaEntity {
 
     @Column(name = "created_at", nullable = false)
     private LocalDateTime createdAt;
-
-    public static NotificationJpaEntity fromDomain(com.example.notification.domain.model.Notification notification) {
-        NotificationJpaEntity entity = new NotificationJpaEntity();
-        entity.notificationId = notification.getNotificationId();
-        entity.userId = notification.getUserId();
-        entity.channel = notification.getChannel();
-        entity.subject = notification.getSubject();
-        entity.body = notification.getBody();
-        entity.status = notification.getStatus();
-        entity.eventId = notification.getEventId();
-        entity.retryCount = notification.getRetryCount();
-        entity.sentAt = notification.getSentAt();
-        entity.createdAt = notification.getCreatedAt();
-        return entity;
-    }
 }

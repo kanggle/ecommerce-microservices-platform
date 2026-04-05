@@ -20,6 +20,14 @@ public class TemplatePersistenceMapper {
     }
 
     public NotificationTemplateJpaEntity toEntity(NotificationTemplate template) {
-        return NotificationTemplateJpaEntity.fromDomain(template);
+        NotificationTemplateJpaEntity entity = new NotificationTemplateJpaEntity();
+        entity.setTemplateId(template.getTemplateId());
+        entity.setType(template.getType());
+        entity.setChannel(template.getChannel());
+        entity.setSubject(template.getSubject());
+        entity.setBody(template.getBody());
+        entity.setCreatedAt(template.getCreatedAt());
+        entity.setUpdatedAt(template.getUpdatedAt());
+        return entity;
     }
 }

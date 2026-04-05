@@ -23,6 +23,17 @@ public class NotificationPersistenceMapper {
     }
 
     public NotificationJpaEntity toEntity(Notification notification) {
-        return NotificationJpaEntity.fromDomain(notification);
+        NotificationJpaEntity entity = new NotificationJpaEntity();
+        entity.setNotificationId(notification.getNotificationId());
+        entity.setUserId(notification.getUserId());
+        entity.setChannel(notification.getChannel());
+        entity.setSubject(notification.getSubject());
+        entity.setBody(notification.getBody());
+        entity.setStatus(notification.getStatus());
+        entity.setEventId(notification.getEventId());
+        entity.setRetryCount(notification.getRetryCount());
+        entity.setSentAt(notification.getSentAt());
+        entity.setCreatedAt(notification.getCreatedAt());
+        return entity;
     }
 }

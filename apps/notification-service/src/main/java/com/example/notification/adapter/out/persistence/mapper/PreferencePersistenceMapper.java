@@ -19,6 +19,13 @@ public class PreferencePersistenceMapper {
     }
 
     public UserNotificationPreferenceJpaEntity toEntity(UserNotificationPreference preference) {
-        return UserNotificationPreferenceJpaEntity.fromDomain(preference);
+        UserNotificationPreferenceJpaEntity entity = new UserNotificationPreferenceJpaEntity();
+        entity.setUserId(preference.getUserId());
+        entity.setEmailEnabled(preference.isEmailEnabled());
+        entity.setSmsEnabled(preference.isSmsEnabled());
+        entity.setPushEnabled(preference.isPushEnabled());
+        entity.setCreatedAt(preference.getCreatedAt());
+        entity.setUpdatedAt(preference.getUpdatedAt());
+        return entity;
     }
 }

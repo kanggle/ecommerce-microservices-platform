@@ -1,16 +1,17 @@
 package com.example.notification.adapter.out.persistence.entity;
 
 import jakarta.persistence.*;
-import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 import java.time.LocalDateTime;
 
 @Entity
 @Table(name = "user_notification_preferences")
 @Getter
-@NoArgsConstructor(access = AccessLevel.PROTECTED)
+@Setter
+@NoArgsConstructor
 public class UserNotificationPreferenceJpaEntity {
 
     @Id
@@ -31,16 +32,4 @@ public class UserNotificationPreferenceJpaEntity {
 
     @Column(name = "updated_at", nullable = false)
     private LocalDateTime updatedAt;
-
-    public static UserNotificationPreferenceJpaEntity fromDomain(
-            com.example.notification.domain.model.UserNotificationPreference pref) {
-        UserNotificationPreferenceJpaEntity entity = new UserNotificationPreferenceJpaEntity();
-        entity.userId = pref.getUserId();
-        entity.emailEnabled = pref.isEmailEnabled();
-        entity.smsEnabled = pref.isSmsEnabled();
-        entity.pushEnabled = pref.isPushEnabled();
-        entity.createdAt = pref.getCreatedAt();
-        entity.updatedAt = pref.getUpdatedAt();
-        return entity;
-    }
 }
