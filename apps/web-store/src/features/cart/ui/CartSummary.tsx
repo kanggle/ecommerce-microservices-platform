@@ -3,6 +3,7 @@
 import { useState } from 'react';
 import Link from 'next/link';
 import { useCart } from '../model/cart-context';
+import { QuantityControl } from './QuantityControl';
 
 export function CartSummary() {
   const { items, updateQuantity, removeItem } = useCart();
@@ -106,37 +107,11 @@ export function CartSummary() {
                   {item.optionName}
                 </div>
               </Link>
-              <div style={{ display: 'flex', alignItems: 'center', border: '1px solid var(--color-border)', borderRadius: 'var(--radius-sm)', overflow: 'hidden', flexShrink: 0, width: 88 }}>
-                <button
-                  type="button"
-                  onClick={() => updateQuantity(item.productId, item.variantId, item.quantity - 1)}
-                  disabled={item.quantity <= 1}
-                  style={{
-                    width: 28, height: 28, border: 'none', background: 'var(--color-bg-secondary)',
-                    fontSize: 'var(--font-size-sm)', cursor: item.quantity <= 1 ? 'not-allowed' : 'pointer',
-                    color: item.quantity <= 1 ? 'var(--color-text-muted)' : 'var(--color-text)',
-                  }}
-                >
-                  −
-                </button>
-                <span style={{
-                  flex: 1, textAlign: 'center', fontSize: 'var(--font-size-sm)',
-                  fontWeight: 'var(--font-weight-semibold)', lineHeight: '28px',
-                  borderLeft: '1px solid var(--color-border)', borderRight: '1px solid var(--color-border)',
-                }}>
-                  {item.quantity}
-                </span>
-                <button
-                  type="button"
-                  onClick={() => updateQuantity(item.productId, item.variantId, item.quantity + 1)}
-                  style={{
-                    width: 28, height: 28, border: 'none', background: 'var(--color-bg-secondary)',
-                    fontSize: 'var(--font-size-sm)', cursor: 'pointer', color: 'var(--color-text)',
-                  }}
-                >
-                  +
-                </button>
-              </div>
+              <QuantityControl
+                quantity={item.quantity}
+                onDecrease={() => updateQuantity(item.productId, item.variantId, item.quantity - 1)}
+                onIncrease={() => updateQuantity(item.productId, item.variantId, item.quantity + 1)}
+              />
               <span style={{ fontSize: 'var(--font-size-sm)', fontWeight: 'var(--font-weight-bold)', whiteSpace: 'nowrap', width: 80, textAlign: 'right', flexShrink: 0 }} className="price">
                 {(item.price * item.quantity).toLocaleString()}<span style={{ fontSize: 'var(--font-size-xs)', fontWeight: 'var(--font-weight-normal)', color: 'var(--color-text-secondary)', marginLeft: '2px' }}>원</span>
               </span>
