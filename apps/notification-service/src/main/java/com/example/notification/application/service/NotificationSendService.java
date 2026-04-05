@@ -26,8 +26,6 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class NotificationSendService implements SendNotificationUseCase {
 
-    private static final int MAX_RETRIES = 3;
-
     private final NotificationRepository notificationRepository;
     private final TemplateRepository templateRepository;
     private final PreferenceRepository preferenceRepository;
