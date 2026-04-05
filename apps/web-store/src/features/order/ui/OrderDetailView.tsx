@@ -1,13 +1,13 @@
 'use client';
 
 import Link from 'next/link';
-import type { OrderDetail, PaymentResponse } from '@repo/types';
 import { OrderStatusBadge } from '@/entities/order';
-import { PaymentStatusBadge } from '@/entities/payment';
 import { ErrorMessage } from '@repo/ui';
 import { Skeleton } from '@/shared/ui/Skeleton';
-import { maskPhone } from '@/shared/lib/mask-phone';
 import { useOrderDetail, CANCELLABLE_STATUSES } from '../model/use-order-detail';
+import { OrderItemsSection } from './OrderItemsSection';
+import { OrderShippingInfo } from './OrderShippingInfo';
+import { OrderPaymentInfo } from './OrderPaymentInfo';
 
 interface Props {
   orderId: string;
@@ -83,59 +83,11 @@ export function OrderDetailView({ orderId }: Props) {
             <OrderStatusBadge status={order.status} />
           </div>
 
-          <section style={{ marginBottom: 'var(--space-8)' }}>
-            <h2 className="section-title">주문 상품</h2>
-            {order.items.map((item) => (
-              <div
-                key={`${item.productId}-${item.variantId}`}
-                style={{ display: 'flex', justifyContent: 'space-between', padding: 'var(--space-2) 0', borderBottom: '1px solid var(--color-border-light)' }}
-              >
-                <span>{item.productName} ({item.optionName}) × {item.quantity}</span>
-                <span className="price">{(item.unitPrice * item.quantity).toLocaleString()}<span style={{ fontSize: 'var(--font-size-xs)', fontWeight: 'var(--font-weight-normal)', color: 'var(--color-text-secondary)', marginLeft: '2px' }}>원</span></span>
-              </div>
-            ))}
-            <div style={{ textAlign: 'right', marginTop: 'var(--space-2)', fontWeight: 'var(--font-weight-bold)', fontSize: 'var(--font-size-lg)' }}>
-              합계: {order.totalPrice.toLocaleString()}<span style={{ fontSize: 'var(--font-size-sm)', fontWeight: 'var(--font-weight-normal)', color: 'var(--color-text-secondary)', marginLeft: '2px' }}>원</span>
-            </div>
-          </section>
+          <OrderItemsSection items={order.items} totalPrice={order.totalPrice} />
 
-          <section style={{ marginBottom: 'var(--space-8)' }}>
-            <h2 className="section-title">배송지 정보</h2>
-            <p style={{ margin: 'var(--space-1) 0' }}>{order.shippingAddress.recipient}</p>
-            <p style={{ margin: 'var(--space-1) 0' }}>{maskPhone(order.shippingAddress.phone)}</p>
-            <p style={{ margin: 'var(--space-1) 0' }}>
-              ({order.shippingAddress.zipCode}) {order.shippingAddress.address1} {order.shippingAddress.address2}
-            </p>
-          </section>
+          <OrderShippingInfo shippingAddress={order.shippingAddress} />
 
-          {(paymentError || payment) && (
-            <section style={{ marginBottom: 'var(--space-8)' }}>
-              <h2 className="section-title">결제 정보</h2>
-              {paymentError ? (
-                <p style={{ color: 'var(--color-error)' }}>{paymentError}</p>
-              ) : payment && (
-                <>
-                  <div style={{ display: 'flex', alignItems: 'center', gap: 'var(--space-2)', marginBottom: 'var(--space-2)' }}>
-                    <span style={{ color: 'var(--color-text-secondary)' }}>결제 상태:</span>
-                    <PaymentStatusBadge status={payment.status} />
-                  </div>
-                  <p style={{ margin: 'var(--space-1) 0', color: 'var(--color-text-secondary)' }}>
-                    결제 금액: {payment.amount.toLocaleString()}<span style={{ fontSize: 'var(--font-size-xs)', fontWeight: 'var(--font-weight-normal)', color: 'var(--color-text-secondary)', marginLeft: '2px' }}>원</span>
-                  </p>
-                  {payment.paidAt && (
-                    <p style={{ margin: 'var(--space-1) 0', color: 'var(--color-text-secondary)' }}>
-                      결제일: {new Date(payment.paidAt).toLocaleString('ko-KR')}
-                    </p>
-                  )}
-                  {payment.refundedAt && (
-                    <p style={{ margin: 'var(--space-1) 0', color: 'var(--color-text-secondary)' }}>
-                      환불일: {new Date(payment.refundedAt).toLocaleString('ko-KR')}
-                    </p>
-                  )}
-                </>
-              )}
-            </section>
-          )}
+          <OrderPaymentInfo payment={payment} paymentError={paymentError} />
 
           <section style={{ marginBottom: 'var(--space-8)' }}>
             <p style={{ fontSize: 'var(--font-size-sm)', color: 'var(--color-text-secondary)' }}>
