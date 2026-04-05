@@ -1,17 +1,9 @@
 'use client';
 
-import { useState } from 'react';
 import { useRouter } from 'next/navigation';
-import type {
-  ProductDetail,
-  ProductStatus,
-  CreateProductRequest,
-  UpdateProductRequest,
-} from '@repo/types';
-import { getErrorMessage } from '@repo/types/guards';
-import { useCreateProduct } from '../hooks/use-create-product';
-import { useUpdateProduct } from '../hooks/use-update-product';
-import { VariantEditor, type VariantInput } from './VariantEditor';
+import type { ProductDetail } from '@repo/types';
+import { useProductForm } from '../hooks/use-product-form';
+import { VariantEditor } from './VariantEditor';
 import { Section } from '@/shared/ui';
 
 interface Props {
@@ -33,53 +25,20 @@ const styles = {
 };
 
 export function ProductForm({ product }: Props) {
-  const isEdit = !!product;
   const router = useRouter();
-  const createProduct = useCreateProduct();
-  const updateProduct = useUpdateProduct();
-
-  const [name, setName] = useState(product?.name ?? '');
-  const [description, setDescription] = useState(product?.description ?? '');
-  const [price, setPrice] = useState(product?.price ?? 0);
-  const [categoryId, setCategoryId] = useState(product?.categoryId ?? '');
-  const [status, setStatus] = useState<ProductStatus>(product?.status ?? 'ON_SALE');
-  const [variants, setVariants] = useState<VariantInput[]>(
-    product?.variants.map((v, i) => ({
-      _key: i, optionName: v.optionName, stock: v.stock, additionalPrice: v.additionalPrice,
-    })) ?? [{ _key: 0, optionName: '', stock: 0, additionalPrice: 0 }],
-  );
-  const [error, setError] = useState('');
-  const [isSubmitting, setIsSubmitting] = useState(false);
-
-  const isValid = name.trim().length > 0 && price > 0;
-
-  async function handleSubmit(e: React.FormEvent) {
-    e.preventDefault();
-    if (!isValid || isSubmitting) return;
-
-    setError('');
-    setIsSubmitting(true);
-
-    try {
-      if (isEdit) {
-        const data: UpdateProductRequest = { name: name.trim(), description: description.trim(), price, status };
-        await updateProduct.mutateAsync({ productId: product.id, data });
-        router.push(`/products/${product.id}`);
-      } else {
-        const data: CreateProductRequest = {
-          name: name.trim(), description: description.trim(), price, categoryId: '',
-          variants: variants.filter((v) => v.optionName.trim().length > 0)
-            .map((v) => ({ optionName: v.optionName.trim(), stock: v.stock, additionalPrice: v.additionalPrice })),
-        };
-        const created = await createProduct.mutateAsync(data);
-        router.push(`/products/${created.id}`);
-      }
-    } catch (err) {
-      setError(getErrorMessage(err, '저장에 실패했습니다.'));
-    } finally {
-      setIsSubmitting(false);
-    }
-  }
+  const {
+    name, setName,
+    description, setDescription,
+    price, setPrice,
+    categoryId, setCategoryId,
+    status, setStatus,
+    variants, setVariants,
+    error,
+    isSubmitting,
+    isEdit,
+    isValid,
+    handleSubmit,
+  } = useProductForm(product);
 
   return (
     <form onSubmit={handleSubmit}>
@@ -99,16 +58,17 @@ export function ProductForm({ product }: Props) {
             <label htmlFor="price" style={styles.label}>가격 *</label>
             <input id="price" type="number" value={price} onChange={(e) => setPrice(Number(e.target.value))} min={0} required style={styles.input} />
           </div>
-          {isEdit && categoryId && (
-            <div>
-              <label htmlFor="categoryId" style={styles.label}>카테고리 ID</label>
-              <input id="categoryId" type="text" value={categoryId} disabled style={styles.categoryInputEditing} />
-            </div>
-          )}
+          <div>
+            <label htmlFor="categoryId" style={styles.label}>카테고리 ID *</label>
+            <input id="categoryId" type="text" value={categoryId}
+              onChange={(e) => setCategoryId(e.target.value)}
+              disabled={isEdit}
+              style={isEdit ? styles.categoryInputEditing : styles.categoryInputCreating} />
+          </div>
           {isEdit && (
             <div>
               <label htmlFor="status" style={styles.label}>상태</label>
-              <select id="status" value={status} onChange={(e) => setStatus(e.target.value as ProductStatus)} style={styles.input}>
+              <select id="status" value={status} onChange={(e) => setStatus(e.target.value as import('@repo/types').ProductStatus)} style={styles.input}>
                 <option value="ON_SALE">판매중</option>
                 <option value="SOLD_OUT">품절</option>
                 <option value="HIDDEN">숨김</option>

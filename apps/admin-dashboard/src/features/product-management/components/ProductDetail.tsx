@@ -50,24 +50,28 @@ export function ProductDetail({ productId }: Props) {
           onChanged={() => refetch()}
         />
         <div style={{ marginTop: '16px', borderTop: '1px solid #eee', paddingTop: '12px' }}>
-          {product.variants.map((variant) => (
-            <button
-              key={variant.id}
-              onClick={() => setSelectedVariant(variant)}
-              style={{
-                padding: '6px 14px',
-                fontSize: '0.75rem',
-                border: '1px solid #d1d5db',
-                borderRadius: '6px',
-                backgroundColor: '#fff',
-                cursor: 'pointer',
-                marginRight: '8px',
-                marginBottom: '4px',
-              }}
-            >
-              {variant.optionName} 재고 조정
-            </button>
-          ))}
+          {product.variants.length === 0 ? (
+            <p>등록된 옵션이 없습니다.</p>
+          ) : (
+            product.variants.map((variant) => (
+              <button
+                key={variant.id}
+                onClick={() => setSelectedVariant(variant)}
+                style={{
+                  padding: '6px 14px',
+                  fontSize: '0.75rem',
+                  border: '1px solid #d1d5db',
+                  borderRadius: '6px',
+                  backgroundColor: '#fff',
+                  cursor: 'pointer',
+                  marginRight: '8px',
+                  marginBottom: '4px',
+                }}
+              >
+                재고 조정
+              </button>
+            ))
+          )}
         </div>
       </Section>
 
