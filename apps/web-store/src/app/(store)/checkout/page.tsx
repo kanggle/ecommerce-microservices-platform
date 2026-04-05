@@ -2,12 +2,14 @@
 
 import { useRouter } from 'next/navigation';
 import { useRequireAuth } from '@/features/auth';
+import { useCart } from '@/features/cart';
 import { CheckoutForm, useCheckoutItems } from '@/features/checkout';
 
 export default function CheckoutPage() {
   const router = useRouter();
   const { isReady } = useRequireAuth();
-  const { checkoutItems, totalAmount, completeOrder, isEmpty } = useCheckoutItems();
+  const { items, removeItem } = useCart();
+  const { checkoutItems, totalAmount, completeOrder, isEmpty } = useCheckoutItems({ items, removeItem });
 
   if (!isReady) return null;
   if (isEmpty) {

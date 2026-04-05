@@ -1,12 +1,16 @@
 import { useMemo, useRef } from 'react';
 import { useSearchParams } from 'next/navigation';
-import { useCart } from '@/features/cart';
+import type { CheckoutCartItem } from './types';
 
-export function useCheckoutItems() {
+interface CartDeps {
+  items: CheckoutCartItem[];
+  removeItem: (productId: string, variantId: string) => void;
+}
+
+export function useCheckoutItems({ items, removeItem }: CartDeps) {
   const searchParams = useSearchParams();
-  const { items, removeItem } = useCart();
   const completedRef = useRef(false);
-  const snapshotRef = useRef<typeof items | null>(null);
+  const snapshotRef = useRef<CheckoutCartItem[] | null>(null);
 
   const selectedKeys = useMemo(() => {
     const raw = searchParams.get('items');
