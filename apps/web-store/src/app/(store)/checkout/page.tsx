@@ -4,6 +4,7 @@ import { useRouter } from 'next/navigation';
 import { useRequireAuth } from '@/features/auth';
 import { useCart } from '@/features/cart';
 import { CheckoutForm, useCheckoutItems } from '@/features/checkout';
+import { NarrowContainer } from '@/shared/ui';
 
 export default function CheckoutPage() {
   const router = useRouter();
@@ -18,12 +19,12 @@ export default function CheckoutPage() {
   }
 
   return (
-    <div style={{ maxWidth: '600px', margin: '0 auto', padding: 'var(--space-8) var(--space-6) var(--space-16)' }}>
+    <NarrowContainer>
       <CheckoutForm
         items={checkoutItems}
         totalAmount={totalAmount}
         onOrderComplete={completeOrder}
       />
-    </div>
+    </NarrowContainer>
   );
 }

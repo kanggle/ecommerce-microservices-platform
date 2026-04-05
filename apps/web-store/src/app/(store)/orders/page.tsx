@@ -2,6 +2,7 @@
 
 import { useRequireAuth } from '@/features/auth';
 import { OrderHistory } from '@/features/order';
+import { NarrowContainer } from '@/shared/ui';
 
 export default function OrdersPage() {
   const { isReady } = useRequireAuth();
@@ -9,8 +10,8 @@ export default function OrdersPage() {
   if (!isReady) return null;
 
   return (
-    <div style={{ maxWidth: '600px', margin: '0 auto', padding: 'var(--space-8) var(--space-6) var(--space-16)' }}>
+    <NarrowContainer>
       <OrderHistory />
-    </div>
+    </NarrowContainer>
   );
 }

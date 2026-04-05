@@ -3,6 +3,7 @@
 import { useSearchParams } from 'next/navigation';
 import { useRequireAuth } from '@/features/auth';
 import { PaymentWidget } from '@/features/checkout';
+import { NarrowContainer } from '@/shared/ui';
 
 export default function PaymentPage() {
   const searchParams = useSearchParams();
@@ -23,9 +24,9 @@ export default function PaymentPage() {
   }
 
   return (
-    <div style={{ maxWidth: '600px', margin: '0 auto', padding: 'var(--space-8) var(--space-6) var(--space-16)' }}>
+    <NarrowContainer>
       <h1 className="page-title">결제하기</h1>
       <PaymentWidget orderId={orderId} amount={amount} orderName={orderName} />
-    </div>
+    </NarrowContainer>
   );
 }
