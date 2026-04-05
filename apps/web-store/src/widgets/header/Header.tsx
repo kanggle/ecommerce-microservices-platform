@@ -1,30 +1,17 @@
 'use client';
 
-import { useState, useRef, useEffect } from 'react';
+import { useState } from 'react';
 import Link from 'next/link';
 import { useAuth } from '@/features/auth';
 import { useCart } from '@/features/cart';
-import { useProfileImage } from '@/shared/context/ProfileImageContext';
+import { ProfileDropdown } from './ProfileDropdown';
 import styles from './Header.module.css';
 
 export function Header() {
   const { user, isAuthenticated, logout } = useAuth();
   const { items } = useCart();
-  const { imageUrl: profileImageUrl } = useProfileImage();
   const [mobileOpen, setMobileOpen] = useState(false);
-  const [dropdownOpen, setDropdownOpen] = useState(false);
-  const dropdownRef = useRef<HTMLDivElement>(null);
   const cartCount = items.reduce((sum, item) => sum + item.quantity, 0);
-
-  useEffect(() => {
-    function handleClickOutside(e: MouseEvent) {
-      if (dropdownRef.current && !dropdownRef.current.contains(e.target as Node)) {
-        setDropdownOpen(false);
-      }
-    }
-    document.addEventListener('mousedown', handleClickOutside);
-    return () => document.removeEventListener('mousedown', handleClickOutside);
-  }, []);
 
   return (
     <header className={styles.header}>
@@ -62,44 +49,7 @@ export function Header() {
             </span>
           </Link>
           {isAuthenticated ? (
-            <div ref={dropdownRef} className={styles.profileWrapper}>
-              <button
-                type="button"
-                className={styles.profileLink}
-                aria-label="프로필 메뉴"
-                onClick={() => setDropdownOpen((o) => !o)}
-              >
-                <span className={styles.profileAvatar}>
-                  {profileImageUrl ? (
-                    /* eslint-disable-next-line @next/next/no-img-element */
-                    <img src={profileImageUrl} alt="프로필" style={{ width: '100%', height: '100%', borderRadius: '50%', objectFit: 'cover' }} />
-                  ) : (
-                    user?.name?.charAt(0).toUpperCase() ?? 'U'
-                  )}
-                </span>
-              </button>
-              {dropdownOpen && (
-                <div className={styles.dropdown}>
-                  <Link href="/my/profile" className={styles.dropdownItem} onClick={() => setDropdownOpen(false)}>
-                    내 프로필
-                  </Link>
-                  <Link href="/my/orders" className={styles.dropdownItem} onClick={() => setDropdownOpen(false)}>
-                    주문내역
-                  </Link>
-                  <Link href="/my/addresses" className={styles.dropdownItem} onClick={() => setDropdownOpen(false)}>
-                    배송지 관리
-                  </Link>
-                  <hr className={styles.dropdownDivider} />
-                  <button
-                    type="button"
-                    className={styles.dropdownItem}
-                    onClick={() => { setDropdownOpen(false); logout(); }}
-                  >
-                    로그아웃
-                  </button>
-                </div>
-              )}
-            </div>
+            <ProfileDropdown userName={user?.name} onLogout={logout} />
           ) : (
             <Link href="/login" className={styles.authLink}>
               로그인
