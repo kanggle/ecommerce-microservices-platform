@@ -9,16 +9,14 @@ import java.util.Optional;
 
 @Repository
 @RequiredArgsConstructor
-public class BatchJobExecutionRepositoryImpl implements BatchJobExecutionRepository {
+class BatchJobExecutionRepositoryImpl implements BatchJobExecutionRepository {
 
     private final BatchJobExecutionJpaRepository jpaRepository;
     private final BatchJobExecutionPersistenceMapper mapper;
 
     @Override
     public BatchJobExecution save(BatchJobExecution execution) {
-        BatchJobExecutionJpaEntity entity = mapper.toEntity(execution);
-        BatchJobExecutionJpaEntity saved = jpaRepository.save(entity);
-        return mapper.toDomain(saved);
+        return mapper.toDomain(jpaRepository.save(mapper.toEntity(execution)));
     }
 
     @Override
