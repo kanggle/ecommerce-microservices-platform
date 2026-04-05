@@ -2,7 +2,7 @@ export const revalidate = 60;
 
 import { Suspense } from 'react';
 import { getProducts } from '@/entities/product';
-import { searchProducts, SearchBar, SearchFilters, SearchResults } from '@/features/search';
+import { searchProducts, SearchBar, SearchResultsSection } from '@/features/search';
 import { ProductList } from '@/features/product';
 import { Pagination } from '@/shared/ui';
 import { ErrorMessage, LoadingSpinner } from '@repo/ui';
@@ -39,25 +39,7 @@ export default async function ProductsPage({ searchParams }: Props) {
     : null;
 
   if (searchResult) {
-    return (
-      <div className="container" style={{ paddingTop: 'var(--space-8)', paddingBottom: 'var(--space-16)' }}>
-        <div style={{ marginBottom: 'var(--space-6)' }}>
-          <Suspense fallback={<LoadingSpinner />}><SearchBar /></Suspense>
-        </div>
-        <div style={{ marginBottom: 'var(--space-4)' }}>
-          <Suspense fallback={<LoadingSpinner />}>
-            <SearchFilters categories={searchResult.facets.categories} priceRanges={searchResult.facets.priceRanges} />
-          </Suspense>
-        </div>
-        <p style={{ color: 'var(--color-text-secondary)', marginBottom: 'var(--space-4)', fontSize: 'var(--font-size-sm)' }}>
-          &quot;{searchResult.query}&quot; 검색 결과 {searchResult.totalElements}건
-        </p>
-        <SearchResults items={searchResult.content} query={searchResult.query} />
-        <div style={{ marginTop: 'var(--space-8)' }}>
-          <Pagination currentPage={searchResult.page} totalElements={searchResult.totalElements} pageSize={searchResult.size} baseHref="/products" searchParams={params as Record<string, string>} />
-        </div>
-      </div>
-    );
+    return <SearchResultsSection result={searchResult} searchParams={params as Record<string, string>} />;
   }
 
   const searchFailed = !!query && !searchResult;
