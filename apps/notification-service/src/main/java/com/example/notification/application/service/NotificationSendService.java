@@ -97,10 +97,4 @@ public class NotificationSendService implements SendNotificationUseCase {
         }
     }
 
-    @Transactional
-    public void retryFailedNotifications() {
-        // Retry logic: called by scheduled task or external trigger
-        // This is a simple implementation; in production, a batch worker would handle this
-        log.info("Retry of failed notifications is handled via Kafka retry policy");
-    }
 }
