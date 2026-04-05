@@ -1,5 +1,3 @@
-export const userKeys = {
-  all: ['admin', 'users'] as const,
-  list: (params: Record<string, unknown>) => [...userKeys.all, params] as const,
-  detail: (userId: string) => [...userKeys.all, userId] as const,
-};
+import { createQueryKeys } from '@/shared/lib/create-query-keys';
+
+export const userKeys = createQueryKeys('admin', 'users');

@@ -1,9 +1,7 @@
 'use client';
 
-import { useState } from 'react';
 import type { ProductVariant } from '@repo/types';
-import { getErrorMessage } from '@repo/types/guards';
-import { useAddVariant, useUpdateVariant, useDeleteVariant } from '../hooks/use-variant-mutations';
+import { useVariantManagement } from '../hooks/use-variant-management';
 
 interface Props {
   productId: string;
@@ -11,69 +9,18 @@ interface Props {
   onChanged: () => void;
 }
 
-interface EditState {
-  variantId: string;
-  optionName: string;
-  additionalPrice: number;
-}
-
-interface AddState {
-  optionName: string;
-  stock: number;
-  additionalPrice: number;
-}
-
 export function VariantManagement({ productId, variants, onChanged }: Props) {
-  const [editing, setEditing] = useState<EditState | null>(null);
-  const [adding, setAdding] = useState<AddState | null>(null);
-  const [error, setError] = useState('');
-
-  const addMutation = useAddVariant(productId);
-  const updateMutation = useUpdateVariant(productId);
-  const deleteMutation = useDeleteVariant(productId);
-
-  const isMutating = addMutation.isPending || updateMutation.isPending || deleteMutation.isPending;
-
-  async function handleUpdate() {
-    if (!editing || !editing.optionName.trim()) return;
-    setError('');
-    try {
-      await updateMutation.mutateAsync({
-        variantId: editing.variantId,
-        data: { optionName: editing.optionName.trim(), additionalPrice: editing.additionalPrice },
-      });
-      setEditing(null);
-      onChanged();
-    } catch (err) {
-      setError(getErrorMessage(err, '옵션 수정에 실패했습니다.'));
-    }
-  }
-
-  async function handleDelete(variantId: string) {
-    setError('');
-    try {
-      await deleteMutation.mutateAsync(variantId);
-      onChanged();
-    } catch (err) {
-      setError(getErrorMessage(err, '옵션 삭제에 실패했습니다.'));
-    }
-  }
-
-  async function handleAdd() {
-    if (!adding || !adding.optionName.trim()) return;
-    setError('');
-    try {
-      await addMutation.mutateAsync({
-        optionName: adding.optionName.trim(),
-        stock: adding.stock,
-        additionalPrice: adding.additionalPrice,
-      });
-      setAdding(null);
-      onChanged();
-    } catch (err) {
-      setError(getErrorMessage(err, '옵션 추가에 실패했습니다.'));
-    }
-  }
+  const {
+    editing,
+    setEditing,
+    adding,
+    setAdding,
+    error,
+    isMutating,
+    handleUpdate,
+    handleDelete,
+    handleAdd,
+  } = useVariantManagement(productId, onChanged);
 
   return (
     <div>

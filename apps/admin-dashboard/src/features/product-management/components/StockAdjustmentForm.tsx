@@ -2,7 +2,7 @@
 
 import { useState } from 'react';
 import type { ProductVariant } from '@repo/types';
-import { getErrorMessage } from '@repo/types/guards';
+import { useAsyncAction } from '@/shared/hooks/use-async-action';
 import { useAdjustStock } from '../hooks/use-adjust-stock';
 
 interface Props {
@@ -30,7 +30,7 @@ const styles = {
 export function StockAdjustmentForm({ productId, variant, onClose }: Props) {
   const [quantity, setQuantity] = useState(0);
   const [reason, setReason] = useState('');
-  const [error, setError] = useState('');
+  const { error, execute } = useAsyncAction();
   const adjustStock = useAdjustStock();
 
   const isValid = quantity !== 0 && reason.trim().length > 0;
@@ -39,16 +39,13 @@ export function StockAdjustmentForm({ productId, variant, onClose }: Props) {
     e.preventDefault();
     if (!isValid) return;
 
-    setError('');
-    try {
+    await execute(async () => {
       await adjustStock.mutateAsync({
         productId,
         data: { variantId: variant.id, quantity, reason: reason.trim() },
       });
       onClose();
-    } catch (err) {
-      setError(getErrorMessage(err, '재고 조정에 실패했습니다.'));
-    }
+    }, '재고 조정에 실패했습니다.');
   }
 
   return (
