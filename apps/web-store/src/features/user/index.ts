@@ -6,5 +6,4 @@ export { AddressForm } from './ui/AddressForm';
 export { AddressManager } from './ui/AddressManager';
 export { useProfile } from './model/use-profile';
 export { useUpdateProfile } from './model/use-update-profile';
-export { useAddresses } from './model/use-addresses';
 export { userKeys } from './model/query-keys';

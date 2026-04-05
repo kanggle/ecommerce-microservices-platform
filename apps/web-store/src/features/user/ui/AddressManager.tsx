@@ -6,7 +6,7 @@ import { ErrorMessage, EmptyState } from '@repo/ui';
 import { Skeleton } from '@/shared/ui/Skeleton';
 import { AddressList } from './AddressList';
 import { AddressForm } from './AddressForm';
-import { useAddresses } from '../model/use-addresses';
+import { useAddresses } from '@/entities/user';
 
 type ViewMode = 'list' | 'add' | 'edit';
 
