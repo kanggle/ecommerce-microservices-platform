@@ -1,15 +1,13 @@
 'use client';
 
-import { useState } from 'react';
 import Link from 'next/link';
 import { useCart } from '../model/cart-context';
+import { useCartSelection } from '../model/use-cart-selection';
 import { QuantityControl } from './QuantityControl';
 
 export function CartSummary() {
   const { items, updateQuantity, removeItem } = useCart();
-  const [checkedSet, setCheckedSet] = useState<Set<string>>(() =>
-    new Set(items.map((i) => `${i.productId}-${i.variantId}`)),
-  );
+  const { allChecked, checkedItems, totalAmount, toggleAll, toggleItem, isChecked, clearSelection, itemKey } = useCartSelection(items);
 
   if (items.length === 0) {
     return (
@@ -24,32 +22,11 @@ export function CartSummary() {
     );
   }
 
-  const allChecked = items.length > 0 && items.every((i) => checkedSet.has(`${i.productId}-${i.variantId}`));
-  const checkedItems = items.filter((i) => checkedSet.has(`${i.productId}-${i.variantId}`));
-  const totalAmount = checkedItems.reduce((sum, i) => sum + i.price * i.quantity, 0);
-
-  function toggleAll() {
-    if (allChecked) {
-      setCheckedSet(new Set());
-    } else {
-      setCheckedSet(new Set(items.map((i) => `${i.productId}-${i.variantId}`)));
-    }
-  }
-
-  function toggleItem(key: string) {
-    setCheckedSet((prev) => {
-      const next = new Set(prev);
-      if (next.has(key)) next.delete(key);
-      else next.add(key);
-      return next;
-    });
-  }
-
   function removeChecked() {
     for (const item of checkedItems) {
       removeItem(item.productId, item.variantId);
     }
-    setCheckedSet(new Set());
+    clearSelection();
   }
 
   return (
@@ -77,8 +54,8 @@ export function CartSummary() {
 
       <div style={{ display: 'flex', flexDirection: 'column', gap: 'var(--space-2)', marginBottom: 'var(--space-6)' }}>
         {items.map((item) => {
-          const key = `${item.productId}-${item.variantId}`;
-          const checked = checkedSet.has(key);
+          const key = itemKey(item);
+          const checked = isChecked(item);
           return (
             <div
               key={key}
