@@ -62,9 +62,7 @@ public class ReviewController {
             @RequestParam(defaultValue = "20") int size,
             @RequestParam(defaultValue = "createdAt,desc") String sort
     ) {
-        int safePage = Math.max(page, 0);
-        int safeSize = size < 1 ? DEFAULT_PAGE_SIZE : Math.min(size, MAX_PAGE_SIZE);
-        ReviewListResult result = reviewQueryService.getProductReviews(productId, safePage, safeSize, sort);
+        ReviewListResult result = reviewQueryService.getProductReviews(productId, sanitizePage(page), sanitizeSize(size), sort);
         return ResponseEntity.ok(ReviewListResponse.from(result));
     }
 
@@ -82,9 +80,7 @@ public class ReviewController {
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "20") int size
     ) {
-        int safePage = Math.max(page, 0);
-        int safeSize = size < 1 ? DEFAULT_PAGE_SIZE : Math.min(size, MAX_PAGE_SIZE);
-        MyReviewListResult result = reviewQueryService.getMyReviews(UUID.fromString(userId), safePage, safeSize);
+        MyReviewListResult result = reviewQueryService.getMyReviews(UUID.fromString(userId), sanitizePage(page), sanitizeSize(size));
         return ResponseEntity.ok(MyReviewListResponse.from(result));
     }
 
@@ -103,6 +99,14 @@ public class ReviewController {
         );
         UpdateReviewResult result = reviewCommandService.updateReview(command);
         return ResponseEntity.ok(UpdateReviewResponse.from(result));
+    }
+
+    private int sanitizePage(int page) {
+        return Math.max(page, 0);
+    }
+
+    private int sanitizeSize(int size) {
+        return size < 1 ? DEFAULT_PAGE_SIZE : Math.min(size, MAX_PAGE_SIZE);
     }
 
     @DeleteMapping("/{reviewId}")
