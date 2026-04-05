@@ -1,18 +1,17 @@
 'use client';
 
-import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import { useCallback, useMemo, useState } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import type { ProductDetail } from '@repo/types';
 import { ProductImage } from '@/entities/product';
 import { useCart } from '@/features/cart';
 import { Toast } from '@/shared/ui';
+import { VariantSelector } from './ProductDetailWithCart/VariantSelector';
+import { SelectedItemsList } from './ProductDetailWithCart/SelectedItemsList';
+import { PurchaseSummary } from './ProductDetailWithCart/PurchaseSummary';
+import type { SelectedItem } from './ProductDetailWithCart/types';
 import styles from './ProductDetailWithCart.module.css';
-
-interface SelectedItem {
-  variantId: string;
-  quantity: number;
-}
 
 interface ProductDetailWithCartProps {
   product: ProductDetail;
@@ -24,17 +23,6 @@ export function ProductDetailWithCart({ product }: ProductDetailWithCartProps) {
   const [selectedItems, setSelectedItems] = useState<SelectedItem[]>([]);
   const [showToast, setShowToast] = useState(false);
   const [dropdownOpen, setDropdownOpen] = useState(false);
-  const dropdownRef = useRef<HTMLDivElement>(null);
-
-  useEffect(() => {
-    function handleClickOutside(e: MouseEvent) {
-      if (dropdownRef.current && !dropdownRef.current.contains(e.target as Node)) {
-        setDropdownOpen(false);
-      }
-    }
-    document.addEventListener('mousedown', handleClickOutside);
-    return () => document.removeEventListener('mousedown', handleClickOutside);
-  }, []);
 
   const variantMap = useMemo(() => new Map(product.variants.map((v) => [v.id, v])), [product.variants]);
   const images = useMemo(() => product.images?.length
@@ -112,6 +100,9 @@ export function ProductDetailWithCart({ product }: ProductDetailWithCartProps) {
 
   const clearToast = useCallback(() => setShowToast(false), []);
 
+  const handleDropdownClose = useCallback(() => setDropdownOpen(false), []);
+  const handleDropdownToggle = useCallback(() => setDropdownOpen((o) => !o), []);
+
   return (
     <>
       {showToast && (
@@ -143,134 +134,32 @@ export function ProductDetailWithCart({ product }: ProductDetailWithCartProps) {
 
           {product.variants.length > 0 && (
             <div className={styles.optionSection}>
-              <div>
-                <span className={styles.optionLabel}>옵션</span>
-                <div className={styles.dropdown} ref={dropdownRef}>
-                  <button
-                    type="button"
-                    className={styles.dropdownTrigger}
-                    onClick={() => setDropdownOpen((o) => !o)}
-                  >
-                    <span className={styles.dropdownPlaceholder}>옵션을 선택하세요</span>
-                    <span className={`${styles.dropdownArrow} ${dropdownOpen ? styles.dropdownArrowOpen : ''}`}>▾</span>
-                  </button>
-                  {dropdownOpen && (
-                    <div className={styles.dropdownMenu}>
-                      {product.variants.map((v) => {
-                        const isSelected = selectedItems.some((s) => s.variantId === v.id);
-                        const isSoldOut = v.stock === 0;
-                        const isDisabled = isSoldOut || isSelected;
-                        return (
-                          <button
-                            key={v.id}
-                            type="button"
-                            className={`${styles.dropdownItem} ${isDisabled ? styles.dropdownItemDisabled : ''}`}
-                            disabled={isDisabled}
-                            onClick={() => handleSelect(v.id)}
-                          >
-                            <span className={styles.dropdownItemName}>{v.optionName}</span>
-                            <span className={styles.dropdownItemMeta}>
-                              {v.additionalPrice > 0 && (
-                                <span className={styles.dropdownItemPrice}>
-                                  +{v.additionalPrice.toLocaleString()}원
-                                </span>
-                              )}
-                              {isSoldOut ? (
-                                <span className={styles.dropdownItemSoldOut}>품절</span>
-                              ) : (
-                                <span className={styles.dropdownItemStock}>재고 {v.stock}</span>
-                              )}
-                            </span>
-                          </button>
-                        );
-                      })}
-                    </div>
-                  )}
-                </div>
-              </div>
+              <VariantSelector
+                variants={product.variants}
+                selectedItems={selectedItems}
+                dropdownOpen={dropdownOpen}
+                onDropdownToggle={handleDropdownToggle}
+                onSelect={handleSelect}
+                onDropdownClose={handleDropdownClose}
+              />
 
-              {selectedItems.length > 0 && (
-                <div className={styles.selectedList}>
-                  {selectedItems.map((item) => {
-                    const v = variantMap.get(item.variantId);
-                    if (!v) return null;
-                    const unitPrice = product.price + v.additionalPrice;
-                    return (
-                      <div key={item.variantId} className={styles.selectedItem}>
-                        <span className={styles.selectedItemName}>{v.optionName}</span>
-                        <div className={styles.stepper}>
-                          <button
-                            type="button"
-                            className={styles.stepperBtn}
-                            onClick={() => handleQuantity(item.variantId, item.quantity - 1)}
-                            disabled={item.quantity <= 1}
-                            aria-label="수량 줄이기"
-                          >
-                            −
-                          </button>
-                          <span className={styles.stepperValue}>{item.quantity}</span>
-                          <button
-                            type="button"
-                            className={styles.stepperBtn}
-                            onClick={() => handleQuantity(item.variantId, item.quantity + 1)}
-                            disabled={item.quantity >= v.stock}
-                            aria-label="수량 늘리기"
-                          >
-                            +
-                          </button>
-                        </div>
-                        <span className={styles.selectedItemPrice}>
-                          {(unitPrice * item.quantity).toLocaleString()}원
-                        </span>
-                        <button
-                          type="button"
-                          className={styles.selectedItemRemove}
-                          onClick={() => handleRemove(item.variantId)}
-                          aria-label={`${v.optionName} 삭제`}
-                        >
-                          ✕
-                        </button>
-                      </div>
-                    );
-                  })}
-                </div>
-              )}
+              <SelectedItemsList
+                selectedItems={selectedItems}
+                variantMap={variantMap}
+                basePrice={product.price}
+                onQuantityChange={handleQuantity}
+                onRemove={handleRemove}
+              />
             </div>
           )}
 
-          <div className={styles.purchaseSummary}>
-            <div className={styles.priceRow}>
-              <span className={styles.priceRowLabel}>
-                총 금액{totalQuantity > 0 ? ` (${totalQuantity}개)` : ''}
-              </span>
-              <span>
-                <span className={styles.totalPrice}>
-                  {totalPrice.toLocaleString()}
-                </span>
-                <span className={styles.totalPriceUnit}>원</span>
-              </span>
-            </div>
-            <div style={{ display: 'flex', gap: 'var(--space-2)' }}>
-              <button
-                type="button"
-                onClick={handleAddToCart}
-                disabled={!canAdd}
-                className={styles.cartBtn}
-                style={{ flex: 1 }}
-              >
-                {canAdd ? '장바구니 담기' : '옵션을 선택하세요'}
-              </button>
-              <button
-                type="button"
-                onClick={handleBuyNow}
-                disabled={!canAdd}
-                className={styles.buyNowBtn}
-                style={{ flex: 1 }}
-              >
-                즉시 주문
-              </button>
-            </div>
-          </div>
+          <PurchaseSummary
+            totalPrice={totalPrice}
+            totalQuantity={totalQuantity}
+            canAdd={canAdd}
+            onAddToCart={handleAddToCart}
+            onBuyNow={handleBuyNow}
+          />
         </div>
       </div>
     </>
