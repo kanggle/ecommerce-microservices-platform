@@ -1,12 +1,13 @@
 'use client';
 
-import { useState, useCallback, useRef } from 'react';
+import { useState, useCallback } from 'react';
 import type { UserProfile } from '@repo/types';
 import { isApiError, ERROR_MESSAGES } from '@repo/types/guards';
 import type { ProfileFieldErrors } from '../model/types';
 import { useUpdateProfile } from '../model/use-update-profile';
 import { Toast } from '@/shared/ui';
 import { ProfileFormField } from './ProfileFormField';
+import { ProfileImageSection } from './ProfileImageSection';
 import { useProfileImage } from '@/shared/context/ProfileImageContext';
 
 interface ProfileFormProps {
@@ -34,20 +35,9 @@ export function ProfileForm({ profile, onUpdated }: ProfileFormProps) {
   const [profileImageUrl, setProfileImageUrl] = useState(profile.profileImageUrl ?? '');
   const [fieldErrors, setFieldErrors] = useState<ProfileFieldErrors>({});
   const [toast, setToast] = useState<{ message: string; type: 'success' | 'error' } | null>(null);
-  const fileInputRef = useRef<HTMLInputElement>(null);
   const { setImageUrl: setGlobalProfileImage } = useProfileImage();
   const updateMutation = useUpdateProfile();
   const isSubmitting = updateMutation.isPending;
-
-  function handleImageChange(e: React.ChangeEvent<HTMLInputElement>) {
-    const file = e.target.files?.[0];
-    if (!file) return;
-    const reader = new FileReader();
-    reader.onload = () => {
-      setProfileImageUrl(reader.result as string);
-    };
-    reader.readAsDataURL(file);
-  }
 
   const clearToast = useCallback(() => setToast(null), []);
 
@@ -101,32 +91,11 @@ export function ProfileForm({ profile, onUpdated }: ProfileFormProps) {
       <section className="card" style={{ padding: 'var(--space-6)', marginBottom: 'var(--space-6)' }}>
         <h2 className="section-title">기본 정보</h2>
         <div style={{ display: 'flex', alignItems: 'center', gap: 'var(--space-6)' }}>
-          <div style={{ flexShrink: 0, display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 'var(--space-2)' }}>
-            {profileImageUrl ? (
-              <img
-                src={profileImageUrl}
-                alt="프로필"
-                style={{ width: 80, height: 80, borderRadius: 'var(--radius-full)', objectFit: 'cover', border: '1px solid var(--color-border-light)' }}
-              />
-            ) : (
-              <div
-                style={{ width: 80, height: 80, borderRadius: 'var(--radius-full)', background: 'var(--color-primary)', color: 'var(--color-white)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 'var(--font-size-2xl)', fontWeight: 'var(--font-weight-bold)' }}
-              >
-                {profile.name?.charAt(0).toUpperCase()}
-              </div>
-            )}
-            <input ref={fileInputRef} type="file" accept="image/*" style={{ display: 'none' }} onChange={handleImageChange} />
-            <div style={{ display: 'flex', gap: 'var(--space-1)' }}>
-              <button type="button" className="btn" style={{ fontSize: 'var(--font-size-xs)', padding: 'var(--space-1) var(--space-2)' }} onClick={() => fileInputRef.current?.click()}>
-                선택
-              </button>
-              {profileImageUrl && (
-                <button type="button" className="btn" style={{ fontSize: 'var(--font-size-xs)', padding: 'var(--space-1) var(--space-2)', color: 'var(--color-text-muted)' }} onClick={() => setProfileImageUrl('')}>
-                  삭제
-                </button>
-              )}
-            </div>
-          </div>
+          <ProfileImageSection
+            profileImageUrl={profileImageUrl}
+            profileName={profile.name}
+            onImageChange={setProfileImageUrl}
+          />
           <div style={{ display: 'flex', flexDirection: 'column', gap: 'var(--space-3)' }}>
             <div>
               <span style={{ fontWeight: 'var(--font-weight-semibold)', fontSize: 'var(--font-size-sm)', color: 'var(--color-text-secondary)' }}>이메일</span>
