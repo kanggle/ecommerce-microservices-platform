@@ -53,8 +53,8 @@ class ReviewRepositoryAdapter implements ReviewRepository, ReviewQueryPort {
         Page<ReviewJpaEntity> result = jpaRepository.findByProductIdAndStatus(
                 productId, ReviewStatus.ACTIVE, PageRequest.of(page, size, jpaSort));
 
-        double averageRating = jpaRepository.averageRatingByProductIdAndStatus(productId, ReviewStatus.ACTIVE);
-        long totalReviews = jpaRepository.countByProductIdAndStatus(productId, ReviewStatus.ACTIVE);
+        double averageRating = fetchAverageRating(productId);
+        long totalReviews = fetchTotalReviews(productId);
 
         List<ReviewListResult.ReviewItem> items = result.getContent().stream()
                 .map(entity -> new ReviewListResult.ReviewItem(
@@ -73,15 +73,15 @@ class ReviewRepositoryAdapter implements ReviewRepository, ReviewQueryPort {
                 result.getNumber(),
                 result.getSize(),
                 result.getTotalElements(),
-                Math.round(averageRating * 10.0) / 10.0,
+                roundToOneDecimal(averageRating),
                 totalReviews
         );
     }
 
     @Override
     public ReviewSummaryResult getSummaryByProductId(UUID productId) {
-        double averageRating = jpaRepository.averageRatingByProductIdAndStatus(productId, ReviewStatus.ACTIVE);
-        long totalReviews = jpaRepository.countByProductIdAndStatus(productId, ReviewStatus.ACTIVE);
+        double averageRating = fetchAverageRating(productId);
+        long totalReviews = fetchTotalReviews(productId);
 
         List<Object[]> distribution = jpaRepository.ratingDistributionByProductIdAndStatus(
                 productId, ReviewStatus.ACTIVE);
@@ -98,7 +98,7 @@ class ReviewRepositoryAdapter implements ReviewRepository, ReviewQueryPort {
 
         return new ReviewSummaryResult(
                 productId,
-                Math.round(averageRating * 10.0) / 10.0,
+                roundToOneDecimal(averageRating),
                 totalReviews,
                 ratingDistribution
         );
@@ -127,6 +127,18 @@ class ReviewRepositoryAdapter implements ReviewRepository, ReviewQueryPort {
                 result.getSize(),
                 result.getTotalElements()
         );
+    }
+
+    private double fetchAverageRating(UUID productId) {
+        return jpaRepository.averageRatingByProductIdAndStatus(productId, ReviewStatus.ACTIVE);
+    }
+
+    private long fetchTotalReviews(UUID productId) {
+        return jpaRepository.countByProductIdAndStatus(productId, ReviewStatus.ACTIVE);
+    }
+
+    private double roundToOneDecimal(double value) {
+        return Math.round(value * 10.0) / 10.0;
     }
 
     private Sort parseSort(String sort) {
