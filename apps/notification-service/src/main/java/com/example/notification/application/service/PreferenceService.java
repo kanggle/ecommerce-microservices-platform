@@ -18,21 +18,23 @@ public class PreferenceService implements ManagePreferenceUseCase {
 
     @Transactional
     public GetPreferenceResult getPreference(String userId) {
-        UserNotificationPreference preference = preferenceRepository.findByUserId(userId)
-                .orElseGet(() -> {
-                    UserNotificationPreference defaultPref = UserNotificationPreference.createDefault(userId);
-                    return preferenceRepository.save(defaultPref);
-                });
+        UserNotificationPreference preference = getOrCreatePreference(userId);
         return GetPreferenceResult.from(preference);
     }
 
     @Transactional
     public GetPreferenceResult updatePreference(UpdatePreferenceCommand command) {
-        UserNotificationPreference preference = preferenceRepository.findByUserId(command.userId())
-                .orElseGet(() -> UserNotificationPreference.createDefault(command.userId()));
-
+        UserNotificationPreference preference = getOrCreatePreference(command.userId());
         preference.update(command.emailEnabled(), command.smsEnabled(), command.pushEnabled());
         UserNotificationPreference saved = preferenceRepository.save(preference);
         return GetPreferenceResult.from(saved);
+    }
+
+    private UserNotificationPreference getOrCreatePreference(String userId) {
+        return preferenceRepository.findByUserId(userId)
+                .orElseGet(() -> {
+                    UserNotificationPreference defaultPref = UserNotificationPreference.createDefault(userId);
+                    return preferenceRepository.save(defaultPref);
+                });
     }
 }
