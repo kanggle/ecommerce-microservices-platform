@@ -17,6 +17,9 @@ public class JwtTokenParser implements TokenParser {
     private final JwtParser jwtParser;
 
     public JwtTokenParser(JwtProperties jwtProperties) {
+        if (jwtProperties.getSecretKey() == null) {
+            jwtProperties.initSecretKey();
+        }
         this.jwtParser = Jwts.parser()
             .verifyWith(jwtProperties.getSecretKey())
             .requireIssuer(jwtProperties.getIssuer())

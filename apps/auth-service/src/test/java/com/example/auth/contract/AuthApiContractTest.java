@@ -16,7 +16,7 @@ import com.example.auth.infrastructure.security.JwtAuthenticationFilter;
 import com.example.auth.infrastructure.security.JsonAuthenticationEntryPoint;
 import com.example.auth.infrastructure.security.JwtTokenParser;
 import com.example.auth.infrastructure.security.AuthRateLimitFilter;
-import com.example.auth.presentation.support.ClientIpResolver;
+import com.example.auth.infrastructure.support.ClientIpResolver;
 import com.example.auth.presentation.advice.GlobalExceptionHandler;
 import com.example.auth.presentation.controller.AuthController;
 import com.fasterxml.jackson.databind.ObjectMapper;

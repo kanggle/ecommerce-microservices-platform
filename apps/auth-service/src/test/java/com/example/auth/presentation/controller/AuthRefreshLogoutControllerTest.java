@@ -16,7 +16,7 @@ import com.example.auth.domain.service.ParsedToken;
 import com.example.auth.infrastructure.security.JwtTokenParser;
 import com.example.auth.infrastructure.security.AuthRateLimitFilter;
 import com.example.auth.infrastructure.metrics.AuthMetrics;
-import com.example.auth.presentation.support.ClientIpResolver;
+import com.example.auth.infrastructure.support.ClientIpResolver;
 import com.example.auth.presentation.advice.GlobalExceptionHandler;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.DisplayName;
@@ -94,7 +94,7 @@ class AuthRefreshLogoutControllerTest {
 
         mockMvc.perform(post("/api/auth/refresh")
                 .contentType(MediaType.APPLICATION_JSON)
-                .content(objectMapper.writeValueAsString(Map.of("refreshToken", "bad-token"))))
+                .content(objectMapper.writeValueAsString(Map.of("refreshToken", "bad-token-too-short-not"))))
             .andExpect(status().isUnauthorized())
             .andExpect(jsonPath("$.code").value("INVALID_REFRESH_TOKEN"));
     }

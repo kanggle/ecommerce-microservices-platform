@@ -11,7 +11,7 @@ import com.example.auth.application.service.LoginService;
 import com.example.auth.application.service.LogoutService;
 import com.example.auth.application.service.RefreshTokenService;
 import com.example.auth.application.service.SignupService;
-import com.example.auth.presentation.support.ClientIpResolver;
+import com.example.auth.infrastructure.support.ClientIpResolver;
 import com.example.auth.presentation.dto.LoginRequest;
 import com.example.auth.presentation.dto.LoginResponse;
 import com.example.auth.presentation.dto.LogoutRequest;

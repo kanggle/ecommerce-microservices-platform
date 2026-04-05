@@ -40,7 +40,11 @@ public class JwtProperties implements TokenProperties {
     private SecretKey secretKey;
 
     @PostConstruct
-    void initSecretKey() {
+    public void initSecretKey() {
+        if (secret == null || secret.isBlank()) {
+            throw new IllegalArgumentException(
+                "jwt.secret must not be empty — set the JWT_SECRET environment variable");
+        }
         byte[] secretBytes = secret.getBytes(StandardCharsets.UTF_8);
         if (secretBytes.length < 32) {
             throw new IllegalArgumentException(

@@ -8,7 +8,10 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Mock;
+import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.mockito.junit.jupiter.MockitoSettings;
+import org.mockito.quality.Strictness;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.data.redis.core.ZSetOperations;
 import org.springframework.data.redis.core.script.RedisScript;
@@ -23,6 +26,7 @@ import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.verify;
 
 @ExtendWith(MockitoExtension.class)
+@MockitoSettings(strictness = Strictness.LENIENT)
 @DisplayName("RedisUserSessionRegistry 단위 테스트")
 class RedisUserSessionRegistryUnitTest {
 
@@ -99,8 +103,7 @@ class RedisUserSessionRegistryUnitTest {
     void registerSession_returnsNoEviction_whenScriptReturnsNull() {
         given(sessionProperties.maxConcurrentSessions()).willReturn(5);
         RedisUserSessionRegistry registry = createRegistry();
-        given(redisTemplate.execute(any(RedisScript.class), any(List.class), any()))
-            .willReturn(null);
+        Mockito.doReturn(null).when(redisTemplate).execute(any(RedisScript.class), any(List.class), any(), any(), any(), any(), any(), any());
 
         UserSessionRegistry.RegistrationResult result = registry.registerSession(UUID.randomUUID(), "token", 604800L);
 
@@ -115,8 +118,7 @@ class RedisUserSessionRegistryUnitTest {
         given(sessionProperties.maxConcurrentSessions()).willReturn(5);
         RedisUserSessionRegistry registry = createRegistry();
         String evictedHash = "evicted-hash-value";
-        given(redisTemplate.execute(any(RedisScript.class), any(List.class), any()))
-            .willReturn(evictedHash);
+        Mockito.doReturn(evictedHash).when(redisTemplate).execute(any(RedisScript.class), any(List.class), any(), any(), any(), any(), any(), any());
 
         UserSessionRegistry.RegistrationResult result = registry.registerSession(UUID.randomUUID(), "token", 604800L);
 

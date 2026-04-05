@@ -35,7 +35,7 @@ import com.example.auth.infrastructure.security.JwtAuthenticationFilter;
 import com.example.auth.infrastructure.security.JsonAuthenticationEntryPoint;
 import com.example.auth.infrastructure.security.JwtTokenParser;
 import com.example.auth.infrastructure.security.AuthRateLimitFilter;
-import com.example.auth.presentation.support.ClientIpResolver;
+import com.example.auth.infrastructure.support.ClientIpResolver;
 import com.example.auth.presentation.advice.GlobalExceptionHandler;
 
 @WebMvcTest(AuthController.class)
@@ -206,7 +206,7 @@ class AuthControllerTest {
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(Map.of(
                     "email", "test@example.com",
-                    "password", "a1" + "a".repeat(126),
+                    "password", "A1!" + "a".repeat(125),
                     "name", "홍길동"
                 ))))
             .andExpect(status().isCreated());
@@ -249,7 +249,7 @@ class AuthControllerTest {
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(Map.of(
                     "email", "test@example.com",
-                    "password", "wrongpw"
+                    "password", "wrongpw1!"
                 ))))
             .andExpect(status().isUnauthorized())
             .andExpect(jsonPath("$.code").value("INVALID_CREDENTIALS"));

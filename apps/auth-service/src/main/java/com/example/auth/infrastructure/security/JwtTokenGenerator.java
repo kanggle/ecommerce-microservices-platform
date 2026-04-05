@@ -19,6 +19,9 @@ public class JwtTokenGenerator implements TokenGenerator {
     private final String audience;
 
     public JwtTokenGenerator(JwtProperties jwtProperties) {
+        if (jwtProperties.getSecretKey() == null) {
+            jwtProperties.initSecretKey();
+        }
         this.secretKey = jwtProperties.getSecretKey();
         this.ttlSeconds = jwtProperties.getAccessTokenTtlSeconds();
         this.issuer = jwtProperties.getIssuer();

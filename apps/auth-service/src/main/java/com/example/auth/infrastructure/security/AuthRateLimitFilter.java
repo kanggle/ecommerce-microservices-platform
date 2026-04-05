@@ -2,7 +2,7 @@ package com.example.auth.infrastructure.security;
 
 import com.example.auth.domain.service.RateLimiter;
 import com.example.auth.domain.service.AuthMetricsRecorder;
-import com.example.auth.presentation.support.ClientIpResolver;
+import com.example.auth.infrastructure.support.ClientIpResolver;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;

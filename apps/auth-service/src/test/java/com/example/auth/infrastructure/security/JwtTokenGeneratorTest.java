@@ -26,6 +26,7 @@ class JwtTokenGeneratorTest {
         props.setRefreshTokenTtlSeconds(2592000L);
         props.setIssuer(ISSUER);
         props.setAudience(AUDIENCE);
+        props.initSecretKey();
         generator = new JwtTokenGenerator(props);
     }
 

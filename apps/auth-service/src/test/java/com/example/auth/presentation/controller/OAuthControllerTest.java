@@ -14,7 +14,7 @@ import com.example.auth.infrastructure.security.JsonAuthenticationEntryPoint;
 import com.example.auth.infrastructure.security.JwtAuthenticationFilter;
 import com.example.auth.infrastructure.security.JwtTokenParser;
 import com.example.auth.presentation.advice.GlobalExceptionHandler;
-import com.example.auth.presentation.support.ClientIpResolver;
+import com.example.auth.infrastructure.support.ClientIpResolver;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
