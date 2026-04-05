@@ -1,4 +1,5 @@
 import type { OrderStatus } from '@repo/types';
+import { StatusBadge } from '@/shared/ui';
 
 const STATUS_LABELS: Record<OrderStatus, string> = {
   PENDING: '주문 대기',
@@ -22,18 +23,10 @@ interface OrderStatusBadgeProps {
 
 export function OrderStatusBadge({ status }: OrderStatusBadgeProps) {
   return (
-    <span
-      style={{
-        display: 'inline-block',
-        padding: 'var(--space-1) var(--space-2)',
-        fontSize: 'var(--font-size-xs)',
-        fontWeight: 'var(--font-weight-bold)',
-        color: 'var(--color-white)',
-        backgroundColor: STATUS_COLORS[status],
-        borderRadius: 'var(--radius-sm)',
-      }}
-    >
-      {STATUS_LABELS[status]}
-    </span>
+    <StatusBadge
+      status={status}
+      labels={STATUS_LABELS}
+      colors={STATUS_COLORS}
+    />
   );
 }

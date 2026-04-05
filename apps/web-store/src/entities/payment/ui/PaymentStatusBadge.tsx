@@ -1,4 +1,5 @@
 import type { PaymentStatus } from '@repo/types';
+import { StatusBadge } from '@/shared/ui';
 
 const STATUS_LABELS: Record<PaymentStatus, string> = {
   PENDING: '결제 대기',
@@ -20,18 +21,10 @@ interface PaymentStatusBadgeProps {
 
 export function PaymentStatusBadge({ status }: PaymentStatusBadgeProps) {
   return (
-    <span
-      style={{
-        display: 'inline-block',
-        padding: 'var(--space-1) var(--space-2)',
-        fontSize: 'var(--font-size-xs)',
-        fontWeight: 'var(--font-weight-bold)',
-        color: 'var(--color-white)',
-        backgroundColor: STATUS_COLORS[status],
-        borderRadius: 'var(--radius-sm)',
-      }}
-    >
-      {STATUS_LABELS[status]}
-    </span>
+    <StatusBadge
+      status={status}
+      labels={STATUS_LABELS}
+      colors={STATUS_COLORS}
+    />
   );
 }
