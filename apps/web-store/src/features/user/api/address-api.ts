@@ -5,11 +5,9 @@ import type {
   CreateAddressResponse,
   UpdateAddressRequest,
 } from '@repo/types';
-import { getMyAddresses, mockAddressState } from '@/entities/user';
+import { mockAddressState } from '@/entities/user';
 
 const userApi = createUserApi(apiClient);
-
-export { getMyAddresses };
 
 export async function createAddress(
   data: CreateAddressRequest,

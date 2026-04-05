@@ -1,5 +1,3 @@
-import type { ShippingAddress } from '@repo/types';
-
 export interface CheckoutCartItem {
   productId: string;
   variantId: string;
@@ -13,8 +11,4 @@ export interface CheckoutFormProps {
   items: CheckoutCartItem[];
   totalAmount: number;
   onOrderComplete: () => void;
-}
-
-export interface CheckoutShippingForm {
-  shippingAddress: ShippingAddress;
 }
