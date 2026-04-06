@@ -3,6 +3,7 @@ export const revalidate = 60;
 import { cache } from 'react';
 import { getProduct } from '@/entities/product';
 import { ProductDetailWithCart } from '@/widgets/ProductDetailWithCart';
+import { ProductReviewSection } from '@/widgets/ProductReviewSection';
 import { notFound } from 'next/navigation';
 import type { Metadata } from 'next';
 
@@ -37,6 +38,7 @@ export default async function ProductDetailPage({ params }: Props) {
   return (
     <div className="container" style={{ paddingTop: 'var(--space-8)', paddingBottom: 'var(--space-16)' }}>
       <ProductDetailWithCart product={product} />
+      <ProductReviewSection productId={product.id} />
     </div>
   );
 }

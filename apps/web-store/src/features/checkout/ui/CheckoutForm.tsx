@@ -22,7 +22,8 @@ function addressToShipping(addr: Address): ShippingAddress {
   };
 }
 
-export function CheckoutForm({ items, totalAmount, onOrderComplete }: CheckoutFormProps) {
+export function CheckoutForm({ items, totalAmount, discountAmount = 0, onOrderComplete }: CheckoutFormProps) {
+  const finalAmount = totalAmount - discountAmount;
   const { isReady: paymentReady, requestPayment } = useTossPayment();
   const [error, setError] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -88,7 +89,7 @@ export function CheckoutForm({ items, totalAmount, onOrderComplete }: CheckoutFo
       const result = await placeOrder({ items: orderItems, shippingAddress: address });
       const orderName = items[0].productName + (items.length > 1 ? ` 외 ${items.length - 1}건` : '');
       onOrderComplete();
-      await requestPayment({ orderId: result.orderId, amount: totalAmount, orderName });
+      await requestPayment({ orderId: result.orderId, amount: finalAmount, orderName });
     } catch (err) {
       if (isApiError(err)) {
         setError(ERROR_MESSAGES[err.code] ?? err.message ?? '주문에 실패했습니다.');
@@ -105,7 +106,7 @@ export function CheckoutForm({ items, totalAmount, onOrderComplete }: CheckoutFo
 
       {error && <div role="alert" className="alert-error">{error}</div>}
 
-      <OrderItemsSection items={items} totalAmount={totalAmount} />
+      <OrderItemsSection items={items} totalAmount={totalAmount} discountAmount={discountAmount} />
 
       <AddressSection
         addressLoading={addressLoading}
@@ -128,7 +129,7 @@ export function CheckoutForm({ items, totalAmount, onOrderComplete }: CheckoutFo
           opacity: !isValid || isSubmitting ? 0.5 : 1,
         }}
       >
-        {isSubmitting ? '주문 처리 중...' : <>{totalAmount.toLocaleString()}<span style={{ fontSize: 'var(--font-size-sm)', fontWeight: 'var(--font-weight-normal)', margin: '0 var(--space-2) 0 2px' }}>원</span>결제하기</>}
+        {isSubmitting ? '주문 처리 중...' : <>{finalAmount.toLocaleString()}<span style={{ fontSize: 'var(--font-size-sm)', fontWeight: 'var(--font-weight-normal)', margin: '0 var(--space-2) 0 2px' }}>원</span>결제하기</>}
       </button>
     </form>
   );

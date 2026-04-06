@@ -7,7 +7,11 @@ import { useRequireAuth } from '@/features/auth';
 const navItems = [
   { href: '/my/profile', label: '프로필' },
   { href: '/my/orders', label: '주문내역' },
+  { href: '/my/wishlist', label: '위시리스트' },
+  { href: '/my/reviews', label: '내 리뷰' },
+  { href: '/my/coupons', label: '쿠폰' },
   { href: '/my/addresses', label: '배송지 관리' },
+  { href: '/my/notifications', label: '알림' },
 ];
 
 export default function MyLayout({ children }: { children: React.ReactNode }) {

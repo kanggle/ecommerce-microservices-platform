@@ -3,9 +3,11 @@ import type { CheckoutCartItem } from '../model/types';
 interface OrderItemsSectionProps {
   items: CheckoutCartItem[];
   totalAmount: number;
+  discountAmount?: number;
 }
 
-export function OrderItemsSection({ items, totalAmount }: OrderItemsSectionProps) {
+export function OrderItemsSection({ items, totalAmount, discountAmount = 0 }: OrderItemsSectionProps) {
+  const finalAmount = totalAmount - discountAmount;
   return (
     <section style={{ marginBottom: 'var(--space-8)' }}>
       <h2 className="section-title">주문 상품</h2>
@@ -36,15 +38,29 @@ export function OrderItemsSection({ items, totalAmount }: OrderItemsSectionProps
           </div>
         ))}
       </div>
-      <div
-        style={{
-          textAlign: 'right',
-          marginTop: 'var(--space-4)',
+      <div style={{ marginTop: 'var(--space-4)', textAlign: 'right' }}>
+        <div style={{ fontWeight: 'var(--font-weight-bold)', fontSize: 'var(--font-size-lg)' }}>
+          상품 합계: <span className="price">{totalAmount.toLocaleString()}<span style={{ fontSize: 'var(--font-size-sm)', fontWeight: 'var(--font-weight-normal)', color: 'var(--color-text-secondary)', marginLeft: '2px' }}>원</span></span>
+        </div>
+        {discountAmount > 0 && (
+          <div
+            data-testid="discount-amount"
+            style={{
+              marginTop: 'var(--space-2)',
+              fontSize: 'var(--font-size-md)',
+              color: 'var(--color-danger)',
+            }}
+          >
+            쿠폰 할인: <span>-{discountAmount.toLocaleString()}<span style={{ fontSize: 'var(--font-size-sm)', marginLeft: '2px' }}>원</span></span>
+          </div>
+        )}
+        <div style={{
+          marginTop: 'var(--space-2)',
           fontWeight: 'var(--font-weight-bold)',
           fontSize: 'var(--font-size-lg)',
-        }}
-      >
-        합계: <span className="price">{totalAmount.toLocaleString()}<span style={{ fontSize: 'var(--font-size-sm)', fontWeight: 'var(--font-weight-normal)', color: 'var(--color-text-secondary)', marginLeft: '2px' }}>원</span></span>
+        }}>
+          결제 금액: <span className="price">{finalAmount.toLocaleString()}<span style={{ fontSize: 'var(--font-size-sm)', fontWeight: 'var(--font-weight-normal)', color: 'var(--color-text-secondary)', marginLeft: '2px' }}>원</span></span>
+        </div>
       </div>
     </section>
   );

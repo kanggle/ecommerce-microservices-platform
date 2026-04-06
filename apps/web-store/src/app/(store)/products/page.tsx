@@ -3,7 +3,7 @@ export const revalidate = 60;
 import { Suspense } from 'react';
 import { getProducts } from '@/entities/product';
 import { searchProducts, SearchBar, SearchResultsSection } from '@/features/search';
-import { ProductList } from '@/features/product';
+import { ProductListWithWishlist } from '@/widgets/ProductListWithWishlist';
 import { Pagination } from '@/shared/ui';
 import { ErrorMessage, LoadingSpinner } from '@repo/ui';
 import type { SearchSortOrder } from '@repo/types';
@@ -68,7 +68,7 @@ export default async function ProductsPage({ searchParams }: Props) {
           </div>
         )}
         <h1 className="page-title">전체 상품</h1>
-        <ProductList products={result.content} />
+        <ProductListWithWishlist products={result.content} />
         <div style={{ marginTop: 'var(--space-8)' }}>
           <Pagination currentPage={result.page} totalElements={result.totalElements} pageSize={result.size} baseHref="/products" searchParams={params as Record<string, string>} />
         </div>

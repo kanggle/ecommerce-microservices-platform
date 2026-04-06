@@ -8,6 +8,7 @@ import { useOrderDetail, CANCELLABLE_STATUSES } from '../model/use-order-detail'
 import { OrderItemsSection } from './OrderItemsSection';
 import { OrderShippingInfo } from './OrderShippingInfo';
 import { OrderPaymentInfo } from './OrderPaymentInfo';
+import { ShippingTracker } from './ShippingTracker';
 
 interface Props {
   orderId: string;
@@ -86,6 +87,8 @@ export function OrderDetailView({ orderId }: Props) {
           <OrderItemsSection items={order.items} totalPrice={order.totalPrice} />
 
           <OrderShippingInfo shippingAddress={order.shippingAddress} />
+
+          <ShippingTracker orderId={orderId} />
 
           <OrderPaymentInfo payment={payment} paymentError={paymentError} />
 

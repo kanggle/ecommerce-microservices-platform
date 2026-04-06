@@ -15,6 +15,9 @@ const NAV_ITEMS: NavItem[] = [
   { label: '상품 관리', href: '/products', icon: '📦' },
   { label: '주문 관리', href: '/orders', icon: '🛒' },
   { label: '사용자 관리', href: '/users', icon: '👥' },
+  { label: '프로모션 관리', href: '/promotions', icon: '🎁' },
+  { label: '배송 관리', href: '/shippings', icon: '🚚' },
+  { label: '알림 관리', href: '/notifications/templates', icon: '🔔' },
 ];
 
 export function Sidebar() {

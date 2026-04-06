@@ -1,0 +1,50 @@
+import { apiClient } from '@/shared/config/api';
+import { createAdminPromotionApi } from '@repo/api-client';
+import type {
+  PaginatedResponse,
+  PromotionSummary,
+  PromotionDetail,
+  PromotionListParams,
+  CreatePromotionRequest,
+  CreatePromotionResponse,
+  UpdatePromotionRequest,
+  UpdatePromotionResponse,
+  IssueCouponsRequest,
+  IssueCouponsResponse,
+} from '@repo/types';
+
+const promotionApi = createAdminPromotionApi(apiClient);
+
+export async function getPromotions(
+  params?: PromotionListParams,
+): Promise<PaginatedResponse<PromotionSummary>> {
+  return promotionApi.getPromotions(params);
+}
+
+export async function getPromotion(promotionId: string): Promise<PromotionDetail> {
+  return promotionApi.getPromotion(promotionId);
+}
+
+export async function createPromotion(
+  data: CreatePromotionRequest,
+): Promise<CreatePromotionResponse> {
+  return promotionApi.createPromotion(data);
+}
+
+export async function updatePromotion(
+  promotionId: string,
+  data: UpdatePromotionRequest,
+): Promise<UpdatePromotionResponse> {
+  return promotionApi.updatePromotion(promotionId, data);
+}
+
+export async function deletePromotion(promotionId: string): Promise<void> {
+  return promotionApi.deletePromotion(promotionId);
+}
+
+export async function issueCoupons(
+  promotionId: string,
+  data: IssueCouponsRequest,
+): Promise<IssueCouponsResponse> {
+  return promotionApi.issueCoupons(promotionId, data);
+}

@@ -40,6 +40,17 @@ vi.mock('@/shared/hooks/useClickOutside', () => ({
   useClickOutside: vi.fn(),
 }));
 
+vi.mock('@/features/auth', () => ({
+  useAuth: () => ({
+    isAuthenticated: false,
+    isLoading: false,
+    user: null,
+    login: vi.fn(),
+    signup: vi.fn(),
+    logout: vi.fn(),
+  }),
+}));
+
 const product: ProductDetail = {
   id: 'prod-1',
   name: '테스트 상품',

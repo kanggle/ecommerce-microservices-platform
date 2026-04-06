@@ -24,3 +24,11 @@ export { createPaymentApi, type ConfirmPaymentRequest, type ConfirmPaymentRespon
 export { createUserApi } from './services/user-api';
 export { createAdminUserApi } from './services/admin-user-api';
 export { createAdminOrderApi } from './services/admin-order-api';
+export { createWishlistApi } from './services/wishlist-api';
+export { createNotificationApi } from './services/notification-api';
+export { createShippingApi } from './services/shipping-api';
+export { createAdminNotificationApi } from './services/admin-notification-api';
+export { createAdminShippingApi } from './services/admin-shipping-api';
+export { createReviewApi } from './services/review-api';
+export { createAdminPromotionApi } from './services/admin-promotion-api';
+export { createCouponApi } from './services/coupon-api';

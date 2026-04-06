@@ -10,5 +10,6 @@ export interface CheckoutCartItem {
 export interface CheckoutFormProps {
   items: CheckoutCartItem[];
   totalAmount: number;
+  discountAmount?: number;
   onOrderComplete: () => void;
 }

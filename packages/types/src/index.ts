@@ -65,6 +65,77 @@ export type {
   PaymentConfirmResponse,
 } from './payment';
 
+// Notification
+export type {
+  NotificationChannel,
+  NotificationStatus,
+  NotificationTemplateType,
+  NotificationSummary,
+  NotificationDetail,
+  NotificationPreferences,
+  UpdateNotificationPreferencesRequest,
+  NotificationTemplateSummary,
+  NotificationTemplateDetail,
+  CreateNotificationTemplateRequest,
+  UpdateNotificationTemplateRequest,
+  NotificationTemplateResponse,
+  NotificationTemplateListParams,
+} from './notification';
+
+// Wishlist
+export type {
+  AddWishlistRequest,
+  AddWishlistResponse,
+  WishlistItem,
+  WishlistCheckResponse,
+  WishlistCheckResult,
+} from './wishlist';
+
+// Shipping
+export type {
+  ShippingStatus,
+  ShippingStatusHistoryEntry,
+  ShippingResponse,
+  ShippingSummary,
+  ShippingListParams,
+  UpdateShippingStatusRequest,
+  UpdateShippingStatusResponse,
+} from './shipping';
+
+// Promotion
+export type {
+  PromotionStatus,
+  DiscountType,
+  PromotionSummary,
+  PromotionDetail,
+  PromotionListParams,
+  CreatePromotionRequest,
+  CreatePromotionResponse,
+  UpdatePromotionRequest,
+  UpdatePromotionResponse,
+  IssueCouponsRequest,
+  IssueCouponsResponse,
+  CouponStatus,
+  CouponSummary,
+  CouponListParams,
+  ApplyCouponRequest,
+  ApplyCouponResponse,
+} from './promotion';
+
+// Review
+export type {
+  CreateReviewRequest,
+  CreateReviewResponse,
+  UpdateReviewRequest,
+  UpdateReviewResponse,
+  ReviewItem,
+  ReviewListResponse,
+  ReviewSummary,
+  MyReviewItem,
+  MyReviewListResponse,
+  ReviewListParams,
+} from './review';
+
 // User
 export type {
   UserProfile,

@@ -1,0 +1,88 @@
+import { useState } from 'react';
+import { useRouter } from 'next/navigation';
+import type {
+  NotificationTemplateType,
+  NotificationChannel,
+  NotificationTemplateSummary,
+  CreateNotificationTemplateRequest,
+  UpdateNotificationTemplateRequest,
+} from '@repo/types';
+import { useAsyncAction } from '@/shared/hooks/use-async-action';
+import { useCreateTemplate } from './use-create-template';
+import { useUpdateTemplate } from './use-update-template';
+
+interface TemplateEditData {
+  templateId: string;
+  type: NotificationTemplateType;
+  channel: NotificationChannel;
+  subject: string;
+  body: string;
+}
+
+export function useTemplateForm(template?: TemplateEditData) {
+  const isEdit = !!template;
+  const router = useRouter();
+  const createTemplate = useCreateTemplate();
+  const updateTemplate = useUpdateTemplate();
+
+  const [type, setType] = useState<NotificationTemplateType>(
+    template?.type ?? 'ORDER_PLACED',
+  );
+  const [channel, setChannel] = useState<NotificationChannel>(
+    template?.channel ?? 'EMAIL',
+  );
+  const [subject, setSubject] = useState(template?.subject ?? '');
+  const [body, setBody] = useState(template?.body ?? '');
+  const { error, execute } = useAsyncAction();
+  const [isSubmitting, setIsSubmitting] = useState(false);
+
+  const isValid = subject.trim().length > 0 && body.trim().length > 0;
+
+  async function handleSubmit(e: React.FormEvent) {
+    e.preventDefault();
+    if (!isValid || isSubmitting) return;
+
+    setIsSubmitting(true);
+
+    await execute(async () => {
+      if (isEdit) {
+        const data: UpdateNotificationTemplateRequest = {
+          subject: subject.trim(),
+          body: body.trim(),
+        };
+        await updateTemplate.mutateAsync({
+          templateId: template.templateId,
+          data,
+        });
+        router.push('/notifications/templates');
+      } else {
+        const data: CreateNotificationTemplateRequest = {
+          type,
+          channel,
+          subject: subject.trim(),
+          body: body.trim(),
+        };
+        await createTemplate.mutateAsync(data);
+        router.push('/notifications/templates');
+      }
+    }, '저장에 실패했습니다.');
+
+    setIsSubmitting(false);
+  }
+
+  return {
+    type,
+    setType,
+    channel,
+    setChannel,
+    subject,
+    setSubject,
+    body,
+    setBody,
+    error,
+    isSubmitting,
+    isEdit,
+    isValid,
+    handleSubmit,
+  };
+}

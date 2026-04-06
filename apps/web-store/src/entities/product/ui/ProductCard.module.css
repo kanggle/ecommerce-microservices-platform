@@ -78,7 +78,15 @@
   border-radius: var(--radius-sm);
 }
 
+.action {
+  position: absolute;
+  top: var(--space-2);
+  right: var(--space-2);
+  z-index: 2;
+}
+
 .placeholder {
+  position: relative;
   aspect-ratio: 1;
   background-color: var(--color-bg-tertiary);
   display: flex;

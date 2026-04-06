@@ -6,6 +6,7 @@ import { useRouter } from 'next/navigation';
 import type { ProductDetail } from '@repo/types';
 import { ProductImage } from '@/entities/product';
 import { useCart } from '@/features/cart';
+import { WishlistButton } from '@/features/wishlist';
 import { Toast } from '@/shared/ui';
 import { VariantSelector } from './ProductDetailWithCart/VariantSelector';
 import { SelectedItemsList } from './ProductDetailWithCart/SelectedItemsList';
@@ -123,7 +124,10 @@ export function ProductDetailWithCart({ product }: ProductDetailWithCartProps) {
         />
 
         <div className={styles.info}>
-          <h1 className={styles.name}>{product.name}</h1>
+          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 'var(--space-2)' }}>
+            <h1 className={styles.name} style={{ margin: 0 }}>{product.name}</h1>
+            <WishlistButton productId={product.id} size="md" />
+          </div>
           <p className={styles.basePrice}>
             {product.price.toLocaleString()}
             <span className={styles.basePriceUnit}>원</span>

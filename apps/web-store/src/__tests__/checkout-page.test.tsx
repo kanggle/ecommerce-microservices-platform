@@ -19,15 +19,24 @@ vi.mock('@/features/checkout', () => ({
   CheckoutForm: (props: Record<string, unknown>) => (
     <div data-testid="checkout-form" data-items={JSON.stringify(props.items)} />
   ),
+  useCheckoutItems: vi.fn(),
+}));
+
+vi.mock('@/features/coupon', () => ({
+  CouponSelector: (props: Record<string, unknown>) => (
+    <div data-testid="coupon-selector" data-order-amount={props.orderAmount} />
+  ),
 }));
 
 import { useAuth, useRequireAuth } from '@/features/auth';
 import { useCart } from '@/features/cart';
+import { useCheckoutItems } from '@/features/checkout';
 import CheckoutPage from '@/app/(store)/checkout/page';
 
 const mockUseAuth = vi.mocked(useAuth);
 const mockUseRequireAuth = vi.mocked(useRequireAuth);
 const mockUseCart = vi.mocked(useCart);
+const mockUseCheckoutItems = vi.mocked(useCheckoutItems);
 
 const CART_ITEMS = [
   { productId: 'p1', variantId: 'v1', productName: '노트북', optionName: '실버', price: 1500000, quantity: 1 },
@@ -36,6 +45,12 @@ const CART_ITEMS = [
 describe('CheckoutPage', () => {
   beforeEach(() => {
     vi.clearAllMocks();
+    mockUseCheckoutItems.mockReturnValue({
+      checkoutItems: [],
+      totalAmount: 0,
+      completeOrder: vi.fn(),
+      isEmpty: true,
+    });
     mockUseRequireAuth.mockReturnValue({ isReady: true });
     mockUseAuth.mockReturnValue({
       isAuthenticated: true,
@@ -101,10 +116,17 @@ describe('CheckoutPage', () => {
       updateQuantity: vi.fn(),
       clearCart: vi.fn(),
     });
+    mockUseCheckoutItems.mockReturnValue({
+      checkoutItems: CART_ITEMS,
+      totalAmount: 1500000,
+      completeOrder: vi.fn(),
+      isEmpty: false,
+    });
 
     const { getByTestId } = render(<CheckoutPage />);
 
     expect(getByTestId('checkout-form')).toBeInTheDocument();
+    expect(getByTestId('coupon-selector')).toBeInTheDocument();
   });
 
   it('인증 로딩 중이면 아무것도 렌더링하지 않는다', () => {

@@ -1,5 +1,5 @@
 import { getProducts } from '@/entities/product';
-import { ProductList } from '@/features/product';
+import { ProductListWithWishlist } from '@/widgets/ProductListWithWishlist';
 import { HeroBanner } from '@/widgets/hero';
 import Link from 'next/link';
 import type { ProductSummary } from '@repo/types';
@@ -45,7 +45,7 @@ export default async function HomePage() {
             전체보기 &rarr;
           </Link>
         </div>
-        <ProductList products={products} />
+        <ProductListWithWishlist products={products} />
       </section>
     </div>
   );

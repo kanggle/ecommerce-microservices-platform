@@ -96,6 +96,14 @@ Tasks must not be implemented from `backlog/`, `in-progress/`, `review/`, `done/
 | TASK-BE-113-fix-002 | TASK-BE-113-fix-001 리뷰 수정 — saveAll() N+1 쿼리 제거 및 회원 탈퇴 배치 저장 통합 테스트 추가 | order-service | code, test |
 | TASK-BE-115 | payment-service 토스페이먼츠 PG 연동 — 결제 승인 API, PG 어댑터, DB 스키마 확장 | payment-service | code, api, test |
 | TASK-FE-049 | web-store 토스페이먼츠 결제 UI — SDK 위젯 연동 및 결제 콜백 처리 | web-store | code, test |
+| TASK-FE-053-fix-001 | TASK-FE-053 리뷰 수정 — useAuth 훅 규칙 위반, window.alert SSR, 구매검증 에러 | web-store | code, test |
+| TASK-FE-054-fix-001 | TASK-FE-054 리뷰 수정 — 위시리스트 삭제 itemId 누락, 100개 초과 에러 | web-store | code, test |
+| TASK-FE-055-fix-001 | TASK-FE-055 리뷰 수정 — 운송장 표시 방어 처리, retry 정책 | web-store | code, test |
+| TASK-FE-056-fix-001 | TASK-FE-056 리뷰 수정 — 빈 orderId 컨트랙트 위반, window.alert, 쿠폰 만료 | web-store | code, test |
+| TASK-FE-057-fix-001 | TASK-FE-057 리뷰 수정 — SENT 필터링, 알림 유형 표시, window.alert | web-store | code, test |
+| TASK-FE-058-fix-001 | TASK-FE-058 리뷰 수정 — 라우트 이중 중첩, 날짜 시간대 왜곡 | admin-dashboard | code, test |
+| TASK-FE-059-fix-001 | TASK-FE-059 리뷰 수정 — SHIPPING_STATUS_OPTIONS 누락, 테스트 경로 | admin-dashboard | code, test |
+| TASK-FE-060-fix-001 | TASK-FE-060 리뷰 수정 — 라우트 이중 중첩, 미정의 API, 409 처리 | admin-dashboard | code, test |
 
 ## in-progress
 

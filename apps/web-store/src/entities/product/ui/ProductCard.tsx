@@ -8,9 +8,10 @@ import styles from './ProductCard.module.css';
 
 interface ProductCardProps {
   product: ProductSummary;
+  action?: React.ReactNode;
 }
 
-export const ProductCard = memo(function ProductCard({ product }: ProductCardProps) {
+export const ProductCard = memo(function ProductCard({ product, action }: ProductCardProps) {
   const isSoldOut = product.status === 'SOLD_OUT';
   const [imgError, setImgError] = useState(false);
 
@@ -31,10 +32,12 @@ export const ProductCard = memo(function ProductCard({ product }: ProductCardPro
             onError={() => setImgError(true)}
             unoptimized={product.thumbnailUrl.includes('placehold.co')}
           />
+          {action && <div className={styles.action}>{action}</div>}
         </div>
       ) : (
         <div className={styles.placeholder}>
           이미지 없음
+          {action && <div className={styles.action}>{action}</div>}
         </div>
       )}
       <div className={styles.body}>
