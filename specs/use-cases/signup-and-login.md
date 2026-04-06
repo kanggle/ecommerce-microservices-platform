@@ -121,3 +121,9 @@
 ### 예외 흐름
 
 - **EF-1: 미인증 요청** — 유효하지 않은 access token인 경우 `UNAUTHORIZED` 오류를 반환한다 (401).
+
+---
+
+## Related Contracts
+- HTTP: `specs/contracts/http/auth-api.md`
+- Events: `specs/contracts/events/auth-events.md`

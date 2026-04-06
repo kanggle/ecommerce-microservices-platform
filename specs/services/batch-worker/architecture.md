@@ -48,16 +48,20 @@ Package organization may follow package-by-layer or package-by-feature if the la
 
 ## Published Interfaces
 - None (batch-worker does not expose HTTP APIs)
-- May publish events to notify other services of completed batch operations
+- May publish domain events to notify other services of completed batch operations (contracts must be defined in `specs/contracts/events/` before implementation)
 
 ## Consumed Interfaces
-- May read from other services' databases via read-only views or consume events
-- Must not write to other services' databases
+- Consumes other services' published HTTP contracts (read-only) for data verification
+- Consumes domain events from other services for batch processing triggers
+- Must not access other services' databases directly (per `service-boundaries.md`)
 
 ## Dependencies
-- PostgreSQL (own database)
+- PostgreSQL (own database — job execution history only)
 - Kafka (event consumption/publication)
-- Other services via HTTP contracts (read-only, if needed)
+- product-service via published HTTP contract (read-only, for index consistency check)
+- search-service via published HTTP contract (read-only, for index consistency check)
+
+For full dependency rules, see `dependencies.md`.
 
 ## Key Jobs (planned)
 - Expired session cleanup (auth-service sessions past inactivity timeout)

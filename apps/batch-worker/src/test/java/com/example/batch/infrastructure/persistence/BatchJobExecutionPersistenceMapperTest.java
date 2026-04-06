@@ -54,6 +54,51 @@ class BatchJobExecutionPersistenceMapperTest {
     }
 
     @Test
+    @DisplayName("RUNNING 상태의 도메인 → JpaEntity 변환 시 nullable 필드가 null로 매핑된다")
+    void toEntity_runningStatus_mapsNullableFieldsAsNull() {
+        BatchJobExecution execution = BatchJobExecution.start("running-job");
+
+        BatchJobExecutionJpaEntity entity = mapper.toEntity(execution);
+
+        assertThat(entity.getId()).isNull();
+        assertThat(entity.getJobName()).isEqualTo("running-job");
+        assertThat(entity.getStatus()).isEqualTo(BatchJobStatus.RUNNING);
+        assertThat(entity.getStartedAt()).isNotNull();
+        assertThat(entity.getFinishedAt()).isNull();
+        assertThat(entity.getErrorMessage()).isNull();
+    }
+
+    @Test
+    @DisplayName("RUNNING 상태의 JpaEntity → 도메인 변환 시 nullable 필드가 null로 매핑된다")
+    void toDomain_runningStatus_mapsNullableFieldsAsNull() {
+        Instant now = Instant.parse("2025-01-01T10:00:00Z");
+        BatchJobExecutionJpaEntity entity = mapper.toEntity(
+                BatchJobExecution.reconstitute(3L, "running-job", BatchJobStatus.RUNNING, now, null, null)
+        );
+
+        BatchJobExecution restored = mapper.toDomain(entity);
+
+        assertThat(restored.getId()).isEqualTo(3L);
+        assertThat(restored.getStatus()).isEqualTo(BatchJobStatus.RUNNING);
+        assertThat(restored.getFinishedAt()).isNull();
+        assertThat(restored.getErrorMessage()).isNull();
+    }
+
+    @Test
+    @DisplayName("FAILED 상태의 왕복 변환 시 에러 메시지가 보존된다")
+    void roundTrip_failedStatus_preservesErrorMessage() {
+        BatchJobExecution original = BatchJobExecution.start("fail-job");
+        original.fail("unexpected error");
+
+        BatchJobExecutionJpaEntity entity = mapper.toEntity(original);
+        BatchJobExecution restored = mapper.toDomain(entity);
+
+        assertThat(restored.getStatus()).isEqualTo(BatchJobStatus.FAILED);
+        assertThat(restored.getErrorMessage()).isEqualTo("unexpected error");
+        assertThat(restored.getFinishedAt()).isEqualTo(original.getFinishedAt());
+    }
+
+    @Test
     @DisplayName("도메인 → JpaEntity → 도메인 왕복 변환 시 데이터 손실이 없다")
     void roundTrip_noDataLoss() {
         BatchJobExecution original = BatchJobExecution.start("test-job");

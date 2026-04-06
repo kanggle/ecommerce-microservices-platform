@@ -33,7 +33,7 @@ public class PaymentConfirmService {
         Payment payment = paymentRepository.findByOrderId(orderId)
                 .orElseThrow(() -> new PaymentNotFoundException(orderId));
 
-        if (!payment.getUserId().equals(userId)) {
+        if (!payment.isOwnedBy(userId)) {
             throw new UnauthorizedPaymentAccessException();
         }
         if (payment.getStatus() != PaymentStatus.PENDING) {

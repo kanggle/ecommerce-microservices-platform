@@ -9,7 +9,7 @@ import com.example.product.domain.model.Product;
 import com.example.product.domain.model.ProductVariant;
 import com.example.product.domain.model.StockQuantity;
 import com.example.product.domain.repository.ProductRepository;
-import com.example.product.infrastructure.metrics.ProductMetrics;
+import com.example.product.application.port.ProductMetricPort;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -41,7 +41,7 @@ class DeleteProductServiceTest {
     private ProductEventPublisher productEventPublisher;
 
     @Mock
-    private ProductMetrics productMetrics;
+    private ProductMetricPort productMetrics;
 
     private EventPublishingHelper eventPublishingHelper;
     private DeleteProductService deleteProductService;

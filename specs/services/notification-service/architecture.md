@@ -17,16 +17,25 @@ The primary flow is event-driven (inbound ports from Kafka) with outbound ports 
 This service uses a hexagonal internal structure.
 
 Recommended internal areas:
-- adapter/in (inbound adapters: HTTP controllers, Kafka consumers)
-- adapter/out (outbound adapters: email sender, SMS sender, push sender, persistence)
-- application (use-cases, ports)
-- domain
+- adapter/in/rest (HTTP controllers, GlobalExceptionHandler)
+- adapter/in/event (Kafka event consumers, event record classes)
+- adapter/in/kafka (Kafka consumer configuration)
+- adapter/out/persistence (JPA entities, repositories, mappers)
+- adapter/out/external (email sender, SMS sender, push sender)
+- application/port/in (inbound port interfaces)
+- application/port/out (outbound port interfaces)
+- application/service (use-case implementations)
+- application/command (input records)
+- application/result (output records)
+- application/page (pagination DTOs)
+- domain/model (domain entities, value objects)
+- domain/exception (domain exceptions)
 
 Key domain concepts:
 - Entities: Notification, NotificationTemplate, UserNotificationPreference
 - Value Objects: NotificationChannel (EMAIL, SMS, PUSH), NotificationStatus (PENDING, SENT, FAILED), TemplateType
-- Ports (inbound): SendNotificationUseCase, ManageTemplateUseCase, ManagePreferenceUseCase
-- Ports (outbound): NotificationSender, NotificationRepository, TemplateRepository
+- Ports (inbound): SendNotificationUseCase, QueryNotificationUseCase, ManageTemplateUseCase, ManagePreferenceUseCase
+- Ports (outbound): NotificationSender, NotificationRepository, TemplateRepository, PreferenceRepository
 
 ## Allowed Dependencies
 - adapter/in -> application (inbound ports)
@@ -64,8 +73,13 @@ Key domain concepts:
 - Shared libraries may be used only under shared-library policy
 
 ## Events
-- Consumes: `OrderPlaced` (order-service), `PaymentCompleted` (payment-service), `ShippingStatusChanged` (shipping-service), `UserSignedUp` (auth-service)
+- Consumes:
+  - `OrderPlaced` from `order.order.placed` (order-service)
+  - `PaymentCompleted` from `payment.payment.completed` (payment-service)
+  - `ShippingStatusChanged` from `shipping.shipping.status-changed` (shipping-service)
+  - `UserSignedUp` from `auth.user.signed-up` (auth-service)
 - Publishes: none
+- Consumer group: `notification-service`
 
 ## Testing Expectations
 Required emphasis:

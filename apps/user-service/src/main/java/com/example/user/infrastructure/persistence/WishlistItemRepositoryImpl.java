@@ -15,7 +15,7 @@ import java.util.UUID;
 
 @Repository
 @RequiredArgsConstructor
-public class WishlistItemRepositoryImpl implements WishlistItemRepository {
+class WishlistItemRepositoryImpl implements WishlistItemRepository {
 
     private final WishlistItemJpaRepository jpaRepository;
     private final WishlistItemJpaMapper mapper;

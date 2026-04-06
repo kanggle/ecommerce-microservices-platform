@@ -42,17 +42,27 @@ public class OrderRepositoryImpl implements OrderRepository {
 
     @Override
     public List<Order> saveAll(List<Order> orders) {
-        // version이 있는 기존 주문 ID를 수집하여 findAllById로 한 번에 조회 (N+1 방지)
+        Map<String, OrderJpaEntity> existingMap = loadExistingEntities(orders);
+        List<OrderJpaEntity> entities = toEntities(orders, existingMap);
+        List<OrderJpaEntity> savedEntities = jpaRepository.saveAll(entities);
+        return savedEntities.stream()
+                .map(mapper::toDomain)
+                .toList();
+    }
+
+    private Map<String, OrderJpaEntity> loadExistingEntities(List<Order> orders) {
         List<String> existingIds = orders.stream()
                 .filter(o -> o.getVersion() != null)
                 .map(Order::getOrderId)
                 .toList();
+        if (existingIds.isEmpty()) {
+            return Map.of();
+        }
+        return jpaRepository.findAllById(existingIds).stream()
+                .collect(Collectors.toMap(OrderJpaEntity::getOrderId, e -> e));
+    }
 
-        Map<String, OrderJpaEntity> existingMap = existingIds.isEmpty()
-                ? Map.of()
-                : jpaRepository.findAllById(existingIds).stream()
-                        .collect(Collectors.toMap(OrderJpaEntity::getOrderId, e -> e));
-
+    private List<OrderJpaEntity> toEntities(List<Order> orders, Map<String, OrderJpaEntity> existingMap) {
         List<OrderJpaEntity> entities = new ArrayList<>(orders.size());
         for (Order order : orders) {
             if (order.getVersion() == null) {
@@ -67,10 +77,7 @@ public class OrderRepositoryImpl implements OrderRepository {
                 entities.add(existing);
             }
         }
-        List<OrderJpaEntity> savedEntities = jpaRepository.saveAll(entities);
-        return savedEntities.stream()
-                .map(mapper::toDomain)
-                .toList();
+        return entities;
     }
 
     @Override

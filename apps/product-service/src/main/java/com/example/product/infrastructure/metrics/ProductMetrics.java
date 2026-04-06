@@ -2,6 +2,7 @@ package com.example.product.infrastructure.metrics;
 
 import com.example.observability.metrics.EventMetricNames;
 import com.example.product.application.dto.StockAdjustmentType;
+import com.example.product.application.port.ProductMetricPort;
 import io.micrometer.core.instrument.Counter;
 import io.micrometer.core.instrument.MeterRegistry;
 import org.springframework.stereotype.Component;
@@ -9,7 +10,7 @@ import org.springframework.stereotype.Component;
 import java.util.Objects;
 
 @Component
-public class ProductMetrics {
+public class ProductMetrics implements ProductMetricPort {
 
     private final MeterRegistry registry;
     private final Counter productCreatedTotal;

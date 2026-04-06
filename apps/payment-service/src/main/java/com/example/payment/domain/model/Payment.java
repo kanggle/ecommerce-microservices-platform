@@ -54,21 +54,6 @@ public class Payment {
         return payment;
     }
 
-    /**
-     * @deprecated Use {@link #confirm(String, String, String)} instead.
-     */
-    @Deprecated
-    public void complete() {
-        if (this.status == PaymentStatus.COMPLETED) {
-            return;
-        }
-        if (this.status != PaymentStatus.PENDING) {
-            throw new InvalidPaymentException("PENDING 상태에서만 결제를 완료할 수 있습니다: " + status);
-        }
-        this.status = PaymentStatus.COMPLETED;
-        this.paidAt = LocalDateTime.now();
-    }
-
     public void confirm(String paymentKey, String paymentMethod, String receiptUrl) {
         if (this.status != PaymentStatus.PENDING) {
             throw new InvalidPaymentException("PENDING 상태에서만 결제를 승인할 수 있습니다: " + status);
@@ -92,10 +77,14 @@ public class Payment {
             return;
         }
         if (this.status != PaymentStatus.COMPLETED) {
-            throw new InvalidPaymentException("Refund is only allowed in COMPLETED status: " + status);
+            throw new InvalidPaymentException("COMPLETED 상태에서만 환불할 수 있습니다: " + status);
         }
         this.status = PaymentStatus.REFUNDED;
         this.refundedAt = LocalDateTime.now();
+    }
+
+    public boolean isOwnedBy(String userId) {
+        return this.userId.equals(userId);
     }
 
     public String getPaymentId() {

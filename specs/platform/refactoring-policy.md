@@ -4,13 +4,13 @@ Platform-wide rules for safe code refactoring across all services.
 
 ---
 
-## Purpose
+# Purpose
 
 Define when, how, and under what constraints refactoring is allowed — ensuring behavior preservation and architecture alignment.
 
 ---
 
-## Definition
+# Definition
 
 Refactoring is a code change that improves internal structure without altering externally observable behavior.
 
@@ -22,7 +22,7 @@ The following are NOT refactoring:
 
 ---
 
-## Preconditions
+# Preconditions
 
 Before any refactoring:
 
@@ -34,7 +34,7 @@ If any precondition is not met, resolve it before starting refactoring.
 
 ---
 
-## Allowed Refactoring Categories
+# Allowed Refactoring Categories
 
 | Category | Description | Risk |
 |---|---|---|
@@ -51,7 +51,7 @@ If any precondition is not met, resolve it before starting refactoring.
 
 ---
 
-## Rules
+# Rules
 
 ### Mandatory
 
@@ -70,7 +70,7 @@ If any precondition is not met, resolve it before starting refactoring.
 
 ---
 
-## Prioritization
+# Prioritization
 
 When multiple refactoring opportunities exist, address them in this order:
 
@@ -83,7 +83,7 @@ When multiple refactoring opportunities exist, address them in this order:
 
 ---
 
-## Verification
+# Verification
 
 After refactoring:
 
@@ -94,7 +94,7 @@ After refactoring:
 
 ---
 
-## Cross-references
+# Cross-references
 
 - Architecture per service: `specs/services/<service>/architecture.md`
 - Dependency rules: `specs/platform/dependency-rules.md`
@@ -105,6 +105,6 @@ After refactoring:
 
 ---
 
-## Change Rule
+# Change Rule
 
 Changes to this policy require team agreement and must be updated here before applying.

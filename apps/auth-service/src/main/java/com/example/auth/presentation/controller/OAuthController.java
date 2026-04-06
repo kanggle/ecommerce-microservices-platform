@@ -46,20 +46,7 @@ public class OAuthController {
             HttpServletResponse response) throws IOException {
 
         if (error != null) {
-            log.warn("{} OAuth callback error: error={}, state={}", provider, error,
-                state != null ? "[present]" : null);
-
-            Optional<String> callbackUrlOpt = oauthService.resolveCallbackUrl(state);
-            if (callbackUrlOpt.isPresent()) {
-                String redirectUrl = UriComponentsBuilder.fromUriString(callbackUrlOpt.get())
-                    .queryParam("error", "oauth_failed")
-                    .build()
-                    .toUriString();
-                response.sendRedirect(redirectUrl);
-                return;
-            }
-
-            response.sendError(HttpServletResponse.SC_BAD_REQUEST, "OAuth callback error");
+            handleOAuthError(provider, error, state, response);
             return;
         }
 
@@ -75,30 +62,50 @@ public class OAuthController {
         try {
             result = oauthService.handleCallback(provider, command);
         } catch (OAuthUpstreamException e) {
-            log.error("{} OAuth upstream error during callback", provider, e);
-            if (e.getCallbackUrl() != null) {
-                String redirectUrl = UriComponentsBuilder.fromUriString(e.getCallbackUrl())
-                    .queryParam("error", "oauth_failed")
-                    .build()
-                    .toUriString();
-                response.sendRedirect(redirectUrl);
-                return;
-            }
-            response.sendError(HttpServletResponse.SC_BAD_GATEWAY, "OAuth provider returned an error");
+            handleUpstreamException(provider, e, response);
             return;
         }
 
         if (!result.success()) {
-            String redirectUrl = UriComponentsBuilder.fromUriString(result.callbackUrl())
-                .queryParam("error", "oauth_failed")
-                .build()
-                .toUriString();
-            response.sendRedirect(redirectUrl);
+            redirectWithError(result.callbackUrl(), response);
             return;
         }
 
-        LoginResult loginResult = result.loginResult();
-        String redirectUrl = UriComponentsBuilder.fromUriString(result.callbackUrl())
+        redirectWithTokens(result.callbackUrl(), result.loginResult(), response);
+    }
+
+    private void handleOAuthError(String provider, String error, String state, HttpServletResponse response) throws IOException {
+        log.warn("{} OAuth callback error: error={}, state={}", provider, error,
+            state != null ? "[present]" : null);
+
+        Optional<String> callbackUrlOpt = oauthService.resolveCallbackUrl(state);
+        if (callbackUrlOpt.isPresent()) {
+            redirectWithError(callbackUrlOpt.get(), response);
+            return;
+        }
+
+        response.sendError(HttpServletResponse.SC_BAD_REQUEST, "OAuth callback error");
+    }
+
+    private void handleUpstreamException(String provider, OAuthUpstreamException e, HttpServletResponse response) throws IOException {
+        log.error("{} OAuth upstream error during callback", provider, e);
+        if (e.getCallbackUrl() != null) {
+            redirectWithError(e.getCallbackUrl(), response);
+            return;
+        }
+        response.sendError(HttpServletResponse.SC_BAD_GATEWAY, "OAuth provider returned an error");
+    }
+
+    private void redirectWithError(String callbackUrl, HttpServletResponse response) throws IOException {
+        String redirectUrl = UriComponentsBuilder.fromUriString(callbackUrl)
+            .queryParam("error", "oauth_failed")
+            .build()
+            .toUriString();
+        response.sendRedirect(redirectUrl);
+    }
+
+    private void redirectWithTokens(String callbackUrl, LoginResult loginResult, HttpServletResponse response) throws IOException {
+        String redirectUrl = UriComponentsBuilder.fromUriString(callbackUrl)
             .queryParam("accessToken", loginResult.accessToken())
             .queryParam("refreshToken", loginResult.refreshToken())
             .build()

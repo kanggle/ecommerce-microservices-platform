@@ -3,6 +3,7 @@
 import { useState } from 'react';
 import type { ProductVariant } from '@repo/types';
 import { useAsyncAction } from '@/shared/hooks/use-async-action';
+import { overlayStyle } from '@/shared/lib/overlay-styles';
 import { useAdjustStock } from '../hooks/use-adjust-stock';
 
 interface Props {
@@ -12,7 +13,7 @@ interface Props {
 }
 
 const styles = {
-  overlay: { position: 'fixed', inset: 0, display: 'flex', alignItems: 'center', justifyContent: 'center', backgroundColor: 'rgba(0, 0, 0, 0.5)', zIndex: 50 } as const,
+  overlay: { ...overlayStyle, backgroundColor: 'rgba(0, 0, 0, 0.5)' as const },
   dialog: { backgroundColor: '#fff', borderRadius: '8px', padding: '24px', maxWidth: '400px', width: '100%' } as const,
   title: { fontSize: '1.125rem', fontWeight: 600, marginBottom: '16px' } as const,
   subtitle: { color: '#6b7280', marginBottom: '16px' } as const,

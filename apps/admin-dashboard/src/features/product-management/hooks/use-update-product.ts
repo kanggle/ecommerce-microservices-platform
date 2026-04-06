@@ -1,7 +1,7 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { updateProduct } from '../api/product-api';
 import { productKeys } from './query-keys';
-import { getErrorMessage } from '@repo/types/guards';
+import { alertError } from '@/shared/lib/alert-error';
 import type { UpdateProductRequest } from '@repo/types';
 
 export function useUpdateProduct() {
@@ -17,7 +17,7 @@ export function useUpdateProduct() {
       });
     },
     onError: (error: unknown) => {
-      window.alert(getErrorMessage(error, '상품 수정에 실패했습니다.'));
+      alertError(error, '상품 수정에 실패했습니다.');
     },
   });
 }

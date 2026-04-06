@@ -10,13 +10,19 @@ Scan all rule files for inconsistencies, conflicts, duplications, and missing re
 ## Usage
 
 ```
+/validate-rules                                            # full scan of all rule files
+/validate-rules --focus=<type>                             # scan only a specific type
+```
+
+Focus values: `specs`, `skills`, `agents`, `commands`
+
+Examples:
+
+```
 /validate-rules
 /validate-rules --focus=agents
 /validate-rules --focus=skills
 ```
-
-- No argument: full scan
-- `--focus=<type>`: scan only a specific type (specs, skills, agents, commands)
 
 ## Procedure
 
@@ -53,7 +59,7 @@ Scan all rule files for inconsistencies, conflicts, duplications, and missing re
 - [ ] Command agent prompt templates are consistent with agent definitions
 - [ ] No two commands do the same thing (functional duplication)
 - [ ] Command names follow a consistent naming pattern
-- [ ] Composite commands (e.g., `pipeline-tasks`) that reference other commands' procedures remain consistent with those commands' current rules (subagent_type, isolation, merge order, etc.)
+- [ ] Composite commands (e.g., `process-tasks`) that reference other commands' procedures remain consistent with those commands' current rules (subagent_type, isolation, merge order, etc.)
 
 #### 2-5. Reference Integrity
 - [ ] All `specs/` paths referenced in skills, agents, and commands exist

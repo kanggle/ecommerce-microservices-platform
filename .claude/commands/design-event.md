@@ -10,6 +10,13 @@ Design a new domain event contract or modify an existing one.
 ## Usage
 
 ```
+/design-event <description>                                # design a new event contract
+/design-event add <EventName> event to <service>-events    # add event to existing contract
+```
+
+Examples:
+
+```
 /design-event product review created event design
 /design-event add OrderShipped event to order-events
 ```

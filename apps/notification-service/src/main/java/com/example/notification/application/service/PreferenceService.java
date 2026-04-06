@@ -29,7 +29,9 @@ public class PreferenceService implements ManagePreferenceUseCase {
         return GetPreferenceResult.from(saved);
     }
 
-    private UserNotificationPreference getOrCreatePreference(String userId) {
+    @Override
+    @Transactional
+    public UserNotificationPreference getOrCreatePreference(String userId) {
         return preferenceRepository.findByUserId(userId)
                 .orElseGet(() -> {
                     UserNotificationPreference defaultPref = UserNotificationPreference.createDefault(userId);

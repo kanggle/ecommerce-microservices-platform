@@ -1,5 +1,7 @@
 'use client';
 
+import { overlayStyle, dialogStyle } from '@/shared/lib/overlay-styles';
+
 interface ConfirmDialogProps {
   open: boolean;
   title: string;
@@ -28,27 +30,9 @@ export function ConfirmDialog({
       role="dialog"
       aria-modal="true"
       aria-label={title}
-      style={{
-        position: 'fixed',
-        inset: 0,
-        display: 'flex',
-        alignItems: 'center',
-        justifyContent: 'center',
-        backgroundColor: 'rgba(0, 0, 0, 0.4)',
-        backdropFilter: 'blur(2px)',
-        zIndex: 50,
-      }}
+      style={{ ...overlayStyle, backdropFilter: 'blur(2px)' }}
     >
-      <div
-        style={{
-          backgroundColor: '#fff',
-          borderRadius: '16px',
-          padding: '28px',
-          maxWidth: '420px',
-          width: '100%',
-          boxShadow: '0 20px 60px rgba(0,0,0,0.15)',
-        }}
-      >
+      <div style={dialogStyle}>
         <h2 style={{ fontSize: '1.125rem', fontWeight: 600, marginBottom: '8px', color: '#111827' }}>
           {title}
         </h2>

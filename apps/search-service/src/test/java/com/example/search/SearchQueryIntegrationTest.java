@@ -2,7 +2,7 @@ package com.example.search;
 
 import com.example.search.adapter.inbound.event.ProductCreatedConsumer;
 import com.example.search.adapter.inbound.event.ProductCreatedEvent;
-import com.example.search.infrastructure.config.IndexProperties;
+import com.example.search.adapter.outbound.elasticsearch.IndexProperties;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;

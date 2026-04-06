@@ -16,8 +16,11 @@
 - None at launch (product-service is a source, not a consumer of other domain services)
 
 ## Publishes To
-- search-service (via ProductCreated, ProductUpdated, ProductDeleted, StockChanged events)
-- order-service (via StockChanged events, if stock reservation is event-driven)
+
+| Target | Events | Purpose |
+|---|---|---|
+| search-service | ProductCreated, ProductUpdated, ProductDeleted, StockChanged | Product index synchronization |
+| order-service | StockChanged | Stock reservation (if event-driven) |
 
 ## Forbidden Dependencies
 - direct database access to another service

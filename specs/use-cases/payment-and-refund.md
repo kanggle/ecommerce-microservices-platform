@@ -100,3 +100,9 @@
 - **EF-1: 결제 미존재** -- 해당 orderId의 결제 정보가 없으면 `PAYMENT_NOT_FOUND` 오류를 반환한다 (404).
 - **EF-2: 소유권 불일치** -- X-User-Id가 결제 소유자와 다르면 `ACCESS_DENIED` 오류를 반환한다 (403).
 - **EF-3: 잘못된 요청** -- 유효하지 않은 orderId 형식이면 `INVALID_PAYMENT_REQUEST` 오류를 반환한다 (400).
+
+---
+
+## Related Contracts
+- HTTP: `specs/contracts/http/payment-api.md`, `specs/contracts/http/order-api.md`
+- Events: `specs/contracts/events/payment-events.md`, `specs/contracts/events/order-events.md`

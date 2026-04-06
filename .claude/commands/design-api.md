@@ -10,6 +10,13 @@ Design a new HTTP API contract or modify an existing one.
 ## Usage
 
 ```
+/design-api <description>                                  # design a new API contract
+/design-api <modification> to <service>-api                # modify an existing contract
+```
+
+Examples:
+
+```
 /design-api product review API design
 /design-api add profile image upload endpoint to user-api
 ```

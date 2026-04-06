@@ -15,6 +15,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.verify;
 
@@ -120,5 +121,69 @@ class IndexSyncServiceTest {
         ArgumentCaptor<SearchDocument> captor = ArgumentCaptor.forClass(SearchDocument.class);
         verify(searchIndexPort).upsert(captor.capture());
         assertThat(captor.getValue().totalStock()).isEqualTo(0);
+    }
+
+    @Test
+    @DisplayName("upsert 성공 시 created 타입의 indexSync 메트릭이 증가한다")
+    void upsert_success_incrementsIndexSyncCreatedMetric() {
+        SearchDocument document = SearchDocument.of("p1", "노트북", "설명", 100000L, "ON_SALE", "cat1", 10);
+
+        indexSyncService.upsert(document);
+
+        verify(searchMetrics).incrementIndexSync("created");
+    }
+
+    @Test
+    @DisplayName("delete 성공 시 deleted 타입의 indexSync 메트릭이 증가한다")
+    void delete_success_incrementsIndexSyncDeletedMetric() {
+        indexSyncService.delete("p1");
+
+        verify(searchMetrics).incrementIndexSync("deleted");
+    }
+
+    @Test
+    @DisplayName("updateStock 성공 시 updated 타입의 indexSync 메트릭이 증가한다")
+    void updateStock_success_incrementsIndexSyncUpdatedMetric() {
+        indexSyncService.updateStock("p1", 5);
+
+        verify(searchMetrics).incrementIndexSync("updated");
+    }
+
+    @Test
+    @DisplayName("upsert 실패 시 indexSyncFailure 메트릭이 증가하고 예외가 전파된다")
+    void upsert_failure_incrementsFailureMetricAndThrows() {
+        SearchDocument document = SearchDocument.of("p1", "노트북", "설명", 100000L, "ON_SALE", "cat1", 10);
+        org.mockito.Mockito.doThrow(new RuntimeException("ES error"))
+                .when(searchIndexPort).upsert(document);
+
+        assertThatThrownBy(() -> indexSyncService.upsert(document))
+                .isInstanceOf(RuntimeException.class);
+
+        verify(searchMetrics).incrementIndexSyncFailure();
+        verify(searchMetrics, org.mockito.Mockito.never()).incrementIndexSync(org.mockito.ArgumentMatchers.anyString());
+    }
+
+    @Test
+    @DisplayName("delete 실패 시 indexSyncFailure 메트릭이 증가하고 예외가 전파된다")
+    void delete_failure_incrementsFailureMetricAndThrows() {
+        org.mockito.Mockito.doThrow(new RuntimeException("ES error"))
+                .when(searchIndexPort).delete("p1");
+
+        assertThatThrownBy(() -> indexSyncService.delete("p1"))
+                .isInstanceOf(RuntimeException.class);
+
+        verify(searchMetrics).incrementIndexSyncFailure();
+    }
+
+    @Test
+    @DisplayName("음수 재고 입력 시에도 SOLD_OUT이 아닌 ON_SALE로 처리된다")
+    void updateStock_negativeStock_treatedAsOnSale() {
+        indexSyncService.updateStock("p1", -1);
+
+        verify(searchIndexPort).updateStock(
+                org.mockito.ArgumentMatchers.eq("p1"),
+                org.mockito.ArgumentMatchers.eq(-1),
+                org.mockito.ArgumentMatchers.eq(ProductStatus.ON_SALE.name())
+        );
     }
 }

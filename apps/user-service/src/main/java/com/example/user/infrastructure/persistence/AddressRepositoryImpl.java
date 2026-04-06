@@ -11,7 +11,7 @@ import java.util.UUID;
 
 @Repository
 @RequiredArgsConstructor
-public class AddressRepositoryImpl implements AddressRepository {
+class AddressRepositoryImpl implements AddressRepository {
 
     private final AddressJpaRepository jpaRepository;
     private final AddressJpaMapper mapper;

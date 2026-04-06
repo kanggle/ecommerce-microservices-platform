@@ -36,6 +36,9 @@ public class JwtAuthenticationFilter implements GlobalFilter, Ordered {
 
     private static final int ORDER = -100;
 
+    private static final String MSG_TOKEN_REQUIRED = "Access token is required";
+    private static final String MSG_TOKEN_INVALID = "Invalid or expired access token";
+
     private final JwtParser jwtParser;
     private final ObjectMapper objectMapper;
     private final GatewayMetrics gatewayMetrics;
@@ -91,7 +94,7 @@ public class JwtAuthenticationFilter implements GlobalFilter, Ordered {
         String authHeader = strippedRequest.getHeaders().getFirst(HttpHeaders.AUTHORIZATION);
         if (authHeader == null || !authHeader.startsWith("Bearer ")) {
             gatewayMetrics.incrementJwtValidationFailure("missing");
-            return writeUnauthorized(exchange, "Access token is required");
+            return writeUnauthorized(exchange, MSG_TOKEN_REQUIRED);
         }
 
         String token = authHeader.substring(7);
@@ -120,32 +123,38 @@ public class JwtAuthenticationFilter implements GlobalFilter, Ordered {
             String email = claims.get("email", String.class);
             String role = claims.get("role", String.class);
 
-            if (userId == null || userId.isBlank() || email == null || email.isBlank()) {
+            if (!hasValidIdentity(userId, email)) {
                 gatewayMetrics.incrementJwtValidationFailure("invalid");
-                return writeUnauthorized(exchange, "Invalid or expired access token");
+                return writeUnauthorized(exchange, MSG_TOKEN_INVALID);
             }
 
-            ServerHttpRequest.Builder requestBuilder = strippedRequest.mutate()
-                    .header("X-User-Id", userId)
-                    .header("X-User-Email", email);
-            if (role != null && !role.isBlank()) {
-                requestBuilder.header("X-User-Role", role);
-            }
-            ServerHttpRequest mutatedRequest = requestBuilder.build();
-
-            String targetService = routeService.resolveTargetService(path);
-            gatewayMetrics.incrementRequestsRouted(targetService);
-
-            return chain.filter(exchange.mutate().request(mutatedRequest).build());
+            ServerHttpRequest enrichedRequest = enrichRequestWithClaims(strippedRequest, userId, email, role);
+            gatewayMetrics.incrementRequestsRouted(routeService.resolveTargetService(path));
+            return chain.filter(exchange.mutate().request(enrichedRequest).build());
         } catch (ExpiredJwtException e) {
             log.debug("JWT expired: {}", e.getMessage());
             gatewayMetrics.incrementJwtValidationFailure("expired");
-            return writeUnauthorized(exchange, "Invalid or expired access token");
+            return writeUnauthorized(exchange, MSG_TOKEN_INVALID);
         } catch (JwtException e) {
             log.debug("JWT validation failed: {}", e.getMessage());
             gatewayMetrics.incrementJwtValidationFailure("invalid");
-            return writeUnauthorized(exchange, "Invalid or expired access token");
+            return writeUnauthorized(exchange, MSG_TOKEN_INVALID);
         }
+    }
+
+    private boolean hasValidIdentity(String userId, String email) {
+        return userId != null && !userId.isBlank() && email != null && !email.isBlank();
+    }
+
+    private ServerHttpRequest enrichRequestWithClaims(
+            ServerHttpRequest request, String userId, String email, String role) {
+        ServerHttpRequest.Builder builder = request.mutate()
+                .header("X-User-Id", userId)
+                .header("X-User-Email", email);
+        if (role != null && !role.isBlank()) {
+            builder.header("X-User-Role", role);
+        }
+        return builder.build();
     }
 
     @Override

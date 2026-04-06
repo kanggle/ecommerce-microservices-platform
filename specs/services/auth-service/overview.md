@@ -11,11 +11,13 @@ Owns authentication and authentication-related identity flows.
 - login
 - logout
 - token refresh
+- OAuth/social login (Google, Naver)
 - authentication session handling
 - authentication-related security coordination
 - authentication audit logging (login attempts, token refresh, logout events)
 - authentication domain event publishing
 - concurrent session management (per-user session limit and inactivity timeout)
+- user withdrawal handling (consuming UserWithdrawn event to deactivate account and revoke tokens)
 
 ## Out of Scope
 - user profile management

@@ -2,13 +2,13 @@ import { useState } from 'react';
 import { useAsyncAction } from '@/shared/hooks/use-async-action';
 import { useAddVariant, useUpdateVariant, useDeleteVariant } from './use-variant-mutations';
 
-export interface EditState {
+interface EditState {
   variantId: string;
   optionName: string;
   additionalPrice: number;
 }
 
-export interface AddState {
+interface AddState {
   optionName: string;
   stock: number;
   additionalPrice: number;

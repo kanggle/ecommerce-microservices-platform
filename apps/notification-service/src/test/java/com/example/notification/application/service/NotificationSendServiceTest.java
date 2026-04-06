@@ -1,9 +1,9 @@
 package com.example.notification.application.service;
 
 import com.example.notification.application.command.SendNotificationCommand;
+import com.example.notification.application.port.in.ManagePreferenceUseCase;
 import com.example.notification.application.port.out.NotificationRepository;
 import com.example.notification.application.port.out.NotificationSender;
-import com.example.notification.application.port.out.PreferenceRepository;
 import com.example.notification.application.port.out.TemplateRepository;
 import com.example.notification.domain.model.*;
 import org.junit.jupiter.api.DisplayName;
@@ -33,7 +33,7 @@ class NotificationSendServiceTest {
     private TemplateRepository templateRepository;
 
     @Mock
-    private PreferenceRepository preferenceRepository;
+    private ManagePreferenceUseCase managePreferenceUseCase;
 
     @Mock
     private NotificationSender emailSender;
@@ -58,10 +58,9 @@ class NotificationSendServiceTest {
     @DisplayName("사용자 설정이 없으면 기본 설정을 생성하고 알림을 발송한다")
     void sendNotification_noPreference_createsDefault() {
         given(notificationRepository.existsByEventId("event-1")).willReturn(false);
-        given(preferenceRepository.findByUserId("user-1")).willReturn(Optional.empty());
 
         UserNotificationPreference defaultPref = UserNotificationPreference.createDefault("user-1");
-        given(preferenceRepository.save(any())).willReturn(defaultPref);
+        given(managePreferenceUseCase.getOrCreatePreference("user-1")).willReturn(defaultPref);
 
         NotificationTemplate emailTemplate = NotificationTemplate.create(
                 TemplateType.ORDER_PLACED, NotificationChannel.EMAIL,
@@ -74,7 +73,7 @@ class NotificationSendServiceTest {
 
         // Inject the sender list via reflection since @InjectMocks won't do it for List<>
         notificationSendService = new NotificationSendService(
-                notificationRepository, templateRepository, preferenceRepository, List.of(emailSender));
+                notificationRepository, templateRepository, managePreferenceUseCase, List.of(emailSender));
 
         SendNotificationCommand command = new SendNotificationCommand(
                 "user-1", "event-1", TemplateType.ORDER_PLACED, Map.of("orderId", "ORD-1"));
@@ -92,12 +91,12 @@ class NotificationSendServiceTest {
 
         UserNotificationPreference pref = UserNotificationPreference.createDefault("user-1");
         pref.update(false, false, false); // all disabled
-        given(preferenceRepository.findByUserId("user-1")).willReturn(Optional.of(pref));
+        given(managePreferenceUseCase.getOrCreatePreference("user-1")).willReturn(pref);
 
         given(emailSender.supportedChannel()).willReturn(NotificationChannel.EMAIL);
 
         notificationSendService = new NotificationSendService(
-                notificationRepository, templateRepository, preferenceRepository, List.of(emailSender));
+                notificationRepository, templateRepository, managePreferenceUseCase, List.of(emailSender));
 
         SendNotificationCommand command = new SendNotificationCommand(
                 "user-1", "event-1", TemplateType.ORDER_PLACED, Map.of());
@@ -113,7 +112,7 @@ class NotificationSendServiceTest {
         given(notificationRepository.existsByEventId("event-1")).willReturn(false);
 
         UserNotificationPreference pref = UserNotificationPreference.createDefault("user-1");
-        given(preferenceRepository.findByUserId("user-1")).willReturn(Optional.of(pref));
+        given(managePreferenceUseCase.getOrCreatePreference("user-1")).willReturn(pref);
 
         NotificationTemplate emailTemplate = NotificationTemplate.create(
                 TemplateType.ORDER_PLACED, NotificationChannel.EMAIL,
@@ -126,7 +125,7 @@ class NotificationSendServiceTest {
         given(notificationRepository.save(any())).willAnswer(inv -> inv.getArgument(0));
 
         notificationSendService = new NotificationSendService(
-                notificationRepository, templateRepository, preferenceRepository, List.of(emailSender));
+                notificationRepository, templateRepository, managePreferenceUseCase, List.of(emailSender));
 
         SendNotificationCommand command = new SendNotificationCommand(
                 "user-1", "event-1", TemplateType.ORDER_PLACED, Map.of());

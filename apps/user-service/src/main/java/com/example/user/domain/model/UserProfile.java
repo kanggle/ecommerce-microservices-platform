@@ -56,27 +56,25 @@ public class UserProfile {
     }
 
     public void updateNickname(String nickname) {
-        if (nickname != null && nickname.trim().length() > 50) {
-            throw new IllegalArgumentException("Nickname must not exceed 50 characters");
-        }
-        this.nickname = nickname == null ? null : nickname.trim();
+        this.nickname = validateAndTrim(nickname, 50, "Nickname");
         this.updatedAt = Instant.now();
     }
 
     public void updatePhone(String phone) {
-        if (phone != null && phone.trim().length() > 20) {
-            throw new IllegalArgumentException("Phone must not exceed 20 characters");
-        }
-        this.phone = phone == null ? null : phone.trim();
+        this.phone = validateAndTrim(phone, 20, "Phone");
         this.updatedAt = Instant.now();
     }
 
     public void updateProfileImageUrl(String profileImageUrl) {
-        if (profileImageUrl != null && profileImageUrl.trim().length() > 500) {
-            throw new IllegalArgumentException("Profile image URL must not exceed 500 characters");
-        }
-        this.profileImageUrl = profileImageUrl == null ? null : profileImageUrl.trim();
+        this.profileImageUrl = validateAndTrim(profileImageUrl, 500, "Profile image URL");
         this.updatedAt = Instant.now();
+    }
+
+    private static String validateAndTrim(String value, int maxLength, String fieldName) {
+        if (value != null && value.trim().length() > maxLength) {
+            throw new IllegalArgumentException(fieldName + " must not exceed " + maxLength + " characters");
+        }
+        return value == null ? null : value.trim();
     }
 
     public void withdraw() {

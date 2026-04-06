@@ -1,7 +1,7 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { createProduct } from '../api/product-api';
 import { productKeys } from './query-keys';
-import { getErrorMessage } from '@repo/types/guards';
+import { alertError } from '@/shared/lib/alert-error';
 
 export function useCreateProduct() {
   const queryClient = useQueryClient();
@@ -12,7 +12,7 @@ export function useCreateProduct() {
       queryClient.invalidateQueries({ queryKey: productKeys.all });
     },
     onError: (error: unknown) => {
-      window.alert(getErrorMessage(error, '상품 생성에 실패했습니다.'));
+      alertError(error, '상품 생성에 실패했습니다.');
     },
   });
 }

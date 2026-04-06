@@ -98,4 +98,52 @@ class SearchProductServiceTest {
         assertThat(captor.getValue().filter().categoryId()).isEqualTo("cat1");
         assertThat(captor.getValue().sort()).isEqualTo(SearchSort.PRICE_ASC);
     }
+
+    @Test
+    @DisplayName("검색 성공 시 search_query_total 메트릭이 증가한다")
+    void search_success_incrementsSearchQueryMetric() {
+        SearchFilter filter = SearchFilter.of("노트북", null, null, null, null);
+        SearchProductQuery query = new SearchProductQuery(filter, SearchSort.RELEVANCE, 0, 20);
+        given(searchQueryPort.search(query)).willReturn(
+                new SearchProductResult(
+                        List.of(SearchDocument.of("p1", "노트북", "설명", 1000L, "ON_SALE", "cat1", 10)),
+                        new FacetResult(List.of(), List.of()), 1L
+                )
+        );
+
+        searchProductService.search(query);
+
+        verify(searchMetrics).incrementSearchQuery();
+    }
+
+    @Test
+    @DisplayName("검색 결과 0건이면 zero_results 메트릭이 증가한다")
+    void search_emptyResult_incrementsZeroResultsMetric() {
+        SearchFilter filter = SearchFilter.of("없는상품", null, null, null, null);
+        SearchProductQuery query = new SearchProductQuery(filter, SearchSort.RELEVANCE, 0, 20);
+        given(searchQueryPort.search(query)).willReturn(
+                new SearchProductResult(List.of(), new FacetResult(List.of(), List.of()), 0L)
+        );
+
+        searchProductService.search(query);
+
+        verify(searchMetrics).incrementZeroResults();
+    }
+
+    @Test
+    @DisplayName("검색 결과가 있으면 zero_results 메트릭이 증가하지 않는다")
+    void search_nonEmptyResult_doesNotIncrementZeroResults() {
+        SearchFilter filter = SearchFilter.of("노트북", null, null, null, null);
+        SearchProductQuery query = new SearchProductQuery(filter, SearchSort.RELEVANCE, 0, 20);
+        given(searchQueryPort.search(query)).willReturn(
+                new SearchProductResult(
+                        List.of(SearchDocument.of("p1", "노트북", "설명", 1000L, "ON_SALE", "cat1", 10)),
+                        new FacetResult(List.of(), List.of()), 1L
+                )
+        );
+
+        searchProductService.search(query);
+
+        verify(searchMetrics, org.mockito.Mockito.never()).incrementZeroResults();
+    }
 }

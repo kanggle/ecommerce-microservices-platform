@@ -98,6 +98,47 @@ class BatchJobExecutionRepositoryIntegrationTest extends AbstractIntegrationTest
     }
 
     @Test
+    @DisplayName("RUNNING 상태로 저장 후 COMPLETED로 변경하여 다시 저장하면 상태가 갱신된다")
+    void save_updateRunningToCompleted_statusIsUpdated() {
+        BatchJobExecution execution = BatchJobExecution.start("update-flow-job");
+        BatchJobExecution saved = repository.save(execution);
+
+        BatchJobExecution toUpdate = BatchJobExecution.reconstitute(
+                saved.getId(), saved.getJobName(), saved.getStatus(),
+                saved.getStartedAt(), saved.getFinishedAt(), saved.getErrorMessage()
+        );
+        toUpdate.complete();
+        repository.save(toUpdate);
+
+        Optional<BatchJobExecution> found = repository.findById(saved.getId());
+
+        assertThat(found).isPresent();
+        assertThat(found.get().getStatus()).isEqualTo(BatchJobStatus.COMPLETED);
+        assertThat(found.get().getFinishedAt()).isNotNull();
+        assertThat(found.get().getJobName()).isEqualTo("update-flow-job");
+    }
+
+    @Test
+    @DisplayName("RUNNING 상태로 저장 후 FAILED로 변경하여 다시 저장하면 에러 메시지가 보존된다")
+    void save_updateRunningToFailed_errorMessagePersisted() {
+        BatchJobExecution execution = BatchJobExecution.start("fail-update-job");
+        BatchJobExecution saved = repository.save(execution);
+
+        BatchJobExecution toUpdate = BatchJobExecution.reconstitute(
+                saved.getId(), saved.getJobName(), saved.getStatus(),
+                saved.getStartedAt(), saved.getFinishedAt(), saved.getErrorMessage()
+        );
+        toUpdate.fail("connection refused");
+        repository.save(toUpdate);
+
+        Optional<BatchJobExecution> found = repository.findById(saved.getId());
+
+        assertThat(found).isPresent();
+        assertThat(found.get().getStatus()).isEqualTo(BatchJobStatus.FAILED);
+        assertThat(found.get().getErrorMessage()).isEqualTo("connection refused");
+    }
+
+    @Test
     @DisplayName("동일 잡 이름으로 여러 실행 이력을 저장할 수 있다")
     void save_sameJobNameMultipleTimes_allowsDuplicateJobNames() {
         BatchJobExecution exec1 = repository.save(BatchJobExecution.start("cleanup-job"));

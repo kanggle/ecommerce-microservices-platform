@@ -15,8 +15,7 @@ import com.example.search.domain.model.FacetResult;
 import com.example.search.domain.model.SearchDocument;
 import com.example.search.domain.model.SearchSort;
 import com.example.search.application.port.out.SearchQueryPort;
-import com.example.search.infrastructure.config.IndexProperties;
-import com.example.search.infrastructure.exception.SearchException;
+import com.example.search.application.exception.SearchException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
@@ -96,7 +95,7 @@ public class ElasticsearchQueryAdapter implements SearchQueryPort {
             case PRICE_ASC -> SortOptions.of(s -> s.field(f -> f.field("price").order(SortOrder.Asc)));
             case PRICE_DESC -> SortOptions.of(s -> s.field(f -> f.field("price").order(SortOrder.Desc)));
             case NEWEST -> SortOptions.of(s -> s.field(f -> f.field("_id").order(SortOrder.Desc)));
-            default -> SortOptions.of(s -> s.score(sc -> sc.order(SortOrder.Desc)));
+            case RELEVANCE -> SortOptions.of(s -> s.score(sc -> sc.order(SortOrder.Desc)));
         };
     }
 

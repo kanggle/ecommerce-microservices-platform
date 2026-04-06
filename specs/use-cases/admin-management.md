@@ -151,3 +151,9 @@
 
 - **EF-1: 사용자 미존재** — userId에 해당하는 사용자가 없으면 404 오류를 반환한다.
 - **EF-2: 권한 없음** — 관리자 권한이 없으면 `ACCESS_DENIED` 오류를 반환한다 (403).
+
+---
+
+## Related Contracts
+- HTTP: `specs/contracts/http/product-api.md`, `specs/contracts/http/user-api.md`
+- Events: `specs/contracts/events/product-events.md`

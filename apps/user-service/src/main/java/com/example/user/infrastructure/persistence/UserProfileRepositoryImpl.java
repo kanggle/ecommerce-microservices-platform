@@ -18,7 +18,7 @@ import java.util.UUID;
 
 @Repository
 @RequiredArgsConstructor
-public class UserProfileRepositoryImpl implements UserProfileRepository {
+class UserProfileRepositoryImpl implements UserProfileRepository {
 
     private final UserProfileJpaRepository jpaRepository;
     private final UserProfileJpaMapper mapper;

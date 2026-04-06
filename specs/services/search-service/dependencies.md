@@ -13,7 +13,10 @@
 - Exposes search query HTTP API to gateway-service (via HTTP contracts)
 
 ## Consumes From
-- product-service: ProductCreated, ProductUpdated, ProductDeleted, StockChanged events
+
+| Source | Events | Purpose |
+|---|---|---|
+| product-service | ProductCreated, ProductUpdated, ProductDeleted, StockChanged | Product index synchronization |
 
 ## Publishes To
 - None (search-service is a read-only query service, it does not publish domain events)

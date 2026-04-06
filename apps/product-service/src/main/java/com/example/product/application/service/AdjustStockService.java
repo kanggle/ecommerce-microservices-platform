@@ -11,7 +11,7 @@ import com.example.product.domain.model.Inventory;
 import com.example.product.domain.model.Product;
 import com.example.product.domain.repository.InventoryRepository;
 import com.example.product.domain.repository.ProductRepository;
-import com.example.product.infrastructure.metrics.ProductMetrics;
+import com.example.product.application.port.ProductMetricPort;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -27,7 +27,7 @@ public class AdjustStockService {
     private final ProductRepository productRepository;
     private final InventoryRepository inventoryRepository;
     private final EventPublishingHelper eventPublishingHelper;
-    private final ProductMetrics productMetrics;
+    private final ProductMetricPort productMetrics;
 
     @Transactional
     public AdjustStockResult adjust(AdjustStockCommand command) {

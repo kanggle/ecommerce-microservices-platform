@@ -151,3 +151,9 @@
 ### 예외 흐름
 
 - **EF-1: 이벤트 처리 실패** — 이벤트 수신 실패 시 재시도 메커니즘을 통해 최종 일관성을 보장한다.
+
+---
+
+## Related Contracts
+- HTTP: `specs/contracts/http/order-api.md`
+- Events: `specs/contracts/events/order-events.md`, `specs/contracts/events/user-events.md`

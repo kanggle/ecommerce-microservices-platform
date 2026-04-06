@@ -23,9 +23,12 @@ Owns scheduled and batch processing tasks for platform-wide maintenance, cleanup
 
 ## Published Interfaces
 - None (does not expose HTTP APIs)
-- may publish events to notify other services of completed batch operations
+- May publish domain events to notify other services of completed batch operations (contracts must be defined in `specs/contracts/events/` before implementation)
 
 ## Dependent Systems
-- persistence (own PostgreSQL database for job history)
-- messaging infrastructure (Kafka — event consumption and publication)
-- other services via HTTP contracts (read-only access where needed)
+- PostgreSQL (own database — job execution history only)
+- Kafka (event consumption and publication)
+- product-service via published HTTP contract (read-only, for index consistency check)
+- search-service via published HTTP contract (read-only, for index consistency check)
+
+For full dependency rules, see `dependencies.md`.

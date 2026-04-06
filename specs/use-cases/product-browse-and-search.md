@@ -113,3 +113,9 @@
 ### 예외 흐름
 
 - **EF-1: 이벤트 유실** — 이벤트 처리 실패 시 재시도 메커니즘을 통해 최종 일관성을 보장한다.
+
+---
+
+## Related Contracts
+- HTTP: `specs/contracts/http/product-api.md`, `specs/contracts/http/search-api.md`
+- Events: `specs/contracts/events/product-events.md`

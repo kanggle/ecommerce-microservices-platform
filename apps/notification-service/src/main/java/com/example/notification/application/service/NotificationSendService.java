@@ -1,10 +1,10 @@
 package com.example.notification.application.service;
 
 import com.example.notification.application.command.SendNotificationCommand;
+import com.example.notification.application.port.in.ManagePreferenceUseCase;
 import com.example.notification.application.port.in.SendNotificationUseCase;
 import com.example.notification.application.port.out.NotificationRepository;
 import com.example.notification.application.port.out.NotificationSender;
-import com.example.notification.application.port.out.PreferenceRepository;
 import com.example.notification.application.port.out.TemplateRepository;
 import com.example.notification.domain.model.Notification;
 import com.example.notification.domain.model.NotificationChannel;
@@ -17,7 +17,6 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Map;
-import java.util.Optional;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
@@ -28,7 +27,7 @@ public class NotificationSendService implements SendNotificationUseCase {
 
     private final NotificationRepository notificationRepository;
     private final TemplateRepository templateRepository;
-    private final PreferenceRepository preferenceRepository;
+    private final ManagePreferenceUseCase managePreferenceUseCase;
     private final List<NotificationSender> notificationSenders;
 
     private Map<NotificationChannel, NotificationSender> getSenderMap() {
@@ -46,11 +45,7 @@ public class NotificationSendService implements SendNotificationUseCase {
             return;
         }
 
-        UserNotificationPreference preference = preferenceRepository.findByUserId(command.userId())
-                .orElseGet(() -> {
-                    UserNotificationPreference defaultPref = UserNotificationPreference.createDefault(command.userId());
-                    return preferenceRepository.save(defaultPref);
-                });
+        UserNotificationPreference preference = managePreferenceUseCase.getOrCreatePreference(command.userId());
 
         Map<NotificationChannel, NotificationSender> senderMap = getSenderMap();
 
@@ -67,20 +62,18 @@ public class NotificationSendService implements SendNotificationUseCase {
             return;
         }
 
-        if (!senderMap.containsKey(channel)) {
+        NotificationSender sender = senderMap.get(channel);
+        if (sender == null) {
             log.debug("No sender available for channel {}", channel);
             return;
         }
 
-        Optional<NotificationTemplate> templateOpt = templateRepository
-                .findByTypeAndChannel(command.templateType(), channel);
+        templateRepository.findByTypeAndChannel(command.templateType(), channel)
+                .ifPresent(template -> renderAndSend(command, channel, template, sender));
+    }
 
-        if (templateOpt.isEmpty()) {
-            log.debug("No template found for type={}, channel={}", command.templateType(), channel);
-            return;
-        }
-
-        NotificationTemplate template = templateOpt.get();
+    private void renderAndSend(SendNotificationCommand command, NotificationChannel channel,
+                               NotificationTemplate template, NotificationSender sender) {
         String renderedSubject = template.renderSubject(command.variables());
         String renderedBody = template.renderBody(command.variables());
 
@@ -88,7 +81,7 @@ public class NotificationSendService implements SendNotificationUseCase {
                 command.userId(), channel, renderedSubject, renderedBody, command.eventId());
 
         try {
-            senderMap.get(channel).send(command.userId(), renderedSubject, renderedBody);
+            sender.send(command.userId(), renderedSubject, renderedBody);
             notification.markSent();
             log.info("Notification sent. userId={}, channel={}, eventId={}",
                     command.userId(), channel, command.eventId());

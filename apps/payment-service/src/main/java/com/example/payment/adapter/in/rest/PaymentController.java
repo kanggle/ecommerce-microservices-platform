@@ -31,9 +31,7 @@ public class PaymentController {
             @RequestHeader(value = "X-User-Id", required = false) String userId,
             @PathVariable String orderId
     ) {
-        if (userId == null || userId.isBlank()) {
-            throw new InvalidPaymentException("X-User-Id 헤더는 필수입니다");
-        }
+        requireUserId(userId);
         Payment payment = paymentQueryService.getPaymentByOrderId(orderId, userId);
         return ResponseEntity.ok(PaymentDetailResponse.from(payment));
     }
@@ -53,12 +51,16 @@ public class PaymentController {
             @RequestHeader(value = "X-User-Id", required = false) String userId,
             @Valid @RequestBody PaymentConfirmRequest request
     ) {
-        if (userId == null || userId.isBlank()) {
-            throw new InvalidPaymentException("X-User-Id 헤더는 필수입니다");
-        }
+        requireUserId(userId);
         PaymentConfirmResult result = paymentConfirmService.confirm(
                 userId, request.paymentKey(), request.orderId(), request.amount()
         );
         return ResponseEntity.ok(PaymentConfirmResponse.from(result));
+    }
+
+    private void requireUserId(String userId) {
+        if (userId == null || userId.isBlank()) {
+            throw new InvalidPaymentException("X-User-Id 헤더는 필수입니다");
+        }
     }
 }

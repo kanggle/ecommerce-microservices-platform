@@ -18,7 +18,7 @@ public class PaymentQueryService {
     public Payment getPaymentByOrderId(String orderId, String requestingUserId) {
         Payment payment = paymentRepository.findByOrderId(orderId)
                 .orElseThrow(() -> new PaymentNotFoundException(orderId));
-        if (!payment.getUserId().equals(requestingUserId)) {
+        if (!payment.isOwnedBy(requestingUserId)) {
             throw new UnauthorizedPaymentAccessException();
         }
         return payment;

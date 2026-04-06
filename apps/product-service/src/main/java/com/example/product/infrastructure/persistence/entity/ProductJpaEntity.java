@@ -97,10 +97,6 @@ public class ProductJpaEntity implements Persistable<UUID> {
         );
     }
 
-    public void softDelete(Instant now) {
-        this.deletedAt = now;
-    }
-
     public void update(Product product) {
         this.name = product.getName();
         this.description = product.getDescription();

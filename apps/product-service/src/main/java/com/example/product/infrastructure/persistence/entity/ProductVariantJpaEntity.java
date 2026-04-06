@@ -63,9 +63,6 @@ public class ProductVariantJpaEntity {
     }
 
     public void updateStock(int newStock) {
-        if (newStock < 0) {
-            throw new IllegalArgumentException("Stock cannot be negative: " + newStock);
-        }
         this.stock = newStock;
     }
 

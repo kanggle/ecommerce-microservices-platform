@@ -1,6 +1,7 @@
 package com.example.product.infrastructure.persistence;
 
 import com.example.product.domain.exception.VariantNotFoundException;
+import com.example.product.infrastructure.persistence.entity.ProductVariantJpaEntity;
 import com.example.product.domain.model.Inventory;
 import com.example.product.domain.model.StockQuantity;
 import com.example.product.domain.repository.InventoryRepository;
@@ -22,14 +23,10 @@ class InventoryRepositoryAdapter implements InventoryRepository {
     @Override
     @Transactional
     public Inventory save(Inventory inventory) {
-        jpaRepository.findById(inventory.getVariantId())
-                .ifPresentOrElse(
-                        entity -> {
-                            entity.updateStock(inventory.currentStock().value());
-                            jpaRepository.save(entity);
-                        },
-                        () -> { throw new VariantNotFoundException(inventory.getVariantId()); }
-                );
+        ProductVariantJpaEntity entity = jpaRepository.findById(inventory.getVariantId())
+                .orElseThrow(() -> new VariantNotFoundException(inventory.getVariantId()));
+        entity.updateStock(inventory.currentStock().value());
+        jpaRepository.save(entity);
         return inventory;
     }
 

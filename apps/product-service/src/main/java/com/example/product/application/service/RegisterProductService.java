@@ -10,7 +10,7 @@ import com.example.product.domain.model.StockQuantity;
 import com.example.product.domain.exception.InvalidCategoryException;
 import com.example.product.domain.repository.CategoryRepository;
 import com.example.product.domain.repository.ProductRepository;
-import com.example.product.infrastructure.metrics.ProductMetrics;
+import com.example.product.application.port.ProductMetricPort;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -25,7 +25,7 @@ public class RegisterProductService {
     private final ProductRepository productRepository;
     private final CategoryRepository categoryRepository;
     private final EventPublishingHelper eventPublishingHelper;
-    private final ProductMetrics productMetrics;
+    private final ProductMetricPort productMetrics;
 
     @Transactional
     public UUID register(RegisterProductCommand command) {

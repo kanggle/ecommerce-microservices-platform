@@ -7,19 +7,13 @@
 `Layered Architecture`
 
 ## Why This Architecture
-This service is a Spring Cloud Gateway (WebFlux-based) API gateway.
+This service is a WebFlux-based API gateway.
 
 Its primary responsibilities are request routing, rate limiting, JWT authentication filtering, and request logging.
 
 There is no domain logic — all behavior is infrastructure-oriented (routing rules, filters, security).
 
 A layered structure keeps filter chains, configuration, and security concerns cleanly separated without the overhead of domain-driven design.
-
-## Tech Stack
-- Spring Cloud Gateway (WebFlux)
-- Spring Boot Actuator
-- Spring Data Redis Reactive (rate limiting)
-- JJWT (JWT validation)
 
 ## Internal Structure Rule
 This service uses a layered internal structure.

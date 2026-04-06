@@ -16,15 +16,21 @@ public class ShippingAddress {
 
     public ShippingAddress(String recipient, String phone, String zipCode,
                            String address1, String address2) {
-        if (recipient == null || recipient.isBlank()) throw new IllegalArgumentException("recipient must not be blank");
-        if (phone == null || phone.isBlank()) throw new IllegalArgumentException("phone must not be blank");
-        if (zipCode == null || zipCode.isBlank()) throw new IllegalArgumentException("zipCode must not be blank");
-        if (address1 == null || address1.isBlank()) throw new IllegalArgumentException("address1 must not be blank");
+        requireNonBlank(recipient, "recipient");
+        requireNonBlank(phone, "phone");
+        requireNonBlank(zipCode, "zipCode");
+        requireNonBlank(address1, "address1");
         this.recipient = recipient;
         this.phone = phone;
         this.zipCode = zipCode;
         this.address1 = address1;
         this.address2 = address2;
+    }
+
+    private static void requireNonBlank(String value, String fieldName) {
+        if (value == null || value.isBlank()) {
+            throw new IllegalArgumentException(fieldName + " must not be blank");
+        }
     }
 
     public static ShippingAddress reconstitute(String recipient, String phone, String zipCode,

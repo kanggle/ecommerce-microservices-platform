@@ -29,14 +29,10 @@ class ProductRepositoryAdapter implements ProductRepository, ProductQueryPort {
         if (product.isNew()) {
             jpaRepository.save(ProductJpaEntity.from(product));
         } else {
-            jpaRepository.findWithVariantsById(product.getId())
-                    .ifPresentOrElse(
-                            entity -> {
-                                entity.update(product);
-                                jpaRepository.save(entity);
-                            },
-                            () -> { throw new IllegalStateException("Product not found: " + product.getId()); }
-                    );
+            ProductJpaEntity entity = jpaRepository.findWithVariantsById(product.getId())
+                    .orElseThrow(() -> new IllegalStateException("Product not found: " + product.getId()));
+            entity.update(product);
+            jpaRepository.save(entity);
         }
         return product;
     }

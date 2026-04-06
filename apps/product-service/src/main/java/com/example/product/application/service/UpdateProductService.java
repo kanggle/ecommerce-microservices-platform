@@ -7,7 +7,7 @@ import com.example.product.domain.exception.ProductNotFoundException;
 import com.example.product.domain.model.Price;
 import com.example.product.domain.model.Product;
 import com.example.product.domain.repository.ProductRepository;
-import com.example.product.infrastructure.metrics.ProductMetrics;
+import com.example.product.application.port.ProductMetricPort;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -20,7 +20,7 @@ public class UpdateProductService {
 
     private final ProductRepository productRepository;
     private final EventPublishingHelper eventPublishingHelper;
-    private final ProductMetrics productMetrics;
+    private final ProductMetricPort productMetrics;
 
     @Transactional
     public UUID update(UpdateProductCommand command) {

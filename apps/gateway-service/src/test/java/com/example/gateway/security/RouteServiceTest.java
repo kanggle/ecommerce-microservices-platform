@@ -55,7 +55,8 @@ class RouteServiceTest {
             "/api/admin/products, product-service",
             "/api/search/products, search-service",
             "/api/orders/123, order-service",
-            "/api/payments/pay-1, payment-service"
+            "/api/payments/pay-1, payment-service",
+            "/api/shippings/ship-1, shipping-service"
     })
     @DisplayName("경로에 따라 올바른 대상 서비스를 반환한다")
     void resolveTargetService_knownPaths_returnsCorrectService(String path, String expectedService) {

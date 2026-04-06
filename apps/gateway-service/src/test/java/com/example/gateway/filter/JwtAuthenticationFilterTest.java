@@ -58,6 +58,25 @@ class JwtAuthenticationFilterTest {
                 .compact();
     }
 
+    private String tokenWithRole(String userId, String email, String role) {
+        return Jwts.builder()
+                .subject(userId)
+                .claim("email", email)
+                .claim("role", role)
+                .expiration(new Date(System.currentTimeMillis() + 3600_000))
+                .signWith(KEY)
+                .compact();
+    }
+
+    private String expiredToken(String userId, String email) {
+        return Jwts.builder()
+                .subject(userId)
+                .claim("email", email)
+                .expiration(new Date(System.currentTimeMillis() - 1000))
+                .signWith(KEY)
+                .compact();
+    }
+
     private String tokenWithoutEmail(String userId) {
         return Jwts.builder()
                 .subject(userId)
@@ -476,5 +495,155 @@ class JwtAuthenticationFilterTest {
                     && headers.get("X-User-Email").size() == 1
                     && "user@example.com".equals(headers.getFirst("X-User-Email"));
         }));
+    }
+
+    @Test
+    @DisplayName("만료된 JWT로 보호된 경로 요청 시 401을 반환하고 expired 메트릭이 기록된다")
+    void filter_expiredToken_protectedRoute_returns401AndIncrementsExpiredMetric() {
+        String token = expiredToken("user-123", "user@example.com");
+        MockServerWebExchange exchange = MockServerWebExchange.from(
+                MockServerHttpRequest.get("/api/orders/123")
+                        .header(HttpHeaders.AUTHORIZATION, "Bearer " + token)
+                        .build()
+        );
+        GatewayFilterChain chain = mock(GatewayFilterChain.class);
+
+        filter.filter(exchange, chain).block();
+
+        assertThat(exchange.getResponse().getStatusCode()).isEqualTo(HttpStatus.UNAUTHORIZED);
+        verify(chain, never()).filter(any());
+        double count = meterRegistry.counter("gateway_jwt_validation_failure_total", "reason", "expired").count();
+        assertThat(count).isEqualTo(1.0);
+    }
+
+    @Test
+    @DisplayName("JWT에 role claim이 있으면 X-User-Role 헤더가 주입된다")
+    void filter_tokenWithRole_injectsRoleHeader() {
+        String token = tokenWithRole("user-123", "user@example.com", "ADMIN");
+        MockServerWebExchange exchange = MockServerWebExchange.from(
+                MockServerHttpRequest.get("/api/orders/123")
+                        .header(HttpHeaders.AUTHORIZATION, "Bearer " + token)
+                        .build()
+        );
+        GatewayFilterChain chain = mock(GatewayFilterChain.class);
+        when(chain.filter(any())).thenReturn(Mono.empty());
+
+        filter.filter(exchange, chain).block();
+
+        verify(chain).filter(argThat(ex -> {
+            var headers = ex.getRequest().getHeaders();
+            return "ADMIN".equals(headers.getFirst("X-User-Role"));
+        }));
+    }
+
+    @Test
+    @DisplayName("JWT에 role claim이 없으면 X-User-Role 헤더가 주입되지 않는다")
+    void filter_tokenWithoutRole_doesNotInjectRoleHeader() {
+        String token = validToken("user-123", "user@example.com");
+        MockServerWebExchange exchange = MockServerWebExchange.from(
+                MockServerHttpRequest.get("/api/orders/123")
+                        .header(HttpHeaders.AUTHORIZATION, "Bearer " + token)
+                        .build()
+        );
+        GatewayFilterChain chain = mock(GatewayFilterChain.class);
+        when(chain.filter(any())).thenReturn(Mono.empty());
+
+        filter.filter(exchange, chain).block();
+
+        verify(chain).filter(argThat(ex -> {
+            var headers = ex.getRequest().getHeaders();
+            return !headers.containsKey("X-User-Role");
+        }));
+    }
+
+    @Test
+    @DisplayName("공개 경로에서 외부 X-User-Role 헤더가 다운스트림에 전달되지 않는다")
+    void filter_spoofedRole_publicRoute_strippedBeforeDownstream() {
+        MockServerWebExchange exchange = MockServerWebExchange.from(
+                MockServerHttpRequest.get("/api/products/42")
+                        .header("X-User-Role", "ADMIN")
+                        .build()
+        );
+        GatewayFilterChain chain = mock(GatewayFilterChain.class);
+        when(chain.filter(any())).thenReturn(Mono.empty());
+
+        filter.filter(exchange, chain).block();
+
+        verify(chain).filter(argThat(ex -> {
+            var headers = ex.getRequest().getHeaders();
+            return !headers.containsKey("X-User-Role");
+        }));
+    }
+
+    @Test
+    @DisplayName("인증 경로에서 외부 X-User-Role 헤더가 JWT role로 덮어쓰기된다")
+    void filter_spoofedRole_authenticatedRoute_overwrittenByJwt() {
+        String token = tokenWithRole("user-123", "user@example.com", "USER");
+        MockServerWebExchange exchange = MockServerWebExchange.from(
+                MockServerHttpRequest.get("/api/orders/123")
+                        .header(HttpHeaders.AUTHORIZATION, "Bearer " + token)
+                        .header("X-User-Role", "ADMIN")
+                        .build()
+        );
+        GatewayFilterChain chain = mock(GatewayFilterChain.class);
+        when(chain.filter(any())).thenReturn(Mono.empty());
+
+        filter.filter(exchange, chain).block();
+
+        verify(chain).filter(argThat(ex -> {
+            var headers = ex.getRequest().getHeaders();
+            return headers.get("X-User-Role").size() == 1
+                    && "USER".equals(headers.getFirst("X-User-Role"));
+        }));
+    }
+
+    @Test
+    @DisplayName("필터 순서는 -100이다")
+    void getOrder_returnsMinusOneHundred() {
+        assertThat(filter.getOrder()).isEqualTo(-100);
+    }
+
+    @Test
+    @DisplayName("공개 경로 POST /api/auth/refresh는 토큰 없이 필터를 통과한다")
+    void filter_publicRoute_refresh_passesWithoutToken() {
+        MockServerWebExchange exchange = MockServerWebExchange.from(
+                MockServerHttpRequest.post("/api/auth/refresh").build()
+        );
+        GatewayFilterChain chain = mock(GatewayFilterChain.class);
+        when(chain.filter(any())).thenReturn(Mono.empty());
+
+        filter.filter(exchange, chain).block();
+
+        verify(chain).filter(any());
+    }
+
+    @Test
+    @DisplayName("인증 헤더 없이 보호된 경로 요청 시 missing 메트릭이 기록된다")
+    void filter_noAuthHeader_protectedRoute_incrementsMissingMetric() {
+        MockServerWebExchange exchange = MockServerWebExchange.from(
+                MockServerHttpRequest.get("/api/orders/123").build()
+        );
+        GatewayFilterChain chain = mock(GatewayFilterChain.class);
+
+        filter.filter(exchange, chain).block();
+
+        double count = meterRegistry.counter("gateway_jwt_validation_failure_total", "reason", "missing").count();
+        assertThat(count).isEqualTo(1.0);
+    }
+
+    @Test
+    @DisplayName("잘못된 JWT로 보호된 경로 요청 시 invalid 메트릭이 기록된다")
+    void filter_invalidToken_protectedRoute_incrementsInvalidMetric() {
+        MockServerWebExchange exchange = MockServerWebExchange.from(
+                MockServerHttpRequest.get("/api/orders/123")
+                        .header(HttpHeaders.AUTHORIZATION, "Bearer invalid.token.here")
+                        .build()
+        );
+        GatewayFilterChain chain = mock(GatewayFilterChain.class);
+
+        filter.filter(exchange, chain).block();
+
+        double count = meterRegistry.counter("gateway_jwt_validation_failure_total", "reason", "invalid").count();
+        assertThat(count).isEqualTo(1.0);
     }
 }

@@ -207,3 +207,9 @@
 
 - **EF-1: 미인증** — 인증 토큰이 없거나 유효하지 않으면 `UNAUTHORIZED` 오류를 반환한다 (401).
 - **EF-2: 이미 탈퇴한 사용자** — 이미 탈퇴한 사용자가 재요청하면 `USER_ALREADY_WITHDRAWN` 오류를 반환한다 (422).
+
+---
+
+## Related Contracts
+- HTTP: `specs/contracts/http/user-api.md`
+- Events: `specs/contracts/events/user-events.md`

@@ -1,7 +1,7 @@
 'use client';
 
 import { useRouter } from 'next/navigation';
-import type { ProductDetail } from '@repo/types';
+import type { ProductDetail, ProductStatus } from '@repo/types';
 import { useProductForm } from '../hooks/use-product-form';
 import { VariantEditor } from './VariantEditor';
 import { Section } from '@/shared/ui';
@@ -68,7 +68,7 @@ export function ProductForm({ product }: Props) {
           {isEdit && (
             <div>
               <label htmlFor="status" style={styles.label}>상태</label>
-              <select id="status" value={status} onChange={(e) => setStatus(e.target.value as import('@repo/types').ProductStatus)} style={styles.input}>
+              <select id="status" value={status} onChange={(e) => setStatus(e.target.value as ProductStatus)} style={styles.input}>
                 <option value="ON_SALE">판매중</option>
                 <option value="SOLD_OUT">품절</option>
                 <option value="HIDDEN">숨김</option>

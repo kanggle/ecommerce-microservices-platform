@@ -82,38 +82,36 @@ class PaymentTest {
                 .isInstanceOf(InvalidPaymentException.class);
     }
 
-    @SuppressWarnings("deprecation")
     @Test
-    @DisplayName("PENDING 상태에서 complete 호출 시 COMPLETED로 전이된다 (레거시 호환)")
+    @DisplayName("PENDING 상태에서 confirm 호출 시 COMPLETED로 전이된다")
     void complete_pendingPayment_becomesCompleted() {
         Payment payment = Payment.create("order-1", "user-1", 30000L);
 
-        payment.complete();
+        payment.confirm("test-payment-key", "CARD", "http://receipt.example.com");
 
         assertThat(payment.getStatus()).isEqualTo(PaymentStatus.COMPLETED);
         assertThat(payment.getPaidAt()).isNotNull();
     }
 
-    @SuppressWarnings("deprecation")
     @Test
-    @DisplayName("COMPLETED 상태에서 complete 호출 시 멱등 처리된다")
+    @DisplayName("COMPLETED 상태에서 confirm 재호출 시 예외가 발생한다")
     void complete_alreadyCompleted_isIdempotent() {
         Payment payment = Payment.create("order-1", "user-1", 30000L);
-        payment.complete();
+        payment.confirm("test-payment-key", "CARD", "http://receipt.example.com");
 
-        assertThatNoException().isThrownBy(payment::complete);
+        assertThatThrownBy(() -> payment.confirm("test-payment-key", "CARD", "http://receipt.example.com"))
+                .isInstanceOf(InvalidPaymentException.class);
         assertThat(payment.getStatus()).isEqualTo(PaymentStatus.COMPLETED);
     }
 
-    @SuppressWarnings("deprecation")
     @Test
-    @DisplayName("REFUNDED 상태에서 complete 호출 시 예외가 발생한다")
+    @DisplayName("REFUNDED 상태에서 confirm 호출 시 예외가 발생한다")
     void complete_refundedPayment_throwsInvalidPaymentException() {
         Payment payment = Payment.create("order-1", "user-1", 30000L);
-        payment.complete();
+        payment.confirm("test-payment-key", "CARD", "http://receipt.example.com");
         payment.refund();
 
-        assertThatThrownBy(payment::complete)
+        assertThatThrownBy(() -> payment.confirm("test-payment-key", "CARD", "http://receipt.example.com"))
                 .isInstanceOf(InvalidPaymentException.class);
     }
 
@@ -172,6 +170,22 @@ class PaymentTest {
         assertThat(payment.getPaymentKey()).isEqualTo("pk_test_123");
         assertThat(payment.getPaymentMethod()).isEqualTo("CARD");
         assertThat(payment.getReceiptUrl()).isEqualTo("https://receipt.url");
+    }
+
+    @Test
+    @DisplayName("동일 userId이면 isOwnedBy가 true를 반환한다")
+    void isOwnedBy_sameUser_returnsTrue() {
+        Payment payment = Payment.create("order-1", "user-1", 30000L);
+
+        assertThat(payment.isOwnedBy("user-1")).isTrue();
+    }
+
+    @Test
+    @DisplayName("다른 userId이면 isOwnedBy가 false를 반환한다")
+    void isOwnedBy_differentUser_returnsFalse() {
+        Payment payment = Payment.create("order-1", "user-1", 30000L);
+
+        assertThat(payment.isOwnedBy("user-2")).isFalse();
     }
 
     @Test

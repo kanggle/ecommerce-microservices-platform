@@ -4,7 +4,7 @@ import com.example.search.application.dto.SearchProductResult;
 import com.example.search.application.service.SearchProductService;
 import com.example.search.domain.model.FacetResult;
 import com.example.search.domain.model.SearchDocument;
-import com.example.search.infrastructure.exception.GlobalExceptionHandler;
+import com.example.search.adapter.inbound.web.GlobalExceptionHandler;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -113,5 +113,71 @@ class SearchControllerTest {
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.content").isEmpty())
                 .andExpect(jsonPath("$.totalElements").value(0));
+    }
+
+    @Test
+    @DisplayName("categoryId, minPrice, maxPrice 필터 조합 요청 시 200 반환")
+    void search_withFilterCombination_returns200() throws Exception {
+        given(searchProductService.search(any())).willReturn(
+                new SearchProductResult(List.of(), new FacetResult(List.of(), List.of()), 0L)
+        );
+
+        mockMvc.perform(get("/api/search/products")
+                        .param("q", "노트북")
+                        .param("categoryId", "electronics")
+                        .param("minPrice", "100000")
+                        .param("maxPrice", "2000000")
+                        .param("status", "ON_SALE"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.query").value("노트북"));
+    }
+
+    @Test
+    @DisplayName("sort=price_asc 파라미터가 정상 처리된다")
+    void search_withSortParam_returns200() throws Exception {
+        given(searchProductService.search(any())).willReturn(
+                new SearchProductResult(List.of(), new FacetResult(List.of(), List.of()), 0L)
+        );
+
+        mockMvc.perform(get("/api/search/products")
+                        .param("q", "노트북")
+                        .param("sort", "price_asc"))
+                .andExpect(status().isOk());
+    }
+
+    @Test
+    @DisplayName("page 파라미터 지정 시 응답에 page가 반영된다")
+    void search_withPage_returnsCorrectPage() throws Exception {
+        given(searchProductService.search(any())).willReturn(
+                new SearchProductResult(List.of(), new FacetResult(List.of(), List.of()), 0L)
+        );
+
+        mockMvc.perform(get("/api/search/products")
+                        .param("q", "노트북")
+                        .param("page", "3"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.page").value(3));
+    }
+
+    @Test
+    @DisplayName("minPrice가 maxPrice보다 크면 400 반환")
+    void search_minPriceGreaterThanMaxPrice_returns400() throws Exception {
+        mockMvc.perform(get("/api/search/products")
+                        .param("q", "노트북")
+                        .param("minPrice", "500000")
+                        .param("maxPrice", "100000"))
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.code").value("INVALID_SEARCH_REQUEST"));
+    }
+
+    @Test
+    @DisplayName("SearchException 발생 시 503 반환")
+    void search_searchException_returns503() throws Exception {
+        given(searchProductService.search(any()))
+                .willThrow(new com.example.search.application.exception.SearchException("ES down", new RuntimeException()));
+
+        mockMvc.perform(get("/api/search/products").param("q", "노트북"))
+                .andExpect(status().isServiceUnavailable())
+                .andExpect(jsonPath("$.code").value("SEARCH_UNAVAILABLE"));
     }
 }

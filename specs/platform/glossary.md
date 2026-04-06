@@ -68,3 +68,9 @@ Defines key terms used across specs, tasks, and documentation in this project.
 | **review** | Implementation is complete and awaiting review. |
 | **done** | Review approved and task is complete. |
 | **archive** | Task is done and no further changes are expected. |
+
+---
+
+# Change Rule
+
+Changes to glossary terms must be documented here before applying across specs.

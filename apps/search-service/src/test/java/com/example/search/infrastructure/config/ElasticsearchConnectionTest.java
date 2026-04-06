@@ -2,6 +2,7 @@ package com.example.search.infrastructure.config;
 
 import co.elastic.clients.elasticsearch.ElasticsearchClient;
 import co.elastic.clients.elasticsearch.indices.ExistsRequest;
+import com.example.search.adapter.outbound.elasticsearch.IndexProperties;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;

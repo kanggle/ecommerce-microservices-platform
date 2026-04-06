@@ -10,6 +10,13 @@ Write tests for the specified service or class.
 ## Usage
 
 ```
+/write-tests <service>                                     # write tests for entire service
+/write-tests <service> <class>                             # write tests for a specific class
+```
+
+Examples:
+
+```
 /write-tests auth-service
 /write-tests order-service OrderPlacementService
 ```

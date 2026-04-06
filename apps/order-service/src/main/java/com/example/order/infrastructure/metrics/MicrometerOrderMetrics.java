@@ -32,28 +32,20 @@ public class MicrometerOrderMetrics implements OrderMetricsPort {
                 .description("Total orders confirmed (stock reserved)")
                 .register(registry);
 
-        this.orderCancelledByUser = Counter.builder("order_cancelled_total")
-                .description("Total orders cancelled by reason")
-                .tag("reason", "user")
-                .register(registry);
-
-        this.orderCancelledByUserWithdrawn = Counter.builder("order_cancelled_total")
-                .description("Total orders cancelled by reason")
-                .tag("reason", "user_withdrawn")
-                .register(registry);
-
-        this.orderCancelledByStockInsufficient = Counter.builder("order_cancelled_total")
-                .description("Total orders cancelled by reason")
-                .tag("reason", "stock_insufficient")
-                .register(registry);
-
-        this.orderCancelledByTimeout = Counter.builder("order_cancelled_total")
-                .description("Total orders cancelled by reason")
-                .tag("reason", "timeout")
-                .register(registry);
+        this.orderCancelledByUser = cancelledCounter(registry, "user");
+        this.orderCancelledByUserWithdrawn = cancelledCounter(registry, "user_withdrawn");
+        this.orderCancelledByStockInsufficient = cancelledCounter(registry, "stock_insufficient");
+        this.orderCancelledByTimeout = cancelledCounter(registry, "timeout");
 
         this.orderAmountSum = Counter.builder("order_amount_sum")
                 .description("Cumulative order amount")
+                .register(registry);
+    }
+
+    private static Counter cancelledCounter(MeterRegistry registry, String reason) {
+        return Counter.builder("order_cancelled_total")
+                .description("Total orders cancelled by reason")
+                .tag("reason", reason)
                 .register(registry);
     }
 

@@ -22,7 +22,7 @@ import org.springframework.web.bind.annotation.RestController;
 @Validated
 public class SearchController {
 
-    private final SearchProductUseCase searchProductService;
+    private final SearchProductUseCase searchProductUseCase;
 
     @GetMapping("/products")
     public ResponseEntity<SearchProductResponse> search(
@@ -36,12 +36,11 @@ public class SearchController {
             @RequestParam(defaultValue = "20") @Positive(message = "size must be greater than 0") int size
     ) {
 
-        int cappedSize = Math.min(size, 100);
         SearchFilter filter = SearchFilter.of(q, categoryId, minPrice, maxPrice, status);
         SearchSort searchSort = SearchSort.from(sort);
-        SearchProductQuery query = new SearchProductQuery(filter, searchSort, page, cappedSize);
+        SearchProductQuery query = new SearchProductQuery(filter, searchSort, page, size);
 
-        SearchProductResult result = searchProductService.search(query);
-        return ResponseEntity.ok(SearchProductResponse.from(q, result, page, cappedSize));
+        SearchProductResult result = searchProductUseCase.search(query);
+        return ResponseEntity.ok(SearchProductResponse.from(q, result, page, query.size()));
     }
 }

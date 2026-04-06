@@ -1,5 +1,7 @@
 package com.example.payment.contract;
 
+import com.example.payment.application.service.PaymentConfirmResult;
+import com.example.payment.application.service.PaymentConfirmService;
 import com.example.payment.application.service.PaymentProcessingService;
 import com.example.payment.application.service.PaymentQueryService;
 import com.example.payment.domain.exception.PaymentNotFoundException;
@@ -11,16 +13,20 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.context.annotation.Import;
+import org.springframework.http.MediaType;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
 
+import java.time.LocalDateTime;
 import java.util.Set;
 
 import static com.example.payment.contract.ContractTestHelper.assertFieldsMatch;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.BDDMockito.given;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 /**
@@ -39,6 +45,9 @@ class PaymentApiContractTest {
     private PaymentQueryService paymentQueryService;
 
     @MockitoBean
+    private PaymentConfirmService paymentConfirmService;
+
+    @MockitoBean
     private PaymentProcessingService paymentProcessingService;
 
     private static final String SPEC_REF = "specs/contracts/http/payment-api.md";
@@ -49,7 +58,7 @@ class PaymentApiContractTest {
     @DisplayName("GET /api/payments/orders/{orderId} 응답은 스펙 정의 필드만 포함한다")
     void getPayment_response_containsSpecFields() throws Exception {
         Payment payment = Payment.create("order-1", "user-1", 30000L);
-        payment.complete();
+        payment.confirm("test-payment-key", "CARD", "http://receipt.example.com");
         given(paymentQueryService.getPaymentByOrderId("order-1", "user-1")).willReturn(payment);
 
         MvcResult result = mockMvc.perform(get("/api/payments/orders/order-1")
@@ -58,8 +67,33 @@ class PaymentApiContractTest {
                 .andReturn();
 
         assertFieldsMatch(result.getResponse().getContentAsString(),
-                Set.of("paymentId", "orderId", "userId", "amount", "status", "createdAt", "paidAt", "refundedAt"),
+                Set.of("paymentId", "orderId", "userId", "amount", "status",
+                        "paymentKey", "paymentMethod", "receiptUrl",
+                        "createdAt", "paidAt", "refundedAt"),
                 SPEC_REF + " GET /api/payments/orders/{orderId} 200");
+    }
+
+    // ─── POST /api/payments/confirm — 200 ───────────────────────────────
+
+    @Test
+    @DisplayName("POST /api/payments/confirm 응답은 스펙 정의 필드만 포함한다")
+    void confirmPayment_response_containsSpecFields() throws Exception {
+        LocalDateTime paidAt = LocalDateTime.of(2026, 4, 6, 12, 0, 0);
+        given(paymentConfirmService.confirm(eq("user-1"), eq("pk_test_123"), eq("order-1"), eq(30000L)))
+                .willReturn(new PaymentConfirmResult("pay-1", "order-1", "COMPLETED", "CARD", "https://receipt.url", paidAt));
+
+        MvcResult result = mockMvc.perform(post("/api/payments/confirm")
+                        .header("X-User-Id", "user-1")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content("""
+                                {"paymentKey":"pk_test_123","orderId":"order-1","amount":30000}
+                                """))
+                .andExpect(status().isOk())
+                .andReturn();
+
+        assertFieldsMatch(result.getResponse().getContentAsString(),
+                Set.of("paymentId", "orderId", "status", "paymentMethod", "receiptUrl", "paidAt"),
+                SPEC_REF + " POST /api/payments/confirm 200");
     }
 
     // ─── Error Response Format ──────────────────────────────────────────

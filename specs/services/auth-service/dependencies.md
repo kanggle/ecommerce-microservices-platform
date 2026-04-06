@@ -13,6 +13,16 @@
 - through published HTTP contracts
 - through published event contracts
 
+## Consumes From
+- None (auth-service is a source of authentication events, not a consumer of other domain events)
+
+## Publishes To
+
+| Target | Events | Purpose |
+|---|---|---|
+| user-service | UserSignedUp | Initial user profile creation |
+| notification-service (future) | UserSignedUp | Welcome notification |
+
 ## Forbidden Dependencies
 - direct database access to another service
 - importing another service's internal code

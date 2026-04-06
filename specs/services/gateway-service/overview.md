@@ -9,7 +9,7 @@ Serves as the single entry point for all client requests, handling request routi
 ## In Scope
 - request routing to downstream backend services
 - JWT token validation and user identity injection (X-User-Id, X-User-Email, X-User-Role headers)
-- per-IP rate limiting with Redis-backed sliding window
+- per-IP rate limiting with Redis-backed token bucket
 - CORS configuration
 - request/response logging
 - health check endpoint exposure

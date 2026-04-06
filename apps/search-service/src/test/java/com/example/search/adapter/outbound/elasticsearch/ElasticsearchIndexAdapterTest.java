@@ -3,8 +3,6 @@ package com.example.search.adapter.outbound.elasticsearch;
 import co.elastic.clients.elasticsearch.ElasticsearchClient;
 import co.elastic.clients.elasticsearch.core.GetRequest;
 import com.example.search.domain.model.SearchDocument;
-import com.example.search.infrastructure.config.IndexInitializer;
-import com.example.search.infrastructure.config.IndexProperties;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -144,5 +142,49 @@ class ElasticsearchIndexAdapterTest {
         ), Map.class);
 
         assertThat(response.source()).containsEntry("name", "두번째");
+    }
+
+    @Test
+    @DisplayName("findById - 존재하는 문서 조회 시 Optional에 값이 반환된다")
+    void findById_existingDocument_returnsPresent() {
+        String productId = "find-product-" + System.nanoTime();
+        SearchDocument document = SearchDocument.of(productId, "조회상품", "설명", 25000L, "ON_SALE", "cat1", 7);
+        adapter.upsert(document);
+        try {
+            elasticsearchClient.indices().refresh(r -> r.index(indexProperties.name()));
+        } catch (Exception ignored) {}
+
+        var result = adapter.findById(productId);
+
+        assertThat(result).isPresent();
+        assertThat(result.get().productId()).isEqualTo(productId);
+        assertThat(result.get().name()).isEqualTo("조회상품");
+        assertThat(result.get().totalStock()).isEqualTo(7);
+    }
+
+    @Test
+    @DisplayName("findById - 존재하지 않는 문서 조회 시 Optional.empty가 반환된다")
+    void findById_nonExistingDocument_returnsEmpty() {
+        var result = adapter.findById("non-existing-" + System.nanoTime());
+
+        assertThat(result).isEmpty();
+    }
+
+    @Test
+    @DisplayName("updateStock - docAsUpsert로 존재하지 않는 문서도 부분 생성된다")
+    void updateStock_nonExistingDocument_createsPartialDocument() throws Exception {
+        String productId = "upsert-stock-" + System.nanoTime();
+
+        adapter.updateStock(productId, 5, "ON_SALE");
+
+        elasticsearchClient.indices().refresh(r -> r.index(indexProperties.name()));
+        var response = elasticsearchClient.get(GetRequest.of(g -> g
+                .index(indexProperties.name())
+                .id(productId)
+        ), Map.class);
+
+        assertThat(response.found()).isTrue();
+        assertThat(response.source()).containsEntry("totalStock", 5);
+        assertThat(response.source()).containsEntry("status", "ON_SALE");
     }
 }

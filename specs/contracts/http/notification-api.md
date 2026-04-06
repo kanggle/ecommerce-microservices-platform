@@ -118,7 +118,7 @@ Update notification preferences for the authenticated user.
 **Error responses**
 | Status | Code | Reason |
 |---|---|---|
-| 400 | INVALID_PREFERENCE_REQUEST | Missing or invalid field |
+| 400 | VALIDATION_ERROR | Missing or invalid field |
 | 401 | UNAUTHORIZED | Missing or invalid access token |
 
 ---
@@ -179,7 +179,7 @@ Create a notification template.
 **Error responses**
 | Status | Code | Reason |
 |---|---|---|
-| 400 | INVALID_TEMPLATE_REQUEST | Missing or invalid field |
+| 400 | VALIDATION_ERROR | Missing or invalid field |
 | 401 | UNAUTHORIZED | Missing or invalid access token |
 | 403 | ACCESS_DENIED | Not an admin user |
 | 409 | TEMPLATE_ALREADY_EXISTS | Template for this type and channel already exists |
@@ -207,7 +207,7 @@ Update a notification template.
 **Error responses**
 | Status | Code | Reason |
 |---|---|---|
-| 400 | INVALID_TEMPLATE_REQUEST | Missing or invalid field |
+| 400 | VALIDATION_ERROR | Missing or invalid field |
 | 401 | UNAUTHORIZED | Missing or invalid access token |
 | 403 | ACCESS_DENIED | Not an admin user |
 | 404 | TEMPLATE_NOT_FOUND | Template does not exist |

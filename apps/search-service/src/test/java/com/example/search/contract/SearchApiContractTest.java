@@ -5,7 +5,7 @@ import com.example.search.application.dto.SearchProductResult;
 import com.example.search.application.service.SearchProductService;
 import com.example.search.domain.model.FacetResult;
 import com.example.search.domain.model.SearchDocument;
-import com.example.search.infrastructure.exception.GlobalExceptionHandler;
+import com.example.search.adapter.inbound.web.GlobalExceptionHandler;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.DisplayName;
