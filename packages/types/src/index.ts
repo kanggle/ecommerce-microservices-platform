@@ -88,7 +88,6 @@ export type {
   AddWishlistResponse,
   WishlistItem,
   WishlistCheckResponse,
-  WishlistCheckResult,
 } from './wishlist';
 
 // Shipping

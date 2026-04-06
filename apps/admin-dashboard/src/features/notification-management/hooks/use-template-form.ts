@@ -3,7 +3,6 @@ import { useRouter } from 'next/navigation';
 import type {
   NotificationTemplateType,
   NotificationChannel,
-  NotificationTemplateSummary,
   CreateNotificationTemplateRequest,
   UpdateNotificationTemplateRequest,
 } from '@repo/types';
@@ -34,15 +33,13 @@ export function useTemplateForm(template?: TemplateEditData) {
   const [subject, setSubject] = useState(template?.subject ?? '');
   const [body, setBody] = useState(template?.body ?? '');
   const { error, execute } = useAsyncAction();
-  const [isSubmitting, setIsSubmitting] = useState(false);
 
+  const isSubmitting = createTemplate.isPending || updateTemplate.isPending;
   const isValid = subject.trim().length > 0 && body.trim().length > 0;
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
     if (!isValid || isSubmitting) return;
-
-    setIsSubmitting(true);
 
     await execute(async () => {
       if (isEdit) {
@@ -66,8 +63,6 @@ export function useTemplateForm(template?: TemplateEditData) {
         router.push('/notifications/templates');
       }
     }, '저장에 실패했습니다.');
-
-    setIsSubmitting(false);
   }
 
   return {

@@ -53,8 +53,8 @@ export function usePromotionForm(promotion?: PromotionDetail) {
         discountValue,
         maxDiscountAmount,
         maxIssuanceCount,
-        startDate: new Date(startDate).toISOString(),
-        endDate: new Date(endDate).toISOString(),
+        startDate: startDate + 'T00:00:00.000Z',
+        endDate: endDate + 'T00:00:00.000Z',
       };
 
       if (isEdit) {

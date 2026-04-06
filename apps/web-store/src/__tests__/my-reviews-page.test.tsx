@@ -45,7 +45,6 @@ import { getMyReviews } from '@/features/review/api/review-api';
 import MyReviewsPage from '@/app/(store)/my/reviews/page';
 
 const mockUseAuth = vi.mocked(useAuth);
-const mockUseRequireAuth = vi.mocked(useRequireAuth);
 const mockGetMyReviews = vi.mocked(getMyReviews);
 
 const MOCK_MY_REVIEWS: MyReviewItem[] = [
@@ -89,7 +88,7 @@ describe('MyReviewsPage', () => {
       signup: vi.fn(),
       logout: vi.fn(),
     });
-    mockUseRequireAuth.mockReturnValue({ isReady: true });
+    vi.mocked(useRequireAuth).mockReturnValue({ isReady: true });
   });
 
   it('내 리뷰 목록을 렌더링한다', async () => {

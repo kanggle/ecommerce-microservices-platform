@@ -152,7 +152,7 @@ export function ShippingList() {
         title="배송 상태 변경"
         message={
           confirmTarget
-            ? `이 배송을 '${NEXT_STATUS[confirmTarget.shipping.status]?.label}' 하시겠습니까?`
+            ? `배송 상태를 '${SHIPPING_STATUS_OPTIONS.find((o) => o.value === confirmTarget.target)?.label ?? confirmTarget.target}'(으)로 변경하시겠습니까?`
             : ''
         }
         confirmLabel="변경"

@@ -1,7 +1,6 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { updateReview } from '../api/review-api';
 import { reviewKeys } from './query-keys';
-import { getErrorMessage } from '@repo/types/guards';
 import type { UpdateReviewRequest } from '@repo/types';
 
 export function useUpdateReview() {
@@ -12,9 +11,6 @@ export function useUpdateReview() {
       updateReview(reviewId, data),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: reviewKeys.all });
-    },
-    onError: (error) => {
-      window.alert(getErrorMessage(error, '리뷰 수정에 실패했습니다.'));
     },
   });
 }

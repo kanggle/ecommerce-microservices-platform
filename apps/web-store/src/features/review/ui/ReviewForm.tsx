@@ -2,7 +2,7 @@
 
 import { useState } from 'react';
 import { StarRating } from './StarRating';
-import { getErrorMessage } from '@repo/types/guards';
+import { getErrorMessage, isApiError } from '@repo/types/guards';
 
 interface ReviewFormProps {
   initialRating?: number;
@@ -38,7 +38,15 @@ export function ReviewForm({
     try {
       await onSubmit({ rating, title: title.trim(), content: content.trim() });
     } catch (err) {
-      setError(getErrorMessage(err, '리뷰 저장에 실패했습니다.'));
+      if (isApiError(err)) {
+        const errorMessages: Record<string, string> = {
+          PRODUCT_NOT_PURCHASED: '구매한 상품에만 리뷰를 작성할 수 있습니다.',
+          REVIEW_ALREADY_EXISTS: '이미 이 상품에 리뷰를 작성했습니다.',
+        };
+        setError(errorMessages[err.code] ?? getErrorMessage(err, '리뷰 저장에 실패했습니다.'));
+      } else {
+        setError(getErrorMessage(err, '리뷰 저장에 실패했습니다.'));
+      }
     }
   }
 

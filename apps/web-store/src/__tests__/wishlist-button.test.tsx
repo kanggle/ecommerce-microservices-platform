@@ -100,7 +100,7 @@ describe('WishlistButton', () => {
       signup: vi.fn(),
       logout: vi.fn(),
     });
-    mockCheckWishlist.mockResolvedValue({ productId: 'product-1', inWishlist: true });
+    mockCheckWishlist.mockResolvedValue({ productId: 'product-1', inWishlist: true, wishlistItemId: 'item-1' });
 
     render(
       <TestQueryProvider>
@@ -122,7 +122,7 @@ describe('WishlistButton', () => {
       signup: vi.fn(),
       logout: vi.fn(),
     });
-    mockCheckWishlist.mockResolvedValue({ productId: 'product-1', inWishlist: false });
+    mockCheckWishlist.mockResolvedValue({ productId: 'product-1', inWishlist: false, wishlistItemId: null });
     mockAddToWishlist.mockResolvedValue({ wishlistItemId: 'item-1', productId: 'product-1' });
 
     const user = userEvent.setup();
@@ -152,7 +152,7 @@ describe('WishlistButton', () => {
       signup: vi.fn(),
       logout: vi.fn(),
     });
-    mockCheckWishlist.mockResolvedValue({ productId: 'product-1', inWishlist: true });
+    mockCheckWishlist.mockResolvedValue({ productId: 'product-1', inWishlist: true, wishlistItemId: 'item-1' });
     mockRemoveFromWishlist.mockResolvedValue(undefined);
 
     const user = userEvent.setup();
@@ -171,5 +171,93 @@ describe('WishlistButton', () => {
     await waitFor(() => {
       expect(mockRemoveFromWishlist).toHaveBeenCalledWith('item-1');
     });
+  });
+
+  it('wishlistItemId prop 없이도 check API의 wishlistItemId로 삭제할 수 있다', async () => {
+    mockUseAuth.mockReturnValue({
+      isAuthenticated: true,
+      isLoading: false,
+      user: { userId: 'user-1', email: 'test@test.com', name: 'Test' },
+      login: vi.fn(),
+      signup: vi.fn(),
+      logout: vi.fn(),
+    });
+    mockCheckWishlist.mockResolvedValue({ productId: 'product-1', inWishlist: true, wishlistItemId: 'item-from-check' });
+    mockRemoveFromWishlist.mockResolvedValue(undefined);
+
+    const user = userEvent.setup();
+    render(
+      <TestQueryProvider>
+        <WishlistButton productId="product-1" />
+      </TestQueryProvider>,
+    );
+
+    await waitFor(() => {
+      expect(screen.getByRole('button', { name: '위시리스트에서 제거' })).toBeInTheDocument();
+    });
+
+    await user.click(screen.getByRole('button', { name: '위시리스트에서 제거' }));
+
+    await waitFor(() => {
+      expect(mockRemoveFromWishlist).toHaveBeenCalledWith('item-from-check');
+    });
+  });
+
+  it('찜 상태 조회 실패 시 기본값으로 찜되지 않은 상태를 표시한다', async () => {
+    mockUseAuth.mockReturnValue({
+      isAuthenticated: true,
+      isLoading: false,
+      user: { userId: 'user-1', email: 'test@test.com', name: 'Test' },
+      login: vi.fn(),
+      signup: vi.fn(),
+      logout: vi.fn(),
+    });
+    mockCheckWishlist.mockRejectedValue(new Error('Network error'));
+
+    render(
+      <TestQueryProvider>
+        <WishlistButton productId="product-1" />
+      </TestQueryProvider>,
+    );
+
+    await waitFor(() => {
+      const button = screen.getByRole('button', { name: '위시리스트에 추가' });
+      expect(button).toBeInTheDocument();
+      expect(button).not.toBeDisabled();
+    });
+  });
+
+  it('위시리스트 100개 초과 시 안내 메시지를 표시한다', async () => {
+    mockUseAuth.mockReturnValue({
+      isAuthenticated: true,
+      isLoading: false,
+      user: { userId: 'user-1', email: 'test@test.com', name: 'Test' },
+      login: vi.fn(),
+      signup: vi.fn(),
+      logout: vi.fn(),
+    });
+    mockCheckWishlist.mockResolvedValue({ productId: 'product-1', inWishlist: false, wishlistItemId: null });
+    mockAddToWishlist.mockRejectedValue({ code: 'WISHLIST_LIMIT_EXCEEDED', message: 'Wishlist limit exceeded', timestamp: '2026-04-06T00:00:00Z' });
+
+    const alertSpy = vi.spyOn(window, 'alert').mockImplementation(() => {});
+
+    const user = userEvent.setup();
+    render(
+      <TestQueryProvider>
+        <WishlistButton productId="product-1" />
+      </TestQueryProvider>,
+    );
+
+    await waitFor(() => {
+      expect(screen.getByRole('button', { name: '위시리스트에 추가' })).toBeInTheDocument();
+    });
+
+    await user.click(screen.getByRole('button', { name: '위시리스트에 추가' }));
+
+    await waitFor(() => {
+      expect(alertSpy).toHaveBeenCalledWith('위시리스트는 최대 100개까지 추가할 수 있습니다.');
+    });
+
+    alertSpy.mockRestore();
   });
 });

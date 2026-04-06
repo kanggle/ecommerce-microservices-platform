@@ -129,6 +129,46 @@ describe('NotificationSettings', () => {
     expect(screen.getByText('알림 설정을 불러오는데 실패했습니다.')).toBeInTheDocument();
   });
 
+  it('설정 변경 실패 시 토글이 이전 상태로 롤백된다', async () => {
+    mockGetMyPreferences.mockResolvedValueOnce(MOCK_PREFERENCES);
+    mockUpdateMyPreferences.mockRejectedValueOnce(new Error('Network error'));
+
+    const user = userEvent.setup();
+    render(<TestQueryProvider><NotificationSettings /></TestQueryProvider>);
+
+    await waitFor(() => {
+      expect(screen.getByRole('switch', { name: 'SMS' })).toBeInTheDocument();
+    });
+
+    // SMS is initially off (false)
+    expect(screen.getByRole('switch', { name: 'SMS' })).not.toBeChecked();
+
+    await user.click(screen.getByRole('switch', { name: 'SMS' }));
+
+    // After failure, toggle should revert to unchecked
+    await waitFor(() => {
+      expect(screen.getByRole('switch', { name: 'SMS' })).not.toBeChecked();
+    });
+  });
+
+  it('설정 변경 실패 시 인라인 에러 메시지를 표시한다', async () => {
+    mockGetMyPreferences.mockResolvedValueOnce(MOCK_PREFERENCES);
+    mockUpdateMyPreferences.mockRejectedValueOnce(new Error('Network error'));
+
+    const user = userEvent.setup();
+    render(<TestQueryProvider><NotificationSettings /></TestQueryProvider>);
+
+    await waitFor(() => {
+      expect(screen.getByRole('switch', { name: 'SMS' })).toBeInTheDocument();
+    });
+
+    await user.click(screen.getByRole('switch', { name: 'SMS' }));
+
+    await waitFor(() => {
+      expect(screen.getByTestId('save-error')).toBeInTheDocument();
+    });
+  });
+
   it('알림 목록으로 돌아가는 링크를 표시한다', async () => {
     mockGetMyPreferences.mockResolvedValueOnce(MOCK_PREFERENCES);
 

@@ -101,6 +101,39 @@ describe('NotificationList', () => {
     expect(screen.getByText('SMS')).toBeInTheDocument();
   });
 
+  it('SENT 상태가 아닌 알림은 표시하지 않는다', async () => {
+    const mixedNotifications: NotificationSummary[] = [
+      ...MOCK_NOTIFICATIONS,
+      {
+        notificationId: 'notif-pending',
+        channel: 'EMAIL',
+        subject: '대기 중인 알림',
+        status: 'PENDING',
+        sentAt: '2026-04-03T10:00:00Z',
+        createdAt: '2026-04-03T10:00:00Z',
+      },
+      {
+        notificationId: 'notif-failed',
+        channel: 'PUSH',
+        subject: '실패한 알림',
+        status: 'FAILED',
+        sentAt: '2026-04-03T11:00:00Z',
+        createdAt: '2026-04-03T11:00:00Z',
+      },
+    ];
+    mockGetMyNotifications.mockResolvedValueOnce(
+      createPaginatedResponse(mixedNotifications, 0, 20, 4),
+    );
+
+    render(<TestQueryProvider><NotificationList /></TestQueryProvider>);
+
+    await waitFor(() => {
+      expect(screen.getAllByTestId('notification-card')).toHaveLength(2);
+    });
+    expect(screen.queryByText('대기 중인 알림')).not.toBeInTheDocument();
+    expect(screen.queryByText('실패한 알림')).not.toBeInTheDocument();
+  });
+
   it('알림이 없으면 빈 상태를 표시한다', async () => {
     mockGetMyNotifications.mockResolvedValueOnce(createPaginatedResponse([]));
 

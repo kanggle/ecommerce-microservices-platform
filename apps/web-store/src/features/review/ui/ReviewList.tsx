@@ -29,15 +29,7 @@ export function ReviewList({ productId }: ReviewListProps) {
   const updateReview = useUpdateReview();
   const deleteReview = useDeleteReview();
 
-  let user: { userId: string } | null = null;
-  let isAuthenticated = false;
-  try {
-    const auth = useAuth();
-    user = auth.user;
-    isAuthenticated = auth.isAuthenticated;
-  } catch {
-    // auth provider not available (e.g., public page without auth)
-  }
+  const { user, isAuthenticated } = useAuth();
 
   const reviews = data?.content ?? [];
   const totalElements = data?.totalElements ?? 0;

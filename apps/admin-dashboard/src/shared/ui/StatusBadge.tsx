@@ -29,7 +29,7 @@ const STATUS_LABELS: Record<string, string> = {
   INACTIVE: '비활성',
   DRAFT: '임시저장',
   PREPARING: '준비중',
-  IN_TRANSIT: '배송중(운송)',
+  IN_TRANSIT: '운송중',
   PENDING: '대기',
   CONFIRMED: '확인',
   SHIPPED: '배송중',

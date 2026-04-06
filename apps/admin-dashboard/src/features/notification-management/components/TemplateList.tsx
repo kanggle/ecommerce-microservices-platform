@@ -4,16 +4,20 @@ import { useRouter } from 'next/navigation';
 import { DataTable, ListError } from '@/shared/ui';
 import type { ColumnDef } from '@/shared/ui';
 import { useTemplates } from '../hooks/use-templates';
-import type { NotificationTemplateSummary } from '@repo/types';
+import type {
+  NotificationTemplateSummary,
+  NotificationTemplateType,
+  NotificationChannel,
+} from '@repo/types';
 
-const TYPE_LABELS: Record<string, string> = {
+const TYPE_LABELS: Record<NotificationTemplateType, string> = {
   ORDER_PLACED: '주문 완료',
   PAYMENT_COMPLETED: '결제 완료',
   SHIPPING_STATUS_CHANGED: '배송 상태 변경',
   WELCOME: '회원 가입',
 };
 
-const CHANNEL_LABELS: Record<string, string> = {
+const CHANNEL_LABELS: Record<NotificationChannel, string> = {
   EMAIL: '이메일',
   SMS: 'SMS',
   PUSH: '푸시',

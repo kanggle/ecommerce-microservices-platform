@@ -108,4 +108,44 @@ describe('ReviewForm', () => {
       expect(screen.getByText('작성 권한이 없습니다.')).toBeInTheDocument();
     });
   });
+
+  it('409 중복 리뷰 에러 시 전용 메시지를 표시한다', async () => {
+    onSubmit.mockRejectedValueOnce({
+      code: 'REVIEW_ALREADY_EXISTS',
+      message: 'User already reviewed this product',
+      timestamp: new Date().toISOString(),
+    });
+
+    const user = userEvent.setup();
+    render(<ReviewForm onSubmit={onSubmit} />);
+
+    await user.click(screen.getByRole('radio', { name: '5점' }));
+    await user.type(screen.getByLabelText('제목'), '좋아요');
+    await user.type(screen.getByLabelText('내용'), '아주 좋습니다.');
+    await user.click(screen.getByRole('button', { name: '리뷰 작성' }));
+
+    await waitFor(() => {
+      expect(screen.getByText('이미 이 상품에 리뷰를 작성했습니다.')).toBeInTheDocument();
+    });
+  });
+
+  it('422 PRODUCT_NOT_PURCHASED 에러 시 구매 필요 메시지를 표시한다', async () => {
+    onSubmit.mockRejectedValueOnce({
+      code: 'PRODUCT_NOT_PURCHASED',
+      message: 'User has not purchased this product',
+      timestamp: new Date().toISOString(),
+    });
+
+    const user = userEvent.setup();
+    render(<ReviewForm onSubmit={onSubmit} />);
+
+    await user.click(screen.getByRole('radio', { name: '5점' }));
+    await user.type(screen.getByLabelText('제목'), '좋아요');
+    await user.type(screen.getByLabelText('내용'), '아주 좋습니다.');
+    await user.click(screen.getByRole('button', { name: '리뷰 작성' }));
+
+    await waitFor(() => {
+      expect(screen.getByText('구매한 상품에만 리뷰를 작성할 수 있습니다.')).toBeInTheDocument();
+    });
+  });
 });

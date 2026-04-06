@@ -18,12 +18,12 @@ export function PromotionDetail({ promotionId }: Props) {
   const deletePromotion = useDeletePromotion();
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
 
-  if (isLoading || !promotion) {
-    return <PageLayout.Skeleton />;
-  }
-
   if (isError) {
     return <ErrorMessage message="프로모션 정보를 불러오는데 실패했습니다." onRetry={() => refetch()} />;
+  }
+
+  if (isLoading || !promotion) {
+    return <PageLayout.Skeleton />;
   }
 
   const handleDelete = async () => {

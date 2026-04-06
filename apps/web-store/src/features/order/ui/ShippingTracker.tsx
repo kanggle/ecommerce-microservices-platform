@@ -147,13 +147,13 @@ export function ShippingTracker({ orderId }: Props) {
       </div>
 
       {/* Tracking Info */}
-      {showTrackingInfo && shipping.trackingNumber && shipping.carrier && (
+      {showTrackingInfo && (
         <div style={{ marginTop: 'var(--space-2)' }}>
           <p style={{ margin: 'var(--space-1) 0', color: 'var(--color-text-secondary)' }}>
-            택배사: {shipping.carrier}
+            택배사: {shipping.carrier ?? '정보 없음'}
           </p>
           <p style={{ margin: 'var(--space-1) 0', color: 'var(--color-text-secondary)' }}>
-            운송장 번호: {shipping.trackingNumber}
+            운송장 번호: {shipping.trackingNumber ?? '정보 없음'}
           </p>
         </div>
       )}

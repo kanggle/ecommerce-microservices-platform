@@ -8,7 +8,7 @@ TASK-FE-053 리뷰 수정 — useAuth 훅 규칙 위반, window.alert SSR 호환
 
 # Status
 
-ready
+review
 
 # Owner
 

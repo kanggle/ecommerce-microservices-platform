@@ -40,6 +40,7 @@ Add a product to the user's wishlist.
 | 400 | VALIDATION_ERROR | Missing or invalid productId |
 | 401 | UNAUTHORIZED | X-User-Id header is missing |
 | 409 | ALREADY_IN_WISHLIST | Product is already in the wishlist |
+| 409 | WISHLIST_LIMIT_EXCEEDED | Wishlist has reached the maximum limit of 100 items |
 
 ---
 
@@ -113,9 +114,12 @@ Check if a product is in the user's wishlist.
 ```json
 {
   "productId": "string (UUID)",
-  "inWishlist": true
+  "inWishlist": true,
+  "wishlistItemId": "string (UUID) | null"
 }
 ```
+
+- `wishlistItemId` is returned when `inWishlist` is `true`. When `inWishlist` is `false`, `wishlistItemId` is `null`.
 
 **Error responses**
 | Status | Code | Reason |

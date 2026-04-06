@@ -3,6 +3,7 @@
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { ErrorMessage } from '@repo/ui';
+import { getErrorMessage } from '@repo/types/guards';
 import { Skeleton } from '@/shared/ui/Skeleton';
 import { useNotificationPreferences } from '../model/use-notification-preferences';
 import { useUpdatePreferences } from '../model/use-update-preferences';
@@ -183,6 +184,19 @@ export function NotificationSettings() {
               }}
             >
               설정이 저장되었습니다.
+            </p>
+          )}
+          {updatePreferences.isError && (
+            <p
+              data-testid="save-error"
+              role="alert"
+              style={{
+                marginTop: 'var(--space-4)',
+                fontSize: 'var(--font-size-sm)',
+                color: 'var(--color-error)',
+              }}
+            >
+              {getErrorMessage(updatePreferences.error, '알림 설정 변경에 실패했습니다.')}
             </p>
           )}
         </div>

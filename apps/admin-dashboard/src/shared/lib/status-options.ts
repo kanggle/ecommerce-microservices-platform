@@ -1,4 +1,4 @@
-import type { ProductStatus, OrderStatus, UserStatus, PromotionStatus } from '@repo/types';
+import type { ProductStatus, OrderStatus, UserStatus, PromotionStatus, ShippingStatus } from '@repo/types';
 
 export interface StatusOption<T extends string = string> {
   label: string;
@@ -31,7 +31,15 @@ export const PROMOTION_STATUS_OPTIONS: StatusOption<PromotionStatus>[] = [
   { label: '종료', value: 'ENDED' },
 ];
 
+export const SHIPPING_STATUS_OPTIONS: StatusOption<ShippingStatus>[] = [
+  { label: '준비중', value: 'PREPARING' },
+  { label: '발송완료', value: 'SHIPPED' },
+  { label: '운송중', value: 'IN_TRANSIT' },
+  { label: '배송완료', value: 'DELIVERED' },
+];
+
 export const VALID_PRODUCT_STATUSES: readonly ProductStatus[] = PRODUCT_STATUS_OPTIONS.map((o) => o.value);
 export const VALID_ORDER_STATUSES: readonly OrderStatus[] = ORDER_STATUS_OPTIONS.map((o) => o.value);
 export const VALID_USER_STATUSES: readonly UserStatus[] = USER_STATUS_OPTIONS.map((o) => o.value);
 export const VALID_PROMOTION_STATUSES: readonly PromotionStatus[] = PROMOTION_STATUS_OPTIONS.map((o) => o.value);
+export const VALID_SHIPPING_STATUSES: readonly ShippingStatus[] = SHIPPING_STATUS_OPTIONS.map((o) => o.value);

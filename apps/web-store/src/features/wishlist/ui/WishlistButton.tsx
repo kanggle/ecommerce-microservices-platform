@@ -3,7 +3,7 @@
 import { useCallback } from 'react';
 import { useRouter } from 'next/navigation';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
-import { getErrorMessage } from '@repo/types/guards';
+import { getErrorMessage, isApiError, ERROR_MESSAGES } from '@repo/types/guards';
 import { useAuth } from '@/features/auth';
 import { useWishlistCheck } from '../model/use-wishlist-check';
 import { addToWishlist, removeFromWishlist } from '../api/wishlist-api';
@@ -29,10 +29,15 @@ function WishlistButtonInner({ productId, wishlistItemId: externalItemId, size =
       queryClient.invalidateQueries({ queryKey: wishlistKeys.lists() });
     },
     onError: (error) => {
-      const code = (error as { code?: string })?.code;
-      if (code === 'ALREADY_IN_WISHLIST') {
-        queryClient.invalidateQueries({ queryKey: wishlistKeys.check(productId) });
-        return;
+      if (isApiError(error)) {
+        if (error.code === 'ALREADY_IN_WISHLIST') {
+          queryClient.invalidateQueries({ queryKey: wishlistKeys.check(productId) });
+          return;
+        }
+        if (error.code === 'WISHLIST_LIMIT_EXCEEDED') {
+          window.alert(ERROR_MESSAGES.WISHLIST_LIMIT_EXCEEDED);
+          return;
+        }
       }
       window.alert(getErrorMessage(error, '위시리스트 추가에 실패했습니다.'));
     },
@@ -58,8 +63,7 @@ function WishlistButtonInner({ productId, wishlistItemId: externalItemId, size =
       if (isPending || checkLoading) return;
 
       if (inWishlist) {
-        // Use externalItemId if available (from list page), or the one from add response
-        const itemId = externalItemId ?? addMutation.data?.wishlistItemId;
+        const itemId = externalItemId ?? checkData?.wishlistItemId ?? addMutation.data?.wishlistItemId;
         if (itemId) {
           removeMutation.mutate(itemId);
         }

@@ -16,7 +16,12 @@ export function useShippingTracking(orderId: string): UseShippingTrackingReturn 
     queryKey: shippingKeys.byOrder(orderId),
     queryFn: () => getShippingByOrder(orderId),
     enabled: !!orderId,
-    retry: false,
+    retry: (failureCount, error) => {
+      if (isApiError(error) && ['SHIPPING_NOT_FOUND', 'ACCESS_DENIED'].includes(error.code)) {
+        return false;
+      }
+      return failureCount < 3;
+    },
   });
 
   const isNotFound = query.error

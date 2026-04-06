@@ -29,6 +29,7 @@ export const ERROR_MESSAGES: Record<string, string> = {
   ADDRESS_NOT_FOUND: '이미 삭제된 배송지입니다.',
   DEFAULT_ADDRESS_CANNOT_BE_DELETED: '기본 배송지는 삭제할 수 없습니다.',
   USER_PROFILE_NOT_FOUND: '프로필을 찾을 수 없습니다.',
+  WISHLIST_LIMIT_EXCEEDED: '위시리스트는 최대 100개까지 추가할 수 있습니다.',
 };
 
 export function getErrorMessage(error: unknown, fallback: string): string {

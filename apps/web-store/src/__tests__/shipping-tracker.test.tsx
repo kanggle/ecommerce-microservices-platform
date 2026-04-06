@@ -197,7 +197,7 @@ describe('ShippingTracker', () => {
   });
 
   it('API 에러 시 에러 메시지를 표시한다', async () => {
-    mockGetShippingByOrder.mockRejectedValueOnce(new Error('network error'));
+    mockGetShippingByOrder.mockRejectedValue(new Error('network error'));
 
     render(
       <TestQueryProvider>
@@ -207,7 +207,7 @@ describe('ShippingTracker', () => {
 
     await waitFor(() => {
       expect(screen.getByText('배송 정보를 불러오는데 실패했습니다.')).toBeInTheDocument();
-    });
+    }, { timeout: 10000 });
   });
 
   it('권한 없는 접근(403) 시 접근 불가 메시지를 표시한다', async () => {
@@ -238,6 +238,68 @@ describe('ShippingTracker', () => {
     );
 
     expect(screen.queryByText('배송 추적')).not.toBeInTheDocument();
+  });
+
+  it('취소된 주문의 배송 정보 조회 시 안내 메시지를 표시한다', async () => {
+    mockGetShippingByOrder.mockRejectedValueOnce({
+      code: 'SHIPPING_NOT_FOUND',
+      message: 'Shipping record for given order does not exist',
+      timestamp: new Date().toISOString(),
+    });
+
+    render(
+      <TestQueryProvider>
+        <ShippingTracker orderId="cancelled-order-1" />
+      </TestQueryProvider>,
+    );
+
+    await waitFor(() => {
+      expect(screen.getByText('배송 추적')).toBeInTheDocument();
+    });
+
+    expect(screen.getByText(/배송 준비 중입니다/)).toBeInTheDocument();
+    expect(screen.queryByText(/택배사:/)).not.toBeInTheDocument();
+    expect(screen.queryByText(/운송장 번호:/)).not.toBeInTheDocument();
+  });
+
+  it('운송장 번호만 있고 택배사가 없으면 택배사에 "정보 없음"을 표시한다', async () => {
+    const shippingWithoutCarrier: ShippingResponse = {
+      ...MOCK_SHIPPING_SHIPPED,
+      carrier: null,
+    };
+    mockGetShippingByOrder.mockResolvedValueOnce(shippingWithoutCarrier);
+
+    render(
+      <TestQueryProvider>
+        <ShippingTracker orderId="order-1" />
+      </TestQueryProvider>,
+    );
+
+    await waitFor(() => {
+      expect(screen.getByText(/운송장 번호: 1234567890/)).toBeInTheDocument();
+    });
+
+    expect(screen.getByText(/택배사: 정보 없음/)).toBeInTheDocument();
+  });
+
+  it('택배사만 있고 운송장 번호가 없으면 운송장 번호에 "정보 없음"을 표시한다', async () => {
+    const shippingWithoutTracking: ShippingResponse = {
+      ...MOCK_SHIPPING_SHIPPED,
+      trackingNumber: null,
+    };
+    mockGetShippingByOrder.mockResolvedValueOnce(shippingWithoutTracking);
+
+    render(
+      <TestQueryProvider>
+        <ShippingTracker orderId="order-1" />
+      </TestQueryProvider>,
+    );
+
+    await waitFor(() => {
+      expect(screen.getByText(/택배사: CJ대한통운/)).toBeInTheDocument();
+    });
+
+    expect(screen.getByText(/운송장 번호: 정보 없음/)).toBeInTheDocument();
   });
 
   it('스텝 인디케이터에 role="list" 속성이 있다', async () => {

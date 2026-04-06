@@ -2,9 +2,11 @@ import {
   PRODUCT_STATUS_OPTIONS,
   ORDER_STATUS_OPTIONS,
   USER_STATUS_OPTIONS,
+  SHIPPING_STATUS_OPTIONS,
   VALID_PRODUCT_STATUSES,
   VALID_ORDER_STATUSES,
   VALID_USER_STATUSES,
+  VALID_SHIPPING_STATUSES,
 } from '@/shared/lib/status-options';
 
 describe('status-options', () => {
@@ -35,6 +37,19 @@ describe('status-options', () => {
     });
   });
 
+  describe('SHIPPING_STATUS_OPTIONS', () => {
+    it('PREPARING, SHIPPED, IN_TRANSIT, DELIVERED 상태를 포함한다', () => {
+      const values = SHIPPING_STATUS_OPTIONS.map((o) => o.value);
+      expect(values).toEqual(['PREPARING', 'SHIPPED', 'IN_TRANSIT', 'DELIVERED']);
+    });
+
+    it('각 옵션에 한국어 라벨이 있다', () => {
+      SHIPPING_STATUS_OPTIONS.forEach((o) => {
+        expect(o.label).toBeTruthy();
+      });
+    });
+  });
+
   describe('VALID_*_STATUSES', () => {
     it('VALID_PRODUCT_STATUSES는 옵션의 value 배열과 동일하다', () => {
       expect(VALID_PRODUCT_STATUSES).toEqual(PRODUCT_STATUS_OPTIONS.map((o) => o.value));
@@ -46,6 +61,10 @@ describe('status-options', () => {
 
     it('VALID_USER_STATUSES는 옵션의 value 배열과 동일하다', () => {
       expect(VALID_USER_STATUSES).toEqual(USER_STATUS_OPTIONS.map((o) => o.value));
+    });
+
+    it('VALID_SHIPPING_STATUSES는 옵션의 value 배열과 동일하다', () => {
+      expect(VALID_SHIPPING_STATUSES).toEqual(SHIPPING_STATUS_OPTIONS.map((o) => o.value));
     });
   });
 });

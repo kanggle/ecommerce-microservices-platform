@@ -21,10 +21,5 @@ export interface WishlistItem {
 export interface WishlistCheckResponse {
   productId: string;
   inWishlist: boolean;
-}
-
-export interface WishlistCheckResult {
-  productId: string;
-  inWishlist: boolean;
-  wishlistItemId?: string;
+  wishlistItemId: string | null;
 }

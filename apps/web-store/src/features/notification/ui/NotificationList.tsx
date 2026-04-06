@@ -73,7 +73,7 @@ export function NotificationList() {
 
   const { data, isLoading, isError, refetch } = useNotifications(page, size);
 
-  const notifications = data?.content ?? [];
+  const notifications = (data?.content ?? []).filter((n) => n.status === 'SENT');
   const totalElements = data?.totalElements ?? 0;
   const error = isError ? '알림 목록을 불러오는데 실패했습니다.' : '';
 

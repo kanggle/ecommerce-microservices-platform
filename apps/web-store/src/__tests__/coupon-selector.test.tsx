@@ -1,7 +1,7 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { render, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
-import type { CouponSummary, PaginatedResponse, ApplyCouponResponse } from '@repo/types';
+import type { CouponSummary, PaginatedResponse } from '@repo/types';
 import { TestQueryProvider } from './test-utils';
 
 vi.mock('next/navigation', () => ({
@@ -25,11 +25,22 @@ vi.mock('@repo/ui', () => ({
 
 vi.mock('@/features/coupon/api/coupon-api');
 
-import { getMyCoupons, applyCoupon } from '@/features/coupon/api/coupon-api';
+import { getMyCoupons } from '@/features/coupon/api/coupon-api';
 import { CouponSelector } from '@/features/coupon/ui/CouponSelector';
 
 const mockGetMyCoupons = vi.mocked(getMyCoupons);
-const mockApplyCoupon = vi.mocked(applyCoupon);
+
+function futureDateISO(): string {
+  const d = new Date();
+  d.setFullYear(d.getFullYear() + 1);
+  return d.toISOString();
+}
+
+function pastDateISO(): string {
+  const d = new Date();
+  d.setDate(d.getDate() - 1);
+  return d.toISOString();
+}
 
 const MOCK_COUPONS: CouponSummary[] = [
   {
@@ -41,7 +52,7 @@ const MOCK_COUPONS: CouponSummary[] = [
     maxDiscountAmount: 0,
     status: 'ISSUED',
     issuedAt: '2026-03-01T00:00:00Z',
-    expiresAt: '2026-04-30T23:59:59Z',
+    expiresAt: futureDateISO(),
   },
   {
     couponId: 'coupon-2',
@@ -52,15 +63,9 @@ const MOCK_COUPONS: CouponSummary[] = [
     maxDiscountAmount: 10000,
     status: 'ISSUED',
     issuedAt: '2026-03-01T00:00:00Z',
-    expiresAt: '2026-06-30T23:59:59Z',
+    expiresAt: futureDateISO(),
   },
 ];
-
-const MOCK_APPLY_RESPONSE: ApplyCouponResponse = {
-  couponId: 'coupon-1',
-  discountAmount: 5000,
-  finalAmount: 25000,
-};
 
 function createPaginatedResponse(
   content: CouponSummary[],
@@ -71,7 +76,6 @@ function createPaginatedResponse(
 describe('CouponSelector', () => {
   beforeEach(() => {
     vi.clearAllMocks();
-    vi.spyOn(window, 'alert').mockImplementation(() => {});
   });
 
   it('쿠폰 선택 버튼을 표시한다', () => {
@@ -104,9 +108,8 @@ describe('CouponSelector', () => {
     expect(screen.getAllByTestId('coupon-card')).toHaveLength(2);
   });
 
-  it('쿠폰 선택 시 할인 적용 API를 호출한다', async () => {
+  it('FIXED 쿠폰 선택 시 클라이언트에서 할인을 계산한다', async () => {
     mockGetMyCoupons.mockResolvedValue(createPaginatedResponse(MOCK_COUPONS));
-    mockApplyCoupon.mockResolvedValueOnce(MOCK_APPLY_RESPONSE);
 
     const onCouponApplied = vi.fn();
     const user = userEvent.setup();
@@ -125,11 +128,39 @@ describe('CouponSelector', () => {
 
     await user.click(screen.getAllByTestId('coupon-card')[0]);
 
+    expect(onCouponApplied).toHaveBeenCalledWith({
+      couponId: 'coupon-1',
+      discountAmount: 5000,
+      finalAmount: 25000,
+    });
+  });
+
+  it('PERCENTAGE 쿠폰 선택 시 클라이언트에서 할인을 계산한다', async () => {
+    mockGetMyCoupons.mockResolvedValue(createPaginatedResponse(MOCK_COUPONS));
+
+    const onCouponApplied = vi.fn();
+    const user = userEvent.setup();
+
+    render(
+      <TestQueryProvider>
+        <CouponSelector orderAmount={30000} onCouponApplied={onCouponApplied} />
+      </TestQueryProvider>,
+    );
+
+    await user.click(screen.getByText('쿠폰 선택'));
+
     await waitFor(() => {
-      expect(mockApplyCoupon).toHaveBeenCalledWith('coupon-1', { orderId: '', orderAmount: 30000 });
+      expect(screen.getAllByTestId('coupon-card')).toHaveLength(2);
     });
 
-    expect(onCouponApplied).toHaveBeenCalledWith(MOCK_APPLY_RESPONSE);
+    // 30000 * 10% = 3000, maxDiscountAmount=10000 이므로 3000 적용
+    await user.click(screen.getAllByTestId('coupon-card')[1]);
+
+    expect(onCouponApplied).toHaveBeenCalledWith({
+      couponId: 'coupon-2',
+      discountAmount: 3000,
+      finalAmount: 27000,
+    });
   });
 
   it('사용 가능한 쿠폰이 없으면 빈 상태를 표시한다', async () => {
@@ -152,7 +183,6 @@ describe('CouponSelector', () => {
 
   it('선택한 쿠폰을 해제할 수 있다', async () => {
     mockGetMyCoupons.mockResolvedValue(createPaginatedResponse(MOCK_COUPONS));
-    mockApplyCoupon.mockResolvedValueOnce(MOCK_APPLY_RESPONSE);
 
     const onCouponApplied = vi.fn();
     const user = userEvent.setup();
@@ -170,8 +200,10 @@ describe('CouponSelector', () => {
     });
     await user.click(screen.getAllByTestId('coupon-card')[0]);
 
-    await waitFor(() => {
-      expect(onCouponApplied).toHaveBeenCalledWith(MOCK_APPLY_RESPONSE);
+    expect(onCouponApplied).toHaveBeenCalledWith({
+      couponId: 'coupon-1',
+      discountAmount: 5000,
+      finalAmount: 25000,
     });
 
     // Close panel, should show selected coupon
@@ -185,5 +217,69 @@ describe('CouponSelector', () => {
     await user.click(screen.getByText('해제'));
 
     expect(onCouponApplied).toHaveBeenLastCalledWith(null);
+  });
+
+  it('만료된 쿠폰 선택 시 만료 메시지를 표시하고 선택하지 않는다', async () => {
+    const expiredCoupon: CouponSummary = {
+      couponId: 'coupon-expired',
+      promotionId: 'promo-expired',
+      promotionName: '만료된 쿠폰',
+      discountType: 'FIXED',
+      discountValue: 3000,
+      maxDiscountAmount: 0,
+      status: 'ISSUED',
+      issuedAt: '2025-01-01T00:00:00Z',
+      expiresAt: pastDateISO(),
+    };
+
+    mockGetMyCoupons.mockResolvedValue(
+      createPaginatedResponse([expiredCoupon]),
+    );
+
+    const onCouponApplied = vi.fn();
+    const user = userEvent.setup();
+
+    render(
+      <TestQueryProvider>
+        <CouponSelector orderAmount={30000} onCouponApplied={onCouponApplied} />
+      </TestQueryProvider>,
+    );
+
+    await user.click(screen.getByText('쿠폰 선택'));
+
+    await waitFor(() => {
+      expect(screen.getAllByTestId('coupon-card')).toHaveLength(1);
+    });
+
+    await user.click(screen.getAllByTestId('coupon-card')[0]);
+
+    expect(screen.getByTestId('coupon-expired-message')).toBeInTheDocument();
+    expect(screen.getByText('쿠폰이 만료되었습니다')).toBeInTheDocument();
+    expect(onCouponApplied).toHaveBeenCalledWith(null);
+  });
+
+  it('쿠폰 선택 시 apply API를 호출하지 않는다', async () => {
+    mockGetMyCoupons.mockResolvedValue(createPaginatedResponse(MOCK_COUPONS));
+
+    const { applyCoupon: mockApplyCoupon } = await import(
+      '@/features/coupon/api/coupon-api'
+    );
+
+    const user = userEvent.setup();
+
+    render(
+      <TestQueryProvider>
+        <CouponSelector orderAmount={30000} onCouponApplied={vi.fn()} />
+      </TestQueryProvider>,
+    );
+
+    await user.click(screen.getByText('쿠폰 선택'));
+    await waitFor(() => {
+      expect(screen.getAllByTestId('coupon-card')).toHaveLength(2);
+    });
+
+    await user.click(screen.getAllByTestId('coupon-card')[0]);
+
+    expect(mockApplyCoupon).not.toHaveBeenCalled();
   });
 });
