@@ -23,14 +23,15 @@ Examples:
 
 ## Procedure
 
-1. Read `specs/platform/event-driven-policy.md` (envelope, naming, consumer rules)
-2. Read `specs/platform/naming-conventions.md` (event topic naming)
-3. Read `specs/platform/versioning-policy.md` (event versioning)
-4. Read existing `specs/contracts/events/` contract files to understand current patterns
-5. Read `specs/services/<service>/overview.md` for the related service (ownership check)
-6. Design the event contract following the format below
-7. Write to `specs/contracts/events/<service>-events.md`
-8. Update related feature/use-case specs and service overview Related Events
+1. Follow `specs/platform/entrypoint.md` Step 0 — read `PROJECT.md` then load `specs/rules/common.md` plus any `specs/rules/domains/<domain>.md` and `specs/rules/traits/<trait>.md` that match the declared classification. Trait files such as `transactional.md`, `integration-heavy.md`, or `real-time.md` contain event-specific mandates (idempotency, DLQ, ordering) that must be honored in the contract design.
+2. Read `specs/platform/event-driven-policy.md` (envelope, naming, consumer rules)
+3. Read `specs/platform/naming-conventions.md` (event topic naming)
+4. Read `specs/platform/versioning-policy.md` (event versioning)
+5. Read existing `specs/contracts/events/` contract files to understand current patterns
+6. Read `specs/services/<service>/overview.md` for the related service (ownership check)
+7. Design the event contract following the format below
+8. Write to `specs/contracts/events/<service>-events.md`
+9. Update related feature/use-case specs and service overview Related Events
 
 ## Contract Format
 

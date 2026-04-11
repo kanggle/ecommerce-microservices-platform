@@ -58,7 +58,7 @@ Direct refactoring of a specific target. No analysis phase.
 
 ### Procedure
 
-1. Read `CLAUDE.md`
+1. Read `CLAUDE.md` — including its "Project Classification (Read First)" section, which requires loading `PROJECT.md` and the applicable `specs/rules/common.md`, `specs/rules/domains/<domain>.md`, and `specs/rules/traits/<trait>.md` files per `specs/platform/entrypoint.md` Step 0 before touching any code.
 2. Read `specs/platform/refactoring-policy.md`
 3. Read `specs/services/<service>/architecture.md`
 4. Read `.claude/skills/INDEX.md` → read matched architecture skill and `backend/refactoring/SKILL.md`
@@ -93,7 +93,7 @@ Main context reads service code for analysis but does NOT perform refactoring di
 
 ### Phase 1: Discovery & Analysis (main context)
 
-1. Read `CLAUDE.md`
+1. Read `CLAUDE.md` — including its "Project Classification (Read First)" section, which requires loading `PROJECT.md` and the applicable `specs/rules/common.md`, `specs/rules/domains/<domain>.md`, and `specs/rules/traits/<trait>.md` files per `specs/platform/entrypoint.md` Step 0 before analysis. Active traits can dictate refactoring constraints (e.g., `transactional` may forbid changes to state-transition paths without saga review).
 2. Read `specs/platform/refactoring-policy.md`
 3. Read `specs/services/<service>/architecture.md` to understand the declared architecture
 4. Read `specs/platform/coding-rules.md` (if exists)
@@ -165,7 +165,7 @@ You are performing a safe refactoring in this project. Follow these steps exactl
 - Description: {description}
 
 ## Steps
-1. Read `CLAUDE.md`
+1. Read `CLAUDE.md` — including its "Project Classification (Read First)" section, which requires loading `PROJECT.md` and the applicable `specs/rules/common.md`, `specs/rules/domains/<domain>.md`, and `specs/rules/traits/<trait>.md` files per `specs/platform/entrypoint.md` Step 0 before touching any code.
 2. Read `specs/platform/refactoring-policy.md`
 3. Read `specs/services/{service}/architecture.md`
 4. Read `specs/platform/coding-rules.md` (if exists)

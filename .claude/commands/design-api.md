@@ -23,15 +23,16 @@ Examples:
 
 ## Procedure
 
-1. Read `specs/platform/naming-conventions.md` (URL and field naming rules)
-2. Read `specs/platform/error-handling.md` (error response format, status codes)
-3. Read `specs/platform/api-gateway-policy.md` (public/authenticated routes, rate limits)
-4. Read `specs/platform/versioning-policy.md` (breaking change criteria)
-5. Read existing `specs/contracts/http/` contract files to understand current patterns
-6. Read `specs/services/<service>/overview.md` for the related service (scope check)
-7. Design the API contract following the format below
-8. Write to `specs/contracts/http/<service>-api.md`
-9. Update related feature/use-case specs if needed
+1. Follow `specs/platform/entrypoint.md` Step 0 — read `PROJECT.md` then load `specs/rules/common.md` plus any `specs/rules/domains/<domain>.md` and `specs/rules/traits/<trait>.md` that match the declared classification. Unknown domain/trait values are a Hard Stop per `CLAUDE.md`.
+2. Read `specs/platform/naming-conventions.md` (URL and field naming rules)
+3. Read `specs/platform/error-handling.md` (error response format, status codes)
+4. Read `specs/platform/api-gateway-policy.md` (public/authenticated routes, rate limits)
+5. Read `specs/platform/versioning-policy.md` (breaking change criteria)
+6. Read existing `specs/contracts/http/` contract files to understand current patterns
+7. Read `specs/services/<service>/overview.md` for the related service (scope check)
+8. Design the API contract following the format below
+9. Write to `specs/contracts/http/<service>-api.md`
+10. Update related feature/use-case specs if needed
 
 ## Contract Format
 

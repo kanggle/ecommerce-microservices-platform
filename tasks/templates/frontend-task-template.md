@@ -48,6 +48,8 @@ Describe the user-visible result that must be achieved.
 
 # Related Specs
 
+> **Before reading Related Specs**: Follow `specs/platform/entrypoint.md` Step 0 — read `PROJECT.md`, then load `specs/rules/common.md` plus any `specs/rules/domains/<domain>.md` and `specs/rules/traits/<trait>.md` matching the declared classification. Unknown tags are a Hard Stop per `CLAUDE.md`.
+
 - `specs/platform/...`
 - `specs/features/...`
 - `specs/use-cases/...`
