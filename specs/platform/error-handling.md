@@ -4,6 +4,28 @@ Defines the platform-wide error response format and error code conventions.
 
 ---
 
+# Registry Structure
+
+This document is the **platform-wide error registry**. It contains two kinds of error codes:
+
+1. **Platform-Common** — errors that every project inherits regardless of domain/traits.
+   Sections: `Authentication`, `Authorization`, `Registration`, `Validation`, `Rate Limiting`, `OAuth`, `General`.
+   These must be carried over verbatim when bootstrapping a new project.
+
+2. **Domain-Specific** — errors that belong to the active primary domain declared in `PROJECT.md`.
+   Sections below the `Platform-Common` block are tagged with their owning domain (e.g. `[domain: ecommerce]`).
+   When a new project is bootstrapped with a different domain, replace the ecommerce sections with the matching domain's error codes.
+
+For ecommerce domain context and business semantics of each code group, see
+[`specs/rules/domains/ecommerce.md`](../rules/domains/ecommerce.md) → `Standard Error Codes` section.
+
+**Change protocol**:
+- New platform-common error codes → add to this file only.
+- New domain-specific error codes → add to this file **and** cross-reference from the matching `specs/rules/domains/<domain>.md`.
+- Do not duplicate the error table inside domain rule files. This document is the single authoritative registry.
+
+---
+
 # Error Response Format
 
 All services must return errors in the following JSON format:
@@ -89,7 +111,13 @@ All services must return errors in the following JSON format:
 | INTERNAL_ERROR | 500 | Unexpected server-side error |
 | SERVICE_UNAVAILABLE | 503 | A required upstream service is unavailable |
 
-## Product
+---
+
+# Domain-Specific Error Codes
+
+> The sections below belong to the active primary domain. When bootstrapping a new project with a different `domain` in `PROJECT.md`, replace these sections with the matching domain's error codes.
+
+## Product  `[domain: ecommerce]`
 
 | Code | HTTP | Description |
 |---|---|---|
@@ -99,13 +127,13 @@ All services must return errors in the following JSON format:
 | INSUFFICIENT_STOCK | 400 | Stock adjustment would result in negative stock |
 | CONFLICT | 409 | Optimistic locking conflict on concurrent update |
 
-## Search
+## Search  `[domain: ecommerce]`
 
 | Code | HTTP | Description |
 |---|---|---|
 | INVALID_SEARCH_REQUEST | 400 | Search request is invalid (missing or blank q parameter, invalid size) |
 
-## Order
+## Order  `[domain: ecommerce]`
 
 | Code | HTTP | Description |
 |---|---|---|
@@ -113,7 +141,7 @@ All services must return errors in the following JSON format:
 | INVALID_ORDER_REQUEST | 400 | Order request is invalid (missing fields, invalid quantity) |
 | ORDER_CANNOT_BE_CANCELLED | 422 | Order cannot be cancelled in its current status |
 
-## Payment
+## Payment  `[domain: ecommerce]`
 
 | Code | HTTP | Description |
 |---|---|---|
@@ -124,7 +152,7 @@ All services must return errors in the following JSON format:
 | PG_CONFIRM_FAILED | 502 | Toss Payments confirmation API returned an error |
 | ACCESS_DENIED | 403 | Not the payment owner (reuses Authorization/ACCESS_DENIED) |
 
-## User
+## User  `[domain: ecommerce]`
 
 | Code | HTTP | Description |
 |---|---|---|
@@ -134,7 +162,7 @@ All services must return errors in the following JSON format:
 | DEFAULT_ADDRESS_CANNOT_BE_DELETED | 422 | Cannot delete the default address while other addresses exist |
 | USER_ALREADY_WITHDRAWN | 422 | User has already been withdrawn |
 
-## Promotion
+## Promotion  `[domain: ecommerce]`
 
 | Code | HTTP | Description |
 |---|---|---|
@@ -150,7 +178,7 @@ All services must return errors in the following JSON format:
 | COUPON_LIMIT_EXCEEDED | 422 | Issuance would exceed max issuance count |
 | COUPON_RESTORE_NOT_ALLOWED | 422 | Coupon cannot be restored (e.g. coupon is not in a used state) |
 
-## Notification
+## Notification  `[domain: ecommerce]`
 
 | Code | HTTP | Description |
 |---|---|---|
@@ -160,7 +188,7 @@ All services must return errors in the following JSON format:
 | TEMPLATE_NOT_FOUND | 404 | Template with given ID does not exist |
 | TEMPLATE_ALREADY_EXISTS | 409 | Template for this type and channel already exists |
 
-## Review
+## Review  `[domain: ecommerce]`
 
 | Code | HTTP | Description |
 |---|---|---|
@@ -169,7 +197,7 @@ All services must return errors in the following JSON format:
 | REVIEW_ALREADY_EXISTS | 409 | User already reviewed this product |
 | PRODUCT_NOT_PURCHASED | 422 | User has not purchased this product |
 
-## Wishlist
+## Wishlist  `[domain: ecommerce]`
 
 | Code | HTTP | Description |
 |---|---|---|
@@ -177,7 +205,7 @@ All services must return errors in the following JSON format:
 | WISHLIST_ITEM_NOT_FOUND | 404 | Wishlist item with given ID does not exist |
 | ALREADY_IN_WISHLIST | 409 | Product is already in the wishlist |
 
-## Shipping
+## Shipping  `[domain: ecommerce]`
 
 | Code | HTTP | Description |
 |---|---|---|

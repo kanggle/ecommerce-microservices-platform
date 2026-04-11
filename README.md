@@ -8,6 +8,7 @@ This repository is designed for spec-driven, task-driven, and AI-assisted develo
 
 ## Principles
 
+- `PROJECT.md` declares the project's domain and trait classification (see taxonomy-based rule system below)
 - `specs/` are the official source of truth
 - work is executed through `tasks/`
 - only tasks in `tasks/ready/` may be implemented
@@ -19,11 +20,19 @@ This repository is designed for spec-driven, task-driven, and AI-assisted develo
 
 ## Document Roles
 
+### `PROJECT.md`
+Declares the project's classification — `domain` (one) and `traits` (multiple) — which selects the applicable rule layers under `specs/rules/`. Every new project must update this file first.
+
 ### `CLAUDE.md`
-Defines the minimum rules for how AI agents and developers must operate.
+Defines the minimum rules for how AI agents and developers must operate. Its "Project Classification (Read First)" section drives the rule-layer resolution.
 
 ### `specs/`
 Official project rules, contracts, service definitions, feature definitions, and cross-service flows.
+- `specs/platform/` — technology-level common rules (architecture, coding, naming, security, testing, observability, etc.) shared across all projects
+- `specs/rules/` — taxonomy-based conditional rules (`common.md` index, `domains/<domain>.md`, `traits/<trait>.md`) activated by `PROJECT.md`
+- `specs/contracts/` — HTTP and event contracts
+- `specs/services/` — per-service architecture, overview, and boundaries
+- `specs/features/`, `specs/use-cases/` — feature-level and use-case specs
 
 ### `.claude/skills/`
 Implementation guidance, working patterns, and checklists.
@@ -44,11 +53,18 @@ Human-oriented onboarding, operational guides, and runbooks.
     platform-project/
     ├── README.md
     ├── CLAUDE.md
+    ├── PROJECT.md           ← project classification (domain + traits)
     ├── .claude/
     ├── apps/
     ├── packages/
     ├── libs/
     ├── specs/
+    │   ├── platform/        ← technology-level common rules (stable)
+    │   ├── rules/           ← taxonomy-based rules (common index + domains/ + traits/)
+    │   ├── contracts/
+    │   ├── services/
+    │   ├── features/
+    │   └── use-cases/
     ├── knowledge/
     ├── tasks/
     ├── docs/
@@ -65,14 +81,17 @@ Do not start implementation from existing code.
 Read in this order:
 
 1. `CLAUDE.md`
-2. target task in `tasks/ready/`
-3. `specs/platform/entrypoint.md`
-4. relevant platform specs
-5. target service specs
-6. related contracts
-7. related feature specs and use-cases
-8. `.claude/skills/`
-9. `knowledge/` if needed
+2. `PROJECT.md` — then follow `specs/platform/entrypoint.md` **Step 0** to load the active rule layers (`specs/rules/common.md`, `specs/rules/domains/<domain>.md`, `specs/rules/traits/<trait>.md`)
+3. target task in `tasks/ready/`
+4. `specs/platform/entrypoint.md` — Core, Service-Type-Specific, and Auxiliary layers
+5. relevant platform specs
+6. target service specs
+7. related contracts
+8. related feature specs and use-cases
+9. `.claude/skills/`
+10. `knowledge/` if needed
+
+Undeclared or unknown `domain`/`trait` values in `PROJECT.md` are a Hard Stop per `CLAUDE.md`.
 
 ---
 
