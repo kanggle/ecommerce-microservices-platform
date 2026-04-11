@@ -11,7 +11,7 @@
 ### 1. Common (모든 프로젝트에 적용)
 
 - 위치: [common.md](common.md) — **인덱스 전용**, 규칙 문장 작성 금지
-- 내용: 기존 [specs/platform/](../) 아래 14개 canonical 파일을 가리키는 인덱스
+- 내용: 기존 [specs/platform/](../platform/) 아래 14개 canonical 파일을 가리키는 인덱스
 - 특징:
   - 모든 프로젝트가 항상 로드
   - 이 계층의 규칙을 domain/trait 계층에서 완화(loosen)하려면 명시적 override 선언이 필요
@@ -41,7 +41,7 @@ AI 에이전트와 개발자는 다음 순서로 규칙을 로드·적용한다:
 2. **Common 계층 로드** — [common.md](common.md)에 인덱싱된 모든 파일
 3. **Domain 계층 로드** — [domains/<declared-domain>.md](domains/) (있는 경우)
 4. **Traits 계층 로드** — [traits/<each-declared-trait>.md](traits/) (있는 경우, 여러 개)
-5. **Service-Type 계층 로드** — 구현 대상 서비스의 `architecture.md`에서 선언한 Service Type에 해당하는 [../service-types/](../service-types/) 파일 (정확히 1개)
+5. **Service-Type 계층 로드** — 구현 대상 서비스의 `architecture.md`에서 선언한 Service Type에 해당하는 [../platform/service-types/](../platform/service-types/) 파일 (정확히 1개)
 6. **기존 `specs/platform/` 나머지** — Core/Auxiliary spec (entrypoint.md 기준)
 
 > Service-type 축은 domain/trait과 **직교(orthogonal)** 하다. 즉 domain이 무엇이든 trait이 무엇이든, 서비스 타입은 독립적으로 선택되며 각자 고유 규칙을 가진다.
@@ -61,9 +61,9 @@ AI 에이전트와 개발자는 다음 순서로 규칙을 로드·적용한다:
    - scope: 이 도메인의 모든 서비스
    ```
 
-2. **Trait 간 충돌** — 두 trait이 서로 모순된 요구를 하면 (예: `real-time` vs `batch-heavy`) 먼저 [../taxonomy.md](../taxonomy.md)의 Incompatibilities 표를 확인한다. 공존이 허용되지만 경고된 조합이면 `PROJECT.md`의 `## Overrides` 섹션에 공존 정당화를 기록한다.
+2. **Trait 간 충돌** — 두 trait이 서로 모순된 요구를 하면 (예: `real-time` vs `batch-heavy`) 먼저 [taxonomy.md](taxonomy.md)의 Incompatibilities 표를 확인한다. 공존이 허용되지만 경고된 조합이면 `PROJECT.md`의 `## Overrides` 섹션에 공존 정당화를 기록한다.
 
-3. **해결 불가 시 Hard Stop** — [CLAUDE.md](../../../CLAUDE.md)의 Hard Stop Rules에 따라 구현을 중단하고 보고한다.
+3. **해결 불가 시 Hard Stop** — [CLAUDE.md](../../CLAUDE.md)의 Hard Stop Rules에 따라 구현을 중단하고 보고한다.
 
 ---
 
@@ -86,7 +86,7 @@ Service-types 축은 이 분류 시스템과 **독립적인 직교 축**이다.
 |---|---|---|---|
 | **Domain** | 프로젝트당 1개 | `PROJECT.md` 선언 | `domains/<domain>.md` |
 | **Traits** | 프로젝트당 다수 | `PROJECT.md` 선언 | `traits/<trait>.md` |
-| **Service Type** | 서비스당 1개 | `specs/services/<service>/architecture.md` 선언 | `../service-types/<type>.md` |
+| **Service Type** | 서비스당 1개 | `specs/services/<service>/architecture.md` 선언 | `../platform/service-types/<type>.md` |
 
 한 프로젝트 안에 여러 서비스가 있고, 각 서비스가 서로 다른 service-type을 가질 수 있다. 반면 domain/traits는 프로젝트 전체에 일괄 적용된다.
 
@@ -99,7 +99,7 @@ Service-types 축은 이 분류 시스템과 **독립적인 직교 축**이다.
 - 14개 common 파일의 경로와 1줄 요약만 포함
 - **실제 규칙 문장을 복사하지 말 것**
 - 중복 발견 시 이 파일에서 삭제 (canonical은 항상 원본 파일)
-- 새 규칙 파일을 [../](../) 아래 추가하면 이 인덱스도 함께 갱신
+- 새 규칙 파일을 [../platform/](../platform/) 아래 추가하면 이 인덱스도 함께 갱신
 
 이 원칙이 깨지면 "이중 진실 소스" 문제가 발생하고 drift가 시작된다.
 
@@ -109,6 +109,6 @@ Service-types 축은 이 분류 시스템과 **독립적인 직교 축**이다.
 
 이 시스템의 무결성은 다음 수단으로 검증한다:
 
-- **Manual grep**: `PROJECT.md`의 domain/traits 값이 [../taxonomy.md](../taxonomy.md)에 등록되어 있는지
+- **Manual grep**: `PROJECT.md`의 domain/traits 값이 [taxonomy.md](taxonomy.md)에 등록되어 있는지
 - **File existence**: 선언된 domain/traits에 대응하는 파일이 있거나, 없어도 "추가 제약 없음" 상태인지
 - **`/validate-rules` skill**: 향후 이 규칙 계층까지 검사 범위 확장 예정 (현재 v0.1 스코프 외)

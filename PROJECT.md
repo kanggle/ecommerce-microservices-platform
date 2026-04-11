@@ -51,7 +51,7 @@ taxonomy_version: 0.1
 예외가 필요한 경우 이 섹션에 다음 형식으로 기록:
 
 ```
-- **rule**: specs/platform/rules/traits/transactional.md#idempotency-key-required
+- **rule**: specs/rules/traits/transactional.md#idempotency-key-required
 - **reason**: <why>
 - **scope**: <which service(s)>
 - **expiry**: <date or condition>

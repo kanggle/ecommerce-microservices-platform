@@ -10,7 +10,7 @@
 
 first-project 기준 적용 범위:
 
-- 필수: [apps/payment-service/](../../../../apps/payment-service/) (PG 연동), [apps/notification-service/](../../../../apps/notification-service/) (SMS/Email/Push/Kakao), [apps/shipping-service/](../../../../apps/shipping-service/) (택배사 API), [apps/auth-service/](../../../../apps/auth-service/) (소셜 로그인), [apps/search-service/](../../../../apps/search-service/) (검색 엔진)
+- 필수: [apps/payment-service/](../../../apps/payment-service/) (PG 연동), [apps/notification-service/](../../../apps/notification-service/) (SMS/Email/Push/Kakao), [apps/shipping-service/](../../../apps/shipping-service/) (택배사 API), [apps/auth-service/](../../../apps/auth-service/) (소셜 로그인), [apps/search-service/](../../../apps/search-service/) (검색 엔진)
 - 조건부: 외부 API 2개 이상과 연동하는 모든 서비스
 
 ---
@@ -83,10 +83,10 @@ first-project 기준 적용 범위:
 
 ## Interaction with Common Rules
 
-- [../../event-driven-policy.md](../../event-driven-policy.md)의 DLQ·retry 정책과 일관성 유지. 내부 이벤트 경로와 외부 연동 경로가 동일 패턴을 따른다.
-- [../../observability.md](../../observability.md)에 다음 메트릭 추가: 벤더별 호출 성공률, p95/p99, 재시도 횟수, circuit 상태 변경, DLQ 깊이, webhook 서명 실패 수.
-- [../../error-handling.md](../../error-handling.md)에 `EXTERNAL_SERVICE_UNAVAILABLE`, `EXTERNAL_TIMEOUT`, `WEBHOOK_SIGNATURE_INVALID`, `DLQ_RETRY_EXHAUSTED` 등 연동 관련 에러 코드가 존재해야 함.
-- [../../security-rules.md](../../security-rules.md)의 비밀 관리 규칙을 따라 벤더 API 키·시크릿을 안전하게 저장한다 (환경변수·Secret Manager 등).
+- [../../platform/event-driven-policy.md](../../platform/event-driven-policy.md)의 DLQ·retry 정책과 일관성 유지. 내부 이벤트 경로와 외부 연동 경로가 동일 패턴을 따른다.
+- [../../platform/observability.md](../../platform/observability.md)에 다음 메트릭 추가: 벤더별 호출 성공률, p95/p99, 재시도 횟수, circuit 상태 변경, DLQ 깊이, webhook 서명 실패 수.
+- [../../platform/error-handling.md](../../platform/error-handling.md)에 `EXTERNAL_SERVICE_UNAVAILABLE`, `EXTERNAL_TIMEOUT`, `WEBHOOK_SIGNATURE_INVALID`, `DLQ_RETRY_EXHAUSTED` 등 연동 관련 에러 코드가 존재해야 함.
+- [../../platform/security-rules.md](../../platform/security-rules.md)의 비밀 관리 규칙을 따라 벤더 API 키·시크릿을 안전하게 저장한다 (환경변수·Secret Manager 등).
 
 ---
 

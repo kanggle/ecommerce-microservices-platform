@@ -3,7 +3,7 @@
 > **Version**: 0.1
 > **Status**: authoritative catalog of domains and traits used by the taxonomy-based rule system.
 
-이 문서는 `PROJECT.md`에서 선언할 수 있는 **domain**과 **trait** 값의 유일한 진실 소스다. `specs/platform/rules/README.md`의 규칙 해결(resolution) 절차가 이 카탈로그를 참조한다.
+이 문서는 `PROJECT.md`에서 선언할 수 있는 **domain**과 **trait** 값의 유일한 진실 소스다. `specs/rules/README.md`의 규칙 해결(resolution) 절차가 이 카탈로그를 참조한다.
 
 ---
 
@@ -13,7 +13,7 @@
 - **Change policy**:
   - 신규 domain/trait 추가는 minor bump (`0.2`, `0.3` …). 기존 프로젝트는 영향 없음.
   - domain/trait 의미의 breaking change 또는 삭제는 major bump (`1.0`). 모든 기존 `PROJECT.md`를 마이그레이션해야 하며, 이 파일 상단에 마이그레이션 노트를 남긴다.
-  - **절대 금지**: 카탈로그에 없는 태그를 `PROJECT.md`에 선언. 새 태그가 필요하면 먼저 이 파일과 `specs/platform/rules/domains/` 또는 `specs/platform/rules/traits/` 아래 해당 rules 파일을 같은 변경에서 함께 추가해야 한다.
+  - **절대 금지**: 카탈로그에 없는 태그를 `PROJECT.md`에 선언. 새 태그가 필요하면 먼저 이 파일과 `specs/rules/domains/` 또는 `specs/rules/traits/` 아래 해당 rules 파일을 같은 변경에서 함께 추가해야 한다.
 
 ---
 

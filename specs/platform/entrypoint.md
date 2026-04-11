@@ -17,11 +17,11 @@ AI agents and developers must begin platform-spec reading from this file.
 Before reading anything else under `specs/platform/`, resolve the project's classification:
 
 1. Read `PROJECT.md` at repository root. Extract `domain` and `traits` from its frontmatter.
-2. Verify both values exist in `specs/platform/taxonomy.md`. Unknown values → Hard Stop.
+2. Verify both values exist in `specs/rules/taxonomy.md`. Unknown values → Hard Stop.
 3. Read rule layers in this order (absent files mean "no additional constraints"):
-   1. `specs/platform/rules/common.md` and every file it indexes
-   2. `specs/platform/rules/domains/<domain>.md` (if present)
-   3. `specs/platform/rules/traits/<trait>.md` for each declared trait (if present)
+   1. `specs/rules/common.md` and every file it indexes
+   2. `specs/rules/domains/<domain>.md` (if present)
+   3. `specs/rules/traits/<trait>.md` for each declared trait (if present)
 4. Continue with the Core section below.
 
 The Core / Service-Type-Specific / Auxiliary layers described next are **still authoritative** — Step 0 augments them by narrowing the active rule set to what applies to this project.

@@ -10,12 +10,12 @@ Before reading any other spec, resolve which rule layers apply to this project:
 
 1. Read `PROJECT.md` at repository root to obtain `domain` and `traits`.
 2. If `PROJECT.md` is missing or its frontmatter cannot be parsed, STOP and report — do not proceed with any implementation.
-3. Verify that the declared `domain` and each `trait` appear in `specs/platform/taxonomy.md`. Undeclared or unknown tags are a Hard Stop.
-4. Load rule files in the order defined by `specs/platform/rules/README.md`:
-   - `specs/platform/rules/common.md` (always)
-   - `specs/platform/rules/domains/<domain>.md` (if present)
-   - `specs/platform/rules/traits/<trait>.md` for each declared trait (if present)
-5. Missing domain/trait files mean "no additional constraints beyond common" — do not auto-generate stubs. See the on-demand policy in `specs/platform/rules/README.md`.
+3. Verify that the declared `domain` and each `trait` appear in `specs/rules/taxonomy.md`. Undeclared or unknown tags are a Hard Stop.
+4. Load rule files in the order defined by `specs/rules/README.md`:
+   - `specs/rules/common.md` (always)
+   - `specs/rules/domains/<domain>.md` (if present)
+   - `specs/rules/traits/<trait>.md` for each declared trait (if present)
+5. Missing domain/trait files mean "no additional constraints beyond common" — do not auto-generate stubs. See the on-demand policy in `specs/rules/README.md`.
 
 ---
 
@@ -34,9 +34,9 @@ Before reading any other spec, resolve which rule layers apply to this project:
 Use documents in the following order:
 
 1. `PROJECT.md` (project classification — domain, traits)
-2. `specs/platform/rules/common.md` and the canonical files it indexes
-3. `specs/platform/rules/domains/<declared-domain>.md` (if present)
-4. `specs/platform/rules/traits/<declared-trait>.md` for each trait (if present)
+2. `specs/rules/common.md` and the canonical files it indexes
+3. `specs/rules/domains/<declared-domain>.md` (if present)
+4. `specs/rules/traits/<declared-trait>.md` for each trait (if present)
 5. `specs/platform/` (remaining files, including `entrypoint.md` and auxiliary specs)
    - Within `specs/platform/service-types/`, only the file matching the target service's declared `Service Type` is read; other service-type files are skipped.
 6. `specs/contracts/`
@@ -100,7 +100,7 @@ For any implementation task:
 
 Stop immediately if any of the following is true:
 
-- `PROJECT.md` is missing, unparsable, or declares a `domain`/`trait` not present in `specs/platform/taxonomy.md`
+- `PROJECT.md` is missing, unparsable, or declares a `domain`/`trait` not present in `specs/rules/taxonomy.md`
 - a domain/trait rule file exists but explicitly conflicts with a common rule without an `## Overrides` block
 - the task is not in `tasks/ready/`
 - required specifications do not exist

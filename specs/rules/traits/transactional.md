@@ -10,8 +10,8 @@
 
 first-project 기준 적용 범위:
 
-- 필수: [apps/order-service/](../../../../apps/order-service/), [apps/payment-service/](../../../../apps/payment-service/), [apps/promotion-service/](../../../../apps/promotion-service/) (coupon redemption)
-- 조건부: [apps/product-service/](../../../../apps/product-service/) (inventory 차감 경로), [apps/shipping-service/](../../../../apps/shipping-service/) (배송 요청 생성)
+- 필수: [apps/order-service/](../../../apps/order-service/), [apps/payment-service/](../../../apps/payment-service/), [apps/promotion-service/](../../../apps/promotion-service/) (coupon redemption)
+- 조건부: [apps/product-service/](../../../apps/product-service/) (inventory 차감 경로), [apps/shipping-service/](../../../apps/shipping-service/) (배송 요청 생성)
 - 제외: 순수 읽기 서비스, 공개 카탈로그 조회
 
 ---
@@ -77,9 +77,9 @@ transactional trait이 활성화된 프로젝트는 다음 산출물을 **필수
 
 ## Interaction with Common Rules
 
-- [../../error-handling.md](../../error-handling.md)의 `CONFLICT`, `STATE_TRANSITION_INVALID`, `DUPLICATE_REQUEST` 에러 코드를 이 trait 규칙에 맞춰 사용한다.
-- [../../testing-strategy.md](../../testing-strategy.md)의 Integration/Event 테스트 레이어에서 **멱등성·보상 시나리오**를 필수 포함한다.
-- [../../observability.md](../../observability.md)에 정의된 메트릭에 더해, idempotency hit rate, saga failure rate, outbox lag 메트릭을 추가한다.
+- [../../platform/error-handling.md](../../platform/error-handling.md)의 `CONFLICT`, `STATE_TRANSITION_INVALID`, `DUPLICATE_REQUEST` 에러 코드를 이 trait 규칙에 맞춰 사용한다.
+- [../../platform/testing-strategy.md](../../platform/testing-strategy.md)의 Integration/Event 테스트 레이어에서 **멱등성·보상 시나리오**를 필수 포함한다.
+- [../../platform/observability.md](../../platform/observability.md)에 정의된 메트릭에 더해, idempotency hit rate, saga failure rate, outbox lag 메트릭을 추가한다.
 
 ---
 

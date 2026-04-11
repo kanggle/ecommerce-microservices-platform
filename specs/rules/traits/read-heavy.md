@@ -10,8 +10,8 @@
 
 first-project 기준 적용 범위:
 
-- 필수: [apps/product-service/](../../../../apps/product-service/), [apps/search-service/](../../../../apps/search-service/), [apps/review-service/](../../../../apps/review-service/), [apps/web-store/](../../../../apps/web-store/) (상품 조회·검색 경로)
-- 조건부: [apps/promotion-service/](../../../../apps/promotion-service/) (프로모션 조회 많은 경우), [apps/user-service/](../../../../apps/user-service/) (프로필 조회)
+- 필수: [apps/product-service/](../../../apps/product-service/), [apps/search-service/](../../../apps/search-service/), [apps/review-service/](../../../apps/review-service/), [apps/web-store/](../../../apps/web-store/) (상품 조회·검색 경로)
+- 조건부: [apps/promotion-service/](../../../apps/promotion-service/) (프로모션 조회 많은 경우), [apps/user-service/](../../../apps/user-service/) (프로필 조회)
 - 제외: 순수 쓰기 경로(결제 commit, 주문 생성 자체)
 
 ---
@@ -77,9 +77,9 @@ first-project 기준 적용 범위:
 
 ## Interaction with Common Rules
 
-- [../../testing-strategy.md](../../testing-strategy.md)의 Performance/Load 테스트 레이어가 **선택**이 아닌 **필수**가 된다. 주요 읽기 엔드포인트는 로드 테스트 스크립트를 보유해야 한다 (참고: [load-tests/](../../../../load-tests/)).
-- [../../observability.md](../../observability.md)에 다음 메트릭을 추가: 엔드포인트별 p50/p95/p99, 캐시 hit rate, DB replica lag, 쿼리 실행 시간 분포.
-- [../../error-handling.md](../../error-handling.md)의 `INVALID_PAGINATION`, `PAGE_SIZE_EXCEEDED` 등 페이지네이션 관련 오류 코드를 사용.
+- [../../platform/testing-strategy.md](../../platform/testing-strategy.md)의 Performance/Load 테스트 레이어가 **선택**이 아닌 **필수**가 된다. 주요 읽기 엔드포인트는 로드 테스트 스크립트를 보유해야 한다 (참고: [load-tests/](../../../load-tests/)).
+- [../../platform/observability.md](../../platform/observability.md)에 다음 메트릭을 추가: 엔드포인트별 p50/p95/p99, 캐시 hit rate, DB replica lag, 쿼리 실행 시간 분포.
+- [../../platform/error-handling.md](../../platform/error-handling.md)의 `INVALID_PAGINATION`, `PAGE_SIZE_EXCEEDED` 등 페이지네이션 관련 오류 코드를 사용.
 
 ---
 
