@@ -40,16 +40,16 @@ Design database schemas, plan migrations, and optimize index strategies.
 ### Migration
 - Prefer rollback-capable migrations
 - Perform data-destructive changes in stages
-- See `.claude/skills/database/migration-strategy.md` and `schema-change-workflow.md`
+- See `.claude/skills/database/migration-strategy/SKILL.md` and `schema-change-workflow/SKILL.md`
 
 ### Indexes
 - Design indexes based on query patterns
 - Composite index column order: highest selectivity first
-- See `.claude/skills/database/indexing.md`
+- See `.claude/skills/database/indexing/SKILL.md`
 
 ### Transactions
 - Transaction boundaries managed at the application service level
-- See `.claude/skills/database/transaction-boundary.md`
+- See `.claude/skills/database/transaction-boundary/SKILL.md`
 
 ## Ownership Boundary
 

@@ -24,7 +24,7 @@ Examples:
 ## Procedure
 
 1. Read `specs/platform/testing-strategy.md`
-2. Read `.claude/skills/backend/testing-backend.md`
+2. Read `.claude/skills/backend/testing-backend/SKILL.md`
 3. Read `specs/services/<service>/architecture.md` for the target service
 4. Check whether test files already exist for the target code
 5. Determine required test levels based on the architecture style

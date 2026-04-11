@@ -31,13 +31,13 @@ Design and implement data pipelines following `specs/platform/service-types/batc
 > Prerequisite: follow CLAUDE.md Required Workflow steps 1–3 (read CLAUDE.md → read task → read specs per entrypoint.md) before starting design or implementation.
 
 1. Read `specs/platform/service-types/batch-job.md`
-2. Read `.claude/skills/service-types/batch-job-setup.md`
+2. Read `.claude/skills/service-types/batch-job-setup/SKILL.md`
 3. Define source and sink schemas; document in service spec
 4. Implement chunked, checkpointed ETL with restart safety
 5. Add data quality checks at each stage; fail loud on violations
 6. Wire lineage metadata to a catalog (or document inline until a catalog exists)
 7. Tune partitioning / clustering for the target warehouse
-8. Add observability per `cross-cutting/observability-setup.md` plus job-specific metrics
+8. Add observability per `cross-cutting/observability-setup/SKILL.md` plus job-specific metrics
 
 ## Does NOT
 

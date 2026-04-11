@@ -31,7 +31,7 @@ Examples:
 1. Read `CLAUDE.md`
 2. List and read all files in:
    - `specs/platform/`
-   - `.claude/skills/` (non-empty files only, per INDEX.md)
+   - `.claude/skills/**/SKILL.md` (each skill is a folder containing `SKILL.md`, per INDEX.md)
    - `.claude/agents/`
    - `.claude/commands/`
 
@@ -63,15 +63,17 @@ Examples:
 
 #### 2-5. Reference Integrity
 - [ ] All `specs/` paths referenced in skills, agents, and commands exist
-- [ ] All `.claude/skills/` paths referenced in agents exist
-- [ ] `skills/INDEX.md` lists all non-empty skill files
-- [ ] No orphaned skill files (exist but not in INDEX)
+- [ ] All `.claude/skills/**/SKILL.md` paths referenced in agents exist
+- [ ] `skills/INDEX.md` lists every `SKILL.md` present under `.claude/skills/`
+- [ ] No orphaned skill folders (contain `SKILL.md` but not listed in INDEX)
+- [ ] Every skill folder contains exactly one `SKILL.md`; no stray `.md` files under `.claude/skills/` except `INDEX.md` (drift = Critical)
+- [ ] Every `SKILL.md` begins with YAML frontmatter containing `name`, `description`, `category` (missing field = Critical)
 
 #### 2-6. Service Type and Metadata Drift
 
 This section was added to support the `service-types` catalog and agent capability metadata. All checks are read-only — `validate-rules` reports drift but never blocks via hooks.
 
-- [ ] `.claude/skills/**/*.md` file set equals the path set listed in `skills/INDEX.md` "Available Skills" table (drift = Critical)
+- [ ] `.claude/skills/**/SKILL.md` file set equals the path set listed in `skills/INDEX.md` "Available Skills" table (drift = Critical)
 - [ ] `specs/platform/service-types/*.md` file set equals the catalog listed in `specs/platform/service-types/INDEX.md` (drift = Critical)
 - [ ] Every `specs/services/<service>/architecture.md` declares a `Service Type` and the value is one of the catalog entries (missing or invalid = Critical)
 - [ ] Every entry in `skills/INDEX.md` "Default Skill Sets by Task Type" table resolves to an existing skill file (missing = Critical)

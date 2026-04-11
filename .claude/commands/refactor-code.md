@@ -61,7 +61,7 @@ Direct refactoring of a specific target. No analysis phase.
 1. Read `CLAUDE.md`
 2. Read `specs/platform/refactoring-policy.md`
 3. Read `specs/services/<service>/architecture.md`
-4. Read `.claude/skills/INDEX.md` → read matched architecture skill and `backend/refactoring.md`
+4. Read `.claude/skills/INDEX.md` → read matched architecture skill and `backend/refactoring/SKILL.md`
 5. Read the target code and all related code
 6. Check existing tests — if no tests exist, write tests before refactoring
 7. Run existing tests → verify all pass (baseline)
@@ -98,7 +98,7 @@ Main context reads service code for analysis but does NOT perform refactoring di
 3. Read `specs/services/<service>/architecture.md` to understand the declared architecture
 4. Read `specs/platform/coding-rules.md` (if exists)
 5. Read `specs/platform/naming-conventions.md` (if exists)
-6. Read `.claude/skills/INDEX.md` → read matched architecture skill and `backend/refactoring.md`
+6. Read `.claude/skills/INDEX.md` → read matched architecture skill and `backend/refactoring/SKILL.md`
 7. Scan all source files in the target service (backend: `apps/<service>/src/`, frontend: `apps/<service>/src/`)
 8. Determine test command based on service type:
    - Backend (Gradle): `./gradlew :apps:<service>:test`
@@ -170,7 +170,7 @@ You are performing a safe refactoring in this project. Follow these steps exactl
 3. Read `specs/services/{service}/architecture.md`
 4. Read `specs/platform/coding-rules.md` (if exists)
 5. Read `specs/platform/naming-conventions.md` (if exists)
-6. Read `.claude/skills/INDEX.md` and matched architecture skill and `backend/refactoring.md`
+6. Read `.claude/skills/INDEX.md` and matched architecture skill and `backend/refactoring/SKILL.md`
 7. Read the target files and all related code
 8. Run existing tests: {testCommand} — verify all pass (baseline)
 9. Perform the refactoring:

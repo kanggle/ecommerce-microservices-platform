@@ -31,7 +31,7 @@ Design and implement ML pipelines following `specs/platform/service-types/ml-pip
 > Prerequisite: follow CLAUDE.md Required Workflow steps 1–3 (read CLAUDE.md → read task → read specs per entrypoint.md) before starting design or implementation.
 
 1. Read `specs/platform/service-types/ml-pipeline.md`
-2. Read `.claude/skills/service-types/ml-pipeline-setup.md`
+2. Read `.claude/skills/service-types/ml-pipeline-setup/SKILL.md`
 3. For training: also read `specs/platform/service-types/batch-job.md` and the batch-job setup skill
 4. For inference: also read the matching `rest-api.md` or `grpc-service.md` spec
 5. Define feature store or inline feature definitions

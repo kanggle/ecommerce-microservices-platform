@@ -19,7 +19,7 @@ Review implemented code and provide feedback on quality, security, performance, 
 
 1. Read the target code and related specs/contracts
 2. Check `specs/services/<service>/architecture.md`
-3. Run the review checklist defined in `.claude/skills/review-checklist.md`
+3. Run the review checklist defined in `.claude/skills/review-checklist/SKILL.md`
 4. Report findings classified as Critical / Warning / Suggestion
 
 ## Report Format

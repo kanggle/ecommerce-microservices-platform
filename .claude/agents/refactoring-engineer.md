@@ -20,7 +20,7 @@ Analyze existing code for refactoring opportunities and perform safe refactoring
 
 1. Read `specs/platform/refactoring-policy.md` for rules and constraints
 2. Read `specs/services/<service>/architecture.md` for the target service
-3. Read `.claude/skills/backend/refactoring.md` for patterns
+3. Read `.claude/skills/backend/refactoring/SKILL.md` for patterns
 4. Read the target code and understand its current structure
 5. Run existing tests — confirm green baseline
 6. Identify refactoring opportunities by category

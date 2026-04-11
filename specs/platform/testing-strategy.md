@@ -72,14 +72,14 @@ Every backend task with `code` tag must include:
 | Controller | Slice |
 | Full flow | Integration |
 
-For implementation details (annotations, imports, container images, setup code), see `.claude/skills/backend/testing-backend.md`.
+For implementation details (annotations, imports, container images, setup code), see `.claude/skills/backend/testing-backend/SKILL.md`.
 
 ---
 
 # Testcontainers Conventions
 
 - Use real containers via Testcontainers. Do not use H2 or in-memory substitutes.
-- Container image versions are specified in `.claude/skills/backend/testing-backend.md`.
+- Container image versions are specified in `.claude/skills/backend/testing-backend/SKILL.md`.
 
 ---
 
