@@ -10,12 +10,15 @@ Before reading any other spec, resolve which rule layers apply to this project:
 
 1. Read `PROJECT.md` at repository root to obtain `domain` and `traits`.
 2. If `PROJECT.md` is missing or its frontmatter cannot be parsed, STOP and report — do not proceed with any implementation.
-3. Verify that the declared `domain` and each `trait` appear in `specs/rules/taxonomy.md`. Undeclared or unknown tags are a Hard Stop.
-4. Load rule files in the order defined by `specs/rules/README.md`:
+3. Consult `.claude/config/activation-rules.md` for the short dispatch table — it tells you which rule categories and skill bundles each declared trait/domain activates. Also confirm membership against `.claude/config/domains.md` and `.claude/config/traits.md`.
+4. Verify that the declared `domain` and each `trait` appear in `specs/rules/taxonomy.md` (authoritative narrative definitions). Undeclared or unknown tags are a Hard Stop.
+5. Load detailed rule files in the order defined by `specs/rules/README.md`:
    - `specs/rules/common.md` (always)
    - `specs/rules/domains/<domain>.md` (if present)
    - `specs/rules/traits/<trait>.md` for each declared trait (if present)
-5. Missing domain/trait files mean "no additional constraints beyond common" — do not auto-generate stubs. See the on-demand policy in `specs/rules/README.md`.
+6. Missing domain/trait files mean "no additional constraints beyond common" — do not auto-generate stubs. See the on-demand policy in `specs/rules/README.md`.
+
+Agents and skills are split into `common/` (always loaded) and `domain/<domain>/` (loaded only when the declared domain matches). See `.claude/agents/domain/README.md` and `.claude/skills/domain/README.md`.
 
 ---
 

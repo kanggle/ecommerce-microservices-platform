@@ -17,14 +17,17 @@ AI agents and developers must begin platform-spec reading from this file.
 Before reading anything else under `specs/platform/`, resolve the project's classification:
 
 1. Read `PROJECT.md` at repository root. Extract `domain` and `traits` from its frontmatter.
-2. Verify both values exist in `specs/rules/taxonomy.md`. Unknown values → Hard Stop.
-3. Read rule layers in this order (absent files mean "no additional constraints"):
+2. Consult `.claude/config/activation-rules.md` for the short dispatch summary — which rule categories and skill bundles each declared trait/domain activates. Confirm membership against `.claude/config/domains.md` and `.claude/config/traits.md`.
+3. Verify both values exist in `specs/rules/taxonomy.md` (authoritative narrative definitions). Unknown values → Hard Stop.
+4. Read detailed rule layers in this order (absent files mean "no additional constraints"):
    1. `specs/rules/common.md` and every file it indexes
    2. `specs/rules/domains/<domain>.md` (if present)
    3. `specs/rules/traits/<trait>.md` for each declared trait (if present)
-4. Continue with the Core section below.
+5. Continue with the Core section below.
 
 The Core / Service-Type-Specific / Auxiliary layers described next are **still authoritative** — Step 0 augments them by narrowing the active rule set to what applies to this project.
+
+> Routing layer (`.claude/config/`) gives the **dispatch summary**; this file (`entrypoint.md`) plus `specs/rules/` give the **detailed rules**. Do not skip either.
 
 ---
 

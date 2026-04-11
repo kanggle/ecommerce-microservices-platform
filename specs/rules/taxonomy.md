@@ -1,9 +1,29 @@
 # Project Taxonomy
 
 > **Version**: 0.1
-> **Status**: authoritative catalog of domains and traits used by the taxonomy-based rule system.
+> **Status**: authoritative **narrative definition** for domains and traits used by the taxonomy-based rule system.
 
-이 문서는 `PROJECT.md`에서 선언할 수 있는 **domain**과 **trait** 값의 유일한 진실 소스다. `specs/rules/README.md`의 규칙 해결(resolution) 절차가 이 카탈로그를 참조한다.
+이 문서는 `PROJECT.md`에서 선언할 수 있는 **domain**과 **trait** 값의 **상세 정의**(정의·전형 서브시스템·언제 고르는가·호환성)를 담는다. `specs/rules/README.md`의 규칙 해결(resolution) 절차가 이 카탈로그를 참조한다.
+
+---
+
+## Companion Routing Layer
+
+짧고 테이블 형태인 **디스패치 카탈로그**와 **활성화 매핑**은 `.claude/config/` 아래에 별도로 존재하며, 에이전트 런타임이 빠르게 훑는 용도다:
+
+- `.claude/config/domains.md` — domain 카탈로그 (list + rule + example)
+- `.claude/config/traits.md` — trait 카탈로그 (list + rule + example)
+- `.claude/config/activation-rules.md` — trait/domain → 활성화되는 규칙 카테고리·스킬 번들 매핑 + 각 항목에서 상세 규칙 파일로의 링크
+
+**두 계층의 역할 분리**:
+
+| 축 | `.claude/config/` | 이 문서 |
+|---|---|---|
+| 목적 | 에이전트가 빠르게 훑고 분기 판단 | 각 분류의 narrative 정의와 호환성 |
+| 형식 | 리스트·표·발동 규칙 (짧음) | 3줄 블록 + Selection Guide + Common Combinations (김) |
+| 진실 소스 | 카탈로그 멤버십 ("X가 유효한 값인가?") + 활성화 매핑 | narrative 정의 ("X가 무엇을 의미하는가?") |
+
+**drift 방지 규칙**: 신규 domain/trait을 추가할 때는 반드시 **이 파일**과 `.claude/config/domains.md` (또는 `traits.md`)과 `.claude/config/activation-rules.md`를 **모두 같은 PR에서** 갱신해야 한다. 어느 한쪽만 수정하면 라우팅 레이어와 상세 정의가 어긋난다.
 
 ---
 
