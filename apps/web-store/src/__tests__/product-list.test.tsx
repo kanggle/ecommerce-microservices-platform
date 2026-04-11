@@ -50,4 +50,14 @@ describe('ProductList', () => {
     const links = screen.getAllByRole('link');
     expect(links).toHaveLength(2);
   });
+
+  it('정상 응답에 포함된 상품 링크는 mock-* 형태의 id를 갖지 않는다 (TASK-FE-061)', () => {
+    render(<ProductList products={products} />);
+
+    const links = screen.getAllByRole('link');
+    for (const link of links) {
+      const href = link.getAttribute('href') ?? '';
+      expect(href).not.toMatch(/\/products\/mock-/);
+    }
+  });
 });

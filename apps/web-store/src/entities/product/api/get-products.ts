@@ -1,25 +1,25 @@
 import { apiClient } from '@/shared/config/api';
 import { createProductApi } from '@repo/api-client';
 import type { PaginatedResponse, ProductSummary, ProductListParams } from '@repo/types';
-import { MOCK_PRODUCTS, toSummary, fallbackThumbnail } from './mock-data';
+import { fallbackThumbnail } from './fallback-images';
 
 const productApi = createProductApi(apiClient);
 
+/**
+ * Fetch a paginated product list from product-service.
+ *
+ * On failure the error is propagated to the caller. Do NOT reintroduce a
+ * silent mock fallback here — mock ids (e.g. `"mock-1"`) are not valid UUIDs
+ * and would crash downstream write paths like WishlistButton / cart / order.
+ * See TASK-FE-061.
+ */
 export async function getProducts(
   params?: ProductListParams,
 ): Promise<PaginatedResponse<ProductSummary>> {
-  try {
-    const result = await productApi.getProducts(params);
-    result.content = result.content.map((p) => ({
-      ...p,
-      thumbnailUrl: p.thumbnailUrl || fallbackThumbnail(p.name),
-    }));
-    return result;
-  } catch {
-    const page = params?.page ?? 0;
-    const size = params?.size ?? 10;
-    const all = MOCK_PRODUCTS.map(toSummary);
-    const content = all.slice(page * size, page * size + size);
-    return { content, page, size, totalElements: all.length };
-  }
+  const result = await productApi.getProducts(params);
+  result.content = result.content.map((p) => ({
+    ...p,
+    thumbnailUrl: p.thumbnailUrl || fallbackThumbnail(p.name),
+  }));
+  return result;
 }

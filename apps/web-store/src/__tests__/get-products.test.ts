@@ -12,31 +12,9 @@ vi.mock('@repo/api-client', () => ({
   })),
 }));
 
-vi.mock('@/entities/product/api/mock-data', () => {
-  const products = Array.from({ length: 3 }, (_, i) => ({
-    id: `mock-${i + 1}`,
-    name: `목 상품 ${i + 1}`,
-    description: '설명',
-    status: 'ON_SALE',
-    price: 10000 * (i + 1),
-    categoryId: 'cat-1',
-    images: [`img-${i + 1}.jpg`],
-    variants: [],
-  }));
-
-  return {
-    MOCK_PRODUCTS: products,
-    fallbackThumbnail: vi.fn((name: string) => `fallback-thumb-${name}.jpg`),
-    toSummary: vi.fn((p: { id: string; name: string; status: string; price: number; images: string[]; categoryId: string }) => ({
-      id: p.id,
-      name: p.name,
-      status: p.status,
-      price: p.price,
-      thumbnailUrl: p.images[0],
-      categoryId: p.categoryId,
-    })),
-  };
-});
+vi.mock('@/entities/product/api/fallback-images', () => ({
+  fallbackThumbnail: vi.fn((name: string) => `fallback-thumb-${name}.jpg`),
+}));
 
 import { getProducts } from '@/entities/product/api/get-products';
 
@@ -88,33 +66,39 @@ describe('getProducts', () => {
     expect(mockGetProducts).toHaveBeenCalledWith(undefined);
   });
 
-  it('API 에러 시 목 데이터를 페이지네이션하여 반환한다', async () => {
-    mockGetProducts.mockRejectedValueOnce(new Error('Server error'));
-
-    const result = await getProducts({ page: 0, size: 2 });
-
-    expect(result.content).toHaveLength(2);
-    expect(result.page).toBe(0);
-    expect(result.size).toBe(2);
-    expect(result.totalElements).toBe(3);
-  });
-
-  it('API 에러 시 두 번째 페이지의 나머지 데이터를 반환한다', async () => {
-    mockGetProducts.mockRejectedValueOnce(new Error('Server error'));
-
-    const result = await getProducts({ page: 1, size: 2 });
-
-    expect(result.content).toHaveLength(1);
-    expect(result.page).toBe(1);
-  });
-
-  it('API 에러 시 파라미터 없으면 기본값 page=0, size=10을 사용한다', async () => {
-    mockGetProducts.mockRejectedValueOnce(new Error('Server error'));
+  it('정상 응답에 포함된 상품 id는 그대로 보존되며 mock-* 형태로 대체되지 않는다', async () => {
+    const apiResponse = {
+      content: [
+        { id: '11111111-1111-1111-1111-111111111111', name: '상품A', status: 'ON_SALE', price: 10000, thumbnailUrl: 'a.jpg', categoryId: 'cat-1' },
+        { id: '22222222-2222-2222-2222-222222222222', name: '상품B', status: 'ON_SALE', price: 20000, thumbnailUrl: 'b.jpg', categoryId: 'cat-1' },
+      ],
+      page: 0,
+      size: 10,
+      totalElements: 2,
+    };
+    mockGetProducts.mockResolvedValueOnce(apiResponse);
 
     const result = await getProducts();
 
-    expect(result.page).toBe(0);
-    expect(result.size).toBe(10);
-    expect(result.content).toHaveLength(3);
+    for (const item of result.content) {
+      expect(item.id).not.toMatch(/^mock-/);
+    }
+    expect(result.content.map((p) => p.id)).toEqual([
+      '11111111-1111-1111-1111-111111111111',
+      '22222222-2222-2222-2222-222222222222',
+    ]);
+  });
+
+  it('API 에러 시 목 데이터로 폴백하지 않고 에러를 그대로 전파한다', async () => {
+    const error = new Error('Server error');
+    mockGetProducts.mockRejectedValueOnce(error);
+
+    await expect(getProducts({ page: 0, size: 2 })).rejects.toThrow('Server error');
+  });
+
+  it('API 에러 시 파라미터 없이 호출해도 에러가 전파된다', async () => {
+    mockGetProducts.mockRejectedValueOnce(new Error('Network error'));
+
+    await expect(getProducts()).rejects.toThrow('Network error');
   });
 });

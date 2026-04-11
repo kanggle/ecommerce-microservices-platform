@@ -12,19 +12,7 @@ vi.mock('@repo/api-client', () => ({
   })),
 }));
 
-vi.mock('@/entities/product/api/mock-data', () => ({
-  MOCK_PRODUCTS: [
-    {
-      id: 'mock-1',
-      name: '목 상품',
-      description: '설명',
-      status: 'ON_SALE',
-      price: 10000,
-      categoryId: 'cat-1',
-      images: ['img1.jpg'],
-      variants: [],
-    },
-  ],
+vi.mock('@/entities/product/api/fallback-images', () => ({
   fallbackImages: vi.fn((name: string) => [`fallback-${name}-1.jpg`, `fallback-${name}-2.jpg`]),
 }));
 
@@ -37,7 +25,7 @@ describe('getProduct', () => {
 
   it('API에서 상품 상세 정보를 정상적으로 조회한다', async () => {
     const product = {
-      id: 'p1',
+      id: '11111111-1111-1111-1111-111111111111',
       name: '테스트 상품',
       description: '설명',
       status: 'ON_SALE',
@@ -48,15 +36,16 @@ describe('getProduct', () => {
     };
     mockGetProduct.mockResolvedValueOnce(product);
 
-    const result = await getProduct('p1');
+    const result = await getProduct('11111111-1111-1111-1111-111111111111');
 
-    expect(mockGetProduct).toHaveBeenCalledWith('p1');
+    expect(mockGetProduct).toHaveBeenCalledWith('11111111-1111-1111-1111-111111111111');
     expect(result).toEqual(product);
+    expect(result?.id).not.toMatch(/^mock-/);
   });
 
   it('API 응답에 이미지가 없으면 폴백 이미지를 설정한다', async () => {
     const product = {
-      id: 'p2',
+      id: '22222222-2222-2222-2222-222222222222',
       name: '이미지없는상품',
       description: '설명',
       status: 'ON_SALE',
@@ -67,7 +56,7 @@ describe('getProduct', () => {
     };
     mockGetProduct.mockResolvedValueOnce(product);
 
-    const result = await getProduct('p2');
+    const result = await getProduct('22222222-2222-2222-2222-222222222222');
 
     expect(result).not.toBeNull();
     expect(result!.images).toEqual(['fallback-이미지없는상품-1.jpg', 'fallback-이미지없는상품-2.jpg']);
@@ -81,21 +70,16 @@ describe('getProduct', () => {
     expect(result).toBeNull();
   });
 
-  it('API 에러 시 목 데이터에서 해당 ID의 상품을 찾아 반환한다', async () => {
-    mockGetProduct.mockRejectedValueOnce(new Error('Network error'));
+  it('API 에러 시 목 데이터로 폴백하지 않고 에러를 그대로 전파한다', async () => {
+    const error = new Error('Network error');
+    mockGetProduct.mockRejectedValueOnce(error);
 
-    const result = await getProduct('mock-1');
-
-    expect(result).not.toBeNull();
-    expect(result!.id).toBe('mock-1');
-    expect(result!.name).toBe('목 상품');
+    await expect(getProduct('mock-1')).rejects.toThrow('Network error');
   });
 
-  it('API 에러 시 목 데이터에도 없는 ID이면 null을 반환한다', async () => {
-    mockGetProduct.mockRejectedValueOnce(new Error('Network error'));
+  it('API 에러 시 다른 ID에 대해서도 폴백 없이 에러가 전파된다', async () => {
+    mockGetProduct.mockRejectedValueOnce(new Error('Server 500'));
 
-    const result = await getProduct('unknown-id');
-
-    expect(result).toBeNull();
+    await expect(getProduct('unknown-id')).rejects.toThrow('Server 500');
   });
 });
