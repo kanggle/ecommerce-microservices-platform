@@ -2,7 +2,7 @@
 
 Patterns for `@Transactional` usage in Spring Boot services.
 
-See also `database/transaction-boundary.md` for layer-level boundary design.
+Prerequisite: read `specs/platform/coding-rules.md` before using this skill. See also `database/transaction-boundary.md` for layer-level boundary design.
 
 ---
 

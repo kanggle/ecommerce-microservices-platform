@@ -2,6 +2,8 @@
 
 Full workflow for implementing a backend task in this repository.
 
+Prerequisite: read `specs/platform/coding-rules.md` and follow `specs/platform/entrypoint.md` before using this skill.
+
 ---
 
 ## Steps 1–6: Spec Reading

@@ -4,6 +4,20 @@ import userEvent from '@testing-library/user-event';
 import { AddressForm } from '@/features/user/ui/AddressForm';
 import type { Address, ApiErrorResponse } from '@repo/types';
 
+// AddressSearch는 daum postcode API를 사용하여 테스트 환경에서 동작하지 않으므로
+// onSelect 콜백을 트리거할 수 있는 스텁으로 대체한다.
+vi.mock('@/shared/ui/AddressSearch', () => ({
+  AddressSearch: ({ onSelect }: { onSelect: (d: { zipCode: string; address1: string }) => void }) => (
+    <button
+      type="button"
+      data-testid="address-search-stub"
+      onClick={() => onSelect({ zipCode: '12345', address1: '서울시 강남구' })}
+    >
+      주소 검색
+    </button>
+  ),
+}));
+
 vi.mock('@/features/user/api/address-api', () => ({
   createAddress: vi.fn(),
   updateAddress: vi.fn(),
@@ -54,9 +68,9 @@ describe('AddressForm', () => {
       expect(screen.getByLabelText('배송지명')).toHaveValue('');
       expect(screen.getByLabelText('수령인')).toHaveValue('');
       expect(screen.getByLabelText('연락처')).toHaveValue('');
-      expect(screen.getByLabelText('우편번호')).toHaveValue('');
-      expect(screen.getByLabelText('주소')).toHaveValue('');
-      expect(screen.getByLabelText('상세주소')).toHaveValue('');
+      expect(screen.getByPlaceholderText('우편번호')).toHaveValue('');
+      expect(screen.getByPlaceholderText('주소 검색을 눌러주세요')).toHaveValue('');
+      expect(screen.getByPlaceholderText('상세주소 (선택)')).toHaveValue('');
     });
 
     it('기본 배송지 체크박스가 표시된다', () => {
@@ -74,7 +88,6 @@ describe('AddressForm', () => {
       expect(screen.getByText('배송지명을 입력해주세요.')).toBeInTheDocument();
       expect(screen.getByText('수령인을 입력해주세요.')).toBeInTheDocument();
       expect(screen.getByText('연락처를 입력해주세요.')).toBeInTheDocument();
-      expect(screen.getByText('우편번호를 입력해주세요.')).toBeInTheDocument();
       expect(screen.getByText('주소를 입력해주세요.')).toBeInTheDocument();
       expect(mockCreateAddress).not.toHaveBeenCalled();
     });
@@ -86,13 +99,13 @@ describe('AddressForm', () => {
       await user.type(screen.getByLabelText('배송지명'), '집');
       await user.type(screen.getByLabelText('수령인'), '홍길동');
       await user.type(screen.getByLabelText('연락처'), 'abc');
-      await user.type(screen.getByLabelText('우편번호'), '12345');
-      await user.type(screen.getByLabelText('주소'), '서울시 강남구');
+      // 주소 검색 스텁으로 zipCode/address1 세팅
+      await user.click(screen.getByTestId('address-search-stub'));
       await user.click(screen.getByRole('button', { name: '추가' }));
 
-      expect(
-        screen.getByText('연락처 형식이 올바르지 않습니다.'),
-      ).toBeInTheDocument();
+      // 인라인 검증과 필드 에러 두 곳에서 동일 메시지가 렌더링될 수 있다
+      const phoneErrors = screen.getAllByText('올바른 휴대폰 번호를 입력해주세요. (예: 010-1234-5678)');
+      expect(phoneErrors.length).toBeGreaterThanOrEqual(1);
     });
 
     it('유효한 입력 시 createAddress를 호출하고 onSaved를 호출한다', async () => {
@@ -104,9 +117,9 @@ describe('AddressForm', () => {
       await user.type(screen.getByLabelText('배송지명'), '집');
       await user.type(screen.getByLabelText('수령인'), '홍길동');
       await user.type(screen.getByLabelText('연락처'), '010-1234-5678');
-      await user.type(screen.getByLabelText('우편번호'), '12345');
-      await user.type(screen.getByLabelText('주소'), '서울시 강남구');
-      await user.type(screen.getByLabelText('상세주소'), '101호');
+      // 주소 검색 스텁으로 zipCode='12345', address1='서울시 강남구' 세팅
+      await user.click(screen.getByTestId('address-search-stub'));
+      await user.type(screen.getByPlaceholderText('상세주소 (선택)'), '101호');
       await user.click(screen.getByRole('button', { name: '추가' }));
 
       await waitFor(() => {
@@ -140,8 +153,7 @@ describe('AddressForm', () => {
       await user.type(screen.getByLabelText('배송지명'), '집');
       await user.type(screen.getByLabelText('수령인'), '홍길동');
       await user.type(screen.getByLabelText('연락처'), '010-1234-5678');
-      await user.type(screen.getByLabelText('우편번호'), '12345');
-      await user.type(screen.getByLabelText('주소'), '서울시 강남구');
+      await user.click(screen.getByTestId('address-search-stub'));
       await user.click(screen.getByRole('button', { name: '추가' }));
 
       await waitFor(() => {
@@ -166,8 +178,7 @@ describe('AddressForm', () => {
       await user.type(screen.getByLabelText('배송지명'), '집');
       await user.type(screen.getByLabelText('수령인'), '홍길동');
       await user.type(screen.getByLabelText('연락처'), '010-1234-5678');
-      await user.type(screen.getByLabelText('우편번호'), '12345');
-      await user.type(screen.getByLabelText('주소'), '서울시 강남구');
+      await user.click(screen.getByTestId('address-search-stub'));
       await user.click(screen.getByRole('button', { name: '추가' }));
 
       expect(
@@ -191,11 +202,11 @@ describe('AddressForm', () => {
       expect(screen.getByLabelText('배송지명')).toHaveValue('집');
       expect(screen.getByLabelText('수령인')).toHaveValue('홍길동');
       expect(screen.getByLabelText('연락처')).toHaveValue('010-1234-5678');
-      expect(screen.getByLabelText('우편번호')).toHaveValue('12345');
-      expect(screen.getByLabelText('주소')).toHaveValue(
+      expect(screen.getByPlaceholderText('우편번호')).toHaveValue('12345');
+      expect(screen.getByPlaceholderText('주소 검색을 눌러주세요')).toHaveValue(
         '서울시 강남구 테헤란로 1',
       );
-      expect(screen.getByLabelText('상세주소')).toHaveValue('101호');
+      expect(screen.getByPlaceholderText('상세주소 (선택)')).toHaveValue('101호');
     });
 
     it('수정 모드에서 기본 배송지 체크박스가 표시되지 않는다', () => {
@@ -274,8 +285,7 @@ describe('AddressForm', () => {
     await user.type(screen.getByLabelText('배송지명'), '집');
     await user.type(screen.getByLabelText('수령인'), '홍길동');
     await user.type(screen.getByLabelText('연락처'), '010-1234-5678');
-    await user.type(screen.getByLabelText('우편번호'), '12345');
-    await user.type(screen.getByLabelText('주소'), '서울시 강남구');
+    await user.click(screen.getByTestId('address-search-stub'));
     await user.click(screen.getByRole('button', { name: '추가' }));
 
     await waitFor(() => {

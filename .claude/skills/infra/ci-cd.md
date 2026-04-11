@@ -2,6 +2,8 @@
 
 Patterns for GitHub Actions CI/CD pipelines in this repository.
 
+Prerequisite: read `specs/platform/deployment-policy.md` before using this skill.
+
 ---
 
 ## Pipeline Structure

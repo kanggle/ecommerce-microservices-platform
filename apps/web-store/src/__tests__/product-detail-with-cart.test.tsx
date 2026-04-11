@@ -36,7 +36,7 @@ vi.mock('@/shared/ui', () => ({
   Toast: ({ message }: { message: string }) => <div data-testid="toast">{message}</div>,
 }));
 
-vi.mock('@/shared/hooks/useClickOutside', () => ({
+vi.mock('@/shared/hooks/use-click-outside', () => ({
   useClickOutside: vi.fn(),
 }));
 
@@ -49,6 +49,10 @@ vi.mock('@/features/auth', () => ({
     signup: vi.fn(),
     logout: vi.fn(),
   }),
+}));
+
+vi.mock('@/features/wishlist', () => ({
+  WishlistButton: () => <button aria-label="wishlist-stub" />,
 }));
 
 const product: ProductDetail = {

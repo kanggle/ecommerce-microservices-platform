@@ -7,7 +7,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.Optional;
 
-interface ShippingJpaRepository extends JpaRepository<ShippingJpaEntity, String> {
+public interface ShippingJpaRepository extends JpaRepository<ShippingJpaEntity, String> {
 
     Optional<ShippingJpaEntity> findByOrderId(String orderId);
 

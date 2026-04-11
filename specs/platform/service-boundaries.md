@@ -6,9 +6,10 @@ Defines ownership rules and cross-service interaction constraints.
 
 # Ownership Rule
 
-Each service owns its domain exclusively.
+See `ownership-rule.md` for the authoritative service, contract, and shared library ownership principles.
 
-- A service owns its data, business rules, and published interfaces.
+This document adds the concrete boundary constraints on top of those principles:
+
 - No other service may read or write another service's database directly.
 - Cross-service data access must go through published contracts only.
 

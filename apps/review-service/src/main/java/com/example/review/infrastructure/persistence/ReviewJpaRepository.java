@@ -11,7 +11,7 @@ import org.springframework.data.repository.query.Param;
 import java.util.Optional;
 import java.util.UUID;
 
-interface ReviewJpaRepository extends JpaRepository<ReviewJpaEntity, UUID> {
+public interface ReviewJpaRepository extends JpaRepository<ReviewJpaEntity, UUID> {
 
     Optional<ReviewJpaEntity> findByIdAndStatus(UUID id, ReviewStatus status);
 

@@ -120,7 +120,7 @@ interface ShippingFormSectionProps {
   onAddressSearchSelect: (result: { zipCode: string; address1: string }) => void;
 }
 
-export function ShippingFormSection({
+function ShippingFormSection({
   address,
   phoneValid,
   onFieldChange,

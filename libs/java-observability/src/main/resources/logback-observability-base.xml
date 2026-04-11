@@ -27,6 +27,8 @@
             </fieldNames>
             <customFields>{"service":"${SERVICE_NAME}"}</customFields>
             <includeMdcKeyName>traceId</includeMdcKeyName>
+            <includeMdcKeyName>eventId</includeMdcKeyName>
+            <includeMdcKeyName>eventType</includeMdcKeyName>
             <timeZone>UTC</timeZone>
         </encoder>
     </appender>
@@ -34,7 +36,7 @@
     <!-- Console appender for local development -->
     <appender name="CONSOLE" class="ch.qos.logback.core.ConsoleAppender">
         <encoder>
-            <pattern>%d{yyyy-MM-dd HH:mm:ss.SSS} [%thread] %-5level %logger{36} [traceId=%X{traceId}] - %msg%n</pattern>
+            <pattern>%d{yyyy-MM-dd HH:mm:ss.SSS} [%thread] %-5level %logger{36} [traceId=%X{traceId} eventId=%X{eventId:-} eventType=%X{eventType:-}] - %msg%n</pattern>
         </encoder>
     </appender>
 </included>

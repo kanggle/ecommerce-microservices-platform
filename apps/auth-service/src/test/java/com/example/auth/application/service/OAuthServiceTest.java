@@ -6,6 +6,7 @@ import com.example.auth.application.exception.OAuthException;
 import com.example.auth.application.exception.OAuthUpstreamException;
 import com.example.auth.domain.entity.Role;
 import com.example.auth.domain.entity.User;
+import com.example.auth.domain.event.AuthEventPublisher;
 import com.example.auth.domain.repository.OAuthStateStore;
 import com.example.auth.domain.repository.RefreshTokenStore;
 import com.example.auth.domain.repository.UserRepository;
@@ -51,6 +52,7 @@ class OAuthServiceTest {
     @Mock private SessionProperties sessionProperties;
     @Mock private UserSessionRegistry sessionRegistry;
     @Mock private OAuthCallbackProperties oauthCallbackProperties;
+    @Mock private AuthEventPublisher authEventPublisher;
 
     @BeforeEach
     void setUp() {
@@ -60,7 +62,7 @@ class OAuthServiceTest {
             List.of(googleProvider, naverProvider),
             oauthStateStore, userRepository, refreshTokenStore,
             tokenGenerator, tokenProperties, sessionProperties,
-            sessionRegistry, oauthCallbackProperties
+            sessionRegistry, oauthCallbackProperties, authEventPublisher
         );
     }
 
@@ -185,6 +187,7 @@ class OAuthServiceTest {
 
         assertThat(result.success()).isTrue();
         then(userRepository).should().save(any(User.class));
+        then(authEventPublisher).should().publish(any());
     }
 
     @Test

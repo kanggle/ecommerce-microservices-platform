@@ -1,9 +1,10 @@
 'use client';
 
+import { Suspense } from 'react';
 import { useSearchParams } from 'next/navigation';
 import { NotificationList, NotificationDetail } from '@/features/notification';
 
-export default function NotificationsPage() {
+function NotificationsContent() {
   const searchParams = useSearchParams();
   const notificationId = searchParams.get('id');
 
@@ -12,4 +13,12 @@ export default function NotificationsPage() {
   }
 
   return <NotificationList />;
+}
+
+export default function NotificationsPage() {
+  return (
+    <Suspense fallback={null}>
+      <NotificationsContent />
+    </Suspense>
+  );
 }

@@ -1,4 +1,5 @@
 import type { OrderDetail } from '@repo/types';
+import { PriceDisplay } from '@/shared/ui';
 
 interface Props {
   items: OrderDetail['items'];
@@ -15,11 +16,11 @@ export function OrderItemsSection({ items, totalPrice }: Props) {
           style={{ display: 'flex', justifyContent: 'space-between', padding: 'var(--space-2) 0', borderBottom: '1px solid var(--color-border-light)' }}
         >
           <span>{item.productName} ({item.optionName}) × {item.quantity}</span>
-          <span className="price">{(item.unitPrice * item.quantity).toLocaleString()}<span style={{ fontSize: 'var(--font-size-xs)', fontWeight: 'var(--font-weight-normal)', color: 'var(--color-text-secondary)', marginLeft: '2px' }}>원</span></span>
+          <PriceDisplay amount={item.unitPrice * item.quantity} className="price" />
         </div>
       ))}
       <div style={{ textAlign: 'right', marginTop: 'var(--space-2)', fontWeight: 'var(--font-weight-bold)', fontSize: 'var(--font-size-lg)' }}>
-        합계: {totalPrice.toLocaleString()}<span style={{ fontSize: 'var(--font-size-sm)', fontWeight: 'var(--font-weight-normal)', color: 'var(--color-text-secondary)', marginLeft: '2px' }}>원</span>
+        합계: <PriceDisplay amount={totalPrice} unitStyle={{ fontSize: 'var(--font-size-sm)', fontWeight: 'var(--font-weight-normal)', color: 'var(--color-text-secondary)', marginLeft: '2px' }} />
       </div>
     </section>
   );

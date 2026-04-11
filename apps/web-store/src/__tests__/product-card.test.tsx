@@ -37,7 +37,10 @@ describe('ProductCard', () => {
   it('상품 가격을 원화 형식으로 표시한다', () => {
     render(<ProductCard product={baseProduct} />);
 
-    expect(screen.getByText('29,900원')).toBeInTheDocument();
+    // 가격 숫자와 단위 "원"이 별도 span으로 렌더링되므로 textContent 전체로 검색한다
+    expect(
+      screen.getByText((_, el) => el?.textContent === '29,900원'),
+    ).toBeInTheDocument();
   });
 
   it('상품 상세 페이지로의 링크를 포함한다', () => {

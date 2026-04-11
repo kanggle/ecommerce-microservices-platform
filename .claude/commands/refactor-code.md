@@ -59,9 +59,9 @@ Direct refactoring of a specific target. No analysis phase.
 ### Procedure
 
 1. Read `CLAUDE.md`
-2. Read `specs/platform/refactor-codeing-policy.md`
+2. Read `specs/platform/refactoring-policy.md`
 3. Read `specs/services/<service>/architecture.md`
-4. Read `.claude/skills/INDEX.md` → read matched architecture skill and `backend/refactor-codeing.md`
+4. Read `.claude/skills/INDEX.md` → read matched architecture skill and `backend/refactoring.md`
 5. Read the target code and all related code
 6. Check existing tests — if no tests exist, write tests before refactoring
 7. Run existing tests → verify all pass (baseline)
@@ -94,11 +94,11 @@ Main context reads service code for analysis but does NOT perform refactoring di
 ### Phase 1: Discovery & Analysis (main context)
 
 1. Read `CLAUDE.md`
-2. Read `specs/platform/refactor-codeing-policy.md`
+2. Read `specs/platform/refactoring-policy.md`
 3. Read `specs/services/<service>/architecture.md` to understand the declared architecture
 4. Read `specs/platform/coding-rules.md` (if exists)
 5. Read `specs/platform/naming-conventions.md` (if exists)
-6. Read `.claude/skills/INDEX.md` → read matched architecture skill and `backend/refactor-codeing.md`
+6. Read `.claude/skills/INDEX.md` → read matched architecture skill and `backend/refactoring.md`
 7. Scan all source files in the target service (backend: `apps/<service>/src/`, frontend: `apps/<service>/src/`)
 8. Determine test command based on service type:
    - Backend (Gradle): `./gradlew :apps:<service>:test`
@@ -166,11 +166,11 @@ You are performing a safe refactoring in this project. Follow these steps exactl
 
 ## Steps
 1. Read `CLAUDE.md`
-2. Read `specs/platform/refactor-codeing-policy.md`
+2. Read `specs/platform/refactoring-policy.md`
 3. Read `specs/services/{service}/architecture.md`
 4. Read `specs/platform/coding-rules.md` (if exists)
 5. Read `specs/platform/naming-conventions.md` (if exists)
-6. Read `.claude/skills/INDEX.md` and matched architecture skill and `backend/refactor-codeing.md`
+6. Read `.claude/skills/INDEX.md` and matched architecture skill and `backend/refactoring.md`
 7. Read the target files and all related code
 8. Run existing tests: {testCommand} — verify all pass (baseline)
 9. Perform the refactoring:
@@ -219,7 +219,7 @@ Skipped: [list with dependency reason]
 ## Rules
 
 - Follow CLAUDE.md Hard Stop Rules at every step
-- Follow `specs/platform/refactor-codeing-policy.md` for all constraints
+- Follow `specs/platform/refactoring-policy.md` for all constraints
 - No behavior change — this is refactoring, not feature work
 - Tests must pass before and after every refactoring
 - One refactoring at a time — do not mix multiple changes

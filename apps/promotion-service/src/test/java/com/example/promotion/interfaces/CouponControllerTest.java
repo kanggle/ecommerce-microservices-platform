@@ -1,5 +1,6 @@
 package com.example.promotion.interfaces;
 
+import com.example.promotion.TestPromotionServiceApplication;
 import com.example.promotion.application.result.ApplyCouponResult;
 import com.example.promotion.application.result.CouponDetail;
 import com.example.promotion.application.service.CouponCommandService;
@@ -16,6 +17,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.http.MediaType;
+import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
 
@@ -30,6 +32,7 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 @WebMvcTest(controllers = {CouponController.class, GlobalExceptionHandler.class})
+@ContextConfiguration(classes = TestPromotionServiceApplication.class)
 @DisplayName("CouponController 슬라이스 테스트")
 class CouponControllerTest {
 

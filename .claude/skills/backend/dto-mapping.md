@@ -2,6 +2,8 @@
 
 Patterns for mapping between layers in Spring Boot services.
 
+Prerequisite: read `specs/platform/coding-rules.md` before using this skill.
+
 ---
 
 ## Mapping Directions

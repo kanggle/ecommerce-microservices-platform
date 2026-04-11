@@ -2,6 +2,8 @@
 
 Patterns for `@Profile("standalone")` in-memory implementations for local development without Docker.
 
+Prerequisite: read `specs/platform/deployment-policy.md` before using this skill.
+
 ---
 
 ## Purpose

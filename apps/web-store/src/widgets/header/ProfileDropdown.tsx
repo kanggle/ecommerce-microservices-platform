@@ -3,7 +3,7 @@
 import { useCallback, useState, useRef } from 'react';
 import Link from 'next/link';
 import { useProfileImage } from '@/shared/context/ProfileImageContext';
-import { useClickOutside } from '@/shared/hooks/useClickOutside';
+import { useClickOutside } from '@/shared/hooks/use-click-outside';
 import styles from './Header.module.css';
 
 interface ProfileDropdownProps {

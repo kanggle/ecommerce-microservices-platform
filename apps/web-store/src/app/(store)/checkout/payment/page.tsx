@@ -1,11 +1,12 @@
 'use client';
 
+import { Suspense } from 'react';
 import { useSearchParams } from 'next/navigation';
 import { useRequireAuth } from '@/features/auth';
 import { PaymentWidget } from '@/features/checkout';
 import { NarrowContainer } from '@/shared/ui';
 
-export default function PaymentPage() {
+function PaymentPageContent() {
   const searchParams = useSearchParams();
   const { isReady } = useRequireAuth();
 
@@ -28,5 +29,13 @@ export default function PaymentPage() {
       <h1 className="page-title">결제하기</h1>
       <PaymentWidget orderId={orderId} amount={amount} orderName={orderName} />
     </NarrowContainer>
+  );
+}
+
+export default function PaymentPage() {
+  return (
+    <Suspense fallback={null}>
+      <PaymentPageContent />
+    </Suspense>
   );
 }

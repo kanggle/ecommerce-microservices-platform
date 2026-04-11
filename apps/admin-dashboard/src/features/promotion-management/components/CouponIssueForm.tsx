@@ -3,14 +3,15 @@
 import { useState } from 'react';
 import { useIssueCoupons } from '../hooks/use-issue-coupons';
 import { getErrorMessage } from '@repo/types/guards';
+import { formStyles } from '@/shared/lib/form-styles';
 
 interface Props {
   promotionId: string;
 }
 
 const styles = {
+  ...formStyles,
   container: { maxWidth: '480px' } as const,
-  label: { display: 'block', marginBottom: '4px', fontWeight: 500 } as const,
   textarea: { width: '100%', padding: '8px 12px', border: '1px solid #d1d5db', borderRadius: '6px', resize: 'vertical', fontFamily: 'monospace' } as const,
   hint: { fontSize: '0.75rem', color: '#6b7280', marginTop: '4px', marginBottom: '12px' } as const,
   buttonRow: { display: 'flex', gap: '8px', alignItems: 'center' } as const,

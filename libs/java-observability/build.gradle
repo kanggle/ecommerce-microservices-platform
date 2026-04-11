@@ -21,6 +21,10 @@ dependencies {
     compileOnly 'org.springframework:spring-webflux'
     compileOnly 'org.springframework.boot:spring-boot-autoconfigure'
 
+    // Spring Kafka (for RecordInterceptor, optional)
+    compileOnly 'org.springframework.kafka:spring-kafka'
+    compileOnly 'com.fasterxml.jackson.core:jackson-databind'
+
     // Test
     testImplementation 'org.springframework.boot:spring-boot-starter-test'
     testImplementation 'org.springframework.boot:spring-boot-starter-web'

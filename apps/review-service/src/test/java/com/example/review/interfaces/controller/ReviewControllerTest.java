@@ -1,5 +1,6 @@
 package com.example.review.interfaces.controller;
 
+import com.example.review.TestReviewServiceApplication;
 import com.example.review.application.result.CreateReviewResult;
 import com.example.review.application.result.MyReviewListResult;
 import com.example.review.application.result.ReviewListResult;
@@ -18,6 +19,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.context.annotation.Import;
 import org.springframework.http.MediaType;
+import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
 
@@ -37,6 +39,7 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 @WebMvcTest(ReviewController.class)
+@ContextConfiguration(classes = TestReviewServiceApplication.class)
 @Import(GlobalExceptionHandler.class)
 @DisplayName("ReviewController 슬라이스 테스트")
 class ReviewControllerTest {

@@ -1,11 +1,13 @@
 package com.example.product.presentation.controller;
 
+import com.example.product.TestProductServiceApplication;
 import com.example.product.application.dto.AdjustStockResult;
 import com.example.product.application.service.AdjustStockService;
 import com.example.product.application.service.DeleteProductService;
 import com.example.product.application.service.QueryProductService;
 import com.example.product.application.service.RegisterProductService;
 import com.example.product.application.service.UpdateProductService;
+import com.example.product.application.service.VariantManagementService;
 import com.example.product.domain.exception.ProductNotFoundException;
 import com.example.product.domain.exception.VariantNotFoundException;
 import com.example.product.presentation.advice.GlobalExceptionHandler;
@@ -16,6 +18,7 @@ import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.context.annotation.Import;
 import org.springframework.dao.OptimisticLockingFailureException;
 import org.springframework.http.MediaType;
+import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
 
@@ -32,6 +35,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @WebMvcTest(controllers = {ProductController.class, AdminProductController.class})
+@ContextConfiguration(classes = TestProductServiceApplication.class)
 @Import(GlobalExceptionHandler.class)
 @DisplayName("AdminProductController PATCH/DELETE 슬라이스 테스트")
 class AdminProductControllerTest {
@@ -54,6 +58,9 @@ class AdminProductControllerTest {
     @MockitoBean
     private AdjustStockService adjustStockService;
 
+    @MockitoBean
+    private VariantManagementService variantManagementService;
+
     @Test
     @DisplayName("PATCH /api/admin/products/{id} - 수정 성공 시 200과 id 반환")
     void update_success_returns200() throws Exception {
@@ -67,6 +74,17 @@ class AdminProductControllerTest {
                                 """))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.id").value(productId.toString()));
+    }
+
+    @Test
+    @DisplayName("PATCH /api/admin/products/{id} - 깨진 JSON 본문 시 400 / VALIDATION_ERROR")
+    void update_malformedBody_returns400() throws Exception {
+        mockMvc.perform(patch("/api/admin/products/{id}", UUID.randomUUID())
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content("{\"name\":"))
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.code").value("VALIDATION_ERROR"))
+                .andExpect(jsonPath("$.message").value("Malformed request body"));
     }
 
     @Test

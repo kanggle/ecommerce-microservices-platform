@@ -4,6 +4,7 @@ import Image from 'next/image';
 import Link from 'next/link';
 import { memo, useState } from 'react';
 import type { ProductSummary } from '@repo/types';
+import { PriceDisplay } from '@/shared/ui';
 import styles from './ProductCard.module.css';
 
 interface ProductCardProps {
@@ -43,7 +44,7 @@ export const ProductCard = memo(function ProductCard({ product, action }: Produc
       <div className={styles.body}>
         <h3 className={styles.name}>{product.name}</h3>
         <p className={styles.price}>
-          {product.price.toLocaleString()}<span style={{ fontSize: 'var(--font-size-xs)', fontWeight: 'var(--font-weight-normal)', color: 'var(--color-text-secondary)', marginLeft: '2px' }}>원</span>
+          <PriceDisplay amount={product.price} />
         </p>
         {isSoldOut && (
           <span className={styles.soldOutBadge}>

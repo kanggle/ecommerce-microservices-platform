@@ -6,7 +6,7 @@ import type {
   CreateProductRequest,
   UpdateProductRequest,
 } from '@repo/types';
-import { useAsyncAction } from '@/shared/hooks/use-async-action';
+import { useSubmitAction } from '@/shared/hooks/use-async-action';
 import { useCreateProduct } from './use-create-product';
 import { useUpdateProduct } from './use-update-product';
 import type { VariantInput } from '../components/VariantEditor';
@@ -27,8 +27,7 @@ export function useProductForm(product?: ProductDetail) {
       _key: i, optionName: v.optionName, stock: v.stock, additionalPrice: v.additionalPrice,
     })) ?? [{ _key: 0, optionName: '', stock: 0, additionalPrice: 0 }],
   );
-  const { error, execute } = useAsyncAction();
-  const [isSubmitting, setIsSubmitting] = useState(false);
+  const { error, isSubmitting, runSubmit } = useSubmitAction();
 
   const isValid = name.trim().length > 0 && price > 0 && categoryId.trim().length > 0;
 
@@ -36,9 +35,7 @@ export function useProductForm(product?: ProductDetail) {
     e.preventDefault();
     if (!isValid || isSubmitting) return;
 
-    setIsSubmitting(true);
-
-    await execute(async () => {
+    await runSubmit(async () => {
       if (isEdit) {
         const data: UpdateProductRequest = { name: name.trim(), description: description.trim(), price, status };
         await updateProduct.mutateAsync({ productId: product.id, data });
@@ -53,8 +50,6 @@ export function useProductForm(product?: ProductDetail) {
         router.push(`/products/${created.id}`);
       }
     }, '저장에 실패했습니다.');
-
-    setIsSubmitting(false);
   }
 
   return {

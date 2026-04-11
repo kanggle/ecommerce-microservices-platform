@@ -2,6 +2,8 @@
 
 Patterns for end-to-end integration tests across services.
 
+Prerequisite: read `specs/platform/testing-strategy.md` before using this skill.
+
 ---
 
 ## Scope

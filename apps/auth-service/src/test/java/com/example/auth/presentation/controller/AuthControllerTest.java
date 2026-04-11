@@ -123,6 +123,17 @@ class AuthControllerTest {
     }
 
     @Test
+    @DisplayName("POST /api/auth/signup - 깨진 JSON 본문 시 400 / VALIDATION_ERROR")
+    void signup_malformedBody_400() throws Exception {
+        mockMvc.perform(post("/api/auth/signup")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content("{\"email\":"))
+            .andExpect(status().isBadRequest())
+            .andExpect(jsonPath("$.code").value("VALIDATION_ERROR"))
+            .andExpect(jsonPath("$.message").value("Malformed request body"));
+    }
+
+    @Test
     @DisplayName("POST /api/auth/signup - 비밀번호 강도 미달 시 400")
     void signup_weakPassword_400() throws Exception {
         mockMvc.perform(post("/api/auth/signup")

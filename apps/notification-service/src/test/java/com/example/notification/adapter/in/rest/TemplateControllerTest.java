@@ -72,6 +72,18 @@ class TemplateControllerTest {
     }
 
     @Test
+    @DisplayName("POST /api/notifications/templates - 깨진 JSON 본문 시 400 / VALIDATION_ERROR")
+    void createTemplate_malformedBody_returns400() throws Exception {
+        mockMvc.perform(post("/api/notifications/templates")
+                        .header("X-User-Role", "ADMIN")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content("{\"type\":"))
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.code").value("VALIDATION_ERROR"))
+                .andExpect(jsonPath("$.message").value("Malformed request body"));
+    }
+
+    @Test
     @DisplayName("POST /api/notifications/templates - 중복 템플릿 생성 시 409")
     void createTemplate_duplicate_returns409() throws Exception {
         given(templateService.createTemplate(any()))

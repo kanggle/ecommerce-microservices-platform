@@ -1,5 +1,5 @@
 server:
-  port: 8089
+  port: ${SERVER_PORT:8093}
 
 spring:
   application:
@@ -60,6 +60,8 @@ management:
       enabled: true
     readinessstate:
       enabled: true
+    mail:
+      enabled: false
   metrics:
     tags:
       service: ${spring.application.name}

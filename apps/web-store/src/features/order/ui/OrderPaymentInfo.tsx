@@ -1,5 +1,6 @@
 import type { PaymentResponse } from '@repo/types';
 import { PaymentStatusBadge } from '@/entities/payment';
+import { PriceDisplay } from '@/shared/ui';
 
 interface Props {
   payment: PaymentResponse | null;
@@ -21,7 +22,7 @@ export function OrderPaymentInfo({ payment, paymentError }: Props) {
             <PaymentStatusBadge status={payment.status} />
           </div>
           <p style={{ margin: 'var(--space-1) 0', color: 'var(--color-text-secondary)' }}>
-            결제 금액: {payment.amount.toLocaleString()}<span style={{ fontSize: 'var(--font-size-xs)', fontWeight: 'var(--font-weight-normal)', color: 'var(--color-text-secondary)', marginLeft: '2px' }}>원</span>
+            결제 금액: <PriceDisplay amount={payment.amount} />
           </p>
           {payment.paidAt && (
             <p style={{ margin: 'var(--space-1) 0', color: 'var(--color-text-secondary)' }}>

@@ -18,6 +18,8 @@ public class RouteService {
         if (HttpMethod.GET.equals(method)) {
             return PATH_MATCHER.match("/api/products/**", path)
                     || PATH_MATCHER.match("/api/search/**", path)
+                    || PATH_MATCHER.match("/api/auth/oauth/**", path)
+                    || PATH_MATCHER.match("/api/reviews/products/**", path)
                     || "/actuator/health".equals(path);
         }
         return false;
@@ -31,6 +33,10 @@ public class RouteService {
         if (path.startsWith("/api/orders")) return "order-service";
         if (path.startsWith("/api/payments")) return "payment-service";
         if (path.startsWith("/api/shippings")) return "shipping-service";
+        if (path.startsWith("/api/reviews")) return "review-service";
+        if (path.startsWith("/api/promotions") || path.startsWith("/api/coupons")) return "promotion-service";
+        if (path.startsWith("/api/notifications")) return "notification-service";
+        if (path.startsWith("/api/wishlists")) return "user-service";
         return "unknown";
     }
 }

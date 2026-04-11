@@ -2,6 +2,8 @@
 
 Patterns for managing Elasticsearch indexes in the search service.
 
+Prerequisite: read `specs/platform/coding-rules.md` before using this skill.
+
 ---
 
 ## Index Adapter

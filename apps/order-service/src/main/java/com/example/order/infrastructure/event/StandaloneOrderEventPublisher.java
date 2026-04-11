@@ -34,6 +34,9 @@ public class StandaloneOrderEventPublisher implements OrderEventPublisher {
         } catch (Exception e) {
             log.error("[standalone] Failed to create payment for orderId={}: {}",
                     payload.orderId(), e.getMessage());
+            throw new IllegalStateException(
+                    "결제 레코드 생성 실패로 주문을 완료할 수 없습니다. payment-service 상태를 확인하세요. orderId="
+                            + payload.orderId(), e);
         }
     }
 

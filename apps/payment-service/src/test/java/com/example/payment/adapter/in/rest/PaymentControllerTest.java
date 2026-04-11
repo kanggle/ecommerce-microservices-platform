@@ -110,6 +110,17 @@ class PaymentControllerTest {
             verify(paymentProcessingService).processPayment("order-1", "user-1", 30000L);
         }
 
+        @Test
+        @DisplayName("깨진 JSON 본문이면 400 / VALIDATION_ERROR 반환")
+        void createPayment_malformedBody_returns400() throws Exception {
+            mockMvc.perform(post("/api/payments")
+                            .contentType(MediaType.APPLICATION_JSON)
+                            .content("{\"orderId\":"))
+                    .andExpect(status().isBadRequest())
+                    .andExpect(jsonPath("$.code").value("VALIDATION_ERROR"))
+                    .andExpect(jsonPath("$.message").value("Malformed request body"));
+        }
+
     }
 
     @Nested

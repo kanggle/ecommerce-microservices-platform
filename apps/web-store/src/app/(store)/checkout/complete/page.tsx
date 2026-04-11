@@ -1,9 +1,10 @@
 'use client';
 
+import { Suspense } from 'react';
 import Link from 'next/link';
 import { useSearchParams } from 'next/navigation';
 
-export default function CheckoutCompletePage() {
+function CheckoutCompleteContent() {
   const searchParams = useSearchParams();
   const orderId = searchParams.get('orderId');
 
@@ -43,5 +44,13 @@ export default function CheckoutCompletePage() {
         </Link>
       </div>
     </div>
+  );
+}
+
+export default function CheckoutCompletePage() {
+  return (
+    <Suspense fallback={null}>
+      <CheckoutCompleteContent />
+    </Suspense>
   );
 }

@@ -1,11 +1,14 @@
 package com.example.payment;
 
+import com.example.payment.application.port.out.PaymentGatewayConfirmResult;
+import com.example.payment.application.port.out.PaymentGatewayPort;
 import com.example.payment.application.service.PaymentConfirmService;
 import com.example.payment.domain.model.PaymentStatus;
 import com.example.payment.application.port.out.PaymentRepository;
 import com.example.payment.adapter.in.event.OrderCancelledEventConsumer;
 import com.example.payment.adapter.in.event.OrderPlacedEventConsumer;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,9 +17,14 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.kafka.test.context.EmbeddedKafka;
 import org.springframework.test.context.DynamicPropertyRegistry;
 import org.springframework.test.context.DynamicPropertySource;
+import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.testcontainers.containers.PostgreSQLContainer;
 import org.testcontainers.junit.jupiter.Container;
 import org.testcontainers.junit.jupiter.Testcontainers;
+
+import static org.mockito.ArgumentMatchers.anyLong;
+import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.BDDMockito.given;
 
 import java.util.List;
 import java.util.Map;
@@ -59,6 +67,15 @@ class PaymentRefundIntegrationTest {
 
     @Autowired
     private ObjectMapper objectMapper;
+
+    @MockitoBean
+    private PaymentGatewayPort paymentGateway;
+
+    @BeforeEach
+    void stubPaymentGateway() {
+        given(paymentGateway.confirmPayment(anyString(), anyString(), anyLong()))
+                .willReturn(new PaymentGatewayConfirmResult("CARD", "https://receipt.test/mock"));
+    }
 
     private String buildOrderPlacedJson(String orderId, String userId, long totalPrice) throws Exception {
         return objectMapper.writeValueAsString(Map.of(

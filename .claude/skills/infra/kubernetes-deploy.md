@@ -2,6 +2,8 @@
 
 Patterns for Kubernetes manifests in this repository.
 
+Prerequisite: read `specs/platform/deployment-policy.md` before using this skill.
+
 ---
 
 ## Service Manifest Structure

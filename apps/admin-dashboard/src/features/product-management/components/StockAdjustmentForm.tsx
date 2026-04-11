@@ -4,6 +4,7 @@ import { useState } from 'react';
 import type { ProductVariant } from '@repo/types';
 import { useAsyncAction } from '@/shared/hooks/use-async-action';
 import { overlayStyle } from '@/shared/lib/overlay-styles';
+import { formStyles } from '@/shared/lib/form-styles';
 import { useAdjustStock } from '../hooks/use-adjust-stock';
 
 interface Props {
@@ -13,6 +14,7 @@ interface Props {
 }
 
 const styles = {
+  ...formStyles,
   overlay: { ...overlayStyle, backgroundColor: 'rgba(0, 0, 0, 0.5)' as const },
   dialog: { backgroundColor: '#fff', borderRadius: '8px', padding: '24px', maxWidth: '400px', width: '100%' } as const,
   title: { fontSize: '1.125rem', fontWeight: 600, marginBottom: '16px' } as const,
@@ -20,8 +22,6 @@ const styles = {
   error: { color: 'red', marginBottom: '12px' } as const,
   fieldGroup: { marginBottom: '12px' } as const,
   fieldGroupLast: { marginBottom: '16px' } as const,
-  label: { display: 'block', marginBottom: '4px', fontWeight: 500 } as const,
-  input: { width: '100%', padding: '8px 12px', border: '1px solid #d1d5db', borderRadius: '6px' } as const,
   buttonRow: { display: 'flex', justifyContent: 'flex-end', gap: '8px' } as const,
   cancelBtn: { padding: '8px 16px', borderRadius: '6px', border: '1px solid #d1d5db', backgroundColor: '#fff', cursor: 'pointer' } as const,
   submitBtn: { padding: '8px 16px', borderRadius: '6px', border: 'none', backgroundColor: '#1A1A2E', color: '#fff', cursor: 'pointer', opacity: 1 } as const,

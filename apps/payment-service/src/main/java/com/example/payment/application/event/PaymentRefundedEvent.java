@@ -4,6 +4,7 @@ import com.example.payment.domain.model.Payment;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 import java.time.Instant;
+import java.time.ZoneOffset;
 import java.util.UUID;
 
 public record PaymentRefundedEvent(
@@ -32,7 +33,7 @@ public record PaymentRefundedEvent(
                         payment.getOrderId(),
                         payment.getUserId(),
                         payment.getAmount(),
-                        payment.getRefundedAt().toString()
+                        payment.getRefundedAt().toInstant(ZoneOffset.UTC).toString()
                 )
         );
     }

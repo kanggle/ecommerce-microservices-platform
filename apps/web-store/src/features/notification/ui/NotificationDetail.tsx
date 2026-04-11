@@ -1,16 +1,10 @@
 'use client';
 
 import Link from 'next/link';
-import type { NotificationChannel } from '@repo/types';
 import { ErrorMessage } from '@repo/ui';
 import { Skeleton } from '@/shared/ui/Skeleton';
 import { useNotificationDetail } from '../model/use-notification-detail';
-
-const CHANNEL_LABELS: Record<NotificationChannel, string> = {
-  EMAIL: '이메일',
-  SMS: 'SMS',
-  PUSH: '푸시',
-};
+import { CHANNEL_LABELS } from '../lib/constants';
 
 interface Props {
   notificationId: string;

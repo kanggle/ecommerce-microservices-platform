@@ -19,7 +19,7 @@ COPY --from=layers /app/snapshot-dependencies ./
 COPY --from=layers /app/application ./
 RUN chown -R appuser:appgroup /app
 USER appuser
-EXPOSE 8089
+EXPOSE 8092
 HEALTHCHECK --interval=30s --timeout=5s --start-period=60s --retries=3 \
-  CMD wget -qO- http://localhost:8089/actuator/health || exit 1
+  CMD wget -qO- http://localhost:8092/actuator/health || exit 1
 ENTRYPOINT ["java", "-javaagent:/app/opentelemetry-javaagent.jar", "-XX:MaxRAMPercentage=75.0", "org.springframework.boot.loader.launch.JarLauncher"]

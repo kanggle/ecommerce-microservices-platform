@@ -49,11 +49,11 @@ outbox:
     batch-size: 50
 
 server:
-  port: ${SERVER_PORT:8086}
+  port: ${SERVER_PORT:8091}
   forward-headers-strategy: native
 
 order-service:
-  base-url: ${ORDER_SERVICE_URL:http://localhost:8083}
+  base-url: ${ORDER_SERVICE_URL:http://localhost:8086}
 
 management:
   endpoints:

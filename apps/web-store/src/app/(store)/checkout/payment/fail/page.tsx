@@ -1,9 +1,10 @@
 'use client';
 
+import { Suspense } from 'react';
 import Link from 'next/link';
 import { useSearchParams } from 'next/navigation';
 
-export default function PaymentFailPage() {
+function PaymentFailContent() {
   const searchParams = useSearchParams();
   const code = searchParams.get('code');
   const message = searchParams.get('message');
@@ -43,5 +44,13 @@ export default function PaymentFailPage() {
         </Link>
       </div>
     </div>
+  );
+}
+
+export default function PaymentFailPage() {
+  return (
+    <Suspense fallback={null}>
+      <PaymentFailContent />
+    </Suspense>
   );
 }

@@ -1,8 +1,8 @@
 import { useRef } from 'react';
 import type { ProductDetail } from '@repo/types';
 import type { SelectedItem } from './types';
-import { useClickOutside } from '@/shared/hooks/useClickOutside';
-import styles from '../ProductDetailWithCart.module.css';
+import { useClickOutside } from '@/shared/hooks/use-click-outside';
+import styles from './ProductDetailWithCart.module.css';
 
 interface VariantSelectorProps {
   variants: ProductDetail['variants'];

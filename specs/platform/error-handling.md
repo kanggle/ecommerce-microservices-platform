@@ -34,6 +34,7 @@ All services must return errors in the following JSON format:
 | Unprocessable business rule violation | 422 Unprocessable Entity |
 | Rate limit exceeded | 429 Too Many Requests |
 | Internal server error | 500 Internal Server Error |
+| Upstream returned an error response (e.g. OAuth provider, PG) | 502 Bad Gateway |
 | Upstream dependency unavailable | 503 Service Unavailable |
 
 ---

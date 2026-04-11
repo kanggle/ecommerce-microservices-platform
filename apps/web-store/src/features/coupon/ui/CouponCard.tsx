@@ -2,6 +2,7 @@
 
 import type { CouponSummary, CouponStatus } from '@repo/types';
 import { StatusBadge } from '@/shared/ui';
+import { formatDiscountValue, formatMaxDiscount } from '../lib/format-discount';
 
 const STATUS_LABELS: Record<CouponStatus, string> = {
   ISSUED: '사용가능',
@@ -14,20 +15,6 @@ const STATUS_COLORS: Record<CouponStatus, string> = {
   USED: 'var(--color-text-secondary)',
   EXPIRED: 'var(--color-danger)',
 };
-
-function formatDiscountValue(coupon: CouponSummary): string {
-  if (coupon.discountType === 'FIXED') {
-    return `${coupon.discountValue.toLocaleString()}원 할인`;
-  }
-  return `${coupon.discountValue}% 할인`;
-}
-
-function formatMaxDiscount(coupon: CouponSummary): string | null {
-  if (coupon.discountType === 'PERCENTAGE' && coupon.maxDiscountAmount > 0) {
-    return `최대 ${coupon.maxDiscountAmount.toLocaleString()}원`;
-  }
-  return null;
-}
 
 interface CouponCardProps {
   coupon: CouponSummary;

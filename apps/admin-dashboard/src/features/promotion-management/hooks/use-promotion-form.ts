@@ -6,7 +6,7 @@ import type {
   CreatePromotionRequest,
   UpdatePromotionRequest,
 } from '@repo/types';
-import { useAsyncAction } from '@/shared/hooks/use-async-action';
+import { useSubmitAction } from '@/shared/hooks/use-async-action';
 import { useCreatePromotion } from './use-create-promotion';
 import { useUpdatePromotion } from './use-update-promotion';
 
@@ -28,8 +28,7 @@ export function usePromotionForm(promotion?: PromotionDetail) {
   const [maxIssuanceCount, setMaxIssuanceCount] = useState(promotion?.maxIssuanceCount ?? 0);
   const [startDate, setStartDate] = useState(promotion ? toDateInputValue(promotion.startDate) : '');
   const [endDate, setEndDate] = useState(promotion ? toDateInputValue(promotion.endDate) : '');
-  const { error, execute } = useAsyncAction();
-  const [isSubmitting, setIsSubmitting] = useState(false);
+  const { error, isSubmitting, runSubmit } = useSubmitAction();
 
   const isValid =
     name.trim().length > 0 &&
@@ -43,9 +42,7 @@ export function usePromotionForm(promotion?: PromotionDetail) {
     e.preventDefault();
     if (!isValid || isSubmitting) return;
 
-    setIsSubmitting(true);
-
-    await execute(async () => {
+    await runSubmit(async () => {
       const formData = {
         name: name.trim(),
         description: description.trim(),
@@ -54,7 +51,7 @@ export function usePromotionForm(promotion?: PromotionDetail) {
         maxDiscountAmount,
         maxIssuanceCount,
         startDate: startDate + 'T00:00:00.000Z',
-        endDate: endDate + 'T00:00:00.000Z',
+        endDate: endDate + 'T23:59:59.999Z',
       };
 
       if (isEdit) {
@@ -67,8 +64,6 @@ export function usePromotionForm(promotion?: PromotionDetail) {
         router.push(`/promotions/${created.promotionId}`);
       }
     }, '저장에 실패했습니다.');
-
-    setIsSubmitting(false);
   }
 
   return {

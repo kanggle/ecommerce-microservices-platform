@@ -32,6 +32,7 @@ Allowed only when:
 ## ready → in-progress
 Allowed only when implementation starts.
 
+
 ## in-progress → review
 Allowed only when:
 - implementation is complete
@@ -124,6 +125,9 @@ _(없음)_
 
 | ID | Title | Service | Tags |
 |---|---|---|---|
+| TASK-BE-116-fix-001 | TASK-BE-116 리뷰 수정 — payment-service AmountMismatchException HTTP 상태 코드 422 → 400 수정 | payment-service | code, api |
+| TASK-FE-061 | web-store product API mock 폴백 제거 — non-UUID mock id가 쓰기 API로 흘러 들어가는 경로 차단 | web-store | code, test |
+| TASK-BE-116 | 전 서비스 GlobalExceptionHandler HttpMessageNotReadableException 핸들러 추가 — 잘못된 JSON/UUID 본문 시 500 → 400 VALIDATION_ERROR | auth-service, user-service, product-service, order-service, payment-service, shipping-service, review-service, promotion-service, notification-service, search-service | code, api, test |
 | TASK-FE-047 | TASK-FE-040에서 발견된 LoginForm oauth_failed 에러 메시지 테스트 누락 수정 | admin-dashboard | code, test |
 | TASK-BE-113-fix-001 | TASK-BE-113 리뷰 수정 — order-service 회원 탈퇴 시 주문 취소 배치 저장 실제 구현 | order-service | code, event, test |
 | TASK-BE-113 | order-service 회원 탈퇴 시 주문 취소 배치 저장 최적화 | order-service | code, event |

@@ -1,6 +1,6 @@
 import type { ProductDetail } from '@repo/types';
 import type { SelectedItem } from './types';
-import styles from '../ProductDetailWithCart.module.css';
+import styles from './ProductDetailWithCart.module.css';
 
 interface SelectedItemsListProps {
   selectedItems: SelectedItem[];

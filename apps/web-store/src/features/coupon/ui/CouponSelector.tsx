@@ -1,11 +1,10 @@
 'use client';
 
-import { useState } from 'react';
 import type { ApplyCouponResponse } from '@repo/types';
 import { ErrorMessage, EmptyState } from '@repo/ui';
 import { Skeleton } from '@/shared/ui/Skeleton';
-import { useCoupons } from '../model/use-coupons';
-import { calculateDiscount, isCouponExpired } from '../lib/calculate-discount';
+import { useCouponSelection } from '../model/use-coupon-selection';
+import { formatDiscountValue } from '../lib/format-discount';
 import { CouponCard } from './CouponCard';
 
 interface CouponSelectorProps {
@@ -13,51 +12,20 @@ interface CouponSelectorProps {
   onCouponApplied: (result: ApplyCouponResponse | null) => void;
 }
 
-/**
- * 쿠폰 선택 패널 크기 — ISSUED 상태 쿠폰 전체를 한 번에 로딩한다.
- * 사용자당 발급 쿠폰 수가 제한적이므로 100건이면 충분하다.
- */
-const COUPON_PAGE_SIZE = 100;
-
 export function CouponSelector({ orderAmount, onCouponApplied }: CouponSelectorProps) {
-  const [isOpen, setIsOpen] = useState(false);
-  const [selectedCouponId, setSelectedCouponId] = useState<string | null>(null);
-  const [expiredMessage, setExpiredMessage] = useState<string | null>(null);
-  const { data, isLoading, isError, refetch } = useCoupons(0, COUPON_PAGE_SIZE, 'ISSUED');
-
-  const coupons = data?.content ?? [];
-
-  function handleSelect(couponId: string) {
-    setExpiredMessage(null);
-
-    if (selectedCouponId === couponId) {
-      setSelectedCouponId(null);
-      onCouponApplied(null);
-      return;
-    }
-
-    const coupon = coupons.find((c) => c.couponId === couponId);
-    if (!coupon) return;
-
-    if (isCouponExpired(coupon)) {
-      setSelectedCouponId(null);
-      onCouponApplied(null);
-      setExpiredMessage('쿠폰이 만료되었습니다');
-      return;
-    }
-
-    const result = calculateDiscount(coupon, orderAmount);
-    setSelectedCouponId(couponId);
-    onCouponApplied(result);
-  }
-
-  function handleRemoveCoupon() {
-    setSelectedCouponId(null);
-    setExpiredMessage(null);
-    onCouponApplied(null);
-  }
-
-  const selectedCoupon = coupons.find((c) => c.couponId === selectedCouponId);
+  const {
+    isOpen,
+    selectedCouponId,
+    expiredMessage,
+    coupons,
+    isLoading,
+    isError,
+    refetch,
+    selectedCoupon,
+    handleSelect,
+    handleRemoveCoupon,
+    toggleOpen,
+  } = useCouponSelection({ orderAmount, onCouponApplied });
 
   return (
     <section style={{ marginBottom: 'var(--space-8)' }}>
@@ -72,7 +40,7 @@ export function CouponSelector({ orderAmount, onCouponApplied }: CouponSelectorP
           type="button"
           className="btn"
           style={{ fontSize: 'var(--font-size-sm)' }}
-          onClick={() => setIsOpen(!isOpen)}
+          onClick={toggleOpen}
         >
           {isOpen ? '닫기' : selectedCoupon ? '변경' : '쿠폰 선택'}
         </button>
@@ -96,9 +64,7 @@ export function CouponSelector({ orderAmount, onCouponApplied }: CouponSelectorP
               {selectedCoupon.promotionName}
             </div>
             <div style={{ fontSize: 'var(--font-size-xs)', color: 'var(--color-text-secondary)' }}>
-              {selectedCoupon.discountType === 'FIXED'
-                ? `${selectedCoupon.discountValue.toLocaleString()}원 할인`
-                : `${selectedCoupon.discountValue}% 할인`}
+              {formatDiscountValue(selectedCoupon)}
             </div>
           </div>
           <button

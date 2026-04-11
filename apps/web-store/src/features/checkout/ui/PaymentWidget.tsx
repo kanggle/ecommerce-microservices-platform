@@ -1,6 +1,7 @@
 'use client';
 
 import { useTossPayment } from '../model/use-toss-payment';
+import { PriceDisplay } from '@/shared/ui';
 
 interface PaymentWidgetProps {
   orderId: string;
@@ -41,8 +42,7 @@ export function PaymentWidget({ orderId, amount, orderName }: PaymentWidgetProps
         {orderName}
       </p>
       <p style={{ fontSize: 'var(--font-size-2xl)', fontWeight: 'var(--font-weight-bold)', marginBottom: 'var(--space-6)' }}>
-        <span className="price">{amount.toLocaleString()}</span>
-        <span style={{ fontSize: 'var(--font-size-sm)', color: 'var(--color-text-secondary)', marginLeft: '2px' }}>원</span>
+        <PriceDisplay amount={amount} className="price" unitStyle={{ fontSize: 'var(--font-size-sm)', color: 'var(--color-text-secondary)', marginLeft: '2px' }} />
       </p>
       <button
         type="button"

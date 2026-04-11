@@ -4,22 +4,58 @@ import { useRouter } from 'next/navigation';
 import type { PromotionDetail } from '@repo/types';
 import { usePromotionForm } from '../hooks/use-promotion-form';
 import { Section } from '@/shared/ui';
+import { formStyles } from '@/shared/lib/form-styles';
 
 interface Props {
   promotion?: PromotionDetail;
 }
 
+const today = () => new Date().toISOString().slice(0, 10);
+
 const styles = {
-  error: { color: 'red', marginBottom: '16px' } as const,
-  fieldGrid: { display: 'grid', gap: '12px', maxWidth: '480px' } as const,
-  label: { display: 'block', marginBottom: '4px', fontWeight: 500 } as const,
-  input: { width: '100%', padding: '8px 12px', border: '1px solid #d1d5db', borderRadius: '6px' } as const,
-  textarea: { width: '100%', padding: '8px 12px', border: '1px solid #d1d5db', borderRadius: '6px', resize: 'vertical' } as const,
-  buttonRow: { display: 'flex', gap: '8px' } as const,
-  cancelBtn: { padding: '10px 24px', borderRadius: '6px', border: '1px solid #d1d5db', backgroundColor: '#fff', cursor: 'pointer' } as const,
-  submitBtn: { padding: '10px 24px', borderRadius: '6px', border: 'none', backgroundColor: '#1A1A2E', color: '#fff', cursor: 'pointer', opacity: 1, fontWeight: 600 } as const,
-  submitBtnDisabled: { padding: '10px 24px', borderRadius: '6px', border: 'none', backgroundColor: '#1A1A2E', color: '#fff', cursor: 'not-allowed', opacity: 0.5, fontWeight: 600 } as const,
-  dateRow: { display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px' } as const,
+  ...formStyles,
+  input: {
+    width: '100%',
+    padding: '10px 14px',
+    border: '1px solid #e5e7eb',
+    borderRadius: '8px',
+    fontSize: '0.875rem',
+    color: '#111827',
+    background: '#fff',
+    outline: 'none',
+  } as const,
+  submitBtn: {
+    padding: '10px 28px',
+    borderRadius: '8px',
+    border: 'none',
+    backgroundColor: '#1A1A2E',
+    color: '#fff',
+    fontWeight: 600,
+    fontSize: '0.875rem',
+    cursor: 'pointer',
+    opacity: 1,
+  } as const,
+  submitBtnDisabled: {
+    padding: '10px 28px',
+    borderRadius: '8px',
+    border: 'none',
+    backgroundColor: '#1A1A2E',
+    color: '#fff',
+    fontWeight: 600,
+    fontSize: '0.875rem',
+    cursor: 'not-allowed',
+    opacity: 0.5,
+  } as const,
+  cancelBtn: {
+    padding: '10px 28px',
+    borderRadius: '8px',
+    border: '1px solid #e5e7eb',
+    backgroundColor: '#fff',
+    color: '#374151',
+    fontWeight: 500,
+    fontSize: '0.875rem',
+    cursor: 'pointer',
+  } as const,
 };
 
 export function PromotionForm({ promotion }: Props) {
@@ -40,72 +76,137 @@ export function PromotionForm({ promotion }: Props) {
     handleSubmit,
   } = usePromotionForm(promotion);
 
+  const dateError = startDate && endDate && startDate >= endDate;
+
   return (
-    <form onSubmit={handleSubmit}>
-      {error && <p role="alert" style={styles.error}>{error}</p>}
+    <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '24px' }}>
+      {error && (
+        <div role="alert" style={styles.errorAlert}>
+          {error}
+        </div>
+      )}
 
       <Section title="기본 정보">
-        <div style={styles.fieldGrid}>
-          <div>
-            <label htmlFor="name" style={styles.label}>프로모션명 *</label>
-            <input id="name" type="text" value={name} onChange={(e) => setName(e.target.value)} required style={styles.input} />
-          </div>
-          <div>
-            <label htmlFor="description" style={styles.label}>설명</label>
-            <textarea id="description" value={description} onChange={(e) => setDescription(e.target.value)} rows={3} style={styles.textarea} />
-          </div>
+        <div style={{ display: 'grid', gap: '16px', maxWidth: '560px' }}>
+          <Field htmlFor="name" label="프로모션명" required>
+            <input id="name" type="text" value={name} onChange={(e) => setName(e.target.value)}
+              placeholder="예: 봄맞이 10% 할인" required style={styles.input} />
+          </Field>
+          <Field htmlFor="description" label="설명">
+            <textarea id="description" value={description} onChange={(e) => setDescription(e.target.value)}
+              rows={3} placeholder="프로모션에 대한 간단한 설명을 입력하세요"
+              style={{ ...styles.input, resize: 'vertical' }} />
+          </Field>
         </div>
       </Section>
 
       <Section title="할인 설정">
-        <div style={styles.fieldGrid}>
-          <div>
-            <label htmlFor="discountType" style={styles.label}>할인 유형 *</label>
-            <select id="discountType" value={discountType} onChange={(e) => setDiscountType(e.target.value as 'FIXED' | 'PERCENTAGE')} style={styles.input}>
+        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '16px 24px', maxWidth: '400px' }}>
+          <Field htmlFor="discountType" label="할인 유형" required>
+            <select id="discountType" value={discountType}
+              onChange={(e) => setDiscountType(e.target.value as 'FIXED' | 'PERCENTAGE')}
+              style={styles.input}>
               <option value="FIXED">정액</option>
               <option value="PERCENTAGE">정률 (%)</option>
             </select>
-          </div>
-          <div>
-            <label htmlFor="discountValue" style={styles.label}>할인값 *</label>
-            <input id="discountValue" type="number" value={discountValue} onChange={(e) => setDiscountValue(Number(e.target.value))} min={0} required style={styles.input} />
-          </div>
-          <div>
-            <label htmlFor="maxDiscountAmount" style={styles.label}>최대 할인금액</label>
-            <input id="maxDiscountAmount" type="number" value={maxDiscountAmount} onChange={(e) => setMaxDiscountAmount(Number(e.target.value))} min={0} style={styles.input} />
-          </div>
-          <div>
-            <label htmlFor="maxIssuanceCount" style={styles.label}>최대 발급 수량 *</label>
-            <input id="maxIssuanceCount" type="number" value={maxIssuanceCount} onChange={(e) => setMaxIssuanceCount(Number(e.target.value))} min={1} required style={styles.input} />
-          </div>
+          </Field>
+          <Field htmlFor="discountValue" label="할인값" required>
+            <input id="discountValue" type="number" value={discountValue}
+              onChange={(e) => setDiscountValue(Number(e.target.value))}
+              min={0} max={discountType === 'PERCENTAGE' ? 100 : undefined}
+              required style={styles.input} />
+          </Field>
+          <Field htmlFor="maxDiscountAmount" label="최대 할인금액" hint="0 = 무제한">
+            <input id="maxDiscountAmount" type="number" value={maxDiscountAmount}
+              onChange={(e) => setMaxDiscountAmount(Number(e.target.value))}
+              min={0} style={styles.input} />
+          </Field>
+          <Field htmlFor="maxIssuanceCount" label="최대 발급 수량" required>
+            <input id="maxIssuanceCount" type="number" value={maxIssuanceCount}
+              onChange={(e) => setMaxIssuanceCount(Number(e.target.value))}
+              min={1} required style={styles.input} />
+          </Field>
         </div>
       </Section>
 
       <Section title="기간 설정">
-        <div style={styles.fieldGrid}>
-          <div style={styles.dateRow}>
-            <div>
-              <label htmlFor="startDate" style={styles.label}>시작일 *</label>
-              <input id="startDate" type="date" value={startDate} onChange={(e) => setStartDate(e.target.value)} required style={styles.input} />
+        <div style={{ maxWidth: '320px' }}>
+          <div style={{ display: 'flex', alignItems: 'flex-end', gap: '8px' }}>
+            <div style={{ flex: 1 }}>
+              <label htmlFor="startDate" style={{
+                display: 'block', marginBottom: '6px', fontSize: '0.8125rem',
+                fontWeight: 600, color: '#374151',
+              }}>
+                시작일 *
+              </label>
+              <input id="startDate" type="date" value={startDate}
+                onChange={(e) => setStartDate(e.target.value)}
+                onClick={(e) => {
+                  const input = e.target as HTMLInputElement;
+                  if (typeof input.showPicker === 'function') input.showPicker();
+                }}
+                min={isEdit ? undefined : today()}
+                required style={styles.dateInput} />
             </div>
-            <div>
-              <label htmlFor="endDate" style={styles.label}>종료일 *</label>
-              <input id="endDate" type="date" value={endDate} onChange={(e) => setEndDate(e.target.value)} required style={styles.input} />
+            <span style={{ color: '#9ca3af', fontSize: '1rem', userSelect: 'none', flexShrink: 0, paddingBottom: '10px' }}>~</span>
+            <div style={{ flex: 1 }}>
+              <label htmlFor="endDate" style={{
+                display: 'block', marginBottom: '6px', fontSize: '0.8125rem',
+                fontWeight: 600, color: '#374151',
+              }}>
+                종료일 *
+              </label>
+              <input id="endDate" type="date" value={endDate}
+                onChange={(e) => setEndDate(e.target.value)}
+                onClick={(e) => {
+                  const input = e.target as HTMLInputElement;
+                  if (typeof input.showPicker === 'function') input.showPicker();
+                }}
+                min={startDate || (isEdit ? undefined : today())}
+                required style={styles.dateInput} />
             </div>
           </div>
-          {startDate && endDate && startDate >= endDate && (
-            <p style={{ color: 'red', fontSize: '0.875rem' }}>종료일은 시작일 이후여야 합니다.</p>
+          {dateError && (
+            <p style={{ color: '#dc2626', fontSize: '0.8125rem', marginTop: '8px' }}>
+              종료일은 시작일 이후여야 합니다.
+            </p>
           )}
         </div>
       </Section>
 
-      <div style={styles.buttonRow}>
-        <button type="submit" disabled={!isValid || isSubmitting}
-          style={isValid ? styles.submitBtn : styles.submitBtnDisabled}>
+      <div style={{ display: 'flex', gap: '10px', paddingTop: '8px' }}>
+        <button type="submit" disabled={!isValid || isSubmitting || !!dateError}
+          style={isValid && !dateError ? styles.submitBtn : styles.submitBtnDisabled}>
           {isSubmitting ? '저장 중...' : isEdit ? '수정' : '등록'}
         </button>
-        <button type="button" onClick={() => router.back()} style={styles.cancelBtn}>취소</button>
+        <button type="button" onClick={() => router.back()} style={styles.cancelBtn}>
+          취소
+        </button>
       </div>
+
     </form>
+  );
+}
+
+function Field({ htmlFor, label, required, hint, children }: {
+  htmlFor?: string;
+  label: string;
+  required?: boolean;
+  hint?: string;
+  children: React.ReactNode;
+}) {
+  return (
+    <div>
+      <label htmlFor={htmlFor} style={{
+        display: 'block', marginBottom: '6px', fontSize: '0.8125rem',
+        fontWeight: 600, color: '#374151',
+      }}>
+        {required ? `${label} *` : label}
+      </label>
+      {children}
+      {hint && (
+        <p style={{ margin: '4px 0 0', fontSize: '0.75rem', color: '#9ca3af' }}>{hint}</p>
+      )}
+    </div>
   );
 }

@@ -6,17 +6,10 @@ import type {
   CreateNotificationTemplateRequest,
   UpdateNotificationTemplateRequest,
 } from '@repo/types';
-import { useAsyncAction } from '@/shared/hooks/use-async-action';
+import { useSubmitAction } from '@/shared/hooks/use-async-action';
 import { useCreateTemplate } from './use-create-template';
 import { useUpdateTemplate } from './use-update-template';
-
-interface TemplateEditData {
-  templateId: string;
-  type: NotificationTemplateType;
-  channel: NotificationChannel;
-  subject: string;
-  body: string;
-}
+import type { TemplateEditData } from '../types';
 
 export function useTemplateForm(template?: TemplateEditData) {
   const isEdit = !!template;
@@ -32,16 +25,14 @@ export function useTemplateForm(template?: TemplateEditData) {
   );
   const [subject, setSubject] = useState(template?.subject ?? '');
   const [body, setBody] = useState(template?.body ?? '');
-  const { error, execute } = useAsyncAction();
-
-  const isSubmitting = createTemplate.isPending || updateTemplate.isPending;
+  const { error, isSubmitting, runSubmit } = useSubmitAction();
   const isValid = subject.trim().length > 0 && body.trim().length > 0;
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
     if (!isValid || isSubmitting) return;
 
-    await execute(async () => {
+    await runSubmit(async () => {
       if (isEdit) {
         const data: UpdateNotificationTemplateRequest = {
           subject: subject.trim(),

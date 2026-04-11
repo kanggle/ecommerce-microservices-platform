@@ -167,8 +167,8 @@ class AuthAuditLogIntegrationTest {
     }
 
     @Test
-    @DisplayName("X-Forwarded-For 헤더에 복수 IP가 있으면 마지막 IP가 ip_address에 저장된다")
-    void login_xForwardedFor_lastIpStored() throws Exception {
+    @DisplayName("X-Forwarded-For 헤더에 복수 IP가 있으면 첫 번째 IP가 ip_address에 저장된다")
+    void login_xForwardedFor_firstIpStored() throws Exception {
         String email = "audit-ip@example.com";
         signupUser(email, "password1!", "IP감사");
 
@@ -184,7 +184,7 @@ class AuthAuditLogIntegrationTest {
         String ipAddress = jdbcTemplate.queryForObject(
             "SELECT ip_address FROM auth_audit_log WHERE email = ? AND event_type = 'LOGIN_SUCCESS'",
             String.class, email);
-        assertThat(ipAddress).isEqualTo("3.3.3.3");
+        assertThat(ipAddress).isEqualTo("1.1.1.1");
     }
 
     // helper methods

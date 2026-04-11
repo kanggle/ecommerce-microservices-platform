@@ -16,6 +16,9 @@
 #   - batch-postgres   : 5436
 #   - user-postgres    : 5437
 #   - shipping-postgres: 5438
+#   - review-postgres  : 5439
+#   - promotion-postgres: 5440
+#   - notification-postgres: 5441
 #
 # Frontend 포트 (호스트):
 #   - web-store        : 3000
@@ -41,6 +44,11 @@ services:
       - KAFKA_CONTROLLER_LISTENER_NAMES=CONTROLLER
       - KAFKA_INTER_BROKER_LISTENER_NAME=PLAINTEXT
       - KAFKA_AUTO_CREATE_TOPICS_ENABLE=true
+      - KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR=1
+      - KAFKA_TRANSACTION_STATE_LOG_REPLICATION_FACTOR=1
+      - KAFKA_TRANSACTION_STATE_LOG_MIN_ISR=1
+      - KAFKA_DEFAULT_REPLICATION_FACTOR=1
+      - KAFKA_MIN_INSYNC_REPLICAS=1
       - CLUSTER_ID=MkU3OEVBNTcwNTJENDM2Qk
     ports:
       - "9093:9094"
@@ -205,12 +213,60 @@ services:
     depends_on:
       prometheus:
         condition: service_healthy
+      loki:
+        condition: service_healthy
     healthcheck:
       test: ["CMD-SHELL", "wget -qO- http://localhost:3000/api/health || exit 1"]
       interval: 10s
       timeout: 5s
       retries: 5
       start_period: 30s
+
+  # ──────────────────────────────────────────────
+  # 인프라 — Loki (로그 집계)
+  # ──────────────────────────────────────────────
+  loki:
+    image: grafana/loki:3.2.1
+    container_name: loki
+    restart: unless-stopped
+    command: -config.file=/etc/loki/local-config.yaml
+    volumes:
+      - ./infra/loki/loki-config.yml:/etc/loki/local-config.yaml:ro
+      - loki-data:/loki
+    ports:
+      - "3101:3100"
+    deploy:
+      resources:
+        limits:
+          memory: 512M
+          cpus: '0.5'
+    healthcheck:
+      test: ["CMD-SHELL", "wget -qO- http://localhost:3100/ready || exit 1"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+      start_period: 30s
+
+  # ──────────────────────────────────────────────
+  # 인프라 — Promtail (로그 수집 → Loki)
+  # ──────────────────────────────────────────────
+  promtail:
+    image: grafana/promtail:3.2.1
+    container_name: promtail
+    restart: unless-stopped
+    command: -config.file=/etc/promtail/config.yml
+    volumes:
+      - ./infra/promtail/promtail-config.yml:/etc/promtail/config.yml:ro
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+      - promtail-data:/tmp
+    deploy:
+      resources:
+        limits:
+          memory: 256M
+          cpus: '0.25'
+    depends_on:
+      loki:
+        condition: service_healthy
 
   # ──────────────────────────────────────────────
   # 인프라 — PostgreSQL ×5
@@ -376,6 +432,75 @@ services:
       timeout: 5s
       retries: 5
 
+  review-postgres:
+    image: postgres:16-alpine
+    container_name: review-postgres
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: review_db
+      POSTGRES_USER: review_user
+      POSTGRES_PASSWORD: ${REVIEW_DB_PASSWORD}
+    ports:
+      - "5439:5432"
+    volumes:
+      - review-postgres-data:/var/lib/postgresql/data
+    deploy:
+      resources:
+        limits:
+          memory: 256M
+          cpus: '0.25'
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U review_user -d review_db"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+  promotion-postgres:
+    image: postgres:16-alpine
+    container_name: promotion-postgres
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: promotion_db
+      POSTGRES_USER: promotion_user
+      POSTGRES_PASSWORD: ${PROMOTION_DB_PASSWORD}
+    ports:
+      - "5440:5432"
+    volumes:
+      - promotion-postgres-data:/var/lib/postgresql/data
+    deploy:
+      resources:
+        limits:
+          memory: 256M
+          cpus: '0.25'
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U promotion_user -d promotion_db"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+  notification-postgres:
+    image: postgres:16-alpine
+    container_name: notification-postgres
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: notification_db
+      POSTGRES_USER: notification_user
+      POSTGRES_PASSWORD: ${NOTIFICATION_DB_PASSWORD}
+    ports:
+      - "5441:5432"
+    volumes:
+      - notification-postgres-data:/var/lib/postgresql/data
+    deploy:
+      resources:
+        limits:
+          memory: 256M
+          cpus: '0.25'
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U notification_user -d notification_db"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
   # ──────────────────────────────────────────────
   # 백엔드 서비스
   # ──────────────────────────────────────────────
@@ -404,6 +529,13 @@ services:
       - OTEL_METRICS_EXPORTER=none
       - OTEL_LOGS_EXPORTER=none
       - SPRING_PROFILES_ACTIVE=prod
+      - GOOGLE_CLIENT_ID=${GOOGLE_CLIENT_ID}
+      - GOOGLE_CLIENT_SECRET=${GOOGLE_CLIENT_SECRET}
+      - GOOGLE_REDIRECT_URI=${GOOGLE_REDIRECT_URI}
+      - NAVER_CLIENT_ID=${NAVER_CLIENT_ID}
+      - NAVER_CLIENT_SECRET=${NAVER_CLIENT_SECRET}
+      - NAVER_REDIRECT_URI=${NAVER_REDIRECT_URI}
+      - OAUTH_CALLBACK_ALLOWLIST=${OAUTH_CALLBACK_ALLOWLIST}
     ports:
       - "8081:8081"
     deploy:
@@ -423,7 +555,7 @@ services:
       interval: 10s
       timeout: 5s
       retries: 10
-      start_period: 40s
+      start_period: 180s
 
   product-service:
     build:
@@ -460,7 +592,7 @@ services:
       interval: 10s
       timeout: 5s
       retries: 10
-      start_period: 40s
+      start_period: 180s
 
   search-service:
     build:
@@ -495,7 +627,7 @@ services:
       interval: 10s
       timeout: 5s
       retries: 10
-      start_period: 40s
+      start_period: 180s
 
   user-service:
     build:
@@ -532,7 +664,7 @@ services:
       interval: 10s
       timeout: 5s
       retries: 10
-      start_period: 40s
+      start_period: 180s
 
   order-service:
     build:
@@ -569,7 +701,7 @@ services:
       interval: 10s
       timeout: 5s
       retries: 10
-      start_period: 40s
+      start_period: 180s
 
   payment-service:
     build:
@@ -583,6 +715,7 @@ services:
       - DB_PASSWORD=${PAYMENT_DB_PASSWORD}
       - KAFKA_BOOTSTRAP_SERVERS=kafka:9092
       - SERVER_PORT=8087
+      - TOSS_PAYMENTS_SECRET_KEY=${TOSS_PAYMENTS_SECRET_KEY}
       - OTEL_EXPORTER_OTLP_ENDPOINT=http://jaeger:4318
       - OTEL_SERVICE_NAME=payment-service
       - OTEL_TRACES_EXPORTER=otlp
@@ -606,7 +739,7 @@ services:
       interval: 10s
       timeout: 5s
       retries: 10
-      start_period: 40s
+      start_period: 180s
 
   batch-worker:
     build:
@@ -643,7 +776,7 @@ services:
       interval: 10s
       timeout: 5s
       retries: 10
-      start_period: 40s
+      start_period: 180s
 
   shipping-service:
     build:
@@ -680,7 +813,119 @@ services:
       interval: 10s
       timeout: 5s
       retries: 10
-      start_period: 40s
+      start_period: 180s
+
+  review-service:
+    build:
+      context: .
+      dockerfile: apps/review-service/Dockerfile
+    container_name: review-service
+    restart: unless-stopped
+    environment:
+      - DB_URL=jdbc:postgresql://review-postgres:5432/review_db
+      - DB_USERNAME=review_user
+      - DB_PASSWORD=${REVIEW_DB_PASSWORD}
+      - KAFKA_BOOTSTRAP_SERVERS=kafka:9092
+      - SERVER_PORT=8091
+      - OTEL_EXPORTER_OTLP_ENDPOINT=http://jaeger:4318
+      - OTEL_SERVICE_NAME=review-service
+      - OTEL_TRACES_EXPORTER=otlp
+      - OTEL_METRICS_EXPORTER=none
+      - OTEL_LOGS_EXPORTER=none
+      - SPRING_PROFILES_ACTIVE=prod
+      - ORDER_SERVICE_URL=http://order-service:8086
+    ports:
+      - "8091:8091"
+    deploy:
+      resources:
+        limits:
+          memory: 512M
+          cpus: '0.5'
+    depends_on:
+      review-postgres:
+        condition: service_healthy
+      kafka:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD-SHELL", "wget -qO- http://localhost:8091/actuator/health || exit 1"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+      start_period: 180s
+
+  promotion-service:
+    build:
+      context: .
+      dockerfile: apps/promotion-service/Dockerfile
+    container_name: promotion-service
+    restart: unless-stopped
+    environment:
+      - DB_URL=jdbc:postgresql://promotion-postgres:5432/promotion_db
+      - DB_USERNAME=promotion_user
+      - DB_PASSWORD=${PROMOTION_DB_PASSWORD}
+      - KAFKA_BOOTSTRAP_SERVERS=kafka:9092
+      - SERVER_PORT=8092
+      - OTEL_EXPORTER_OTLP_ENDPOINT=http://jaeger:4318
+      - OTEL_SERVICE_NAME=promotion-service
+      - OTEL_TRACES_EXPORTER=otlp
+      - OTEL_METRICS_EXPORTER=none
+      - OTEL_LOGS_EXPORTER=none
+      - SPRING_PROFILES_ACTIVE=prod
+    ports:
+      - "8092:8092"
+    deploy:
+      resources:
+        limits:
+          memory: 512M
+          cpus: '0.5'
+    depends_on:
+      promotion-postgres:
+        condition: service_healthy
+      kafka:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD-SHELL", "wget -qO- http://localhost:8092/actuator/health || exit 1"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+      start_period: 180s
+
+  notification-service:
+    build:
+      context: .
+      dockerfile: apps/notification-service/Dockerfile
+    container_name: notification-service
+    restart: unless-stopped
+    environment:
+      - DB_URL=jdbc:postgresql://notification-postgres:5432/notification_db
+      - DB_USERNAME=notification_user
+      - DB_PASSWORD=${NOTIFICATION_DB_PASSWORD}
+      - KAFKA_BOOTSTRAP_SERVERS=kafka:9092
+      - SERVER_PORT=8093
+      - OTEL_EXPORTER_OTLP_ENDPOINT=http://jaeger:4318
+      - OTEL_SERVICE_NAME=notification-service
+      - OTEL_TRACES_EXPORTER=otlp
+      - OTEL_METRICS_EXPORTER=none
+      - OTEL_LOGS_EXPORTER=none
+      - SPRING_PROFILES_ACTIVE=prod
+    ports:
+      - "8093:8093"
+    deploy:
+      resources:
+        limits:
+          memory: 512M
+          cpus: '0.5'
+    depends_on:
+      notification-postgres:
+        condition: service_healthy
+      kafka:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD-SHELL", "wget -qO- http://localhost:8093/actuator/health || exit 1"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+      start_period: 180s
 
   gateway-service:
     build:
@@ -699,6 +944,9 @@ services:
       - USER_SERVICE_URL=http://user-service:8084
       - PAYMENT_SERVICE_URL=http://payment-service:8087
       - SHIPPING_SERVICE_URL=http://shipping-service:8090
+      - REVIEW_SERVICE_URL=http://review-service:8091
+      - PROMOTION_SERVICE_URL=http://promotion-service:8092
+      - NOTIFICATION_SERVICE_URL=http://notification-service:8093
       - SERVER_PORT=8080
       - OTEL_EXPORTER_OTLP_ENDPOINT=http://jaeger:4318
       - OTEL_SERVICE_NAME=gateway-service
@@ -730,12 +978,18 @@ services:
         condition: service_healthy
       shipping-service:
         condition: service_healthy
+      review-service:
+        condition: service_healthy
+      promotion-service:
+        condition: service_healthy
+      notification-service:
+        condition: service_healthy
     healthcheck:
       test: ["CMD-SHELL", "wget -qO- http://localhost:8080/actuator/health || exit 1"]
       interval: 10s
       timeout: 5s
       retries: 10
-      start_period: 60s
+      start_period: 180s
 
   # ──────────────────────────────────────────────
   # 프론트엔드 애플리케이션
@@ -748,6 +1002,8 @@ services:
         - NEXT_PUBLIC_API_URL=http://localhost:8080
     container_name: web-store
     restart: unless-stopped
+    environment:
+      - API_URL_INTERNAL=http://gateway-service:8080
     ports:
       - "3000:3000"
     deploy:
@@ -798,4 +1054,9 @@ volumes:
   payment-postgres-data:
   batch-postgres-data:
   shipping-postgres-data:
+  review-postgres-data:
+  promotion-postgres-data:
+  notification-postgres-data:
   elasticsearch-data:
+  loki-data:
+  promtail-data:

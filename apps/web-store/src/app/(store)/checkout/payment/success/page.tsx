@@ -21,7 +21,7 @@ export default function PaymentSuccessPage() {
   if (status === 'pending') {
     return (
       <div className="container" style={{ paddingTop: 'var(--space-16)', textAlign: 'center' }}>
-        <p>결제 승인 ��...</p>
+        <p>결제 승인 중...</p>
       </div>
     );
   }

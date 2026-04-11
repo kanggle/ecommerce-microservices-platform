@@ -25,7 +25,7 @@ const DEFAULT_PUBLIC_PATHS = [
 ];
 
 const DEFAULT_REFRESH_TIMEOUT_MS = 5000;
-const DEFAULT_REQUEST_TIMEOUT_MS = 3000;
+const DEFAULT_REQUEST_TIMEOUT_MS = 10000;
 
 export class ApiClient {
   private instance: AxiosInstance;

@@ -8,7 +8,7 @@ import { ProfileDropdown } from './ProfileDropdown';
 import styles from './Header.module.css';
 
 export function Header() {
-  const { user, isAuthenticated, logout } = useAuth();
+  const { user, isAuthenticated, isLoading, logout } = useAuth();
   const { items } = useCart();
   const [mobileOpen, setMobileOpen] = useState(false);
   const cartCount = items.reduce((sum, item) => sum + item.quantity, 0);
@@ -48,7 +48,9 @@ export function Header() {
               {cartCount > 99 ? '99+' : cartCount || 0}
             </span>
           </Link>
-          {isAuthenticated ? (
+          {isLoading ? (
+            <div style={{ width: 32, height: 32 }} />
+          ) : isAuthenticated ? (
             <ProfileDropdown userName={user?.name} onLogout={logout} />
           ) : (
             <Link href="/login" className={styles.authLink}>

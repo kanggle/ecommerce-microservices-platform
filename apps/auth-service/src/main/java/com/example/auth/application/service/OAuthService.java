@@ -6,6 +6,9 @@ import com.example.auth.application.dto.OAuthLoginCommand;
 import com.example.auth.application.exception.OAuthException;
 import com.example.auth.application.exception.OAuthUpstreamException;
 import com.example.auth.domain.entity.User;
+import com.example.auth.domain.event.AuthEvent;
+import com.example.auth.domain.event.AuthEventPublisher;
+import com.example.auth.domain.event.UserSignedUp;
 import com.example.auth.domain.repository.OAuthStateStore;
 import com.example.auth.domain.repository.RefreshTokenStore;
 import com.example.auth.domain.repository.UserRepository;
@@ -44,6 +47,7 @@ public class OAuthService {
     private final SessionProperties sessionProperties;
     private final UserSessionRegistry sessionRegistry;
     private final OAuthCallbackProperties oauthCallbackProperties;
+    private final AuthEventPublisher eventPublisher;
 
     public OAuthService(List<OAuthProvider> providerList,
                         OAuthStateStore oauthStateStore,
@@ -53,7 +57,8 @@ public class OAuthService {
                         TokenProperties tokenProperties,
                         SessionProperties sessionProperties,
                         UserSessionRegistry sessionRegistry,
-                        OAuthCallbackProperties oauthCallbackProperties) {
+                        OAuthCallbackProperties oauthCallbackProperties,
+                        AuthEventPublisher eventPublisher) {
         this.oauthProviders = providerList.stream()
             .collect(Collectors.toMap(OAuthProvider::provider, Function.identity()));
         this.oauthStateStore = oauthStateStore;
@@ -64,6 +69,7 @@ public class OAuthService {
         this.sessionProperties = sessionProperties;
         this.sessionRegistry = sessionRegistry;
         this.oauthCallbackProperties = oauthCallbackProperties;
+        this.eventPublisher = eventPublisher;
     }
 
     public String buildAuthorizationUrl(String provider, String callbackUrl) {
@@ -148,7 +154,10 @@ public class OAuthService {
     private User createOAuthUser(String email, String name, String provider) {
         String displayName = (name != null && !name.isBlank()) ? name : email.split("@")[0];
         User newUser = User.createOAuthUser(email, displayName, provider);
-        return userRepository.save(newUser);
+        User saved = userRepository.save(newUser);
+        eventPublisher.publish(AuthEvent.of(new UserSignedUp(saved.getId(), email, displayName)));
+        log.info("OAuth user created and UserSignedUp event published: userId={}, provider={}", saved.getId(), provider);
+        return saved;
     }
 
     private OAuthProvider resolveProvider(String provider) {

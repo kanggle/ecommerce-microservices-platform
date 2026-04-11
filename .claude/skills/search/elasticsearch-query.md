@@ -2,6 +2,8 @@
 
 Patterns for building search queries in the search service.
 
+Prerequisite: read `specs/platform/coding-rules.md` before using this skill.
+
 ---
 
 ## Query Adapter

@@ -1,7 +1,7 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
-import { Header } from '@/widgets/header/Header';
+import { Header } from '@/widgets/header';
 
 const mockLogout = vi.fn();
 const mockUseAuth = vi.fn();
@@ -27,7 +27,7 @@ vi.mock('@/shared/context/ProfileImageContext', () => ({
   useProfileImage: () => ({ imageUrl: '' }),
 }));
 
-vi.mock('@/shared/hooks/useClickOutside', () => ({
+vi.mock('@/shared/hooks/use-click-outside', () => ({
   useClickOutside: vi.fn(),
 }));
 

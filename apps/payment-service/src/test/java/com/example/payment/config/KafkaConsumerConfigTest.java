@@ -11,7 +11,7 @@ import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.kafka.listener.CommonErrorHandler;
 import org.springframework.kafka.listener.DefaultErrorHandler;
 import org.springframework.test.util.ReflectionTestUtils;
-import org.springframework.util.backoff.FixedBackOff;
+import org.springframework.util.backoff.ExponentialBackOff;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -33,17 +33,19 @@ class KafkaConsumerConfigTest {
     }
 
     @Test
-    @DisplayName("FixedBackOff 재시도 간격이 1000ms, 최대 재시도 횟수가 3회로 설정된다")
+    @DisplayName("ExponentialBackOff가 표준 설정(1s base, 2x multiplier, 30s max, 3회)으로 구성된다")
     void kafkaErrorHandler_hasCorrectBackOffConfiguration() {
         KafkaConsumerConfig config = new KafkaConsumerConfig();
         DefaultErrorHandler errorHandler = (DefaultErrorHandler) config.kafkaErrorHandler(kafkaTemplate);
 
         Object failureTracker = ReflectionTestUtils.getField(errorHandler, "failureTracker");
-        FixedBackOff backOff = (FixedBackOff) ReflectionTestUtils.getField(failureTracker, "backOff");
+        ExponentialBackOff backOff = (ExponentialBackOff) ReflectionTestUtils.getField(failureTracker, "backOff");
 
         assertThat(backOff).isNotNull();
-        assertThat(backOff.getInterval()).isEqualTo(1000L);
-        assertThat(backOff.getMaxAttempts()).isEqualTo(3L);
+        assertThat(backOff.getInitialInterval()).isEqualTo(1000L);
+        assertThat(backOff.getMultiplier()).isEqualTo(2.0);
+        assertThat(backOff.getMaxInterval()).isEqualTo(30000L);
+        assertThat(backOff.getMaxAttempts()).isEqualTo(3);
     }
 
     @Test

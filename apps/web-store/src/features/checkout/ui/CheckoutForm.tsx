@@ -11,6 +11,7 @@ import { useAddresses } from '@/entities/user';
 import { isValidPhone } from '@/shared/lib/validate-phone';
 import { OrderItemsSection } from './OrderItemsSection';
 import { AddressSection } from './AddressSection';
+import { PriceDisplay } from '@/shared/ui';
 
 function addressToShipping(addr: Address): ShippingAddress {
   return {
@@ -129,7 +130,7 @@ export function CheckoutForm({ items, totalAmount, discountAmount = 0, onOrderCo
           opacity: !isValid || isSubmitting ? 0.5 : 1,
         }}
       >
-        {isSubmitting ? '주문 처리 중...' : <>{finalAmount.toLocaleString()}<span style={{ fontSize: 'var(--font-size-sm)', fontWeight: 'var(--font-weight-normal)', margin: '0 var(--space-2) 0 2px' }}>원</span>결제하기</>}
+        {isSubmitting ? '주문 처리 중...' : <><PriceDisplay amount={finalAmount} unitStyle={{ fontSize: 'var(--font-size-sm)', fontWeight: 'var(--font-weight-normal)', margin: '0 var(--space-2) 0 2px' }} />결제하기</>}
       </button>
     </form>
   );

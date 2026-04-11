@@ -5,6 +5,7 @@ import { useRouter } from 'next/navigation';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { getErrorMessage, isApiError, ERROR_MESSAGES } from '@repo/types/guards';
 import { useAuth } from '@/features/auth';
+import { HeartIcon } from '@/shared/ui/HeartIcon';
 import { useWishlistCheck } from '../model/use-wishlist-check';
 import { addToWishlist, removeFromWishlist } from '../api/wishlist-api';
 import { wishlistKeys } from '../model/query-keys';
@@ -141,18 +142,7 @@ function HeartButton({ active, disabled, size, onClick }: HeartButtonProps) {
         flexShrink: 0,
       }}
     >
-      <svg
-        width={iconSize}
-        height={iconSize}
-        viewBox="0 0 24 24"
-        fill={active ? 'var(--color-error)' : 'none'}
-        stroke={active ? 'var(--color-error)' : 'var(--color-text-secondary)'}
-        strokeWidth="2"
-        strokeLinecap="round"
-        strokeLinejoin="round"
-      >
-        <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z" />
-      </svg>
+      <HeartIcon size={iconSize} filled={active} />
     </button>
   );
 }

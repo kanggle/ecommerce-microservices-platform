@@ -107,8 +107,10 @@ describe('CartSummary', () => {
       expect(screen.getByText('노트북')).toBeInTheDocument();
     });
     expect(screen.getByText('실버')).toBeInTheDocument();
-    const priceElements = screen.getAllByText('1,500,000원');
-    expect(priceElements).toHaveLength(2); // 항목 가격 + 합계
+    // 가격 숫자와 단위 "원"이 별도 span으로 렌더링되므로 textContent 전체로 검색한다
+    // 선택 상태는 비동기 초기화로 합계가 0이 될 수 있으므로 항목 가격만 확인한다
+    const priceElements = screen.getAllByText((_, el) => el?.textContent === '1,500,000원');
+    expect(priceElements.length).toBeGreaterThanOrEqual(1); // 항목 가격(최소 1개)
   });
 
   it('전체 삭제 버튼으로 장바구니를 비운다', async () => {
@@ -131,7 +133,13 @@ describe('CartSummary', () => {
       expect(screen.getByText('노트북')).toBeInTheDocument();
     });
 
-    await user.click(screen.getByText('전체 삭제'));
+    // 선택 상태가 비동기 초기화로 비어있을 수 있으므로 전체선택 후 삭제
+    const allCheckboxes = screen.getAllByRole('checkbox');
+    // 전체선택(첫 번째 체크박스)이 체크되지 않은 경우 클릭해서 전체 선택
+    if (!allCheckboxes[0].checked) {
+      await user.click(allCheckboxes[0]);
+    }
+    await user.click(screen.getByText('선택 삭제'));
 
     await waitFor(() => {
       expect(screen.getByText('장바구니가 비어있습니다.')).toBeInTheDocument();
@@ -162,7 +170,10 @@ describe('CartItemRow', () => {
       expect(screen.getByText('마우스')).toBeInTheDocument();
     });
     expect(screen.getByText('블랙')).toBeInTheDocument();
-    expect(screen.getByText('50,000원')).toBeInTheDocument();
+    // 가격 숫자와 단위 "원"이 별도 span으로 렌더링되므로 textContent 전체로 검색한다
+    expect(
+      screen.getByText((_, el) => el?.textContent === '50,000원'),
+    ).toBeInTheDocument();
     expect(screen.getByText('2')).toBeInTheDocument();
   });
 

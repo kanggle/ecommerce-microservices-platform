@@ -64,9 +64,9 @@ export function AddressList({ addresses, onAddClick, onEditClick, onChanged, onS
   async function handleSetDefault(addressId: string) {
     setError('');
     setSettingDefaultId(addressId);
-    onSetDefault(addressId);
     try {
       await updateAddress(addressId, { isDefault: true });
+      onSetDefault(addressId);
     } catch (err) {
       onChanged();
       if (isApiError(err)) {

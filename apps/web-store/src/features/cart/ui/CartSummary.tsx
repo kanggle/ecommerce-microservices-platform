@@ -4,6 +4,7 @@ import Link from 'next/link';
 import { useCart } from '../model/cart-context';
 import { useCartSelection } from '../model/use-cart-selection';
 import { QuantityControl } from './QuantityControl';
+import { PriceDisplay } from '@/shared/ui';
 
 export function CartSummary() {
   const { items, updateQuantity, removeItem } = useCart();
@@ -90,7 +91,7 @@ export function CartSummary() {
                 onIncrease={() => updateQuantity(item.productId, item.variantId, item.quantity + 1)}
               />
               <span style={{ fontSize: 'var(--font-size-sm)', fontWeight: 'var(--font-weight-bold)', whiteSpace: 'nowrap', width: 80, textAlign: 'right', flexShrink: 0 }} className="price">
-                {(item.price * item.quantity).toLocaleString()}<span style={{ fontSize: 'var(--font-size-xs)', fontWeight: 'var(--font-weight-normal)', color: 'var(--color-text-secondary)', marginLeft: '2px' }}>원</span>
+                <PriceDisplay amount={item.price * item.quantity} />
               </span>
             </div>
           );
@@ -112,7 +113,7 @@ export function CartSummary() {
           합계
         </span>
         <span className="price" style={{ fontSize: 'var(--font-size-xl)' }}>
-          {totalAmount.toLocaleString()}<span style={{ fontSize: 'var(--font-size-sm)', fontWeight: 'var(--font-weight-normal)', color: 'var(--color-text-secondary)', marginLeft: '2px' }}>원</span>
+          <PriceDisplay amount={totalAmount} unitStyle={{ fontSize: 'var(--font-size-sm)', fontWeight: 'var(--font-weight-normal)', color: 'var(--color-text-secondary)', marginLeft: '2px' }} />
         </span>
       </div>
 

@@ -45,7 +45,7 @@ spring:
         - id: user-service
           uri: ${USER_SERVICE_URL:http://localhost:8084}
           predicates:
-            - Path=/api/users/**,/api/admin/users/**
+            - Path=/api/users/**,/api/admin/users/**,/api/wishlists/**
           filters:
             - name: RequestRateLimiter
               args:
@@ -90,6 +90,39 @@ spring:
           uri: ${SHIPPING_SERVICE_URL:http://localhost:8090}
           predicates:
             - Path=/api/shippings/**
+          filters:
+            - name: RequestRateLimiter
+              args:
+                redis-rate-limiter.replenishRate: 100
+                redis-rate-limiter.burstCapacity: 200
+                key-resolver: "#{@ipKeyResolver}"
+
+        - id: review-service
+          uri: ${REVIEW_SERVICE_URL:http://localhost:8091}
+          predicates:
+            - Path=/api/reviews/**
+          filters:
+            - name: RequestRateLimiter
+              args:
+                redis-rate-limiter.replenishRate: 100
+                redis-rate-limiter.burstCapacity: 200
+                key-resolver: "#{@ipKeyResolver}"
+
+        - id: promotion-service
+          uri: ${PROMOTION_SERVICE_URL:http://localhost:8092}
+          predicates:
+            - Path=/api/promotions/**,/api/coupons/**
+          filters:
+            - name: RequestRateLimiter
+              args:
+                redis-rate-limiter.replenishRate: 100
+                redis-rate-limiter.burstCapacity: 200
+                key-resolver: "#{@ipKeyResolver}"
+
+        - id: notification-service
+          uri: ${NOTIFICATION_SERVICE_URL:http://localhost:8093}
+          predicates:
+            - Path=/api/notifications/**
           filters:
             - name: RequestRateLimiter
               args:

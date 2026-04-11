@@ -25,8 +25,8 @@ vi.mock('@/shared/config/api', () => ({
   apiClient: {},
 }));
 
+import { getMyAddresses } from '@/entities/user/api/address-api';
 import {
-  getMyAddresses,
   createAddress,
   updateAddress,
   deleteAddress,

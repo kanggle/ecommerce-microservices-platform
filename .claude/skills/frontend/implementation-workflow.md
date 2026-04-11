@@ -2,6 +2,8 @@
 
 Step-by-step workflow for implementing frontend tasks in Next.js applications.
 
+Prerequisite: read `specs/platform/coding-rules.md` (TypeScript Rules section) and follow `specs/platform/entrypoint.md` before using this skill.
+
 ---
 
 ## Workflow Steps

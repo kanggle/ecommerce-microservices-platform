@@ -2,6 +2,8 @@
 
 Patterns for verifying API and event contracts between services.
 
+Prerequisite: read `specs/platform/testing-strategy.md` before using this skill.
+
 ---
 
 ## Purpose

@@ -75,6 +75,7 @@ public class AddressService {
                         command.label(), command.recipientName(), command.phone(),
                         command.zipCode(), command.address1(), command.address2(), true
                 );
+                addressRepository.save(address);
                 return AddressResult.from(address);
             }
         }
@@ -84,6 +85,7 @@ public class AddressService {
                 command.zipCode(), command.address1(), command.address2(), command.isDefault()
         );
 
+        addressRepository.save(address);
         return AddressResult.from(address);
     }
 

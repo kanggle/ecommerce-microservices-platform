@@ -40,3 +40,33 @@ scrape_configs:
     metrics_path: /actuator/prometheus
     static_configs:
       - targets: ['payment-service:8087']
+
+  - job_name: 'user-service'
+    metrics_path: /actuator/prometheus
+    static_configs:
+      - targets: ['user-service:8084']
+
+  - job_name: 'batch-worker'
+    metrics_path: /actuator/prometheus
+    static_configs:
+      - targets: ['batch-worker:8088']
+
+  - job_name: 'shipping-service'
+    metrics_path: /actuator/prometheus
+    static_configs:
+      - targets: ['shipping-service:8090']
+
+  - job_name: 'review-service'
+    metrics_path: /actuator/prometheus
+    static_configs:
+      - targets: ['review-service:8091']
+
+  - job_name: 'promotion-service'
+    metrics_path: /actuator/prometheus
+    static_configs:
+      - targets: ['promotion-service:8092']
+
+  - job_name: 'notification-service'
+    metrics_path: /actuator/prometheus
+    static_configs:
+      - targets: ['notification-service:8093']

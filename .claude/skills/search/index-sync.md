@@ -2,6 +2,8 @@
 
 Patterns for synchronizing Elasticsearch indexes with source data via events.
 
+Prerequisite: read `specs/platform/event-driven-policy.md` before using this skill.
+
 ---
 
 ## Event-Driven Sync Flow

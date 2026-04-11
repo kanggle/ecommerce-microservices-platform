@@ -39,6 +39,8 @@ const MOCK_ADDRESSES: Address[] = [
 const mockOnAddClick = vi.fn();
 const mockOnEditClick = vi.fn();
 const mockOnChanged = vi.fn();
+const mockOnSetDefault = vi.fn();
+const mockOnDeleted = vi.fn();
 
 function renderAddressList(addresses = MOCK_ADDRESSES) {
   return render(
@@ -47,6 +49,8 @@ function renderAddressList(addresses = MOCK_ADDRESSES) {
       onAddClick={mockOnAddClick}
       onEditClick={mockOnEditClick}
       onChanged={mockOnChanged}
+      onSetDefault={mockOnSetDefault}
+      onDeleted={mockOnDeleted}
     />,
   );
 }
@@ -70,7 +74,7 @@ describe('AddressList', () => {
   it('기본 배송지에 "기본" 배지를 표시한다', () => {
     renderAddressList();
 
-    expect(screen.getByText('기본')).toBeInTheDocument();
+    expect(screen.getByText('기본 배송지')).toBeInTheDocument();
   });
 
   it('기본 배송지가 아닌 항목에 "기본으로 설정" 버튼을 표시한다', () => {
@@ -133,7 +137,7 @@ describe('AddressList', () => {
     });
 
     await waitFor(() => {
-      expect(mockOnChanged).toHaveBeenCalledTimes(1);
+      expect(mockOnDeleted).toHaveBeenCalledWith('addr-2');
     });
   });
 
@@ -194,7 +198,7 @@ describe('AddressList', () => {
     });
 
     await waitFor(() => {
-      expect(mockOnChanged).toHaveBeenCalledTimes(1);
+      expect(mockOnSetDefault).toHaveBeenCalledWith('addr-2');
     });
   });
 

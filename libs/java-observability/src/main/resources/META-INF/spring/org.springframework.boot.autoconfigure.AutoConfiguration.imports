@@ -1,1 +1,2 @@
 com.example.observability.config.ObservabilityAutoConfig
+com.example.observability.kafka.KafkaEventContextAutoConfiguration

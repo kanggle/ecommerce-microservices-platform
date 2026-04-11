@@ -102,6 +102,30 @@ class WishlistControllerTest {
                     .andExpect(status().isUnauthorized())
                     .andExpect(jsonPath("$.code").value("UNAUTHORIZED"));
         }
+
+        @Test
+        @DisplayName("productId가 UUID 형식이 아니면 400 VALIDATION_ERROR를 반환한다")
+        void addItem_nonUuidProductId_returns400() throws Exception {
+            mockMvc.perform(post("/api/wishlists")
+                            .header("X-User-Id", USER_ID.toString())
+                            .contentType(MediaType.APPLICATION_JSON)
+                            .content("{\"productId\":\"mock-1\"}"))
+                    .andExpect(status().isBadRequest())
+                    .andExpect(jsonPath("$.code").value("VALIDATION_ERROR"))
+                    .andExpect(jsonPath("$.message").value("Malformed request body"));
+        }
+
+        @Test
+        @DisplayName("요청 본문이 깨진 JSON이면 400 VALIDATION_ERROR를 반환한다")
+        void addItem_malformedJson_returns400() throws Exception {
+            mockMvc.perform(post("/api/wishlists")
+                            .header("X-User-Id", USER_ID.toString())
+                            .contentType(MediaType.APPLICATION_JSON)
+                            .content("{\"productId\":"))
+                    .andExpect(status().isBadRequest())
+                    .andExpect(jsonPath("$.code").value("VALIDATION_ERROR"))
+                    .andExpect(jsonPath("$.message").value("Malformed request body"));
+        }
     }
 
     @Nested

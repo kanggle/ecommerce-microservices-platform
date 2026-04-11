@@ -2,6 +2,7 @@
 
 import type { CartItem } from '../model/types';
 import { useCart } from '../model/cart-context';
+import { PriceDisplay } from '@/shared/ui';
 
 interface CartItemRowProps {
   item: CartItem;
@@ -59,7 +60,7 @@ export function CartItemRow({ item }: CartItemRowProps) {
             fontSize: 'var(--font-size-sm)',
           }}
         >
-          {item.price.toLocaleString()}<span style={{ fontSize: 'var(--font-size-xs)', fontWeight: 'var(--font-weight-normal)', color: 'var(--color-text-secondary)', marginLeft: '2px' }}>원</span>
+          <PriceDisplay amount={item.price} />
         </p>
       </div>
 

@@ -33,7 +33,7 @@ describe('OAuthButton', () => {
 
     const expectedCallback = encodeURIComponent('http://localhost:3000/oauth/callback');
     expect(window.location.href).toBe(
-      `http://localhost:8081/api/auth/oauth/google?callbackUrl=${expectedCallback}`,
+      `http://localhost:8080/api/auth/oauth/google?callbackUrl=${expectedCallback}`,
     );
   });
 

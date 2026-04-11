@@ -1,4 +1,4 @@
-import styles from '../ProductDetailWithCart.module.css';
+import styles from './ProductDetailWithCart.module.css';
 
 interface PurchaseSummaryProps {
   totalPrice: number;

@@ -1,13 +1,6 @@
 'use client';
 
-import {
-  createContext,
-  useCallback,
-  useContext,
-  useEffect,
-  useMemo,
-  useState,
-} from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 import type { SignupRequest, LoginRequest } from '@repo/types';
 import {
   getUserFromToken,
@@ -16,15 +9,10 @@ import {
   getStoredRefreshToken,
   type AuthState,
 } from '@repo/api-client';
+import { AuthContext } from '@/shared/lib/auth-context';
 import * as authActions from '../api/auth-actions';
 
-interface AuthContextValue extends AuthState {
-  login: (data: LoginRequest) => Promise<void>;
-  signup: (data: SignupRequest) => Promise<void>;
-  logout: () => Promise<void>;
-}
-
-const AuthContext = createContext<AuthContextValue | null>(null);
+export { useAuth } from '@/shared/lib/auth-context';
 
 export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [state, setState] = useState<AuthState>({
@@ -77,12 +65,4 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   );
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
-}
-
-export function useAuth(): AuthContextValue {
-  const context = useContext(AuthContext);
-  if (!context) {
-    throw new Error('useAuth must be used within an AuthProvider');
-  }
-  return context;
 }

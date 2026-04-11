@@ -2,6 +2,8 @@
 
 Patterns for the shared pagination DTOs used across all services.
 
+Prerequisite: read `specs/platform/coding-rules.md` before using this skill.
+
 ---
 
 ## PageQuery (Request)

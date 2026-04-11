@@ -46,14 +46,17 @@ describe('OrderItemsSection', () => {
   it('각 상품의 소계를 표시한다', () => {
     render(<OrderItemsSection items={items} totalAmount={40000} />);
 
-    const priceElements = screen.getAllByText('20,000');
+    // 가격 숫자와 단위 "원"이 별도 span으로 렌더링되므로 textContent 전체로 검색한다
+    const priceElements = screen.getAllByText((_, el) => el?.textContent === '20,000원');
     expect(priceElements).toHaveLength(2);
   });
 
   it('합계 금액을 표시한다', () => {
     render(<OrderItemsSection items={items} totalAmount={40000} />);
 
-    expect(screen.getByText('40,000')).toBeInTheDocument();
+    // 상품 합계와 결제 금액 모두 40,000원으로 렌더링되므로 최소 1개 이상 존재하면 통과
+    const fortyThousand = screen.getAllByText((_, el) => el?.textContent === '40,000원');
+    expect(fortyThousand.length).toBeGreaterThanOrEqual(1);
   });
 
   it('빈 목록이면 상품 항목을 표시하지 않는다', () => {

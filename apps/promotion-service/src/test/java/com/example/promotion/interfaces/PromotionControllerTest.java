@@ -1,5 +1,6 @@
 package com.example.promotion.interfaces;
 
+import com.example.promotion.TestPromotionServiceApplication;
 import com.example.web.exception.AccessDeniedException;
 import com.example.promotion.application.result.CreatePromotionResult;
 import com.example.promotion.application.result.PromotionDetail;
@@ -18,6 +19,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.http.MediaType;
+import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
 
@@ -30,6 +32,7 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 @WebMvcTest(controllers = {PromotionController.class, GlobalExceptionHandler.class})
+@ContextConfiguration(classes = TestPromotionServiceApplication.class)
 @DisplayName("PromotionController 슬라이스 테스트")
 class PromotionControllerTest {
 
@@ -68,6 +71,18 @@ class PromotionControllerTest {
                                 """))
                 .andExpect(status().isCreated())
                 .andExpect(jsonPath("$.promotionId").value("promo-123"));
+    }
+
+    @Test
+    @DisplayName("깨진 JSON 본문이면 400 / VALIDATION_ERROR 반환")
+    void createPromotion_malformedBody_returns400() throws Exception {
+        mockMvc.perform(post("/api/promotions")
+                        .header("X-User-Role", "ADMIN")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content("{\"name\":"))
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.code").value("VALIDATION_ERROR"))
+                .andExpect(jsonPath("$.message").value("Malformed request body"));
     }
 
     @Test

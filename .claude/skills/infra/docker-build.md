@@ -2,6 +2,8 @@
 
 Patterns for building Docker images in this repository.
 
+Prerequisite: read `specs/platform/deployment-policy.md` before using this skill.
+
 ---
 
 ## Multi-Stage Build (Backend)

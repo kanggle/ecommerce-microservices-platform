@@ -1,5 +1,6 @@
 package com.example.product.presentation.controller;
 
+import com.example.product.TestProductServiceApplication;
 import com.example.product.application.dto.ProductDetail;
 import com.example.product.application.dto.ProductListResult;
 import com.example.product.application.dto.ProductSummary;
@@ -9,6 +10,7 @@ import com.example.product.application.service.DeleteProductService;
 import com.example.product.application.service.QueryProductService;
 import com.example.product.application.service.RegisterProductService;
 import com.example.product.application.service.UpdateProductService;
+import com.example.product.application.service.VariantManagementService;
 import com.example.product.domain.exception.ProductNotFoundException;
 import com.example.product.domain.model.ProductStatus;
 import com.example.product.presentation.advice.GlobalExceptionHandler;
@@ -18,6 +20,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.context.annotation.Import;
 import org.springframework.http.MediaType;
+import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
 
@@ -33,6 +36,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @WebMvcTest(controllers = {ProductController.class, AdminProductController.class})
+@ContextConfiguration(classes = TestProductServiceApplication.class)
 @Import(GlobalExceptionHandler.class)
 @DisplayName("ProductController 슬라이스 테스트")
 class ProductControllerTest {
@@ -54,6 +58,9 @@ class ProductControllerTest {
 
     @MockitoBean
     private AdjustStockService adjustStockService;
+
+    @MockitoBean
+    private VariantManagementService variantManagementService;
 
     @Test
     @DisplayName("GET /api/products - 목록 조회 성공")

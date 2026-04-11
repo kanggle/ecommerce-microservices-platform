@@ -12,6 +12,7 @@ import org.springframework.dao.DataAccessException;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
@@ -39,6 +40,12 @@ public class GlobalExceptionHandler {
             .map(FieldError::getDefaultMessage)
             .collect(java.util.stream.Collectors.joining(", "));
         return ErrorResponse.of("VALIDATION_ERROR", message.isEmpty() ? "Validation failed" : message);
+    }
+
+    @ExceptionHandler(HttpMessageNotReadableException.class)
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    public ErrorResponse handleUnreadable(HttpMessageNotReadableException ex) {
+        return ErrorResponse.of("VALIDATION_ERROR", "Malformed request body");
     }
 
     @ExceptionHandler(OAuthUpstreamException.class)

@@ -1,10 +1,10 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { Suspense, useEffect, useState } from 'react';
 import { useSearchParams } from 'next/navigation';
 import { saveTokens } from '@repo/api-client';
 
-export default function OAuthCallbackPage() {
+function OAuthCallbackContent() {
   const searchParams = useSearchParams();
   const [error, setError] = useState('');
 
@@ -41,5 +41,13 @@ export default function OAuthCallbackPage() {
     <div style={{ maxWidth: '400px', margin: '0 auto', padding: 'var(--space-16) var(--space-6)', textAlign: 'center' }}>
       <p style={{ color: 'var(--color-text-secondary)' }}>로그인 처리 중...</p>
     </div>
+  );
+}
+
+export default function OAuthCallbackPage() {
+  return (
+    <Suspense fallback={null}>
+      <OAuthCallbackContent />
+    </Suspense>
   );
 }

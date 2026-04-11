@@ -8,18 +8,28 @@ Prerequisite: read `specs/platform/event-driven-policy.md` before using this ski
 
 ## Retry Configuration
 
-Use Spring Kafka's `DefaultErrorHandler` with `FixedBackOff`.
+Use Spring Kafka's `DefaultErrorHandler` with `ExponentialBackOff`, matching `specs/platform/event-driven-policy.md` Retry Policy (Base 1s, multiplier 2.0, max 30s, max 3 attempts).
 
 ```java
+import org.springframework.util.backoff.ExponentialBackOff;
+
 @Configuration
 @Profile("!standalone")
 public class KafkaConsumerConfig {
 
     @Bean
     public DefaultErrorHandler errorHandler(KafkaTemplate<String, String> kafkaTemplate) {
-        DeadLetterPublishingRecoverer recoverer =
-            new DeadLetterPublishingRecoverer(kafkaTemplate);
-        FixedBackOff backOff = new FixedBackOff(1000L, 3); // 1s interval, 3 retries
+        // Custom destination resolver: append ".dlq" instead of Spring's default ".DLT"
+        DeadLetterPublishingRecoverer recoverer = new DeadLetterPublishingRecoverer(
+            kafkaTemplate,
+            (record, ex) -> new TopicPartition(record.topic() + ".dlq", record.partition())
+        );
+
+        // Exponential backoff per event-driven-policy.md Retry Policy
+        ExponentialBackOff backOff = new ExponentialBackOff(1000L, 2.0);
+        backOff.setMaxInterval(30000L);
+        backOff.setMaxAttempts(3);
+
         return new DefaultErrorHandler(recoverer, backOff);
     }
 }
@@ -29,13 +39,13 @@ public class KafkaConsumerConfig {
 
 ## DLQ Topic Naming
 
-Pattern: `{original-topic}.DLT`
+Pattern: `{original-topic}.dlq`
 
-Spring Kafka's `DeadLetterPublishingRecoverer` appends `.DLT` by default.
+Per `specs/platform/event-driven-policy.md`, DLQ topics use the `.dlq` suffix — **not** Spring Kafka's default `.DLT`. A custom destination resolver must be passed to `DeadLetterPublishingRecoverer` (see the configuration example above).
 
 Examples:
-- `order.order.placed` → `order.order.placed.DLT`
-- `product.product.stock-changed` → `product.product.stock-changed.DLT`
+- `order.order.placed` → `order.order.placed.dlq`
+- `product.product.stock-changed` → `product.product.stock-changed.dlq`
 
 ---
 
@@ -97,5 +107,5 @@ void malformedEvent_routedToDlq() {
 |---|---|
 | Catching all exceptions silently in consumer | Let retriable errors propagate to trigger retry |
 | No DLQ configured | Always configure `DeadLetterPublishingRecoverer` |
-| Infinite retries | Use bounded `FixedBackOff` or `ExponentialBackOff` |
+| Infinite retries | Use bounded `ExponentialBackOff` with `setMaxAttempts(3)` |
 | Retrying non-retriable errors | Skip or throw to DLQ for deserialization/validation errors |

@@ -7,6 +7,8 @@ import { getErrorMessage } from '@repo/types/guards';
 import type { WishlistItem } from '@repo/types';
 import { removeFromWishlist } from '../api/wishlist-api';
 import { wishlistKeys } from '../model/query-keys';
+import { WishlistItemInfo } from './WishlistItemInfo';
+import { WishlistItemActions } from './WishlistItemActions';
 
 interface WishlistItemCardProps {
   item: WishlistItem;
@@ -57,100 +59,8 @@ export function WishlistItemCard({ item }: WishlistItemCardProps) {
         transition: 'box-shadow var(--transition-fast)',
       }}
     >
-      <div style={{ flex: 1, minWidth: 0 }}>
-        <div style={{ display: 'flex', alignItems: 'center', gap: 'var(--space-2)' }}>
-          <span
-            style={{
-              fontSize: 'var(--font-size-sm)',
-              fontWeight: 'var(--font-weight-medium)',
-              color: isDeleted ? 'var(--color-text-muted)' : 'var(--color-text)',
-              overflow: 'hidden',
-              textOverflow: 'ellipsis',
-              whiteSpace: 'nowrap',
-            }}
-          >
-            {isDeleted ? '판매 종료' : item.productName}
-          </span>
-          {isDeleted && (
-            <span
-              style={{
-                fontSize: 'var(--font-size-xs)',
-                padding: '1px 6px',
-                borderRadius: 'var(--radius-sm)',
-                background: 'var(--color-bg-tertiary)',
-                color: 'var(--color-text-muted)',
-                fontWeight: 'var(--font-weight-semibold)',
-                flexShrink: 0,
-              }}
-            >
-              삭제됨
-            </span>
-          )}
-        </div>
-        <div
-          style={{
-            marginTop: 'var(--space-1)',
-            display: 'flex',
-            alignItems: 'center',
-            gap: 'var(--space-3)',
-          }}
-        >
-          {!isDeleted && (
-            <span
-              style={{
-                fontSize: 'var(--font-size-sm)',
-                fontWeight: 'var(--font-weight-bold)',
-                color: 'var(--color-accent)',
-              }}
-            >
-              {item.productPrice.toLocaleString()}원
-            </span>
-          )}
-          <span
-            style={{
-              fontSize: 'var(--font-size-xs)',
-              color: 'var(--color-text-muted)',
-            }}
-          >
-            {formattedDate} 추가
-          </span>
-        </div>
-      </div>
-
-      <button
-        type="button"
-        onClick={handleRemove}
-        disabled={removeMutation.isPending}
-        aria-label="위시리스트에서 제거"
-        style={{
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'center',
-          width: '32px',
-          height: '32px',
-          borderRadius: 'var(--radius-full)',
-          border: 'none',
-          background: 'transparent',
-          cursor: removeMutation.isPending ? 'not-allowed' : 'pointer',
-          transition: 'all var(--transition-fast)',
-          opacity: removeMutation.isPending ? 0.5 : 1,
-          padding: 0,
-          flexShrink: 0,
-        }}
-      >
-        <svg
-          width={16}
-          height={16}
-          viewBox="0 0 24 24"
-          fill="var(--color-error)"
-          stroke="var(--color-error)"
-          strokeWidth="2"
-          strokeLinecap="round"
-          strokeLinejoin="round"
-        >
-          <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z" />
-        </svg>
-      </button>
+      <WishlistItemInfo item={item} isDeleted={isDeleted} formattedDate={formattedDate} />
+      <WishlistItemActions isPending={removeMutation.isPending} onRemove={handleRemove} />
     </div>
   );
 

@@ -1,5 +1,6 @@
 package com.example.order.presentation;
 
+import com.example.order.TestOrderServiceApplication;
 import com.example.order.application.dto.CancelOrderResult;
 import com.example.order.application.dto.OrderDetail;
 import com.example.order.application.dto.OrderSummary;
@@ -21,6 +22,7 @@ import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.context.annotation.Import;
 import org.springframework.dao.OptimisticLockingFailureException;
 import org.springframework.http.MediaType;
+import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
 
@@ -34,6 +36,7 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 @WebMvcTest(OrderController.class)
+@ContextConfiguration(classes = TestOrderServiceApplication.class)
 @Import(GlobalExceptionHandler.class)
 @DisplayName("OrderController 슬라이스 테스트")
 class OrderControllerTest {
@@ -93,6 +96,18 @@ class OrderControllerTest {
                         .content(VALID_PLACE_BODY))
                 .andExpect(status().isUnauthorized())
                 .andExpect(jsonPath("$.code").value("UNAUTHORIZED"));
+    }
+
+    @Test
+    @DisplayName("깨진 JSON 본문이면 400 / VALIDATION_ERROR 반환")
+    void placeOrder_malformedBody_returns400() throws Exception {
+        mockMvc.perform(post("/api/orders")
+                        .header("X-User-Id", "user1")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content("{\"items\":"))
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.code").value("VALIDATION_ERROR"))
+                .andExpect(jsonPath("$.message").value("Malformed request body"));
     }
 
     @Test

@@ -2,6 +2,8 @@
 
 Patterns for using Testcontainers in Spring Boot integration tests.
 
+Prerequisite: read `specs/platform/testing-strategy.md` before using this skill.
+
 ---
 
 ## Basic Setup

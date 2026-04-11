@@ -2,6 +2,8 @@
 
 Patterns for managing test data and fixtures.
 
+Prerequisite: read `specs/platform/testing-strategy.md` before using this skill.
+
 ---
 
 ## Fixture Principles

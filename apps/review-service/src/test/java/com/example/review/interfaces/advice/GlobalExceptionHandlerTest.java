@@ -1,5 +1,6 @@
 package com.example.review.interfaces.advice;
 
+import com.example.review.TestReviewServiceApplication;
 import com.example.review.application.service.ReviewCommandService;
 import com.example.review.application.service.ReviewQueryService;
 import com.example.review.domain.exception.ProductNotPurchasedException;
@@ -13,6 +14,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.context.annotation.Import;
 import org.springframework.http.MediaType;
+import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
 
@@ -24,6 +26,7 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 @WebMvcTest(ReviewController.class)
+@ContextConfiguration(classes = TestReviewServiceApplication.class)
 @Import(GlobalExceptionHandler.class)
 @DisplayName("GlobalExceptionHandler 슬라이스 테스트")
 class GlobalExceptionHandlerTest {
@@ -63,6 +66,42 @@ class GlobalExceptionHandlerTest {
                 .andExpect(jsonPath("$.code").value("VALIDATION_ERROR"))
                 .andExpect(jsonPath("$.message").isNotEmpty())
                 .andExpect(jsonPath("$.timestamp").isNotEmpty());
+    }
+
+    // -----------------------------------------------------------------------
+    // 400 Bad Request — HttpMessageNotReadableException (UUID 파싱 실패, 깨진 JSON)
+    // -----------------------------------------------------------------------
+
+    @Test
+    @DisplayName("productId가 UUID 형식이 아니면 400 / VALIDATION_ERROR 반환")
+    void handleNonUuidBody_returns400() throws Exception {
+        mockMvc.perform(post("/api/reviews")
+                        .header("X-User-Id", USER_ID.toString())
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content("""
+                                {
+                                    "productId": "mock-1",
+                                    "rating": 5,
+                                    "title": "Good",
+                                    "content": "Content"
+                                }
+                                """))
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.code").value("VALIDATION_ERROR"))
+                .andExpect(jsonPath("$.message").value("Malformed request body"))
+                .andExpect(jsonPath("$.timestamp").isNotEmpty());
+    }
+
+    @Test
+    @DisplayName("요청 본문이 깨진 JSON이면 400 / VALIDATION_ERROR 반환")
+    void handleMalformedJson_returns400() throws Exception {
+        mockMvc.perform(post("/api/reviews")
+                        .header("X-User-Id", USER_ID.toString())
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content("{\"productId\":"))
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.code").value("VALIDATION_ERROR"))
+                .andExpect(jsonPath("$.message").value("Malformed request body"));
     }
 
     // -----------------------------------------------------------------------

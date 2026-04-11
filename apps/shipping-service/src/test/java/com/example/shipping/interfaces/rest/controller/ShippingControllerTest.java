@@ -1,5 +1,6 @@
 package com.example.shipping.interfaces.rest.controller;
 
+import com.example.shipping.TestShippingServiceApplication;
 import com.example.web.exception.AccessDeniedException;
 import com.example.shipping.application.exception.UnauthorizedShippingAccessException;
 import com.example.shipping.application.result.ShippingResult;
@@ -19,6 +20,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.context.annotation.Import;
 import org.springframework.http.MediaType;
+import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
 
@@ -32,6 +34,7 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 @WebMvcTest(ShippingController.class)
+@ContextConfiguration(classes = TestShippingServiceApplication.class)
 @Import(GlobalExceptionHandler.class)
 @DisplayName("ShippingController 슬라이스 테스트")
 class ShippingControllerTest {
@@ -116,6 +119,18 @@ class ShippingControllerTest {
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.shippingId").value("ship-1"))
                 .andExpect(jsonPath("$.status").value("SHIPPED"));
+    }
+
+    @Test
+    @DisplayName("깨진 JSON 본문이면 400 / VALIDATION_ERROR 반환")
+    void updateShippingStatus_malformedBody_returns400() throws Exception {
+        mockMvc.perform(put("/api/shippings/ship-1/status")
+                        .header("X-User-Role", "ADMIN")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content("{\"status\":"))
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.code").value("VALIDATION_ERROR"))
+                .andExpect(jsonPath("$.message").value("Malformed request body"));
     }
 
     @Test

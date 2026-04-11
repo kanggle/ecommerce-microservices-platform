@@ -2,6 +2,8 @@
 
 Patterns for Terraform infrastructure-as-code in this repository.
 
+Prerequisite: read `specs/platform/deployment-policy.md` before using this skill.
+
 ---
 
 ## Module Structure
