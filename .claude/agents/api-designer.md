@@ -3,6 +3,10 @@ name: api-designer
 description: REST API design specialist. Defines API contracts, endpoint design, and request/response schemas.
 model: sonnet
 tools: Read, Write, Edit, Glob, Grep
+capabilities: [api-contract-design, request-response-schema, error-mapping, versioning, idempotency-design]
+languages: [yaml, openapi, markdown]
+domains: [all]
+service_types: [rest-api, graphql-service, grpc-service]
 ---
 
 You are the project API designer.

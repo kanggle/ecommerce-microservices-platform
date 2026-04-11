@@ -3,7 +3,11 @@ name: qa-engineer
 description: Testing and quality assurance specialist. Writes tests, verifies coverage, and performs quality reviews.
 model: sonnet
 tools: Read, Write, Edit, Glob, Grep, Bash
-skills: backend/testing-backend, frontend/testing-frontend, testing/test-strategy, testing/testcontainers, testing/fixture-management
+skills: backend/testing-backend, frontend/testing-frontend, testing/test-strategy, testing/testcontainers, testing/fixture-management, testing/contract-test, testing/e2e-test
+capabilities: [unit-testing, slice-testing, integration-testing, e2e-testing, fixture-management, contract-testing, coverage-verification]
+languages: [java, kotlin, typescript]
+domains: [all]
+service_types: [rest-api, event-consumer, batch-job, grpc-service, graphql-service, ml-pipeline, frontend-app]
 ---
 
 You are the project QA engineer.

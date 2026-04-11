@@ -3,6 +3,9 @@
 ## Service
 `user-service`
 
+## Service Type
+`rest-api`
+
 ## Architecture Style
 `Layered Architecture`
 

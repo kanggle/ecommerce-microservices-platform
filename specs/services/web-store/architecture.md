@@ -3,6 +3,9 @@
 ## Application
 `web-store`
 
+## Service Type
+`frontend-app`
+
 ## Architecture Style
 `Feature-Sliced Design`
 

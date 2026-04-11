@@ -3,6 +3,9 @@
 ## Service
 `auth-service`
 
+## Service Type
+`rest-api`
+
 ## Architecture Style
 `Layered Architecture`
 

@@ -3,6 +3,9 @@
 ## Application
 `admin-dashboard`
 
+## Service Type
+`frontend-app`
+
 ## Architecture Style
 `Layered by Feature`
 

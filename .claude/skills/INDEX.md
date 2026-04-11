@@ -47,6 +47,10 @@ Read only the matched skill files — do not read unrelated ones.
 | Frontend form handling patterns | `frontend/form-handling.md` |
 | Frontend loading and error state handling | `frontend/loading-error-handling.md` |
 | Frontend test writing (Vitest + Testing Library) | `frontend/testing-frontend.md` |
+| Reusable component primitives, a11y, design tokens | `frontend/component-library.md` |
+| Bundle analysis, code splitting, image/font, Core Web Vitals | `frontend/bundling-perf.md` |
+| Next.js App Router server actions and revalidation | `frontend/server-actions.md` |
+| Frontend auth: HttpOnly cookies, refresh proxy, server boundary | `frontend/auth-client.md` |
 | Elasticsearch index management | `search/elasticsearch-index.md` |
 | Elasticsearch query building | `search/elasticsearch-query.md` |
 | Search index sync via events | `search/index-sync.md` |
@@ -59,6 +63,22 @@ Read only the matched skill files — do not read unrelated ones.
 | Kubernetes deployment manifests | `infra/kubernetes-deploy.md` |
 | Terraform module patterns | `infra/terraform-module.md` |
 | GitHub Actions CI/CD pipelines | `infra/ci-cd.md` |
+| Prometheus/Grafana/Loki/Alertmanager stack as code | `infra/monitoring-stack.md` |
+| Secrets storage, sealed secrets, ESO, rotation | `infra/secrets-management.md` |
+| Service mesh (Linkerd/Istio) mTLS, traffic split, authz | `infra/service-mesh.md` |
+| K8s right-sizing, HPA, spot/ARM, PDB, cost levers | `infra/cost-optimization.md` |
+| Cache tier selection, TTL, invalidation policy | `cross-cutting/caching.md` |
+| API/event versioning, deprecation, coexistence | `cross-cutting/api-versioning.md` |
+| End-to-end observability setup (logs, metrics, traces, alerts) | `cross-cutting/observability-setup.md` |
+| OWASP Top 10 hardening checklist | `cross-cutting/security-hardening.md` |
+| Performance targets, profiling, load testing | `cross-cutting/performance-tuning.md` |
+| Set up a `rest-api` service end-to-end | `service-types/rest-api-setup.md` |
+| Set up an `event-consumer` service end-to-end | `service-types/event-consumer-setup.md` |
+| Set up a `batch-job` service end-to-end | `service-types/batch-job-setup.md` |
+| Set up a `grpc-service` end-to-end | `service-types/grpc-service-setup.md` |
+| Set up a `graphql-service` end-to-end | `service-types/graphql-service-setup.md` |
+| Set up an `ml-pipeline` service end-to-end | `service-types/ml-pipeline-setup.md` |
+| Set up a `frontend-app` service end-to-end | `service-types/frontend-app-setup.md` |
 | Code review checklist | `review-checklist.md` |
 
 ---
@@ -73,7 +93,7 @@ Read only the matched skill files — do not read unrelated ones.
 | Add event publishing | `event-implementation`, `outbox-pattern`, `scheduled-tasks`, `testing-backend` |
 | Add event consumer | `event-implementation`, `consumer-retry-dlq`, `idempotent-consumer`, `testing-backend` |
 | Add database migration | `schema-change-workflow`, `migration-strategy`, `indexing` |
-| Add frontend screen | matched architecture skill, `api-client`, `state-management`, `form-handling`, `loading-error-handling`, `testing-frontend` |
+| Add frontend screen | matched architecture skill, `api-client`, `state-management`, `form-handling`, `loading-error-handling`, `component-library`, `testing-frontend` |
 | Add search feature | `elasticsearch-index`, `elasticsearch-query`, `index-sync` |
 | Add gateway route/filter | `gateway-security` |
 | Add observability/metrics | `observability-metrics` |
@@ -81,3 +101,9 @@ Read only the matched skill files — do not read unrelated ones.
 | Integration task | backend skills + `e2e-test` + specs as needed |
 | Infrastructure task | `docker-build`, `kubernetes-deploy`, `ci-cd` as needed |
 | Code review | `review-checklist` + related architecture skill + `testing-backend` or `testing-frontend` |
+| Set up new service | matching `service-types/<type>-setup` + `cross-cutting/observability-setup` + `cross-cutting/security-hardening` |
+| Add caching layer | `cross-cutting/caching` + `backend/redis-session` (if Redis) |
+| Bump API version | `cross-cutting/api-versioning` + `testing/contract-test` |
+| Wire observability for a service | `cross-cutting/observability-setup` + `backend/observability-metrics` + `infra/monitoring-stack` |
+| Performance investigation | `cross-cutting/performance-tuning` + `cross-cutting/observability-setup` |
+| Security hardening pass | `cross-cutting/security-hardening` + `backend/jwt-auth` (if auth) |

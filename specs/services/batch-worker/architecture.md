@@ -3,6 +3,9 @@
 ## Service
 `batch-worker`
 
+## Service Type
+`batch-job`
+
 ## Architecture Style
 `Layered Architecture`
 

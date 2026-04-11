@@ -19,6 +19,7 @@ This document defines the minimum operating rules for AI agents and developers i
 Use documents in the following order:
 
 1. `specs/platform/`
+   - Within `specs/platform/service-types/`, only the file matching the target service's declared `Service Type` is read; other service-type files are skipped.
 2. `specs/contracts/`
 3. `specs/services/`
 4. `specs/features/`
@@ -64,11 +65,12 @@ For any implementation task:
 1. Read `CLAUDE.md`
 2. Read the target task in `tasks/ready/`
 3. Follow `specs/platform/entrypoint.md` for spec reading order
-4. Read `.claude/skills/INDEX.md` and matched skill files for implementation guidance
-5. Use `knowledge/` for design judgment only
-6. Read existing code in the target service to understand current patterns, conventions, and structure
-7. Implement and test
-8. Prepare for review
+4. Determine the target service's `Service Type` from `specs/services/<service>/architecture.md` and read the matching `specs/platform/service-types/<type>.md` (exactly one file)
+5. Read `.claude/skills/INDEX.md` and matched skill files for implementation guidance
+6. Use `knowledge/` for design judgment only
+7. Read existing code in the target service to understand current patterns, conventions, and structure
+8. Implement and test
+9. Prepare for review
 
 ---
 
@@ -82,6 +84,7 @@ Stop immediately if any of the following is true:
 - acceptance criteria are unclear
 - required contracts are missing
 - the task requires architecture decisions not documented in specs
+- the target service's `Service Type` is undeclared or not in the catalog at `specs/platform/service-types/INDEX.md`
 
 If stopped, report the blocking issue explicitly.
 

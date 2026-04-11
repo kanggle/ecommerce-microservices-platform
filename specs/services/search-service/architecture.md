@@ -3,6 +3,9 @@
 ## Service
 `search-service`
 
+## Service Type
+`rest-api`
+
 ## Architecture Style
 `Hexagonal Architecture`
 

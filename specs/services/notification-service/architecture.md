@@ -3,6 +3,9 @@
 ## Service
 `notification-service`
 
+## Service Type
+`event-consumer`
+
 ## Architecture Style
 `Hexagonal Architecture`
 

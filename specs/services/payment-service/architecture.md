@@ -3,6 +3,9 @@
 ## Service
 `payment-service`
 
+## Service Type
+`rest-api`
+
 ## Architecture Style
 `Hexagonal Architecture`
 

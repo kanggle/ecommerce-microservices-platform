@@ -4,6 +4,10 @@ description: Spring Boot backend implementation specialist. Implements API endpo
 model: opus
 tools: Read, Write, Edit, Glob, Grep, Bash
 skills: backend/implementation-workflow, backend/springboot-api, backend/testing-backend, backend/exception-handling, backend/validation, backend/dto-mapping, backend/transaction-handling, backend/pagination
+capabilities: [api-implementation, data-access, transaction-management, event-publishing, event-consumption, testing]
+languages: [java, kotlin]
+domains: [auth, user, product, order, payment, promotion, review, shipping, notification, search]
+service_types: [rest-api, event-consumer, batch-job]
 ---
 
 You are the project backend engineer.

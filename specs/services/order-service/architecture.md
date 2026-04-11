@@ -3,6 +3,9 @@
 ## Service
 `order-service`
 
+## Service Type
+`rest-api`
+
 ## Architecture Style
 `DDD-style Architecture`
 

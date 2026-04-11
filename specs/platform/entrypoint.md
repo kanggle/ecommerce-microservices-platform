@@ -12,11 +12,12 @@ AI agents and developers must begin platform-spec reading from this file.
 
 ---
 
-# Platform Specs: Core vs Auxiliary
+# Platform Specs: Core, Service-Type-Specific, and Auxiliary
 
-Platform specs are divided into **Core** and **Auxiliary**.
+Platform specs are divided into three layers:
 
 - **Core**: Always read before any implementation task.
+- **Service-Type-Specific**: Read exactly one file matching the target service's declared `Service Type`.
 - **Auxiliary**: Read only when the task requires it. Check the task's `Related Specs` section.
 
 ## Core (Always Read)
@@ -26,6 +27,22 @@ Platform specs are divided into **Core** and **Auxiliary**.
 3. `dependency-rules.md`
 4. `shared-library-policy.md`
 5. `security-rules.md`
+
+## Service-Type-Specific (Read Exactly One)
+
+After Core, read the file under `specs/platform/service-types/` that matches the target service's `Service Type` declared in `specs/services/<service>/architecture.md`. Catalog and selection rules live in `specs/platform/service-types/INDEX.md`.
+
+| Service Type | File |
+|---|---|
+| `rest-api` | `service-types/rest-api.md` |
+| `event-consumer` | `service-types/event-consumer.md` |
+| `batch-job` | `service-types/batch-job.md` |
+| `grpc-service` | `service-types/grpc-service.md` |
+| `graphql-service` | `service-types/graphql-service.md` |
+| `ml-pipeline` | `service-types/ml-pipeline.md` |
+| `frontend-app` | `service-types/frontend-app.md` |
+
+Reading more than one service-type spec for a single task is forbidden — pick the one declared by the target service.
 
 ## Auxiliary (Read When Relevant)
 
@@ -49,11 +66,12 @@ If no tags are declared or the section does not exist, read only `error-handling
 After reading Core platform specs:
 
 1. Read the target task in `tasks/ready/`
-2. Read auxiliary specs matching the task's tags
-3. Read related API or event contracts in `specs/contracts/`
-4. Read the target service specs in `specs/services/<service>/`
-5. Read related feature specs in `specs/features/` (if the directory exists and contains files)
-6. Read related use-cases in `specs/use-cases/` (if the directory exists and contains files)
+2. Identify the target service's `Service Type` from its `architecture.md` and read the matching `specs/platform/service-types/<type>.md` (exactly one)
+3. Read auxiliary specs matching the task's tags
+4. Read related API or event contracts in `specs/contracts/`
+5. Read the target service specs in `specs/services/<service>/`
+6. Read related feature specs in `specs/features/` (if the directory exists and contains files)
+7. Read related use-cases in `specs/use-cases/` (if the directory exists and contains files)
 
 If a directory is empty or does not exist, skip it and continue to the next step.
 

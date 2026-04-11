@@ -3,7 +3,11 @@ name: frontend-engineer
 description: Next.js frontend implementation specialist. Implements pages, components, state management, and API integration.
 model: opus
 tools: Read, Write, Edit, Glob, Grep, Bash
-skills: frontend/architecture/feature-sliced-design, frontend/architecture/layered-by-feature, frontend/implementation-workflow, frontend/api-client, frontend/state-management, frontend/form-handling, frontend/loading-error-handling, frontend/testing-frontend
+skills: frontend/architecture/feature-sliced-design, frontend/architecture/layered-by-feature, frontend/implementation-workflow, frontend/api-client, frontend/state-management, frontend/form-handling, frontend/loading-error-handling, frontend/component-library, frontend/bundling-perf, frontend/server-actions, frontend/auth-client, frontend/testing-frontend
+capabilities: [ui-implementation, state-management, api-integration, form-handling, server-actions, auth-client, accessibility, performance, testing]
+languages: [typescript]
+domains: [web-store, admin-dashboard]
+service_types: [frontend-app]
 ---
 
 You are the project frontend engineer.
