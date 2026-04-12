@@ -37,12 +37,12 @@ management:
 
 oauth:
   google:
-    client-id: ${GOOGLE_CLIENT_ID:263781549944-7l9oebqsulvr2bc5c6lrgo19usb9k5aq.apps.googleusercontent.com}
-    client-secret: ${GOOGLE_CLIENT_SECRET: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}
+    client-id: ${GOOGLE_CLIENT_ID:your-google-client-id}
+    client-secret: ${GOOGLE_CLIENT_SECRET:your-google-client-secret}
     redirect-uri: ${GOOGLE_REDIRECT_URI:http://localhost:8081/api/auth/oauth/google/callback}
   naver:
-    client-id: ${NAVER_CLIENT_ID:RhjGGXvyg2swBpGvrx68}
-    client-secret: ${NAVER_CLIENT_SECRET:pedd8hL8vy}
+    client-id: ${NAVER_CLIENT_ID:your-naver-client-id}
+    client-secret: ${NAVER_CLIENT_SECRET:your-naver-client-secret}
     redirect-uri: ${NAVER_REDIRECT_URI:http://localhost:8081/api/auth/oauth/naver/callback}
 
 jwt:
