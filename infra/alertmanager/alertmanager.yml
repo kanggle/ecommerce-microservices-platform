@@ -1,10 +1,14 @@
 # ============================================================
 # AlertManager 설정
-# 외부 알림 채널 연동은 Out of Scope — 설정 포인트만 제공
+# Slack Webhook 기반 알림 전송
+#
+# Webhook URL은 `slack_api_url_file`로 파일 참조 (보안)
+# 채널명은 docker-compose 환경변수 치환으로 주입 (민감 정보 아님)
 # ============================================================
 
 global:
   resolve_timeout: 5m
+  slack_api_url_file: /etc/alertmanager/slack-webhook-url
 
 route:
   group_by: ['alertname', 'service']
@@ -25,28 +29,44 @@ route:
 
 receivers:
   - name: 'default'
-    # 외부 알림 채널 연동 포인트
-    # Slack 예시:
-    # slack_configs:
-    #   - api_url: 'https://hooks.slack.com/services/XXX/YYY/ZZZ'
-    #     channel: '#alerts'
-    #     send_resolved: true
+    slack_configs:
+      - channel: '#alerts'
+        send_resolved: true
+        title: '[{{ .Status | toUpper }}] {{ .CommonLabels.alertname }}'
+        text: |-
+          {{ range .Alerts }}
+          *Severity*: {{ .Labels.severity }}
+          *Service*: {{ .Labels.job }}
+          *Category*: {{ .Labels.category }}
+          *Summary*: {{ .Annotations.summary }}
+          *Description*: {{ .Annotations.description }}
+          {{ end }}
 
   - name: 'critical'
-    # CRITICAL 알림용 — PagerDuty, Slack 등 연동 가능
-    # pagerduty_configs:
-    #   - service_key: '<service-key>'
-    # slack_configs:
-    #   - api_url: 'https://hooks.slack.com/services/XXX/YYY/ZZZ'
-    #     channel: '#alerts-critical'
-    #     send_resolved: true
+    slack_configs:
+      - channel: '#alerts-critical'
+        send_resolved: true
+        title: '🚨 [CRITICAL] {{ .CommonLabels.alertname }}'
+        text: |-
+          {{ range .Alerts }}
+          *Service*: {{ .Labels.job }}
+          *Category*: {{ .Labels.category }}
+          *Summary*: {{ .Annotations.summary }}
+          *Description*: {{ .Annotations.description }}
+          {{ end }}
 
   - name: 'warning'
-    # WARNING 알림용
-    # slack_configs:
-    #   - api_url: 'https://hooks.slack.com/services/XXX/YYY/ZZZ'
-    #     channel: '#alerts-warning'
-    #     send_resolved: true
+    slack_configs:
+      - channel: '#alerts-warning'
+        send_resolved: true
+        title: '⚠️ [WARNING] {{ .CommonLabels.alertname }}'
+        text: |-
+          {{ range .Alerts }}
+          *Service*: {{ .Labels.job }}
+          *Category*: {{ .Labels.category }}
+          *Summary*: {{ .Annotations.summary }}
+          *Description*: {{ .Annotations.description }}
+          {{ end }}
 
 inhibit_rules:
   - source_matchers:

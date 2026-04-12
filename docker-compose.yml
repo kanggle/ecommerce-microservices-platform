@@ -171,6 +171,8 @@ services:
     restart: unless-stopped
     volumes:
       - ./infra/alertmanager/alertmanager.yml:/etc/alertmanager/alertmanager.yml:ro
+      # Slack Webhook URL 파일 마운트 — slack-webhook-url.example 참고하여 slack-webhook-url 파일 생성 (gitignored)
+      - ./infra/alertmanager/slack-webhook-url:/etc/alertmanager/slack-webhook-url:ro
     command:
       - '--config.file=/etc/alertmanager/alertmanager.yml'
       - '--storage.path=/alertmanager'

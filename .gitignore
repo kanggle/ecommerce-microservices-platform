@@ -2,6 +2,9 @@
 .env
 .env.*
 
+# Alertmanager Slack webhook URL (secret) — commit .example only
+infra/alertmanager/slack-webhook-url
+
 # Local H2 database files
 /data/
 
