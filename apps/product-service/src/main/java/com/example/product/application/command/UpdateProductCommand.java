@@ -9,5 +9,11 @@ public record UpdateProductCommand(
         String name,
         String description,
         Long price,
-        ProductStatus status
-) {}
+        ProductStatus status,
+        String thumbnailUrl
+) {
+    public UpdateProductCommand(UUID productId, String name, String description, Long price,
+                                ProductStatus status) {
+        this(productId, name, description, price, status, null);
+    }
+}

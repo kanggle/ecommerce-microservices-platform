@@ -8,5 +8,11 @@ public record RegisterProductCommand(
         String description,
         long price,
         UUID categoryId,
+        String thumbnailUrl,
         List<VariantCommand> variants
-) {}
+) {
+    public RegisterProductCommand(String name, String description, long price, UUID categoryId,
+                                  List<VariantCommand> variants) {
+        this(name, description, price, categoryId, null, variants);
+    }
+}

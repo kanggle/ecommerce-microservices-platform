@@ -20,6 +20,7 @@ public class Product {
     private Price price;
     private ProductStatus status;
     private UUID categoryId;
+    private String thumbnailUrl;
     private Instant createdAt;
     private Instant updatedAt;
     private List<ProductVariant> variants = new ArrayList<>();
@@ -62,6 +63,14 @@ public class Product {
                                        ProductStatus status, UUID categoryId,
                                        Instant createdAt, Instant updatedAt,
                                        List<ProductVariant> variants) {
+        return reconstitute(id, name, description, price, status, categoryId, null,
+                createdAt, updatedAt, variants);
+    }
+
+    public static Product reconstitute(UUID id, String name, String description, Price price,
+                                       ProductStatus status, UUID categoryId, String thumbnailUrl,
+                                       Instant createdAt, Instant updatedAt,
+                                       List<ProductVariant> variants) {
         if (id == null) throw new IllegalArgumentException("id must not be null");
         if (name == null || name.isBlank()) throw new IllegalArgumentException("Product name must not be blank");
         if (price == null) throw new IllegalArgumentException("Price must not be null");
@@ -74,6 +83,7 @@ public class Product {
         product.price = price;
         product.status = status;
         product.categoryId = categoryId;
+        product.thumbnailUrl = thumbnailUrl;
         product.createdAt = createdAt;
         product.updatedAt = updatedAt;
         product.variants = new ArrayList<>(variants);
@@ -126,6 +136,11 @@ public class Product {
             throw new IllegalArgumentException("Price must not be null");
         }
         this.price = price;
+        this.updatedAt = Instant.now();
+    }
+
+    public void updateThumbnailUrl(String thumbnailUrl) {
+        this.thumbnailUrl = thumbnailUrl;
         this.updatedAt = Instant.now();
     }
 

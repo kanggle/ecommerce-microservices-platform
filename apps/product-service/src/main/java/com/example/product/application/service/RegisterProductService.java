@@ -47,6 +47,9 @@ public class RegisterProductService {
                 new Price(command.price()),
                 command.categoryId(),
                 variants);
+        if (command.thumbnailUrl() != null) {
+            product.updateThumbnailUrl(command.thumbnailUrl());
+        }
 
         productRepository.save(product);
         productMetrics.incrementProductCreated();

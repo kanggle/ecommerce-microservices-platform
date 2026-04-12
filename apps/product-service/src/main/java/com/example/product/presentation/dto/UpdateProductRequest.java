@@ -11,9 +11,14 @@ public record UpdateProductRequest(
         String description,
         @Min(value = 0, message = "가격은 0 이상이어야 합니다")
         Long price,
-        ProductStatus status
+        ProductStatus status,
+        String thumbnailUrl
 ) {
+    public UpdateProductRequest(String name, String description, Long price, ProductStatus status) {
+        this(name, description, price, status, null);
+    }
+
     public UpdateProductCommand toCommand(UUID productId) {
-        return new UpdateProductCommand(productId, name, description, price, status);
+        return new UpdateProductCommand(productId, name, description, price, status, thumbnailUrl);
     }
 }
