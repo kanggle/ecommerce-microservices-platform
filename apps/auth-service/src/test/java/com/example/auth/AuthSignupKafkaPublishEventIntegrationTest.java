@@ -36,7 +36,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @AutoConfigureMockMvc
 @Testcontainers
 @DisplayName("회원가입 → Kafka auth.user.signed-up 발행 통합 테스트")
-class AuthSignupKafkaPublishIntegrationTest {
+class AuthSignupKafkaPublishEventIntegrationTest {
 
     @SuppressWarnings("resource")
     @Container

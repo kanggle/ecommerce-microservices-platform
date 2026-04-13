@@ -105,7 +105,8 @@ Tasks must not be implemented from `backlog/`, `in-progress/`, `review/`, `done/
 | TASK-FE-058-fix-001 | TASK-FE-058 리뷰 수정 — 라우트 이중 중첩, 날짜 시간대 왜곡 | admin-dashboard | code, test |
 | TASK-FE-059-fix-001 | TASK-FE-059 리뷰 수정 — SHIPPING_STATUS_OPTIONS 누락, 테스트 경로 | admin-dashboard | code, test |
 | TASK-FE-060-fix-001 | TASK-FE-060 리뷰 수정 — 라우트 이중 중첩, 미정의 API, 409 처리 | admin-dashboard | code, test |
-| TASK-BE-119 | auth-service AuthEvent → Kafka 발행 브리지 구현 — 인메모리 이벤트를 실제 Kafka로 전송 | auth-service | code, event, test |
+| TASK-BE-119-fix-002 | TASK-BE-119 리뷰 fix: 통합 테스트 파일명 컨벤션 + Kafka producer acks/idempotence 설정 추가 | auth-service | code, test |
+| TASK-BE-119-fix-003 | TASK-BE-118-fix-001 리뷰 fix: RepublishSignupEventsIntegrationTest AdminAccountSeeder 충돌 수정 | auth-service | code, test |
 
 ## in-progress
 
@@ -113,26 +114,23 @@ _(없음)_
 
 ## review
 
-| ID | Title | Service | Tags |
-|---|---|---|---|
-| TASK-BE-114 | auth-service Google OAuth 2.0 로그인 구현 — Authorization Code Flow, 사용자 find-or-create, JWT 발급 | auth-service | code, api, test |
-| TASK-BE-098 | order-service API 컨트랙트 불일치 수정 — POST 요청 필드 차이 및 GET 목록 status 필터 미구현 | order-service | code, api, test |
-| TASK-BE-095 | gateway-service 외부 클라이언트 X-User-Id / X-User-Email 헤더 스푸핑 방어 — 모든 경로에서 수신 헤더 제거 | gateway-service | code, test |
-| TASK-BE-096 | gateway-service rate_limited 메트릭 실제 연동 — RequestRateLimiter 429 응답 시 gateway_rate_limited_total 기록 | gateway-service | code, test |
-| TASK-BE-097 | gateway-service 통합 테스트 user-service 라우트 누락 수정 | gateway-service | code, test |
-| TASK-BE-105 | order-service ErrorResponse 컨트랙트 위반 수정 — timestamp 필드 제거 및 IllegalArgumentException 핸들러 추가 | order-service | code, api, test |
-| TASK-BE-118 | auth-service 가입 이벤트 재발행 내부 엔드포인트 — user-service user_profiles 누락 복구 수단 제공 | auth-service, gateway-service | code, api, event, test |
-| TASK-BE-118-fix-001 | TASK-BE-118 리뷰 수정 — 재발행 엔드포인트 통합 테스트 누락 추가 및 보안/로깅 보완 | auth-service | code, test |
-| TASK-BE-118-fix-002 | TASK-BE-118-fix-001 리뷰 수정 — SecurityConfig TODO 주석에 연결된 태스크 ID 추가 | auth-service | code |
+_(없음)_
 
 ## done
 
 | ID | Title | Service | Tags |
 |---|---|---|---|
+| TASK-BE-119 | auth-service AuthEvent → Kafka 발행 브리지 구현 — 인메모리 이벤트를 실제 Kafka로 전송 | auth-service | code, event, test |
+| TASK-BE-118-fix-002 | TASK-BE-118-fix-001 리뷰 수정 — SecurityConfig TODO 주석에 연결된 태스크 ID 추가 | auth-service | code |
 | TASK-BE-118-fix-001 | TASK-BE-118 리뷰 수정 — 재발행 엔드포인트 통합 테스트 누락 추가 및 보안/로깅 보완 | auth-service | code, test |
 | TASK-BE-118 | auth-service 가입 이벤트 재발행 내부 엔드포인트 — user-service user_profiles 누락 복구 수단 제공 | auth-service | code, api, event, test |
 | TASK-BE-116-fix-001 | TASK-BE-116 리뷰 수정 — payment-service AmountMismatchException HTTP 상태 코드 422 → 400 수정 | payment-service | code, api |
-| TASK-BE-118 | auth-service 가입 이벤트 재발행 내부 엔드포인트 — user-service user_profiles 누락 복구 수단 제공 | auth-service | code, api, event, test |
+| TASK-BE-114 | auth-service Google OAuth 2.0 로그인 구현 — Authorization Code Flow, 사용자 find-or-create, JWT 발급 | auth-service | code, api, test |
+| TASK-BE-098 | order-service API 컨트랙트 불일치 수정 — POST 요청 필드 차이 및 GET 목록 status 필터 미구현 | order-service | code, api, test |
+| TASK-BE-097 | gateway-service 통합 테스트 user-service 라우트 누락 수정 | gateway-service | code, test |
+| TASK-BE-096 | gateway-service rate_limited 메트릭 실제 연동 — RequestRateLimiter 429 응답 시 gateway_rate_limited_total 기록 | gateway-service | code, test |
+| TASK-BE-095 | gateway-service 외부 클라이언트 X-User-Id / X-User-Email 헤더 스푸핑 방어 — 모든 경로에서 수신 헤더 제거 | gateway-service | code, test |
+| TASK-BE-105 | order-service ErrorResponse 컨트랙트 위반 수정 — timestamp 필드 제거 및 IllegalArgumentException 핸들러 추가 | order-service | code, api, test |
 | TASK-FE-061 | web-store product API mock 폴백 제거 — non-UUID mock id가 쓰기 API로 흘러 들어가는 경로 차단 | web-store | code, test |
 | TASK-BE-116 | 전 서비스 GlobalExceptionHandler HttpMessageNotReadableException 핸들러 추가 — 잘못된 JSON/UUID 본문 시 500 → 400 VALIDATION_ERROR | auth-service, user-service, product-service, order-service, payment-service, shipping-service, review-service, promotion-service, notification-service, search-service | code, api, test |
 | TASK-FE-047 | TASK-FE-040에서 발견된 LoginForm oauth_failed 에러 메시지 테스트 누락 수정 | admin-dashboard | code, test |

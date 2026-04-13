@@ -52,6 +52,8 @@ spring:
     producer:
       key-serializer: org.apache.kafka.common.serialization.StringSerializer
       value-serializer: org.apache.kafka.common.serialization.StringSerializer
+      acks: all
+      enable-idempotence: true
     consumer:
       group-id: auth-service
       auto-offset-reset: earliest
