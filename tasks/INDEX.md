@@ -120,6 +120,7 @@ _(없음)_
 | TASK-BE-096 | gateway-service rate_limited 메트릭 실제 연동 — RequestRateLimiter 429 응답 시 gateway_rate_limited_total 기록 | gateway-service | code, test |
 | TASK-BE-097 | gateway-service 통합 테스트 user-service 라우트 누락 수정 | gateway-service | code, test |
 | TASK-BE-105 | order-service ErrorResponse 컨트랙트 위반 수정 — timestamp 필드 제거 및 IllegalArgumentException 핸들러 추가 | order-service | code, api, test |
+| TASK-BE-118 | auth-service 가입 이벤트 재발행 내부 엔드포인트 — user-service user_profiles 누락 복구 수단 제공 | auth-service, gateway-service | code, api, event, test |
 
 ## done
 
