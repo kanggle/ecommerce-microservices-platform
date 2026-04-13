@@ -42,6 +42,9 @@ public class SecurityConfig {
                 .requestMatchers("/api/auth/signup", "/api/auth/login", "/api/auth/refresh",
                     "/api/auth/oauth/**").permitAll()
                 .requestMatchers("/actuator/health", "/actuator/info", "/actuator/prometheus").permitAll()
+                // /api/internal/**: gateway-service에서 라우팅되지 않아 외부 접근 불가.
+                // 내부 운영자는 kubectl port-forward 등으로 파드에 직접 접근한다.
+                .requestMatchers("/api/internal/**").permitAll()
                 .anyRequest().authenticated()
             )
             .exceptionHandling(e -> e.authenticationEntryPoint(authenticationEntryPoint))
