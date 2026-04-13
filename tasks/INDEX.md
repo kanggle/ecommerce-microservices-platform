@@ -105,6 +105,7 @@ Tasks must not be implemented from `backlog/`, `in-progress/`, `review/`, `done/
 | TASK-FE-058-fix-001 | TASK-FE-058 리뷰 수정 — 라우트 이중 중첩, 날짜 시간대 왜곡 | admin-dashboard | code, test |
 | TASK-FE-059-fix-001 | TASK-FE-059 리뷰 수정 — SHIPPING_STATUS_OPTIONS 누락, 테스트 경로 | admin-dashboard | code, test |
 | TASK-FE-060-fix-001 | TASK-FE-060 리뷰 수정 — 라우트 이중 중첩, 미정의 API, 409 처리 | admin-dashboard | code, test |
+| TASK-BE-118-fix-001 | TASK-BE-118 리뷰 수정 — 재발행 엔드포인트 통합 테스트 누락 추가 및 보안/로깅 보완 | auth-service | code, test |
 
 ## in-progress
 
@@ -127,6 +128,7 @@ _(없음)_
 | ID | Title | Service | Tags |
 |---|---|---|---|
 | TASK-BE-116-fix-001 | TASK-BE-116 리뷰 수정 — payment-service AmountMismatchException HTTP 상태 코드 422 → 400 수정 | payment-service | code, api |
+| TASK-BE-118 | auth-service 가입 이벤트 재발행 내부 엔드포인트 — user-service user_profiles 누락 복구 수단 제공 | auth-service | code, api, event, test |
 | TASK-FE-061 | web-store product API mock 폴백 제거 — non-UUID mock id가 쓰기 API로 흘러 들어가는 경로 차단 | web-store | code, test |
 | TASK-BE-116 | 전 서비스 GlobalExceptionHandler HttpMessageNotReadableException 핸들러 추가 — 잘못된 JSON/UUID 본문 시 500 → 400 VALIDATION_ERROR | auth-service, user-service, product-service, order-service, payment-service, shipping-service, review-service, promotion-service, notification-service, search-service | code, api, test |
 | TASK-FE-047 | TASK-FE-040에서 발견된 LoginForm oauth_failed 에러 메시지 테스트 누락 수정 | admin-dashboard | code, test |
