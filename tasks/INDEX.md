@@ -95,6 +95,7 @@ Tasks must not be implemented from `backlog/`, `in-progress/`, `review/`, `done/
 | TASK-BE-107 | order-service OrderController 페이지 사이즈 상한 제한 추가 — 과도한 size 파라미터에 의한 DB 과부하 방지 | order-service | code, api, test |
 | TASK-BE-108 | 전 서비스 컨트랙트 준수 자동 검증 테스트 추가 — API 응답 스키마 및 이벤트 페이로드 스펙 일치 검증 | order-service, auth-service, user-service, product-service, payment-service, search-service | code, api, event, test |
 | TASK-BE-113-fix-002 | TASK-BE-113-fix-001 리뷰 수정 — saveAll() N+1 쿼리 제거 및 회원 탈퇴 배치 저장 통합 테스트 추가 | order-service | code, test |
+| TASK-BE-118-fix-002 | TASK-BE-118-fix-001 리뷰 수정 — SecurityConfig TODO 주석에 연결된 태스크 ID 추가 | auth-service | code |
 | TASK-BE-115 | payment-service 토스페이먼츠 PG 연동 — 결제 승인 API, PG 어댑터, DB 스키마 확장 | payment-service | code, api, test |
 | TASK-FE-049 | web-store 토스페이먼츠 결제 UI — SDK 위젯 연동 및 결제 콜백 처리 | web-store | code, test |
 | TASK-FE-053-fix-001 | TASK-FE-053 리뷰 수정 — useAuth 훅 규칙 위반, window.alert SSR, 구매검증 에러 | web-store | code, test |
@@ -125,6 +126,8 @@ _(없음)_
 
 | ID | Title | Service | Tags |
 |---|---|---|---|
+| TASK-BE-118-fix-001 | TASK-BE-118 리뷰 수정 — 재발행 엔드포인트 통합 테스트 누락 추가 및 보안/로깅 보완 | auth-service | code, test |
+| TASK-BE-118 | auth-service 가입 이벤트 재발행 내부 엔드포인트 — user-service user_profiles 누락 복구 수단 제공 | auth-service | code, api, event, test |
 | TASK-BE-116-fix-001 | TASK-BE-116 리뷰 수정 — payment-service AmountMismatchException HTTP 상태 코드 422 → 400 수정 | payment-service | code, api |
 | TASK-FE-061 | web-store product API mock 폴백 제거 — non-UUID mock id가 쓰기 API로 흘러 들어가는 경로 차단 | web-store | code, test |
 | TASK-BE-116 | 전 서비스 GlobalExceptionHandler HttpMessageNotReadableException 핸들러 추가 — 잘못된 JSON/UUID 본문 시 500 → 400 VALIDATION_ERROR | auth-service, user-service, product-service, order-service, payment-service, shipping-service, review-service, promotion-service, notification-service, search-service | code, api, test |
