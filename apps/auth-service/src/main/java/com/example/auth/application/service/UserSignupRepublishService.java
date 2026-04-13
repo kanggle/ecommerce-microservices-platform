@@ -50,8 +50,9 @@ public class UserSignupRepublishService {
                 published++;
             } catch (Exception e) {
                 failed++;
-                log.warn("Signup event republish failed for userId={}: {}",
-                    user.getId(), e.getMessage());
+                // PII 보호: 예외 메시지에 이메일 등이 포함될 수 있으므로 클래스명만 기록한다.
+                log.warn("Signup event republish failed for userId={}: errorType={}",
+                    user.getId(), e.getClass().getSimpleName());
             }
         }
 

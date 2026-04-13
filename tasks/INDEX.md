@@ -105,7 +105,6 @@ Tasks must not be implemented from `backlog/`, `in-progress/`, `review/`, `done/
 | TASK-FE-058-fix-001 | TASK-FE-058 리뷰 수정 — 라우트 이중 중첩, 날짜 시간대 왜곡 | admin-dashboard | code, test |
 | TASK-FE-059-fix-001 | TASK-FE-059 리뷰 수정 — SHIPPING_STATUS_OPTIONS 누락, 테스트 경로 | admin-dashboard | code, test |
 | TASK-FE-060-fix-001 | TASK-FE-060 리뷰 수정 — 라우트 이중 중첩, 미정의 API, 409 처리 | admin-dashboard | code, test |
-| TASK-BE-118-fix-001 | TASK-BE-118 리뷰 수정 — 재발행 엔드포인트 통합 테스트 누락 추가 및 보안/로깅 보완 | auth-service | code, test |
 
 ## in-progress
 
@@ -122,6 +121,7 @@ _(없음)_
 | TASK-BE-097 | gateway-service 통합 테스트 user-service 라우트 누락 수정 | gateway-service | code, test |
 | TASK-BE-105 | order-service ErrorResponse 컨트랙트 위반 수정 — timestamp 필드 제거 및 IllegalArgumentException 핸들러 추가 | order-service | code, api, test |
 | TASK-BE-118 | auth-service 가입 이벤트 재발행 내부 엔드포인트 — user-service user_profiles 누락 복구 수단 제공 | auth-service, gateway-service | code, api, event, test |
+| TASK-BE-118-fix-001 | TASK-BE-118 리뷰 수정 — 재발행 엔드포인트 통합 테스트 누락 추가 및 보안/로깅 보완 | auth-service | code, test |
 
 ## done
 
