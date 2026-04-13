@@ -73,39 +73,7 @@ Tasks must not be implemented from `backlog/`, `in-progress/`, `review/`, `done/
 
 ## ready
 
-| ID | Title | Service | Tags |
-|---|---|---|---|
-| TASK-FE-040 | admin-dashboard Google OAuth 로그인 UI 구현 — 소셜 버튼 및 콜백 페이지 추가 | admin-dashboard | code, test |
-| TASK-FE-048 | TASK-FE-047 리뷰 수정 — LoginForm oauth_failed 쿼리 파라미터 처리 로직 누락 구현 | admin-dashboard | code, test |
-| TASK-BE-082 | auth-service, order-service, user-service 도메인 모델 프레임워크 의존성 분리 — JPA 애노테이션 제거 및 JpaEntity 분리 | auth-service, order-service, user-service | code, test |
-| TASK-BE-083 | 전 서비스 이벤트 envelope snake_case 통일 — order, auth, product, user-service 적용 | order-service, auth-service, product-service, user-service | code, event, test |
-| TASK-BE-085 | user-service Address 도메인 모델 리팩토링 — 반복 검증 로직 추출 및 update 메서드 분해 | user-service | code, test |
-| TASK-BE-086 | order-service 컨트롤러 수동 null 검증 제거 — @Valid + DTO 검증 전환 | order-service | code, test |
-| TASK-BE-087 | gateway-service 빈 X-User-Id 헤더 차단 — JWT에서 userId 추출 실패 시 401 반환 | gateway-service | code, test |
-| TASK-BE-089 | payment-service 환불 멱등성 보장 — 중복 환불 요청 방지 | payment-service | code, test |
-| TASK-BE-090 | batch-worker 테스트 커버리지 확대 — 핵심 잡 로직 및 실패 시나리오 테스트 추가 | batch-worker | code, test |
-| TASK-FE-037 | admin-dashboard mutation 에러 핸들러 및 Suspense 일관성 추가 | admin-dashboard | code, test |
-| TASK-FE-038 | 프론트엔드 페이지네이션 대량 페이지 렌더링 최적화 — 말줄임 표시 적용 | admin-dashboard, web-store | code, test |
-| TASK-FE-039 | 프론트엔드 접근성(a11y) 개선 — form label 연결, aria-label, Next.js Image, 전화번호 마스킹 | admin-dashboard, web-store | code, test |
-| TASK-BE-100 | order-service 이벤트 발행 신뢰성 개선 — TransactionalEventListener 기반 트랜잭션 후 발행 전환 | order-service | code, event, test |
-| TASK-BE-101 | order-service PaymentRefundConfirmationService 예외 처리 누락 수정 — InvalidOrderException catch 추가 | order-service | code, event, test |
-| TASK-BE-102 | order-service 이벤트 컨슈머 ZoneId.systemDefault() 제거 — UTC 고정 시간대 전환 | order-service | code, event, test |
-| TASK-BE-104 | order-service Kafka consumer 예외 래핑 수정 — JsonProcessingException not-retryable 우회 버그 및 DLQ KafkaTemplate 타입 불일치 | order-service | code, event, test |
-| TASK-BE-106 | order-service OrderCancelledEvent cancelledAt 시각 불일치 수정 — 도메인 취소 시각 사용 | order-service | code, event, test |
-| TASK-BE-107 | order-service OrderController 페이지 사이즈 상한 제한 추가 — 과도한 size 파라미터에 의한 DB 과부하 방지 | order-service | code, api, test |
-| TASK-BE-108 | 전 서비스 컨트랙트 준수 자동 검증 테스트 추가 — API 응답 스키마 및 이벤트 페이로드 스펙 일치 검증 | order-service, auth-service, user-service, product-service, payment-service, search-service | code, api, event, test |
-| TASK-BE-113-fix-002 | TASK-BE-113-fix-001 리뷰 수정 — saveAll() N+1 쿼리 제거 및 회원 탈퇴 배치 저장 통합 테스트 추가 | order-service | code, test |
-| TASK-BE-115 | payment-service 토스페이먼츠 PG 연동 — 결제 승인 API, PG 어댑터, DB 스키마 확장 | payment-service | code, api, test |
-| TASK-FE-049 | web-store 토스페이먼츠 결제 UI — SDK 위젯 연동 및 결제 콜백 처리 | web-store | code, test |
-| TASK-FE-053-fix-001 | TASK-FE-053 리뷰 수정 — useAuth 훅 규칙 위반, window.alert SSR, 구매검증 에러 | web-store | code, test |
-| TASK-FE-054-fix-001 | TASK-FE-054 리뷰 수정 — 위시리스트 삭제 itemId 누락, 100개 초과 에러 | web-store | code, test |
-| TASK-FE-055-fix-001 | TASK-FE-055 리뷰 수정 — 운송장 표시 방어 처리, retry 정책 | web-store | code, test |
-| TASK-FE-056-fix-001 | TASK-FE-056 리뷰 수정 — 빈 orderId 컨트랙트 위반, window.alert, 쿠폰 만료 | web-store | code, test |
-| TASK-FE-057-fix-001 | TASK-FE-057 리뷰 수정 — SENT 필터링, 알림 유형 표시, window.alert | web-store | code, test |
-| TASK-FE-058-fix-001 | TASK-FE-058 리뷰 수정 — 라우트 이중 중첩, 날짜 시간대 왜곡 | admin-dashboard | code, test |
-| TASK-FE-059-fix-001 | TASK-FE-059 리뷰 수정 — SHIPPING_STATUS_OPTIONS 누락, 테스트 경로 | admin-dashboard | code, test |
-| TASK-FE-060-fix-001 | TASK-FE-060 리뷰 수정 — 라우트 이중 중첩, 미정의 API, 409 처리 | admin-dashboard | code, test |
-| TASK-FE-061 | admin-dashboard 홈 화면 1순위 위젯 구현 — 주문/매출/재고 KPI 및 최근 주문 | admin-dashboard | code, api, test |
+_(없음)_
 
 ## in-progress
 
@@ -121,6 +89,8 @@ _(없음)_
 
 | ID | Title | Service | Tags |
 |---|---|---|---|
+| TASK-FE-063-fix-001 | TASK-FE-063 리뷰 fix: 대시보드 위젯 테스트 3종 추가 및 집계 한계 경고 표시 | admin-dashboard | code, test |
+| TASK-FE-063 | admin-dashboard 홈 화면 1순위 위젯 구현 — 주문/매출/재고 KPI 및 최근 주문 | admin-dashboard | code, api, test |
 | TASK-FE-062-fix-001 | TASK-FE-062 리뷰 fix: cross-feature import 제거 + 에러/로딩 fallback 테스트 추가 | admin-dashboard | code, test |
 | TASK-FE-062 | admin-dashboard 주문관리 목록/상세에 주문자 이메일 표시 | admin-dashboard | code, test |
 | TASK-BE-119-fix-003 | TASK-BE-118-fix-001 리뷰 fix: RepublishSignupEventsIntegrationTest AdminAccountSeeder 충돌 수정 | auth-service | code, test |
