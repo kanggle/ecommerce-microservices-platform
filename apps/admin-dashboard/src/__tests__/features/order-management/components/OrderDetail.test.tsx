@@ -27,6 +27,22 @@ vi.mock('@/features/order-management/api/order-api', () => ({
   getOrder: (...args: unknown[]) => mockGetOrder(...args),
 }));
 
+vi.mock('@/features/user-management/api/user-api', () => ({
+  getUser: vi.fn().mockImplementation((userId: string) =>
+    Promise.resolve({
+      userId,
+      email: `${userId}@example.com`,
+      name: 'Tester',
+      nickname: null,
+      phone: null,
+      profileImageUrl: null,
+      status: 'ACTIVE',
+      createdAt: '2026-01-01T00:00:00Z',
+      updatedAt: '2026-01-01T00:00:00Z',
+    }),
+  ),
+}));
+
 vi.mock('next/navigation', () => ({
   useRouter: () => ({ push: vi.fn() }),
 }));
@@ -59,6 +75,12 @@ describe('OrderDetail', () => {
     render(<OrderDetail orderId="o1" />, { wrapper: createWrapper() });
 
     expect(await screen.findByText('u1')).toBeInTheDocument();
+  });
+
+  it('주문자 이메일을 표시한다', async () => {
+    render(<OrderDetail orderId="o1" />, { wrapper: createWrapper() });
+
+    expect(await screen.findByText('u1@example.com')).toBeInTheDocument();
   });
 
   it('주문 항목을 표시한다', async () => {

@@ -21,6 +21,22 @@ vi.mock('@/features/order-management/api/order-api', () => ({
   }),
 }));
 
+vi.mock('@/features/user-management/api/user-api', () => ({
+  getUser: vi.fn().mockImplementation((userId: string) =>
+    Promise.resolve({
+      userId,
+      email: `${userId}@example.com`,
+      name: 'Tester',
+      nickname: null,
+      phone: null,
+      profileImageUrl: null,
+      status: 'ACTIVE',
+      createdAt: '2026-01-01T00:00:00Z',
+      updatedAt: '2026-01-01T00:00:00Z',
+    }),
+  ),
+}));
+
 function createWrapper() {
   const queryClient = new QueryClient({
     defaultOptions: { queries: { retry: false } },
@@ -49,6 +65,13 @@ describe('OrderList', () => {
     await screen.findByText('30,000원');
     expect(screen.getByRole('combobox')).toBeInTheDocument();
     expect(screen.getByText('전체 상태')).toBeInTheDocument();
+  });
+
+  it('주문자 이메일을 표시한다', async () => {
+    render(<OrderList />, { wrapper: createWrapper() });
+
+    expect(await screen.findByText('u1@example.com')).toBeInTheDocument();
+    expect(await screen.findByText('u2@example.com')).toBeInTheDocument();
   });
 
   it('주문 상태 뱃지를 표시한다', async () => {
