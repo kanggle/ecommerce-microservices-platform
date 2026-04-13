@@ -105,7 +105,7 @@ Tasks must not be implemented from `backlog/`, `in-progress/`, `review/`, `done/
 | TASK-FE-058-fix-001 | TASK-FE-058 리뷰 수정 — 라우트 이중 중첩, 날짜 시간대 왜곡 | admin-dashboard | code, test |
 | TASK-FE-059-fix-001 | TASK-FE-059 리뷰 수정 — SHIPPING_STATUS_OPTIONS 누락, 테스트 경로 | admin-dashboard | code, test |
 | TASK-FE-060-fix-001 | TASK-FE-060 리뷰 수정 — 라우트 이중 중첩, 미정의 API, 409 처리 | admin-dashboard | code, test |
-_(없음)_
+| TASK-FE-061 | admin-dashboard 홈 화면 1순위 위젯 구현 — 주문/매출/재고 KPI 및 최근 주문 | admin-dashboard | code, api, test |
 
 ## in-progress
 
@@ -121,6 +121,8 @@ _(없음)_
 
 | ID | Title | Service | Tags |
 |---|---|---|---|
+| TASK-FE-062-fix-001 | TASK-FE-062 리뷰 fix: cross-feature import 제거 + 에러/로딩 fallback 테스트 추가 | admin-dashboard | code, test |
+| TASK-FE-062 | admin-dashboard 주문관리 목록/상세에 주문자 이메일 표시 | admin-dashboard | code, test |
 | TASK-BE-119-fix-003 | TASK-BE-118-fix-001 리뷰 fix: RepublishSignupEventsIntegrationTest AdminAccountSeeder 충돌 수정 | auth-service | code, test |
 | TASK-BE-119-fix-002 | TASK-BE-119 리뷰 fix: 통합 테스트 파일명 컨벤션 + Kafka producer acks/idempotence 설정 추가 | auth-service | code, test |
 | TASK-BE-119 | auth-service AuthEvent → Kafka 발행 브리지 구현 — 인메모리 이벤트를 실제 Kafka로 전송 | auth-service | code, event, test |
