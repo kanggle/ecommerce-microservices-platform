@@ -5,6 +5,7 @@ import com.example.auth.domain.event.AuthEvent;
 import com.example.auth.domain.event.AuthEventPublisher;
 import com.example.auth.domain.repository.UserRepository;
 import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -112,6 +113,14 @@ class RepublishSignupEventsIntegrationTest {
 
     @Autowired
     private JdbcTemplate jdbcTemplate;
+
+    @BeforeEach
+    void setUp() {
+        // AdminAccountSeeder(ApplicationRunner)가 컨텍스트 기동 시 admin 유저를 삽입하므로
+        // 각 테스트가 깨끗한 상태에서 시작하도록 users 테이블을 먼저 비운다.
+        publisher.reset();
+        jdbcTemplate.update("DELETE FROM users");
+    }
 
     @AfterEach
     void cleanup() {
