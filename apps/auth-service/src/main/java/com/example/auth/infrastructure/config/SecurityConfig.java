@@ -46,7 +46,7 @@ public class SecurityConfig {
                 // 1) gateway-service 라우팅 테이블에 등록되지 않아 외부 인터넷(공개 Ingress)에서는 도달 불가.
                 // 2) 접근 경로는 kubectl port-forward 또는 동일 Kubernetes 네트워크 내부의 운영자 도구 전용.
                 // 3) Security Filter 레벨 인증은 현재 비활성(permitAll) — 네트워크 경계(gateway routing + cluster NetworkPolicy)에서 1차 차단한다.
-                // TODO: 내부 클러스터 IP 대역 제한(NetworkPolicy) 또는 mTLS/서비스계정 토큰 기반 인증을 별도 ADR로 승격 후 여기서 강제할 것.
+                // TODO(TASK-BE-118-fix-002): 내부 클러스터 IP 대역 제한(NetworkPolicy) 또는 mTLS/서비스계정 토큰 기반 인증을 별도 ADR로 승격 후 여기서 강제할 것.
                 //       (참고: specs/platform/security-rules.md 내부 경로 섹션)
                 .requestMatchers("/api/internal/**").permitAll()
                 .anyRequest().authenticated()
