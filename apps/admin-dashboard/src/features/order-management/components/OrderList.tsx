@@ -4,17 +4,17 @@ import { useRouter } from 'next/navigation';
 import { DataTable, StatusBadge, FilterBar, ListError } from '@/shared/ui';
 import type { ColumnDef } from '@/shared/ui';
 import { useOrders } from '../hooks/use-orders';
-import { useUser } from '@/features/user-management/hooks/use-user';
+import { useUserEmail } from '@/shared/hooks';
 import { ORDER_STATUS_OPTIONS } from '@/shared/lib/status-options';
 import type { AdminOrderSummary } from '@repo/types';
 
 function UserEmailCell({ userId }: { userId: string }) {
-  const { data, isLoading, isError } = useUser(userId);
+  const { email, isLoading, isError } = useUserEmail(userId);
 
   if (isLoading) return <span style={{ color: '#9ca3af' }}>불러오는 중...</span>;
-  if (isError || !data?.email) return <span style={{ color: '#9ca3af' }}>{userId.slice(0, 8) + '...'}</span>;
+  if (isError || !email) return <span style={{ color: '#9ca3af' }}>-</span>;
 
-  return <span>{data.email}</span>;
+  return <span>{email}</span>;
 }
 
 const columns: ColumnDef<AdminOrderSummary>[] = [

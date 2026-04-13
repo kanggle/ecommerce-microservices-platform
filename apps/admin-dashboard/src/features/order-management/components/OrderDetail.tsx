@@ -5,7 +5,7 @@ import { ErrorMessage } from '@repo/ui';
 import { getErrorMessage } from '@repo/types/guards';
 import { useOrder } from '../hooks/use-order';
 import { useChangeOrderStatus } from '../hooks/use-change-order-status';
-import { useUser } from '@/features/user-management/hooks/use-user';
+import { useUserEmail } from '@/shared/hooks';
 import type { OrderStatus, OrderItem } from '@repo/types';
 
 interface Props {
@@ -117,13 +117,13 @@ function OrderItemsTable({ items }: { items: OrderItem[] }) {
 export function OrderDetail({ orderId }: Props) {
   const { data: order, isLoading, isError, refetch } = useOrder(orderId);
   const mutation = useChangeOrderStatus(orderId);
-  const { data: user, isLoading: isUserLoading, isError: isUserError } = useUser(order?.userId ?? '');
+  const { email, isLoading: isUserLoading, isError: isUserError } = useUserEmail(order?.userId ?? '');
 
   const userEmail = isUserLoading
     ? '불러오는 중...'
-    : isUserError || !user?.email
+    : isUserError || !email
       ? '-'
-      : user.email;
+      : email;
 
   if (isLoading || !order) {
     return <PageLayout.Skeleton />;
