@@ -81,15 +81,16 @@ _(없음)_
 
 ## review
 
-| ID | Title | Service | Tags |
-|---|---|---|---|
-| TASK-BE-123 | TASK-BE-122 리뷰 fix: DATA_INTEGRITY_VIOLATION 에러 코드 등록 및 wishlist-api 컨트랙트 갱신 | user-service | code |
-| TASK-FE-064-fix-001 | TASK-FE-064 리뷰 이슈 수정: 로그아웃 카트 클리어 테스트 누락 및 토큰 만료 시 카트 즉시 삭제 | web-store | code, test |
+_(없음)_
 
 ## done
 
 | ID | Title | Service | Tags |
 |---|---|---|---|
+| TASK-BE-124-fix-001 | TASK-BE-124 리뷰 지적 수정 — wishlistItemId 미구현 전면 보완 | user-service | code, test |
+| TASK-BE-124 | GET /api/wishlists/me/check 응답에 wishlistItemId 추가 — 콘트랙트와 구현 불일치 수정 | user-service | code, test |
+| TASK-FE-064-fix-001 | TASK-FE-064 리뷰 이슈 수정: 로그아웃 카트 클리어 테스트 누락 및 토큰 만료 시 카트 즉시 삭제 | web-store | code, test |
+| TASK-BE-123 | TASK-BE-122 리뷰 fix: DATA_INTEGRITY_VIOLATION 에러 코드 등록 및 wishlist-api 컨트랙트 갱신 | user-service | code |
 | TASK-FE-063-fix-001 | TASK-FE-063 리뷰 fix: 대시보드 위젯 테스트 3종 추가 및 집계 한계 경고 표시 | admin-dashboard | code, test |
 | TASK-FE-063 | admin-dashboard 홈 화면 1순위 위젯 구현 — 주문/매출/재고 KPI 및 최근 주문 | admin-dashboard | code, api, test |
 | TASK-FE-062-fix-001 | TASK-FE-062 리뷰 fix: cross-feature import 제거 + 에러/로딩 fallback 테스트 추가 | admin-dashboard | code, test |
