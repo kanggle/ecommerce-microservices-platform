@@ -81,9 +81,10 @@ _(없음)_
 
 ## review
 
-_(없음)_
-
-
+| ID | Title | Service | Tags |
+|---|---|---|---|
+| TASK-BE-123 | TASK-BE-122 리뷰 fix: DATA_INTEGRITY_VIOLATION 에러 코드 등록 및 wishlist-api 컨트랙트 갱신 | user-service | code |
+| TASK-FE-064-fix-001 | TASK-FE-064 리뷰 이슈 수정: 로그아웃 카트 클리어 테스트 누락 및 토큰 만료 시 카트 즉시 삭제 | web-store | code, test |
 
 ## done
 

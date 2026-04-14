@@ -1,6 +1,16 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { render, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
+
+vi.mock('@/features/auth', () => ({
+  useAuth: () => ({ isAuthenticated: true, isLoading: false }),
+}));
+
+vi.mock('next/navigation', () => ({
+  useRouter: () => ({ push: vi.fn(), replace: vi.fn() }),
+  usePathname: () => '/cart',
+}));
+
 import { CartProvider } from '@/features/cart/model/cart-context';
 import { AddToCartButton } from '@/features/cart/ui/AddToCartButton';
 import { CartSummary } from '@/features/cart/ui/CartSummary';

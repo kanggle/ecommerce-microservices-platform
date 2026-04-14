@@ -1,6 +1,13 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { render, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
+
+const mockAuthState = { isAuthenticated: true, isLoading: false };
+
+vi.mock('@/features/auth', () => ({
+  useAuth: () => mockAuthState,
+}));
+
 import { CartProvider, useCart } from '@/features/cart/model/cart-context';
 
 const ITEM_A = {
@@ -49,6 +56,8 @@ describe('CartContext', () => {
     vi.spyOn(Storage.prototype, 'removeItem').mockImplementation((key) => {
       delete storage[key];
     });
+    mockAuthState.isAuthenticated = true;
+    mockAuthState.isLoading = false;
   });
 
   it('초기 상태에서 장바구니가 비어있다', async () => {
@@ -268,5 +277,99 @@ describe('CartContext', () => {
     expect(() => {
       render(<TestConsumer />);
     }).toThrow('useCart must be used within a CartProvider');
+  });
+});
+
+describe('CartContext × 인증 상태', () => {
+  let storage: Record<string, string>;
+
+  beforeEach(() => {
+    storage = {};
+    vi.spyOn(Storage.prototype, 'getItem').mockImplementation((key) => storage[key] ?? null);
+    vi.spyOn(Storage.prototype, 'setItem').mockImplementation((key, value) => {
+      storage[key] = value;
+    });
+    vi.spyOn(Storage.prototype, 'removeItem').mockImplementation((key) => {
+      delete storage[key];
+    });
+    mockAuthState.isAuthenticated = true;
+    mockAuthState.isLoading = false;
+  });
+
+  it('비로그인 상태에서는 localStorage 카트를 복원하지 않는다', async () => {
+    storage['cart'] = JSON.stringify([{ ...ITEM_A, quantity: 5 }]);
+    mockAuthState.isAuthenticated = false;
+
+    render(
+      <CartProvider>
+        <TestConsumer />
+      </CartProvider>,
+    );
+
+    await waitFor(() => {
+      expect(screen.getByTestId('count').textContent).toBe('0');
+    });
+    expect(storage['cart']).toBeUndefined();
+  });
+
+  it('비로그인 상태에서 addItem은 카트에 아무것도 추가하지 않는다', async () => {
+    mockAuthState.isAuthenticated = false;
+    const user = userEvent.setup();
+
+    render(
+      <CartProvider>
+        <TestConsumer />
+      </CartProvider>,
+    );
+
+    await user.click(screen.getByText('addA'));
+
+    expect(screen.getByTestId('count').textContent).toBe('0');
+    expect(storage['cart']).toBeUndefined();
+  });
+
+  it('인증 로딩 중에는 카트를 로드하지 않고 대기한다', async () => {
+    storage['cart'] = JSON.stringify([{ ...ITEM_A, quantity: 1 }]);
+    mockAuthState.isLoading = true;
+    mockAuthState.isAuthenticated = false;
+
+    render(
+      <CartProvider>
+        <TestConsumer />
+      </CartProvider>,
+    );
+
+    expect(screen.getByTestId('count').textContent).toBe('0');
+  });
+
+  it('로그아웃 시 localStorage의 cart 키가 삭제된다', async () => {
+    // 선행 조건: 로그인 상태에서 카트가 localStorage에 존재
+    storage['cart'] = JSON.stringify([{ ...ITEM_A, quantity: 2 }]);
+    mockAuthState.isAuthenticated = true;
+    mockAuthState.isLoading = false;
+
+    const { rerender } = render(
+      <CartProvider>
+        <TestConsumer />
+      </CartProvider>,
+    );
+
+    await waitFor(() => {
+      expect(screen.getByTestId('count').textContent).toBe('2');
+    });
+    expect(storage['cart']).toBeDefined();
+
+    // 로그아웃 전환: isAuthenticated true -> false
+    mockAuthState.isAuthenticated = false;
+    rerender(
+      <CartProvider>
+        <TestConsumer />
+      </CartProvider>,
+    );
+
+    await waitFor(() => {
+      expect(screen.getByTestId('count').textContent).toBe('0');
+    });
+    expect(storage['cart']).toBeUndefined();
   });
 });
