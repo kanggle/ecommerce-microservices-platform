@@ -15,6 +15,8 @@ public interface WishlistItemRepository {
 
     boolean existsByUserIdAndProductId(UUID userId, UUID productId);
 
+    Optional<WishlistItem> findByUserIdAndProductId(UUID userId, UUID productId);
+
     PageResult<WishlistItem> findAllByUserId(UUID userId, PageQuery pageQuery);
 
     void delete(WishlistItem item);

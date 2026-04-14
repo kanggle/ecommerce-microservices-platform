@@ -4,6 +4,7 @@ import java.util.UUID;
 
 public record WishlistCheckResult(
         UUID productId,
-        boolean inWishlist
+        boolean inWishlist,
+        UUID wishlistItemId
 ) {
 }

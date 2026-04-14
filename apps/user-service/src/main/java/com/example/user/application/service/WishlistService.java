@@ -6,10 +6,12 @@ import com.example.user.application.result.WishlistCheckResult;
 import com.example.user.application.result.WishlistItemResult;
 import com.example.user.application.result.WishlistPageResult;
 import com.example.user.domain.exception.AlreadyInWishlistException;
+import com.example.user.domain.exception.UserProfileNotFoundException;
 import com.example.user.domain.exception.WishlistItemNotFoundException;
 import com.example.common.page.PageQuery;
 import com.example.common.page.PageResult;
 import com.example.user.domain.model.WishlistItem;
+import com.example.user.domain.repository.UserProfileRepository;
 import com.example.user.domain.repository.WishlistItemRepository;
 import com.example.user.domain.service.ProductInfoProvider;
 import com.example.user.domain.service.ProductInfoProvider.ProductInfo;
@@ -32,10 +34,15 @@ import java.util.stream.Collectors;
 public class WishlistService {
 
     private final WishlistItemRepository wishlistItemRepository;
+    private final UserProfileRepository userProfileRepository;
     private final ProductInfoProvider productInfoProvider;
 
     @Transactional
     public AddWishlistItemResult addItem(AddWishlistItemCommand command) {
+        if (!userProfileRepository.existsByUserId(command.userId())) {
+            throw new UserProfileNotFoundException(command.userId());
+        }
+
         if (wishlistItemRepository.existsByUserIdAndProductId(command.userId(), command.productId())) {
             throw new AlreadyInWishlistException(command.productId());
         }
@@ -104,7 +111,8 @@ public class WishlistService {
     }
 
     public WishlistCheckResult checkItem(UUID userId, UUID productId) {
-        boolean exists = wishlistItemRepository.existsByUserIdAndProductId(userId, productId);
-        return new WishlistCheckResult(productId, exists);
+        return wishlistItemRepository.findByUserIdAndProductId(userId, productId)
+                .map(item -> new WishlistCheckResult(productId, true, item.getId()))
+                .orElseGet(() -> new WishlistCheckResult(productId, false, null));
     }
 }
