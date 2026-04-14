@@ -8,7 +8,7 @@ vi.mock('next/navigation', () => ({
   useRouter: () => ({ push: vi.fn(), replace: vi.fn() }),
 }));
 
-vi.mock('@/features/auth', () => ({
+vi.mock('@/shared/lib/auth-context', () => ({
   useAuth: vi.fn(),
 }));
 
@@ -33,7 +33,7 @@ vi.mock('@repo/ui', () => ({
   ),
 }));
 
-import { useAuth } from '@/features/auth';
+import { useAuth } from '@/shared/lib/auth-context';
 import {
   getProductReviews,
   getProductReviewSummary,

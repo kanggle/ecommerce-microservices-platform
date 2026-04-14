@@ -10,7 +10,7 @@ vi.mock('next/navigation', () => ({
   usePathname: () => '/products',
 }));
 
-vi.mock('@/features/auth', () => ({
+vi.mock('@/shared/lib/auth-context', () => ({
   useAuth: vi.fn(),
 }));
 
@@ -34,7 +34,7 @@ vi.mock('@/features/wishlist/api/wishlist-api', () => ({
   checkWishlist: vi.fn(),
 }));
 
-import { useAuth } from '@/features/auth';
+import { useAuth } from '@/shared/lib/auth-context';
 import { checkWishlist, addToWishlist, removeFromWishlist } from '@/features/wishlist/api/wishlist-api';
 import { WishlistButton } from '@/features/wishlist';
 

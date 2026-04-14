@@ -4,7 +4,7 @@ import userEvent from '@testing-library/user-event';
 
 const mockAuthState = { isAuthenticated: true, isLoading: false };
 
-vi.mock('@/features/auth', () => ({
+vi.mock('@/shared/lib/auth-context', () => ({
   useAuth: () => mockAuthState,
 }));
 
