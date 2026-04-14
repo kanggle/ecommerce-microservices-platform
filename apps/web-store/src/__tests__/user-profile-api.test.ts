@@ -19,7 +19,6 @@ vi.mock('@repo/api-client', () => ({
 describe('user-profile-api', () => {
   beforeEach(async () => {
     vi.clearAllMocks();
-    // 모듈을 매번 새로 로드하여 mockProfile 상태를 초기화한다
     vi.resetModules();
   });
 
@@ -50,21 +49,17 @@ describe('user-profile-api', () => {
       expect(result).toEqual(profile);
     });
 
-    it('API 에러 시 폴백 프로필을 반환한다', async () => {
+    it('API 에러 시 에러를 그대로 전파한다', async () => {
       mockGetMe.mockRejectedValueOnce(new Error('Unauthorized'));
 
       const { getMyProfile } = await loadModule();
-      const result = await getMyProfile();
 
-      expect(result.userId).toBe('mock-user');
-      expect(result.email).toBe('test@example.com');
-      expect(result.name).toBe('테스트유저');
-      expect(result.status).toBe('ACTIVE');
+      await expect(getMyProfile()).rejects.toThrow('Unauthorized');
     });
 
-    it('API 성공 후 다시 에러 발생 시 캐시된 프로필을 반환한다', async () => {
+    it('정상 응답의 userId는 mock-user가 아니다', async () => {
       const profile = {
-        userId: 'user-1',
+        userId: 'a1b2c3d4-e5f6-7890-abcd-ef1234567890',
         email: 'user@example.com',
         name: '홍길동',
         nickname: null,
@@ -75,18 +70,12 @@ describe('user-profile-api', () => {
         updatedAt: '2026-01-01T00:00:00Z',
       };
       mockGetMe.mockResolvedValueOnce(profile);
-      mockGetMe.mockRejectedValueOnce(new Error('Server error'));
 
       const { getMyProfile } = await loadModule();
+      const result = await getMyProfile();
 
-      // 첫 호출: API 성공으로 캐시 저장
-      const first = await getMyProfile();
-      expect(first.userId).toBe('user-1');
-
-      // 두 번째 호출: API 에러지만 캐시된 프로필 반환
-      const second = await getMyProfile();
-      expect(second.userId).toBe('user-1');
-      expect(second.name).toBe('홍길동');
+      expect(result.userId).not.toBe('mock-user');
+      expect(result.userId).toBe('a1b2c3d4-e5f6-7890-abcd-ef1234567890');
     });
   });
 
@@ -112,50 +101,34 @@ describe('user-profile-api', () => {
       expect(result).toEqual(response);
     });
 
-    it('API 에러 시 요청 데이터를 기반으로 폴백 응답을 반환한다', async () => {
+    it('API 에러 시 에러를 그대로 전파한다', async () => {
       mockUpdateMe.mockRejectedValueOnce(new Error('Server error'));
 
       const { updateMyProfile } = await loadModule();
-      const result = await updateMyProfile({
-        nickname: '오프라인닉네임',
-        phone: '010-0000-0000',
-        profileImageUrl: 'img.jpg',
-      });
 
-      expect(result.userId).toBe('mock-user');
-      expect(result.nickname).toBe('오프라인닉네임');
-      expect(result.phone).toBe('010-0000-0000');
-      expect(result.profileImageUrl).toBe('img.jpg');
-      expect(result.status).toBe('ACTIVE');
+      await expect(
+        updateMyProfile({ nickname: '오프라인닉네임', phone: '010-0000-0000', profileImageUrl: 'img.jpg' }),
+      ).rejects.toThrow('Server error');
     });
 
-    it('API 에러 시 이전에 캐시된 프로필 정보를 폴백에 활용한다', async () => {
-      const profile = {
-        userId: 'user-1',
-        email: 'real@example.com',
-        name: '실제유저',
-        nickname: '기존닉네임',
-        phone: '010-1111-2222',
+    it('업데이트 응답의 userId는 mock-user가 아니다', async () => {
+      const updateData = { nickname: '새닉네임', phone: null, profileImageUrl: null };
+      const response = {
+        userId: 'a1b2c3d4-e5f6-7890-abcd-ef1234567890',
+        email: 'user@example.com',
+        name: '홍길동',
+        nickname: '새닉네임',
+        phone: null,
         profileImageUrl: null,
         status: 'ACTIVE',
-        createdAt: '2026-01-01T00:00:00Z',
-        updatedAt: '2026-01-01T00:00:00Z',
+        updatedAt: '2026-04-05T00:00:00Z',
       };
-      mockGetMe.mockResolvedValueOnce(profile);
-      mockUpdateMe.mockRejectedValueOnce(new Error('Server error'));
+      mockUpdateMe.mockResolvedValueOnce(response);
 
-      const { getMyProfile, updateMyProfile } = await loadModule();
+      const { updateMyProfile } = await loadModule();
+      const result = await updateMyProfile(updateData);
 
-      // getMyProfile로 캐시 설정
-      await getMyProfile();
-
-      // updateMyProfile 에러 시 캐시된 userId/email 사용
-      const result = await updateMyProfile({ nickname: '변경닉네임', phone: null, profileImageUrl: null });
-
-      expect(result.userId).toBe('user-1');
-      expect(result.email).toBe('real@example.com');
-      expect(result.name).toBe('실제유저');
-      expect(result.nickname).toBe('변경닉네임');
+      expect(result.userId).not.toBe('mock-user');
     });
   });
 });
