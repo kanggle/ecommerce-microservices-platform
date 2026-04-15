@@ -1,6 +1,5 @@
 import type { Address, ShippingAddress } from '@repo/types';
-import { Skeleton } from '@/shared/ui/Skeleton';
-import { AddressSearch } from '@/shared/ui/AddressSearch';
+import { Skeleton, AddressSearch, PhoneFieldError } from '@/shared/ui';
 
 interface AddressSectionProps {
   addressLoading: boolean;
@@ -135,9 +134,7 @@ function ShippingFormSection({
       <div className="form-group" style={{ marginBottom: 0 }}>
         <label htmlFor="phone" className="label">전화번호</label>
         <input id="phone" type="tel" className="input" value={address.phone} onChange={(e) => onFieldChange('phone', e.target.value)} required placeholder="010-0000-0000" />
-        {address.phone.trim().length > 0 && !phoneValid && (
-          <p style={{ color: 'var(--color-error)', fontSize: 'var(--font-size-xs)', margin: 'var(--space-1) 0 0' }}>올바른 휴대폰 번호를 입력해주세요. (예: 010-1234-5678)</p>
-        )}
+        <PhoneFieldError phone={address.phone} isValid={phoneValid} />
       </div>
       <div className="form-group" style={{ marginBottom: 0 }}>
         <label className="label">주소</label>
