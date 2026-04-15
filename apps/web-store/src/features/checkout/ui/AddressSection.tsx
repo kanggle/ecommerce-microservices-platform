@@ -38,65 +38,17 @@ export function AddressSection({
       {!addressLoading && savedAddresses.length > 0 && (
         <div style={{ display: 'flex', flexDirection: 'column', gap: 'var(--space-2)', marginBottom: 'var(--space-4)' }}>
           {savedAddresses.map((addr) => (
-            <label
+            <SavedAddressOption
               key={addr.id}
-              style={{
-                display: 'flex',
-                alignItems: 'center',
-                gap: 'var(--space-3)',
-                padding: 'var(--space-3)',
-                border: selectedAddressId === addr.id ? '2px solid var(--color-primary)' : '1px solid var(--color-border-light)',
-                borderRadius: 'var(--radius-md)',
-                cursor: 'pointer',
-                background: selectedAddressId === addr.id ? 'rgba(26, 26, 46, 0.03)' : 'var(--color-white)',
-                transition: 'all var(--transition-fast)',
-              }}
-            >
-              <input
-                type="radio"
-                name="savedAddress"
-                checked={selectedAddressId === addr.id}
-                onChange={() => onAddressSelect(addr.id)}
-                style={{ flexShrink: 0 }}
-              />
-              <div style={{ flex: 1, minWidth: 0 }}>
-                <div style={{ display: 'flex', alignItems: 'center', gap: 'var(--space-2)', marginBottom: '2px' }}>
-                  <span style={{ fontSize: 'var(--font-size-sm)', fontWeight: 'var(--font-weight-semibold)' }}>{addr.label}</span>
-                  {addr.isDefault && (
-                    <span style={{ display: 'inline-block', padding: '1px 6px', fontSize: '0.65rem', fontWeight: 'var(--font-weight-semibold)', backgroundColor: 'var(--color-primary)', color: '#fff', borderRadius: 'var(--radius-full)' }}>기본</span>
-                  )}
-                </div>
-                <div style={{ fontSize: 'var(--font-size-xs)', color: 'var(--color-text-secondary)' }}>
-                  {addr.recipientName} · {addr.phone}
-                </div>
-                <div style={{ fontSize: 'var(--font-size-xs)', color: 'var(--color-text-secondary)' }}>
-                  ({addr.zipCode}) {addr.address1}{addr.address2 ? ` ${addr.address2}` : ''}
-                </div>
-              </div>
-            </label>
-          ))}
-          <label
-            style={{
-              display: 'flex',
-              alignItems: 'center',
-              gap: 'var(--space-3)',
-              padding: 'var(--space-3)',
-              border: selectedAddressId === 'new' ? '2px solid var(--color-primary)' : '1px solid var(--color-border-light)',
-              borderRadius: 'var(--radius-md)',
-              cursor: 'pointer',
-              background: selectedAddressId === 'new' ? 'rgba(26, 26, 46, 0.03)' : 'var(--color-white)',
-              transition: 'all var(--transition-fast)',
-            }}
-          >
-            <input
-              type="radio"
-              name="savedAddress"
-              checked={selectedAddressId === 'new'}
-              onChange={() => onAddressSelect('new')}
-              style={{ flexShrink: 0 }}
+              addr={addr}
+              selected={selectedAddressId === addr.id}
+              onSelect={onAddressSelect}
             />
-            <span style={{ fontSize: 'var(--font-size-sm)', color: 'var(--color-text-secondary)' }}>새 배송지 직접 입력</span>
-          </label>
+          ))}
+          <NewAddressOption
+            selected={selectedAddressId === 'new'}
+            onSelect={onAddressSelect}
+          />
         </div>
       )}
 
@@ -109,6 +61,84 @@ export function AddressSection({
         />
       )}
     </section>
+  );
+}
+
+interface SavedAddressOptionProps {
+  addr: Address;
+  selected: boolean;
+  onSelect: (id: string) => void;
+}
+
+function SavedAddressOption({ addr, selected, onSelect }: SavedAddressOptionProps) {
+  return (
+    <label
+      style={{
+        display: 'flex',
+        alignItems: 'center',
+        gap: 'var(--space-3)',
+        padding: 'var(--space-3)',
+        border: selected ? '2px solid var(--color-primary)' : '1px solid var(--color-border-light)',
+        borderRadius: 'var(--radius-md)',
+        cursor: 'pointer',
+        background: selected ? 'rgba(26, 26, 46, 0.03)' : 'var(--color-white)',
+        transition: 'all var(--transition-fast)',
+      }}
+    >
+      <input
+        type="radio"
+        name="savedAddress"
+        checked={selected}
+        onChange={() => onSelect(addr.id)}
+        style={{ flexShrink: 0 }}
+      />
+      <div style={{ flex: 1, minWidth: 0 }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: 'var(--space-2)', marginBottom: '2px' }}>
+          <span style={{ fontSize: 'var(--font-size-sm)', fontWeight: 'var(--font-weight-semibold)' }}>{addr.label}</span>
+          {addr.isDefault && (
+            <span style={{ display: 'inline-block', padding: '1px 6px', fontSize: '0.65rem', fontWeight: 'var(--font-weight-semibold)', backgroundColor: 'var(--color-primary)', color: '#fff', borderRadius: 'var(--radius-full)' }}>기본</span>
+          )}
+        </div>
+        <div style={{ fontSize: 'var(--font-size-xs)', color: 'var(--color-text-secondary)' }}>
+          {addr.recipientName} · {addr.phone}
+        </div>
+        <div style={{ fontSize: 'var(--font-size-xs)', color: 'var(--color-text-secondary)' }}>
+          ({addr.zipCode}) {addr.address1}{addr.address2 ? ` ${addr.address2}` : ''}
+        </div>
+      </div>
+    </label>
+  );
+}
+
+interface NewAddressOptionProps {
+  selected: boolean;
+  onSelect: (id: string) => void;
+}
+
+function NewAddressOption({ selected, onSelect }: NewAddressOptionProps) {
+  return (
+    <label
+      style={{
+        display: 'flex',
+        alignItems: 'center',
+        gap: 'var(--space-3)',
+        padding: 'var(--space-3)',
+        border: selected ? '2px solid var(--color-primary)' : '1px solid var(--color-border-light)',
+        borderRadius: 'var(--radius-md)',
+        cursor: 'pointer',
+        background: selected ? 'rgba(26, 26, 46, 0.03)' : 'var(--color-white)',
+        transition: 'all var(--transition-fast)',
+      }}
+    >
+      <input
+        type="radio"
+        name="savedAddress"
+        checked={selected}
+        onChange={() => onSelect('new')}
+        style={{ flexShrink: 0 }}
+      />
+      <span style={{ fontSize: 'var(--font-size-sm)', color: 'var(--color-text-secondary)' }}>새 배송지 직접 입력</span>
+    </label>
   );
 }
 
