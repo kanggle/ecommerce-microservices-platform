@@ -262,6 +262,24 @@ Order Service                  Kafka                    Downstream
 
 ---
 
+## API Documentation (Swagger/OpenAPI)
+
+각 서비스는 SpringDoc 기반 OpenAPI 3.0 스펙을 자동 생성하고 Swagger UI를 제공합니다.
+
+| Service | Swagger UI | OpenAPI JSON |
+|---------|-----------|--------------|
+| Product | http://localhost:8082/swagger-ui.html | http://localhost:8082/v3/api-docs |
+| Auth    | http://localhost:8081/swagger-ui.html | http://localhost:8081/v3/api-docs |
+| User    | http://localhost:8084/swagger-ui.html | http://localhost:8084/v3/api-docs |
+| Order   | http://localhost:8086/swagger-ui.html | http://localhost:8086/v3/api-docs |
+| Payment | http://localhost:8087/swagger-ui.html | http://localhost:8087/v3/api-docs |
+
+- 컨트롤러의 @RestController + DTO에서 스키마/예시 자동 추론
+- `/v3/api-docs` JSON 출력을 Postman/Insomnia 등으로 import 가능
+- 전체 계약은 여전히 `specs/contracts/http/*.md` 가 source of truth
+
+---
+
 ## Deployment
 
 ### Local (Docker Compose)
