@@ -3,7 +3,7 @@ export const revalidate = 60;
 import { Suspense } from 'react';
 import { getProducts } from '@/entities/product';
 import { searchProducts, SearchBar, SearchResultsSection } from '@/features/search';
-import { ProductListWithWishlist } from '@/widgets/ProductListWithWishlist';
+import { ProductListWithWishlist } from '@/widgets/product-list-with-wishlist';
 import { Pagination } from '@/shared/ui';
 import { ErrorMessage, LoadingSpinner } from '@repo/ui';
 import type { SearchSortOrder } from '@repo/types';

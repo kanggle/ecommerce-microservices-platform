@@ -2,7 +2,7 @@ export const revalidate = 60;
 
 import { cache } from 'react';
 import { getProduct } from '@/entities/product';
-import { ProductDetailWithCart } from '@/widgets/ProductDetailWithCart';
+import { ProductDetailWithCart } from '@/widgets/product-detail-with-cart';
 import { ProductReviewSection } from '@/widgets/ProductReviewSection';
 import { ErrorMessage } from '@repo/ui';
 import { notFound } from 'next/navigation';
