@@ -1,6 +1,7 @@
 import { useQuery } from '@tanstack/react-query';
 import { createAdminUserApi } from '@repo/api-client';
 import { apiClient } from '@/shared/config/api';
+import { isMock, mockGetUser } from '@/shared/lib/mock-data';
 
 const adminUserApi = createAdminUserApi(apiClient);
 
@@ -14,7 +15,7 @@ const adminUserApi = createAdminUserApi(apiClient);
 export function useUserEmail(userId: string) {
   const query = useQuery({
     queryKey: ['admin', 'users', userId] as const,
-    queryFn: () => adminUserApi.getUser(userId),
+    queryFn: () => (isMock() ? mockGetUser(userId) : adminUserApi.getUser(userId)),
     enabled: !!userId,
   });
 

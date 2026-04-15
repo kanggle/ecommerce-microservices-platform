@@ -1,15 +1,27 @@
 'use client';
 
 import { useState } from 'react';
-import { useRouter } from 'next/navigation';
+import { useRouter, useSearchParams } from 'next/navigation';
 import Link from 'next/link';
 import { isApiError, ERROR_MESSAGES } from '@repo/types/guards';
 import { useAuth } from '../model/auth-context';
 import { OAuthButton } from './OAuthButton';
 import { GoogleIcon, NaverIcon, InstagramIcon } from '@/shared/ui/icons/oauth';
 
+function resolveRedirect(raw: string | null): string {
+  if (!raw) return '/';
+  try {
+    const decoded = decodeURIComponent(raw);
+    if (decoded.startsWith('/') && !decoded.startsWith('//')) return decoded;
+  } catch {
+    // ignore malformed redirect
+  }
+  return '/';
+}
+
 export function LoginForm() {
   const router = useRouter();
+  const searchParams = useSearchParams();
   const { login } = useAuth();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -27,7 +39,7 @@ export function LoginForm() {
 
     try {
       await login({ email, password });
-      router.push('/');
+      router.push(resolveRedirect(searchParams?.get('redirect') ?? null));
     } catch (err) {
       if (isApiError(err)) {
         setError(ERROR_MESSAGES[err.code] ?? err.message);

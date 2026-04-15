@@ -17,7 +17,9 @@ export async function getProduct(id: string): Promise<ProductDetail | null> {
   const product = await productApi.getProduct(id);
   if (!product) return null;
   if (!product.images?.length) {
-    product.images = fallbackImages(product.name);
+    product.images = product.thumbnailUrl
+      ? [product.thumbnailUrl]
+      : fallbackImages(product.name);
   }
   return product;
 }

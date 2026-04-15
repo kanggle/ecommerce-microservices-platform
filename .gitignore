@@ -34,3 +34,7 @@ Desktop.ini
 */data/*.mv.db
 */data/*.lock.db
 apps/payment-service/data/
+
+# JVM crash logs
+hs_err_pid*.log
+replay_pid*.log

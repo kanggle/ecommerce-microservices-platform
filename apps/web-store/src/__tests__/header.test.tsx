@@ -37,6 +37,7 @@ describe('Header', () => {
     mockUseAuth.mockReturnValue({
       user: null,
       isAuthenticated: false,
+      isLoading: false,
       logout: mockLogout,
     });
     mockUseCart.mockReturnValue({ items: [] });
@@ -62,10 +63,36 @@ describe('Header', () => {
     expect(link).toHaveAttribute('href', '/products');
   });
 
-  it('장바구니 링크를 표시한다', () => {
+  it('인증 상태에서 장바구니 링크를 표시한다', () => {
+    mockUseAuth.mockReturnValue({
+      user: { name: '홍길동' },
+      isAuthenticated: true,
+      isLoading: false,
+      logout: mockLogout,
+    });
+
     render(<Header />);
 
     expect(screen.getByLabelText('장바구니')).toHaveAttribute('href', '/cart');
+  });
+
+  it('비로그인 상태에서 장바구니 링크를 숨긴다', () => {
+    render(<Header />);
+
+    expect(screen.queryByLabelText('장바구니')).not.toBeInTheDocument();
+  });
+
+  it('인증 로딩 중에는 장바구니 링크를 숨긴다', () => {
+    mockUseAuth.mockReturnValue({
+      user: null,
+      isAuthenticated: false,
+      isLoading: true,
+      logout: mockLogout,
+    });
+
+    render(<Header />);
+
+    expect(screen.queryByLabelText('장바구니')).not.toBeInTheDocument();
   });
 
   it('비인증 상태에서 로그인 링크를 표시한다', () => {
@@ -78,6 +105,7 @@ describe('Header', () => {
     mockUseAuth.mockReturnValue({
       user: { name: '홍길동' },
       isAuthenticated: true,
+      isLoading: false,
       logout: mockLogout,
     });
 
@@ -87,7 +115,13 @@ describe('Header', () => {
     expect(screen.queryByText('로그인')).not.toBeInTheDocument();
   });
 
-  it('장바구니에 아이템이 있으면 뱃지 숫자를 표시한다', () => {
+  it('인증 상태에서 장바구니에 아이템이 있으면 뱃지 숫자를 표시한다', () => {
+    mockUseAuth.mockReturnValue({
+      user: { name: '홍길동' },
+      isAuthenticated: true,
+      isLoading: false,
+      logout: mockLogout,
+    });
     mockUseCart.mockReturnValue({
       items: [
         { productId: 'p1', variantId: 'v1', quantity: 3 },

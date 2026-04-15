@@ -13,11 +13,18 @@ export function AuthGuard({ children }: AuthGuardProps) {
   const router = useRouter();
   const { isAuthenticated, isLoading } = useAuth();
 
+  const mockBypass = process.env.NEXT_PUBLIC_USE_MOCK === 'true';
+
   useEffect(() => {
+    if (mockBypass) return;
     if (!isLoading && !isAuthenticated) {
       router.replace('/login');
     }
-  }, [isAuthenticated, isLoading, router]);
+  }, [isAuthenticated, isLoading, router, mockBypass]);
+
+  if (mockBypass) {
+    return <>{children}</>;
+  }
 
   if (isLoading) {
     return <LoadingSpinner />;

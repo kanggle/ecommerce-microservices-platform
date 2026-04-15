@@ -1,5 +1,10 @@
 import { apiClient } from '@/shared/config/api';
 import { createAdminPromotionApi } from '@repo/api-client';
+import {
+  isMock,
+  mockGetPromotions,
+  mockGetPromotion,
+} from '@/shared/lib/mock-data';
 import type {
   PaginatedResponse,
   PromotionSummary,
@@ -18,10 +23,12 @@ const promotionApi = createAdminPromotionApi(apiClient);
 export async function getPromotions(
   params?: PromotionListParams,
 ): Promise<PaginatedResponse<PromotionSummary>> {
+  if (isMock()) return mockGetPromotions(params);
   return promotionApi.getPromotions(params);
 }
 
 export async function getPromotion(promotionId: string): Promise<PromotionDetail> {
+  if (isMock()) return mockGetPromotion(promotionId);
   return promotionApi.getPromotion(promotionId);
 }
 

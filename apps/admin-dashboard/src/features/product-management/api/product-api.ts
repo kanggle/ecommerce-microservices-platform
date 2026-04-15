@@ -1,5 +1,6 @@
 import { apiClient } from '@/shared/config/api';
 import { createProductApi } from '@repo/api-client';
+import { isMock, mockGetProducts, mockGetProduct } from '@/shared/lib/mock-data';
 import type {
   PaginatedResponse,
   ProductSummary,
@@ -17,10 +18,12 @@ const productApi = createProductApi(apiClient);
 export async function getProducts(
   params?: ProductListParams,
 ): Promise<PaginatedResponse<ProductSummary>> {
+  if (isMock()) return mockGetProducts(params);
   return productApi.getProducts(params);
 }
 
 export async function getProduct(productId: string): Promise<ProductDetail> {
+  if (isMock()) return mockGetProduct(productId);
   return productApi.getProduct(productId);
 }
 

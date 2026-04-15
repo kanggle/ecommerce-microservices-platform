@@ -39,7 +39,9 @@ Add a product to the user's wishlist.
 |---|---|---|
 | 400 | VALIDATION_ERROR | Missing or invalid productId |
 | 401 | UNAUTHORIZED | X-User-Id header is missing |
+| 404 | USER_PROFILE_NOT_FOUND | user_profiles 행이 없는 유저 요청 |
 | 409 | ALREADY_IN_WISHLIST | Product is already in the wishlist |
+| 409 | DATA_INTEGRITY_VIOLATION | Data integrity constraint was violated (backstop for concurrent duplicate insert) |
 | 409 | WISHLIST_LIMIT_EXCEEDED | Wishlist has reached the maximum limit of 100 items |
 
 ---
