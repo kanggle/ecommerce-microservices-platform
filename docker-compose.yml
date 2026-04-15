@@ -1029,6 +1029,7 @@ services:
       dockerfile: apps/admin-dashboard/Dockerfile
       args:
         - NEXT_PUBLIC_API_URL=http://localhost:8080
+        - NEXT_PUBLIC_USE_MOCK=true
     container_name: admin-dashboard
     restart: unless-stopped
     ports:
