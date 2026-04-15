@@ -4,7 +4,7 @@ import { HeroBanner } from '@/widgets/hero';
 import Link from 'next/link';
 import type { ProductSummary } from '@repo/types';
 
-export const dynamic = 'force-dynamic';
+export const revalidate = 60;
 
 export default async function HomePage() {
   const products: ProductSummary[] = await getProducts({ page: 0, size: 8 })
