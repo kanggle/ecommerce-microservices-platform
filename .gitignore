@@ -20,6 +20,7 @@ dist/
 .gradle/
 .next/
 *.class
+*.tsbuildinfo
 
 # IDE
 .idea/
