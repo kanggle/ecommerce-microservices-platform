@@ -5,8 +5,9 @@ import type { Address } from '@repo/types';
 import { isApiError, ERROR_MESSAGES } from '@repo/types/guards';
 import { createAddress, updateAddress } from '../api/address-api';
 import { useAddressFormValidation } from '../model/use-address-form-validation';
-import { AddressSearch } from '@/shared/ui/AddressSearch';
+import { AddressSearch, PhoneFieldError } from '@/shared/ui';
 import { isValidPhone } from '@/shared/lib/validate-phone';
+import { useAddressFields } from '@/shared/hooks';
 
 interface AddressFormProps {
   address?: Address;
@@ -20,8 +21,10 @@ export function AddressForm({ address, onSaved, onCancel }: AddressFormProps) {
   const [label, setLabel] = useState(address?.label ?? '');
   const [recipientName, setRecipientName] = useState(address?.recipientName ?? '');
   const [phone, setPhone] = useState(address?.phone ?? '');
-  const [zipCode, setZipCode] = useState(address?.zipCode ?? '');
-  const [address1, setAddress1] = useState(address?.address1 ?? '');
+  const { zipCode, address1, handleAddressSearchSelect } = useAddressFields({
+    zipCode: address?.zipCode,
+    address1: address?.address1,
+  });
   const [address2, setAddress2] = useState(address?.address2 ?? '');
   const [isDefault, setIsDefault] = useState(address?.isDefault ?? false);
   const [error, setError] = useState('');
@@ -75,17 +78,15 @@ export function AddressForm({ address, onSaved, onCancel }: AddressFormProps) {
           <div className="form-group" style={{ marginBottom: 0 }}>
             <label htmlFor="addressPhone" className="label">연락처</label>
             <input id="addressPhone" type="tel" className="input" value={phone} onChange={(e) => { setPhone(e.target.value); clearFieldError('phone'); }} placeholder="010-0000-0000" />
-            {phone.trim().length > 0 && !isValidPhone(phone) && (
-              <p style={{ color: 'var(--color-error)', fontSize: 'var(--font-size-xs)', margin: 'var(--space-1) 0 0' }}>올바른 휴대폰 번호를 입력해주세요. (예: 010-1234-5678)</p>
-            )}
+            <PhoneFieldError phone={phone} isValid={isValidPhone(phone)} />
             {fieldErrors.phone && <p role="alert" style={{ color: 'var(--color-error)', fontSize: 'var(--font-size-xs)', margin: 'var(--space-1) 0 0' }}>{fieldErrors.phone}</p>}
           </div>
           <div className="form-group" style={{ marginBottom: 0 }}>
             <label className="label">주소</label>
             <div style={{ display: 'flex', gap: 'var(--space-2)', marginBottom: 'var(--space-2)' }}>
               <input id="address1" type="text" className="input" value={address1} readOnly placeholder="주소 검색을 눌러주세요" style={{ flex: 1, background: 'var(--color-bg-secondary)' }} />
-              <AddressSearch onSelect={({ zipCode: z, address1: a }) => {
-                setZipCode(z); setAddress1(a);
+              <AddressSearch onSelect={(result) => {
+                handleAddressSearchSelect(result);
                 clearFieldError('zipCode'); clearFieldError('address1');
               }} />
             </div>
