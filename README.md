@@ -262,6 +262,39 @@ Order Service                  Kafka                    Downstream
 
 ---
 
+## Code Quality: 리팩토링 사례
+
+실제 프로젝트에서 누적된 **중복 제거 및 구조 개선** 작업 기록. "언제 추상화하고 언제 하지 않는가"의 판단 기준도 함께 정리.
+
+### Case Study — admin-dashboard 뮤테이션 훅 팩토리화
+
+**문제**: 5개 도메인(product/promotion/notification/order/shipping)에 걸쳐 12개의 `useMutation` 기반 훅이 존재. 각 훅이 `useMutation` + `useQueryClient.invalidateQueries` + `alertError` 보일러플레이트를 반복.
+
+**접근**: 실제 중복이 있는 영역에만 공용 훅 `useInvalidatingMutation` 신설. 각 훅은 `mutationFn` / `invalidate` 키 / `errorMessage` / 선택적 커스텀 핸들러만 선언.
+
+**결과**:
+
+| 지표 | Before | After | 변화 |
+|------|--------|-------|------|
+| 뮤테이션 훅 평균 LOC | ~18줄 | ~11줄 | **−39%** |
+| 에러 처리 중앙 집중 | ❌ 각 훅에 중복 | ✅ 팩토리 1곳 | — |
+| 테스트 (admin-dashboard) | 420 passed | 420 passed | 무회귀 |
+
+**의도적으로 추상화하지 않은 것**:
+- `use-*-form.ts` 3개 훅은 필드·검증·제출·라우팅이 각기 달라 공용화 시 제네릭 지옥·억지 추상화가 됨 → 원형 유지
+- 191줄짜리 `TemplateForm`은 단일 Section 평탄 구조라 분해 시 프롭 드릴링만 증가 → 유지
+- 공용 `FormField` 래퍼는 실제 소비자가 1곳뿐이라 제공하지 않음
+
+> CLAUDE.md의 *"Three similar lines is better than a premature abstraction"* 원칙을 실제 판단에 적용한 기록.
+
+### 플레이키 테스트 원인 분석
+
+`<input type="date">`에 `userEvent.type`을 쓰면 문자 단위 키스트로크가 중간값을 무효 날짜로 만들어 병렬 부하 시 타이밍 플레이키를 유발. `fireEvent.change`로 전환하여 완성된 값을 단일 이벤트로 주입 → 안정화.
+
+관련 PR: [#6](https://github.com/kanggle/ecommerce-microservices-platform/pull/6)
+
+---
+
 ## API Documentation (Swagger/OpenAPI)
 
 각 서비스는 SpringDoc 기반 OpenAPI 3.0 스펙을 자동 생성하고 Swagger UI를 제공합니다.
