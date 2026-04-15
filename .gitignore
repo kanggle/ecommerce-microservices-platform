@@ -5,6 +5,9 @@
 # Alertmanager Slack webhook URL (secret) — commit .example only
 infra/alertmanager/slack-webhook-url
 
+# k6 부하 테스트 결과 (재현 가능, 용량 큼)
+load-tests/results/
+
 # Local H2 database files
 /data/
 

@@ -248,6 +248,18 @@ Order Service                  Kafka                    Downstream
 | Payment | 결제 처리 | ~150 |
 | **E2E Flow** | 회원가입→검색→주문→결제 | ~150 |
 
+### Performance 측정 결과 (Search 시나리오, 단일 호스트 Docker)
+
+| Endpoint | Median | P95 | 검증 통과율 |
+|----------|--------|-----|------------|
+| Product List | **25ms** | 657ms | 99.8% |
+| Product Detail | **18ms** | 471ms | 99.8% |
+| Search | **78ms** | 15.1s* | 72%* |
+
+\* Stress 단계(150 VUs)에서 Elasticsearch saturation. Smoke/Load 구간은 SLA 부합.
+
+상세 분석: [docs/performance-benchmark.md](docs/performance-benchmark.md)
+
 ---
 
 ## Deployment
