@@ -17,6 +17,7 @@ interface JwtPayload {
   sub: string;
   email: string;
   name?: string;
+  exp?: number;
 }
 
 export function parseJwtPayload(token: string): JwtPayload | null {
@@ -37,6 +38,13 @@ export function getUserFromToken(): AuthUser | null {
 
   const payload = parseJwtPayload(token);
   if (!payload) return null;
+
+  if (typeof payload.exp === 'number' && payload.exp * 1000 <= Date.now()) {
+    localStorage.removeItem(ACCESS_TOKEN_KEY);
+    localStorage.removeItem(REFRESH_TOKEN_KEY);
+    localStorage.removeItem('cart');
+    return null;
+  }
 
   return {
     userId: payload.sub,
