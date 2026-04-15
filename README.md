@@ -37,6 +37,51 @@
 
 ---
 
+## Screenshots
+
+### Web Store (고객)
+
+<p align="center">
+  <img src="docs/screenshots/01-home.png" width="900" alt="Web Store 홈"><br>
+  <em>상품 카탈로그 — Elasticsearch 기반 검색 · 카테고리 필터</em>
+</p>
+
+<p align="center">
+  <img src="docs/screenshots/02-product-detail.png" width="900" alt="상품 상세"><br>
+  <em>상품 상세 — 옵션 선택 · 리뷰 · 위시리스트</em>
+</p>
+
+<p align="center">
+  <img src="docs/screenshots/03-checkout.png" width="900" alt="체크아웃"><br>
+  <em>체크아웃 — 배송지 입력 · Toss Payments 결제 연동</em>
+</p>
+
+<p align="center">
+  <img src="docs/screenshots/04-my-orders.png" width="900" alt="주문 내역"><br>
+  <em>주문 내역 — 주문 상태 추적 (PENDING → CONFIRMED → SHIPPED → DELIVERED)</em>
+</p>
+
+### Admin Dashboard (관리자)
+
+<p align="center">
+  <img src="docs/screenshots/05-admin-dashboard.png" width="900" alt="관리자 홈"><br>
+  <em>관리자 대시보드 — 주요 KPI · 최근 주문</em>
+</p>
+
+<p align="center">
+  <img src="docs/screenshots/06-admin-products.png" width="900" alt="상품 관리"><br>
+  <em>상품 관리 — ProductCreated 이벤트 발행 → Search 인덱스 실시간 반영</em>
+</p>
+
+### Observability
+
+<p align="center">
+  <img src="docs/screenshots/07-grafana.png" width="900" alt="Grafana 대시보드"><br>
+  <em>Grafana — Prometheus 메트릭 · Loki 로그 · Jaeger 트레이스 통합 뷰</em>
+</p>
+
+---
+
 ## System Architecture
 
 ```

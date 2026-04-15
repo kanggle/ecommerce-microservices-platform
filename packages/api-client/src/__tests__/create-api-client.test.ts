@@ -59,4 +59,73 @@ describe('createApiClient', () => {
     expect(client.patch).toBeDefined();
     expect(client.delete).toBeDefined();
   });
+
+  it('onAuthError는 localStorage의 cart 키를 삭제한다', () => {
+    const removeItemSpy = vi.fn();
+    const locationMock = { href: '' };
+    // jsdom 없이 node 환경에서 window 전역 준비
+    Object.defineProperty(globalThis, 'window', {
+      value: { location: locationMock },
+      writable: true,
+      configurable: true,
+    });
+    Object.defineProperty(globalThis, 'localStorage', {
+      value: {
+        getItem: vi.fn(() => null),
+        setItem: vi.fn(),
+        removeItem: removeItemSpy,
+        clear: vi.fn(),
+        length: 0,
+        key: vi.fn(() => null),
+      },
+      writable: true,
+      configurable: true,
+    });
+
+    const client = createApiClient({
+      baseURL: 'http://localhost:3000',
+      loginPath: '/login',
+    });
+
+    const cfg = (client as unknown as { config: { onAuthError?: () => void } }).config;
+    expect(cfg.onAuthError).toBeDefined();
+    cfg.onAuthError!();
+
+    expect(removeItemSpy).toHaveBeenCalledWith('cart');
+    expect(locationMock.href).toBe('/login');
+  });
+
+  it('localStorage.removeItem이 예외를 던져도 onAuthError는 로그인 페이지로 리다이렉트한다', () => {
+    const locationMock = { href: '' };
+    Object.defineProperty(globalThis, 'window', {
+      value: { location: locationMock },
+      writable: true,
+      configurable: true,
+    });
+    Object.defineProperty(globalThis, 'localStorage', {
+      value: {
+        getItem: vi.fn(() => null),
+        setItem: vi.fn(),
+        removeItem: vi.fn((key: string) => {
+          if (key === 'cart') {
+            throw new Error('storage disabled');
+          }
+        }),
+        clear: vi.fn(),
+        length: 0,
+        key: vi.fn(() => null),
+      },
+      writable: true,
+      configurable: true,
+    });
+
+    const client = createApiClient({
+      baseURL: 'http://localhost:3000',
+      loginPath: '/login',
+    });
+    const cfg = (client as unknown as { config: { onAuthError?: () => void } }).config;
+
+    expect(() => cfg.onAuthError!()).not.toThrow();
+    expect(locationMock.href).toBe('/login');
+  });
 });

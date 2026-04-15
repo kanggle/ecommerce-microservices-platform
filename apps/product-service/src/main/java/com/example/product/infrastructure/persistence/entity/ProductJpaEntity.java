@@ -40,6 +40,9 @@ public class ProductJpaEntity implements Persistable<UUID> {
     @Column(name = "category_id", columnDefinition = "uuid")
     private UUID categoryId;
 
+    @Column(name = "thumbnail_url", length = 500)
+    private String thumbnailUrl;
+
     @Column(nullable = false, updatable = false)
     private Instant createdAt;
 
@@ -78,6 +81,7 @@ public class ProductJpaEntity implements Persistable<UUID> {
         entity.price = product.getPrice().value();
         entity.status = product.getStatus();
         entity.categoryId = product.getCategoryId();
+        entity.thumbnailUrl = product.getThumbnailUrl();
         entity.createdAt = product.getCreatedAt();
         entity.updatedAt = product.getUpdatedAt();
         entity.isNew = true;
@@ -93,7 +97,7 @@ public class ProductJpaEntity implements Persistable<UUID> {
                 .toList();
         return Product.reconstitute(
                 id, name, description, new Price(price),
-                status, categoryId, createdAt, updatedAt, domainVariants
+                status, categoryId, thumbnailUrl, createdAt, updatedAt, domainVariants
         );
     }
 
@@ -103,6 +107,7 @@ public class ProductJpaEntity implements Persistable<UUID> {
         this.price = product.getPrice().value();
         this.status = product.getStatus();
         this.categoryId = product.getCategoryId();
+        this.thumbnailUrl = product.getThumbnailUrl();
         this.updatedAt = product.getUpdatedAt();
         syncVariants(product.getVariants());
     }

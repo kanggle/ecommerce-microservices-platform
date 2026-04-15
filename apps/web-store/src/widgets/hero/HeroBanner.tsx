@@ -10,7 +10,8 @@ interface Slide {
   subtitle: string;
   cta: string;
   href: string;
-  bg: string;
+  image: string;
+  overlay: string;
 }
 
 const SLIDES: Slide[] = [
@@ -20,7 +21,9 @@ const SLIDES: Slide[] = [
     subtitle: '합리적인 가격, 빠른 배송. 최고의 쇼핑 경험을 제공합니다.',
     cta: '전체 상품 보기',
     href: '/products',
-    bg: 'linear-gradient(135deg, #1a1a2e 0%, #16213e 100%)',
+    image:
+      'https://images.unsplash.com/photo-1607082349566-187342175e2f?auto=format&fit=crop&w=1920&q=80',
+    overlay: 'linear-gradient(135deg, rgba(26, 26, 46, 0.45) 0%, rgba(22, 33, 62, 0.35) 100%)',
   },
   {
     id: '2',
@@ -28,7 +31,9 @@ const SLIDES: Slide[] = [
     subtitle: '이번 시즌 새로운 컬렉션을 만나보세요.',
     cta: '신상품 보기',
     href: '/products',
-    bg: 'linear-gradient(135deg, #0f3460 0%, #16213e 100%)',
+    image:
+      'https://images.unsplash.com/photo-1441986300917-64674bd600d8?auto=format&fit=crop&w=1920&q=80',
+    overlay: 'linear-gradient(135deg, rgba(15, 52, 96, 0.4) 0%, rgba(22, 33, 62, 0.4) 100%)',
   },
   {
     id: '3',
@@ -36,7 +41,9 @@ const SLIDES: Slide[] = [
     subtitle: '인기 상품을 합리적인 가격에 만나보세요.',
     cta: '할인 상품 보기',
     href: '/products',
-    bg: 'linear-gradient(135deg, #e94560 0%, #0f3460 100%)',
+    image:
+      'https://images.unsplash.com/photo-1607082348824-0a96f2a4b9da?auto=format&fit=crop&w=1920&q=80',
+    overlay: 'linear-gradient(135deg, rgba(233, 69, 96, 0.35) 0%, rgba(15, 52, 96, 0.45) 100%)',
   },
 ];
 
@@ -71,7 +78,10 @@ export function HeroBanner() {
 
   return (
     <section className={styles.banner}>
-      <div className={styles.slide} style={{ background: slide.bg }}>
+      <div className={styles.slide}>
+        {/* eslint-disable-next-line @next/next/no-img-element */}
+        <img src={slide.image} alt="" className={styles.image} />
+        <div className={styles.overlay} style={{ background: slide.overlay }} />
         <div className={styles.inner}>
           <h1 className={styles.title}>{slide.title}</h1>
           <p className={styles.subtitle}>{slide.subtitle}</p>

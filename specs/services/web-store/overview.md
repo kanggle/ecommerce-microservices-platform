@@ -9,7 +9,7 @@ Provides the customer-facing storefront for product browsing, search, cart, chec
 ## In Scope
 - product browsing and detail view (SSR/SSG for SEO)
 - product search with filters and sorting
-- shopping cart management (client-side state)
+- shopping cart management (client-side state, **인증된 사용자에게만 노출**)
 - checkout flow and payment integration (Toss Payments widget)
 - user authentication (login, signup, session management)
 - user profile and address management

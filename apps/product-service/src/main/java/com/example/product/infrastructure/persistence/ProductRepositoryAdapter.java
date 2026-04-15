@@ -60,6 +60,7 @@ class ProductRepositoryAdapter implements ProductRepository, ProductQueryPort {
                         entity.getName(),
                         entity.getStatus(),
                         entity.getPrice(),
+                        entity.getThumbnailUrl(),
                         entity.getCategoryId()));
 
         return new ProductListResult(

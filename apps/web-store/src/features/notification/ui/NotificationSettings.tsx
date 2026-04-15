@@ -9,6 +9,26 @@ import { useNotificationPreferences } from '../model/use-notification-preference
 import { useUpdatePreferences } from '../model/use-update-preferences';
 import { SettingToggle } from './SettingToggle';
 
+type PreferenceField = 'emailEnabled' | 'smsEnabled' | 'pushEnabled';
+
+function NotificationSettingsSkeleton() {
+  return (
+    <div style={{ display: 'flex', flexDirection: 'column', gap: 'var(--space-4)' }}>
+      {Array.from({ length: 3 }).map((_, i) => (
+        <div key={i} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: 'var(--space-4) 0' }}>
+          <div>
+            <Skeleton width="80px" height="14px" />
+            <div style={{ marginTop: 'var(--space-1)' }}>
+              <Skeleton width="160px" height="12px" />
+            </div>
+          </div>
+          <Skeleton width="44px" height="24px" borderRadius="12px" />
+        </div>
+      ))}
+    </div>
+  );
+}
+
 export function NotificationSettings() {
   const { data: preferences, isLoading, isError, refetch } = useNotificationPreferences();
   const updatePreferences = useUpdatePreferences();
@@ -26,16 +46,16 @@ export function NotificationSettings() {
     }
   }, [preferences]);
 
-  async function handleToggle(
-    field: 'emailEnabled' | 'smsEnabled' | 'pushEnabled',
-    value: boolean,
-  ) {
+  async function handleToggle(field: PreferenceField, value: boolean) {
     const updatedState = { emailEnabled, smsEnabled, pushEnabled, [field]: value };
 
-    if (field === 'emailEnabled') setEmailEnabled(value);
-    if (field === 'smsEnabled') setSmsEnabled(value);
-    if (field === 'pushEnabled') setPushEnabled(value);
+    const setters: Record<PreferenceField, (v: boolean) => void> = {
+      emailEnabled: setEmailEnabled,
+      smsEnabled: setSmsEnabled,
+      pushEnabled: setPushEnabled,
+    };
 
+    setters[field](value);
     setSaveSuccess(false);
 
     try {
@@ -44,9 +64,7 @@ export function NotificationSettings() {
       setTimeout(() => setSaveSuccess(false), 2000);
     } catch {
       // Rollback on failure
-      if (field === 'emailEnabled') setEmailEnabled(!value);
-      if (field === 'smsEnabled') setSmsEnabled(!value);
-      if (field === 'pushEnabled') setPushEnabled(!value);
+      setters[field](!value);
     }
   }
 
@@ -69,21 +87,7 @@ export function NotificationSettings() {
 
       <h1 className="page-title">알림 설정</h1>
 
-      {isLoading && (
-        <div style={{ display: 'flex', flexDirection: 'column', gap: 'var(--space-4)' }}>
-          {Array.from({ length: 3 }).map((_, i) => (
-            <div key={i} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: 'var(--space-4) 0' }}>
-              <div>
-                <Skeleton width="80px" height="14px" />
-                <div style={{ marginTop: 'var(--space-1)' }}>
-                  <Skeleton width="160px" height="12px" />
-                </div>
-              </div>
-              <Skeleton width="44px" height="24px" borderRadius="12px" />
-            </div>
-          ))}
-        </div>
-      )}
+      {isLoading && <NotificationSettingsSkeleton />}
       {error && <ErrorMessage message={error} onRetry={() => refetch()} />}
 
       {!isLoading && !error && (

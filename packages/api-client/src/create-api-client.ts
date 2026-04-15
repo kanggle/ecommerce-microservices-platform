@@ -22,6 +22,11 @@ export function createApiClient({ baseURL, loginPath }: CreateApiClientOptions):
     onAuthError: () => {
       if (typeof window !== 'undefined') {
         clearTokens();
+        try {
+          localStorage.removeItem('cart');
+        } catch {
+          // localStorage 접근 실패(프라이빗 모드 등) 시 무시하고 리다이렉트 진행
+        }
         window.location.href = loginPath;
       }
     },

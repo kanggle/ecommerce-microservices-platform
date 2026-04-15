@@ -34,7 +34,7 @@ public record ProductListResponse(
                 summary.name(),
                 summary.status().name(),
                 summary.price(),
-                null,
+                summary.thumbnailUrl(),
                 UuidUtils.toString(summary.categoryId()));
     }
 }

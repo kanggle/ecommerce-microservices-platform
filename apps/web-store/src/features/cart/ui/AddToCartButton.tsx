@@ -1,7 +1,9 @@
 'use client';
 
 import { useCallback, useState } from 'react';
+import { usePathname, useRouter } from 'next/navigation';
 import { useCart } from '../model/cart-context';
+import { useAuth } from '@/shared/lib/auth-context';
 import { Toast } from '@/shared/ui';
 
 interface AddToCartButtonProps {
@@ -24,12 +26,31 @@ export function AddToCartButton({
   disabled = false,
 }: AddToCartButtonProps) {
   const { addItem } = useCart();
+  const { isAuthenticated } = useAuth();
+  const router = useRouter();
+  const pathname = usePathname();
   const [showToast, setShowToast] = useState(false);
 
   const handleClick = useCallback(() => {
+    if (!isAuthenticated) {
+      const redirect = encodeURIComponent(pathname ?? '/');
+      router.push(`/login?redirect=${redirect}`);
+      return;
+    }
     addItem({ productId, variantId, productName, optionName, price }, quantity);
     setShowToast(true);
-  }, [addItem, productId, variantId, productName, optionName, price, quantity]);
+  }, [
+    isAuthenticated,
+    pathname,
+    router,
+    addItem,
+    productId,
+    variantId,
+    productName,
+    optionName,
+    price,
+    quantity,
+  ]);
 
   const clearToast = useCallback(() => setShowToast(false), []);
 

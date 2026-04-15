@@ -108,6 +108,7 @@ All services must return errors in the following JSON format:
 | Code | HTTP | Description |
 |---|---|---|
 | NOT_FOUND | 404 | Requested resource does not exist |
+| DATA_INTEGRITY_VIOLATION | 409 | Data integrity constraint was violated (e.g. unique or FK constraint) |
 | INTERNAL_ERROR | 500 | Unexpected server-side error |
 | SERVICE_UNAVAILABLE | 503 | A required upstream service is unavailable |
 

@@ -6,6 +6,7 @@ import com.example.user.application.result.WishlistItemResult;
 import com.example.user.application.result.WishlistPageResult;
 import com.example.user.application.service.WishlistService;
 import com.example.user.domain.exception.AlreadyInWishlistException;
+import com.example.user.domain.exception.UserProfileNotFoundException;
 import com.example.user.domain.exception.WishlistAccessDeniedException;
 import com.example.user.domain.exception.WishlistItemNotFoundException;
 import com.example.user.presentation.exception.GlobalExceptionHandler;
@@ -16,6 +17,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.context.annotation.Import;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.MediaType;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
@@ -24,6 +26,7 @@ import java.time.Instant;
 import java.util.List;
 import java.util.UUID;
 
+import static org.hamcrest.Matchers.nullValue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.BDDMockito.given;
@@ -91,6 +94,34 @@ class WishlistControllerTest {
                             .content("{\"productId\":\"" + productId + "\"}"))
                     .andExpect(status().isConflict())
                     .andExpect(jsonPath("$.code").value("ALREADY_IN_WISHLIST"));
+        }
+
+        @Test
+        @DisplayName("user_profiles 행이 없으면 404 USER_PROFILE_NOT_FOUND를 반환한다")
+        void addItem_userProfileNotFound_returns404() throws Exception {
+            UUID productId = UUID.randomUUID();
+            given(wishlistService.addItem(any())).willThrow(new UserProfileNotFoundException(USER_ID));
+
+            mockMvc.perform(post("/api/wishlists")
+                            .header("X-User-Id", USER_ID.toString())
+                            .contentType(MediaType.APPLICATION_JSON)
+                            .content("{\"productId\":\"" + productId + "\"}"))
+                    .andExpect(status().isNotFound())
+                    .andExpect(jsonPath("$.code").value("USER_PROFILE_NOT_FOUND"));
+        }
+
+        @Test
+        @DisplayName("DataIntegrityViolationException이 발생하면 409 DATA_INTEGRITY_VIOLATION을 반환한다")
+        void addItem_dataIntegrityViolation_returns409() throws Exception {
+            UUID productId = UUID.randomUUID();
+            given(wishlistService.addItem(any())).willThrow(new DataIntegrityViolationException("FK violation"));
+
+            mockMvc.perform(post("/api/wishlists")
+                            .header("X-User-Id", USER_ID.toString())
+                            .contentType(MediaType.APPLICATION_JSON)
+                            .content("{\"productId\":\"" + productId + "\"}"))
+                    .andExpect(status().isConflict())
+                    .andExpect(jsonPath("$.code").value("DATA_INTEGRITY_VIOLATION"));
         }
 
         @Test
@@ -219,10 +250,11 @@ class WishlistControllerTest {
     class CheckItem {
 
         @Test
-        @DisplayName("위시리스트에 있는 상품을 체크하면 200과 inWishlist=true를 반환한다")
+        @DisplayName("위시리스트에 있는 상품을 체크하면 200과 inWishlist=true, wishlistItemId를 반환한다")
         void checkItem_exists_returnsTrue() throws Exception {
             UUID productId = UUID.randomUUID();
-            var result = new WishlistCheckResult(productId, true);
+            UUID wishlistItemId = UUID.randomUUID();
+            var result = new WishlistCheckResult(productId, true, wishlistItemId);
             given(wishlistService.checkItem(eq(USER_ID), eq(productId))).willReturn(result);
 
             mockMvc.perform(get("/api/wishlists/me/check")
@@ -230,21 +262,23 @@ class WishlistControllerTest {
                             .param("productId", productId.toString()))
                     .andExpect(status().isOk())
                     .andExpect(jsonPath("$.productId").value(productId.toString()))
-                    .andExpect(jsonPath("$.inWishlist").value(true));
+                    .andExpect(jsonPath("$.inWishlist").value(true))
+                    .andExpect(jsonPath("$.wishlistItemId").value(wishlistItemId.toString()));
         }
 
         @Test
-        @DisplayName("위시리스트에 없는 상품을 체크하면 200과 inWishlist=false를 반환한다")
+        @DisplayName("위시리스트에 없는 상품을 체크하면 200과 inWishlist=false, wishlistItemId=null을 반환한다")
         void checkItem_notExists_returnsFalse() throws Exception {
             UUID productId = UUID.randomUUID();
-            var result = new WishlistCheckResult(productId, false);
+            var result = new WishlistCheckResult(productId, false, null);
             given(wishlistService.checkItem(eq(USER_ID), eq(productId))).willReturn(result);
 
             mockMvc.perform(get("/api/wishlists/me/check")
                             .header("X-User-Id", USER_ID.toString())
                             .param("productId", productId.toString()))
                     .andExpect(status().isOk())
-                    .andExpect(jsonPath("$.inWishlist").value(false));
+                    .andExpect(jsonPath("$.inWishlist").value(false))
+                    .andExpect(jsonPath("$.wishlistItemId").value(nullValue()));
         }
 
         @Test

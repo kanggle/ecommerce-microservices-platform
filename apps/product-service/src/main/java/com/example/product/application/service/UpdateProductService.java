@@ -39,6 +39,9 @@ public class UpdateProductService {
         if (command.status() != null) {
             product.changeStatus(command.status());
         }
+        if (command.thumbnailUrl() != null) {
+            product.updateThumbnailUrl(command.thumbnailUrl());
+        }
 
         productRepository.save(product);
         productMetrics.incrementProductUpdated();

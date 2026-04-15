@@ -25,6 +25,7 @@ export interface ProductDetail {
   status: ProductStatus;
   price: number;
   categoryId: string;
+  thumbnailUrl?: string;
   images?: string[];
   variants: ProductVariant[];
 }

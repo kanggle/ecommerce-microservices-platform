@@ -1,78 +1,39 @@
 'use client';
 
-import { useEffect, useState } from 'react';
-import type { Address, ShippingAddress } from '@repo/types';
-
+import { useState } from 'react';
 import { isApiError, ERROR_MESSAGES } from '@repo/types/guards';
 import type { CheckoutFormProps } from '../model/types';
 import { placeOrder } from '@/entities/order';
 import { useTossPayment } from '../model/use-toss-payment';
 import { useAddresses } from '@/entities/user';
 import { isValidPhone } from '@/shared/lib/validate-phone';
+import { useShippingAddressState } from '../model/use-shipping-address-state';
 import { OrderItemsSection } from './OrderItemsSection';
 import { AddressSection } from './AddressSection';
 import { PriceDisplay } from '@/shared/ui';
-
-function addressToShipping(addr: Address): ShippingAddress {
-  return {
-    recipient: addr.recipientName,
-    phone: addr.phone,
-    zipCode: addr.zipCode,
-    address1: addr.address1,
-    address2: addr.address2 ?? '',
-  };
-}
 
 export function CheckoutForm({ items, totalAmount, discountAmount = 0, onOrderComplete }: CheckoutFormProps) {
   const finalAmount = totalAmount - discountAmount;
   const { isReady: paymentReady, requestPayment } = useTossPayment();
   const [error, setError] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const [selectedAddressId, setSelectedAddressId] = useState<string>('');
-  const [address, setAddress] = useState<ShippingAddress>({
-    recipient: '', phone: '', zipCode: '', address1: '', address2: '',
-  });
 
   const { data: addressData, isLoading: addressLoading } = useAddresses();
-
   const savedAddresses = addressData?.addresses ?? [];
 
-  useEffect(() => {
-    if (addressData && !selectedAddressId) {
-      const addrs = addressData.addresses;
-      const defaultAddr = addrs.find((a) => a.isDefault) ?? addrs[0];
-      if (defaultAddr) {
-        setSelectedAddressId(defaultAddr.id);
-        setAddress(addressToShipping(defaultAddr));
-      }
-    }
-  }, [addressData, selectedAddressId]);
-
-  function handleAddressSelect(id: string) {
-    setSelectedAddressId(id);
-    if (id === 'new') {
-      setAddress({ recipient: '', phone: '', zipCode: '', address1: '', address2: '' });
-      return;
-    }
-    const found = savedAddresses.find((a) => a.id === id);
-    if (found) {
-      setAddress(addressToShipping(found));
-    }
-  }
+  const {
+    selectedAddressId,
+    address,
+    handleAddressSelect,
+    handleAddressSearchSelect,
+    updateField,
+  } = useShippingAddressState(savedAddresses, addressData);
 
   const phoneValid = isValidPhone(address.phone);
   const isValid =
     address.recipient.trim().length > 0 && phoneValid &&
     address.zipCode.trim().length > 0 && address.address1.trim().length > 0;
   const isNewAddress = selectedAddressId === 'new' || selectedAddressId === '';
-
-  function updateField(field: keyof ShippingAddress, value: string) {
-    setAddress((prev) => ({ ...prev, [field]: value }));
-  }
-
-  function handleAddressSearchSelect({ zipCode, address1 }: { zipCode: string; address1: string }) {
-    setAddress((prev) => ({ ...prev, zipCode, address1 }));
-  }
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();

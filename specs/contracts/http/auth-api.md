@@ -127,6 +127,63 @@ No body.
 
 ---
 
+## POST /api/internal/users/republish-signup-events
+
+Internal operations endpoint. Iterates the `users` table and republishes
+`auth.user.signed-up` events for every user. Used to recover `user_profiles`
+rows in user-service when consumer failures caused missing profiles.
+
+**Auth required:** No (network-level restriction only)
+
+**Access policy**
+
+- Path prefix `/api/internal/**` is NOT routed by gateway-service — it is
+  reachable only inside the cluster (sidecar / ops bastion). External callers
+  receive 404 from the gateway.
+- Operators call the auth-service pod directly via kubectl port-forward or
+  an equivalent internal channel.
+
+**Request**
+
+No body.
+
+**Response 200**
+```json
+{
+  "totalUsers": 152,
+  "publishedCount": 150,
+  "failedCount": 2
+}
+```
+
+- `totalUsers`: number of rows iterated from the `users` table
+- `publishedCount`: number of events handed to `AuthEventPublisher.publish` without throwing
+- `failedCount`: number of users whose publish call threw (best-effort; see Notes)
+
+**Behavior**
+
+- Partial success is allowed. Kafka outage returns 200 with
+  `failedCount == totalUsers`, not 5xx.
+- Consumers are expected to be idempotent — republishing for users whose
+  `user_profiles` already exist is a no-op.
+- Inactive users (`active = false`) are included to preserve history.
+
+**Error responses**
+| Status | Code | Reason |
+|---|---|---|
+| 500 | INTERNAL_ERROR | Database query for users failed |
+
+**Notes on failure counting**
+
+`AuthEventPublisher.publish` is void and historically swallows broker errors
+via the infrastructure adapter. The republish use-case publishes through a
+counting wrapper (try/catch around each `publish` call) so that exceptions
+surfacing synchronously from the adapter are counted. Asynchronous broker
+failures that occur after the adapter returns are counted as `publishedCount`
+and surface via metrics, not via this endpoint.
+
+---
+
 ## Token Rules
 
 - Access token: JWT, signed with HS256 (HMAC-SHA256, secret key must be at least 32 bytes), TTL 1 hour

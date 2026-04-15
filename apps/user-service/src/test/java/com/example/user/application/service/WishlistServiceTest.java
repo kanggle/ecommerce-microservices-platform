@@ -5,11 +5,13 @@ import com.example.user.application.result.AddWishlistItemResult;
 import com.example.user.application.result.WishlistCheckResult;
 import com.example.user.application.result.WishlistPageResult;
 import com.example.user.domain.exception.AlreadyInWishlistException;
+import com.example.user.domain.exception.UserProfileNotFoundException;
 import com.example.user.domain.exception.WishlistAccessDeniedException;
 import com.example.user.domain.exception.WishlistItemNotFoundException;
 import com.example.common.page.PageQuery;
 import com.example.common.page.PageResult;
 import com.example.user.domain.model.WishlistItem;
+import com.example.user.domain.repository.UserProfileRepository;
 import com.example.user.domain.repository.WishlistItemRepository;
 import com.example.user.domain.service.ProductInfoProvider;
 import com.example.user.domain.service.ProductInfoProvider.ProductInfo;
@@ -41,6 +43,9 @@ class WishlistServiceTest {
     private WishlistItemRepository wishlistItemRepository;
 
     @Mock
+    private UserProfileRepository userProfileRepository;
+
+    @Mock
     private ProductInfoProvider productInfoProvider;
 
     @InjectMocks
@@ -57,6 +62,7 @@ class WishlistServiceTest {
         @DisplayName("위시리스트에 상품을 추가하면 결과를 반환한다")
         void addItem_validCommand_returnsResult() {
             var command = new AddWishlistItemCommand(USER_ID, PRODUCT_ID);
+            given(userProfileRepository.existsByUserId(USER_ID)).willReturn(true);
             given(wishlistItemRepository.existsByUserIdAndProductId(USER_ID, PRODUCT_ID)).willReturn(false);
             given(wishlistItemRepository.save(any(WishlistItem.class))).willAnswer(inv -> inv.getArgument(0));
 
@@ -71,12 +77,25 @@ class WishlistServiceTest {
         @DisplayName("이미 위시리스트에 있는 상품을 추가하면 AlreadyInWishlistException이 발생한다")
         void addItem_duplicate_throwsAlreadyInWishlist() {
             var command = new AddWishlistItemCommand(USER_ID, PRODUCT_ID);
+            given(userProfileRepository.existsByUserId(USER_ID)).willReturn(true);
             given(wishlistItemRepository.existsByUserIdAndProductId(USER_ID, PRODUCT_ID)).willReturn(true);
 
             assertThatThrownBy(() -> wishlistService.addItem(command))
                     .isInstanceOf(AlreadyInWishlistException.class);
 
             then(wishlistItemRepository).should().existsByUserIdAndProductId(USER_ID, PRODUCT_ID);
+        }
+
+        @Test
+        @DisplayName("user_profiles에 행이 없으면 UserProfileNotFoundException이 발생한다")
+        void addItem_userProfileMissing_throwsUserProfileNotFound() {
+            var command = new AddWishlistItemCommand(USER_ID, PRODUCT_ID);
+            given(userProfileRepository.existsByUserId(USER_ID)).willReturn(false);
+
+            assertThatThrownBy(() -> wishlistService.addItem(command))
+                    .isInstanceOf(UserProfileNotFoundException.class);
+
+            then(wishlistItemRepository).shouldHaveNoInteractions();
         }
     }
 
@@ -203,25 +222,29 @@ class WishlistServiceTest {
     class CheckItem {
 
         @Test
-        @DisplayName("위시리스트에 있는 상품을 체크하면 true를 반환한다")
+        @DisplayName("위시리스트에 있는 상품을 체크하면 true와 wishlistItemId를 반환한다")
         void checkItem_exists_returnsTrue() {
-            given(wishlistItemRepository.existsByUserIdAndProductId(USER_ID, PRODUCT_ID)).willReturn(true);
+            UUID wishlistItemId = UUID.randomUUID();
+            WishlistItem item = WishlistItem.reconstitute(wishlistItemId, USER_ID, PRODUCT_ID, java.time.Instant.now());
+            given(wishlistItemRepository.findByUserIdAndProductId(USER_ID, PRODUCT_ID)).willReturn(Optional.of(item));
 
             WishlistCheckResult result = wishlistService.checkItem(USER_ID, PRODUCT_ID);
 
             assertThat(result.productId()).isEqualTo(PRODUCT_ID);
             assertThat(result.inWishlist()).isTrue();
+            assertThat(result.wishlistItemId()).isEqualTo(wishlistItemId);
         }
 
         @Test
-        @DisplayName("위시리스트에 없는 상품을 체크하면 false를 반환한다")
+        @DisplayName("위시리스트에 없는 상품을 체크하면 false와 null wishlistItemId를 반환한다")
         void checkItem_notExists_returnsFalse() {
-            given(wishlistItemRepository.existsByUserIdAndProductId(USER_ID, PRODUCT_ID)).willReturn(false);
+            given(wishlistItemRepository.findByUserIdAndProductId(USER_ID, PRODUCT_ID)).willReturn(Optional.empty());
 
             WishlistCheckResult result = wishlistService.checkItem(USER_ID, PRODUCT_ID);
 
             assertThat(result.productId()).isEqualTo(PRODUCT_ID);
             assertThat(result.inWishlist()).isFalse();
+            assertThat(result.wishlistItemId()).isNull();
         }
     }
 }

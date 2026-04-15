@@ -7,9 +7,11 @@ import type { ApiErrorResponse } from '@repo/types';
 
 const mockPush = vi.fn();
 const mockReplace = vi.fn();
+const mockSearchParams = { value: new URLSearchParams() };
 
 vi.mock('next/navigation', () => ({
   useRouter: () => ({ push: mockPush, replace: mockReplace }),
+  useSearchParams: () => mockSearchParams.value,
 }));
 
 vi.mock('next/link', () => ({
@@ -42,6 +44,7 @@ describe('LoginForm', () => {
     vi.spyOn(Storage.prototype, 'getItem').mockReturnValue(null);
     vi.spyOn(Storage.prototype, 'setItem').mockImplementation(() => {});
     vi.spyOn(Storage.prototype, 'removeItem').mockImplementation(() => {});
+    mockSearchParams.value = new URLSearchParams();
   });
 
   it('이메일, 비밀번호 입력 필드와 로그인 버튼을 표시한다', () => {
@@ -76,6 +79,46 @@ describe('LoginForm', () => {
   });
 
   it('로그인 성공 시 홈으로 이동한다', async () => {
+    mockLogin.mockResolvedValueOnce({
+      accessToken: 'token',
+      refreshToken: 'refresh',
+      expiresIn: 3600,
+    });
+
+    const user = userEvent.setup();
+    renderLoginForm();
+
+    await user.type(screen.getByLabelText('이메일'), 'test@test.com');
+    await user.type(screen.getByLabelText('비밀번호'), 'password123');
+    await user.click(screen.getByRole('button', { name: '로그인' }));
+
+    await waitFor(() => {
+      expect(mockPush).toHaveBeenCalledWith('/');
+    });
+  });
+
+  it('redirect 쿼리 파라미터가 있으면 해당 경로로 이동한다', async () => {
+    mockSearchParams.value = new URLSearchParams('redirect=%2Fproducts%2Fp1');
+    mockLogin.mockResolvedValueOnce({
+      accessToken: 'token',
+      refreshToken: 'refresh',
+      expiresIn: 3600,
+    });
+
+    const user = userEvent.setup();
+    renderLoginForm();
+
+    await user.type(screen.getByLabelText('이메일'), 'test@test.com');
+    await user.type(screen.getByLabelText('비밀번호'), 'password123');
+    await user.click(screen.getByRole('button', { name: '로그인' }));
+
+    await waitFor(() => {
+      expect(mockPush).toHaveBeenCalledWith('/products/p1');
+    });
+  });
+
+  it('외부 URL redirect는 무시하고 홈으로 이동한다', async () => {
+    mockSearchParams.value = new URLSearchParams('redirect=https%3A%2F%2Fevil.com');
     mockLogin.mockResolvedValueOnce({
       accessToken: 'token',
       refreshToken: 'refresh',

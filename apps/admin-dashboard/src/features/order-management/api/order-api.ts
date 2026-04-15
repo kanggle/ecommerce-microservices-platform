@@ -1,5 +1,6 @@
 import { apiClient } from '@/shared/config/api';
 import { createAdminOrderApi } from '@repo/api-client';
+import { isMock, mockGetOrders, mockGetOrder } from '@/shared/lib/mock-data';
 import type {
   PaginatedResponse,
   OrderListParams,
@@ -14,10 +15,12 @@ const adminOrderApi = createAdminOrderApi(apiClient);
 export async function getOrders(
   params?: OrderListParams,
 ): Promise<PaginatedResponse<AdminOrderSummary>> {
+  if (isMock()) return mockGetOrders(params);
   return adminOrderApi.getOrders(params);
 }
 
 export async function getOrder(orderId: string): Promise<AdminOrderDetail> {
+  if (isMock()) return mockGetOrder(orderId);
   return adminOrderApi.getOrder(orderId);
 }
 

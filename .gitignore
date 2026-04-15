@@ -2,6 +2,9 @@
 .env
 .env.*
 
+# Alertmanager Slack webhook URL (secret) — commit .example only
+infra/alertmanager/slack-webhook-url
+
 # Local H2 database files
 /data/
 
@@ -31,3 +34,7 @@ Desktop.ini
 */data/*.mv.db
 */data/*.lock.db
 apps/payment-service/data/
+
+# JVM crash logs
+hs_err_pid*.log
+replay_pid*.log

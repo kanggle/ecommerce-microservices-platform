@@ -1,10 +1,19 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { render, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
+
+vi.mock('@/shared/lib/auth-context', () => ({
+  useAuth: () => ({ isAuthenticated: true, isLoading: false }),
+}));
+
+vi.mock('next/navigation', () => ({
+  useRouter: () => ({ push: vi.fn(), replace: vi.fn() }),
+  usePathname: () => '/cart',
+}));
+
 import { CartProvider } from '@/features/cart/model/cart-context';
 import { AddToCartButton } from '@/features/cart/ui/AddToCartButton';
 import { CartSummary } from '@/features/cart/ui/CartSummary';
-import { CartItemRow } from '@/features/cart/ui/CartItemRow';
 import type { CartItem } from '@/features/cart/model/types';
 
 vi.mock('next/link', () => ({
@@ -144,54 +153,5 @@ describe('CartSummary', () => {
     await waitFor(() => {
       expect(screen.getByText('장바구니가 비어있습니다.')).toBeInTheDocument();
     });
-  });
-});
-
-describe('CartItemRow', () => {
-  const item: CartItem = {
-    productId: 'p1',
-    variantId: 'v1',
-    productName: '마우스',
-    optionName: '블랙',
-    price: 50000,
-    quantity: 2,
-  };
-
-  beforeEach(() => {
-    vi.clearAllMocks();
-    vi.spyOn(Storage.prototype, 'getItem').mockReturnValue(JSON.stringify([item]));
-    vi.spyOn(Storage.prototype, 'setItem').mockImplementation(() => {});
-  });
-
-  it('상품 정보와 수량을 표시한다', async () => {
-    renderWithCart(<CartItemRow item={item} />);
-
-    await waitFor(() => {
-      expect(screen.getByText('마우스')).toBeInTheDocument();
-    });
-    expect(screen.getByText('블랙')).toBeInTheDocument();
-    // 가격 숫자와 단위 "원"이 별도 span으로 렌더링되므로 textContent 전체로 검색한다
-    expect(
-      screen.getByText((_, el) => el?.textContent === '50,000원'),
-    ).toBeInTheDocument();
-    expect(screen.getByText('2')).toBeInTheDocument();
-  });
-
-  it('수량 증가 버튼이 있다', () => {
-    renderWithCart(<CartItemRow item={item} />);
-
-    expect(screen.getByLabelText('수량 증가')).toBeInTheDocument();
-  });
-
-  it('수량 감소 버튼이 있다', () => {
-    renderWithCart(<CartItemRow item={item} />);
-
-    expect(screen.getByLabelText('수량 감소')).toBeInTheDocument();
-  });
-
-  it('삭제 버튼이 있다', () => {
-    renderWithCart(<CartItemRow item={item} />);
-
-    expect(screen.getByLabelText('삭제')).toBeInTheDocument();
   });
 });

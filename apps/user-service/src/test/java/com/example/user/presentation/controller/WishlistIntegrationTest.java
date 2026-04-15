@@ -115,6 +115,22 @@ class WishlistIntegrationTest {
         }
 
         @Test
+        @DisplayName("user_profiles 행이 없는 유저로 요청하면 404 USER_PROFILE_NOT_FOUND를 반환한다")
+        void addItem_userProfileMissing_returns404() throws Exception {
+            UUID userIdWithoutProfile = UUID.randomUUID();
+            UUID productId = UUID.randomUUID();
+
+            mockMvc.perform(post("/api/wishlists")
+                            .header("X-User-Id", userIdWithoutProfile.toString())
+                            .contentType(MediaType.APPLICATION_JSON)
+                            .content("{\"productId\":\"" + productId + "\"}"))
+                    .andExpect(status().isNotFound())
+                    .andExpect(jsonPath("$.code").value("USER_PROFILE_NOT_FOUND"));
+
+            assertThat(wishlistItemRepository.existsByUserIdAndProductId(userIdWithoutProfile, productId)).isFalse();
+        }
+
+        @Test
         @DisplayName("productId 없이 요청하면 400을 반환한다")
         void addItem_missingProductId_returns400() throws Exception {
             UUID userId = createUser();
@@ -234,22 +250,23 @@ class WishlistIntegrationTest {
     class CheckItem {
 
         @Test
-        @DisplayName("위시리스트에 있는 상품을 체크하면 inWishlist=true를 반환한다")
+        @DisplayName("위시리스트에 있는 상품을 체크하면 inWishlist=true와 wishlistItemId를 반환한다")
         void checkItem_exists_returnsTrue() throws Exception {
             UUID userId = createUser();
             UUID productId = UUID.randomUUID();
-            createAndSaveWishlistItem(userId, productId);
+            WishlistItem saved = createAndSaveWishlistItem(userId, productId);
 
             mockMvc.perform(get("/api/wishlists/me/check")
                             .header("X-User-Id", userId.toString())
                             .param("productId", productId.toString()))
                     .andExpect(status().isOk())
                     .andExpect(jsonPath("$.productId").value(productId.toString()))
-                    .andExpect(jsonPath("$.inWishlist").value(true));
+                    .andExpect(jsonPath("$.inWishlist").value(true))
+                    .andExpect(jsonPath("$.wishlistItemId").value(saved.getId().toString()));
         }
 
         @Test
-        @DisplayName("위시리스트에 없는 상품을 체크하면 inWishlist=false를 반환한다")
+        @DisplayName("위시리스트에 없는 상품을 체크하면 inWishlist=false와 wishlistItemId=null을 반환한다")
         void checkItem_notExists_returnsFalse() throws Exception {
             UUID userId = createUser();
             UUID productId = UUID.randomUUID();
@@ -258,7 +275,8 @@ class WishlistIntegrationTest {
                             .header("X-User-Id", userId.toString())
                             .param("productId", productId.toString()))
                     .andExpect(status().isOk())
-                    .andExpect(jsonPath("$.inWishlist").value(false));
+                    .andExpect(jsonPath("$.inWishlist").value(false))
+                    .andExpect(jsonPath("$.wishlistItemId").value(org.hamcrest.Matchers.nullValue()));
         }
 
         @Test

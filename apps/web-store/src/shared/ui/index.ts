@@ -1,4 +1,5 @@
 export { AddressSearch } from './AddressSearch';
+export { PhoneFieldError } from './PhoneFieldError';
 export { PriceDisplay } from './PriceDisplay';
 export { NarrowContainer } from './NarrowContainer';
 export { Pagination } from './Pagination';

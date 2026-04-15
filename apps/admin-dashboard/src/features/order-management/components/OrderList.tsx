@@ -4,8 +4,18 @@ import { useRouter } from 'next/navigation';
 import { DataTable, StatusBadge, FilterBar, ListError } from '@/shared/ui';
 import type { ColumnDef } from '@/shared/ui';
 import { useOrders } from '../hooks/use-orders';
+import { useUserEmail } from '@/shared/hooks';
 import { ORDER_STATUS_OPTIONS } from '@/shared/lib/status-options';
 import type { AdminOrderSummary } from '@repo/types';
+
+function UserEmailCell({ userId }: { userId: string }) {
+  const { email, isLoading, isError } = useUserEmail(userId);
+
+  if (isLoading) return <span style={{ color: '#9ca3af' }}>불러오는 중...</span>;
+  if (isError || !email) return <span style={{ color: '#9ca3af' }}>-</span>;
+
+  return <span>{email}</span>;
+}
 
 const columns: ColumnDef<AdminOrderSummary>[] = [
   {
@@ -15,6 +25,11 @@ const columns: ColumnDef<AdminOrderSummary>[] = [
   },
   { key: 'userId', header: '주문자ID',
     render: (order: AdminOrderSummary) => order.userId.slice(0, 8) + '...',
+  },
+  {
+    key: 'userEmail',
+    header: '주문자 이메일',
+    render: (order: AdminOrderSummary) => <UserEmailCell userId={order.userId} />,
   },
   {
     key: 'status',

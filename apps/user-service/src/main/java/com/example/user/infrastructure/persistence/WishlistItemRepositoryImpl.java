@@ -38,6 +38,11 @@ class WishlistItemRepositoryImpl implements WishlistItemRepository {
     }
 
     @Override
+    public Optional<WishlistItem> findByUserIdAndProductId(UUID userId, UUID productId) {
+        return jpaRepository.findByUserIdAndProductId(userId, productId).map(mapper::toDomain);
+    }
+
+    @Override
     public PageResult<WishlistItem> findAllByUserId(UUID userId, PageQuery pageQuery) {
         Sort sort = Sort.by(Sort.Direction.fromString(pageQuery.sortDirection()), pageQuery.sortBy());
         PageRequest pageRequest = PageRequest.of(pageQuery.page(), pageQuery.size(), sort);

@@ -1,6 +1,7 @@
 import { useEffect, useRef } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
-import { useConfirmPayment } from './use-confirm-payment';
+import { useMutation } from '@tanstack/react-query';
+import { confirmPayment } from '@/entities/payment';
 
 export type PaymentConfirmationStatus = 'invalid' | 'pending' | 'error' | 'redirecting';
 
@@ -8,7 +9,10 @@ export function usePaymentConfirmation() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const calledRef = useRef(false);
-  const confirmMutation = useConfirmPayment();
+  const confirmMutation = useMutation({
+    mutationFn: (params: { paymentKey: string; orderId: string; amount: number }) =>
+      confirmPayment(params),
+  });
 
   const paymentKey = searchParams.get('paymentKey');
   const orderId = searchParams.get('orderId');

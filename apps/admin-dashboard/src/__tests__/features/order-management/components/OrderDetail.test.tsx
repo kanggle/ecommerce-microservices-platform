@@ -27,6 +27,16 @@ vi.mock('@/features/order-management/api/order-api', () => ({
   getOrder: (...args: unknown[]) => mockGetOrder(...args),
 }));
 
+const mockUseUserEmail = vi.fn();
+
+vi.mock('@/shared/hooks', async () => {
+  const actual = await vi.importActual<typeof import('@/shared/hooks')>('@/shared/hooks');
+  return {
+    ...actual,
+    useUserEmail: (userId: string) => mockUseUserEmail(userId),
+  };
+});
+
 vi.mock('next/navigation', () => ({
   useRouter: () => ({ push: vi.fn() }),
 }));
@@ -44,6 +54,12 @@ describe('OrderDetail', () => {
   beforeEach(() => {
     mockGetOrder.mockClear();
     mockGetOrder.mockResolvedValue(mockOrder);
+    mockUseUserEmail.mockReset();
+    mockUseUserEmail.mockImplementation((userId: string) => ({
+      email: `${userId}@example.com`,
+      isLoading: false,
+      isError: false,
+    }));
   });
 
   it('주문 기본 정보를 표시한다', async () => {
@@ -59,6 +75,12 @@ describe('OrderDetail', () => {
     render(<OrderDetail orderId="o1" />, { wrapper: createWrapper() });
 
     expect(await screen.findByText('u1')).toBeInTheDocument();
+  });
+
+  it('주문자 이메일을 표시한다', async () => {
+    render(<OrderDetail orderId="o1" />, { wrapper: createWrapper() });
+
+    expect(await screen.findByText('u1@example.com')).toBeInTheDocument();
   });
 
   it('주문 항목을 표시한다', async () => {
@@ -83,5 +105,31 @@ describe('OrderDetail', () => {
     render(<OrderDetail orderId="o1" />, { wrapper: createWrapper() });
 
     expect(await screen.findByText('주문 항목이 없습니다.')).toBeInTheDocument();
+  });
+
+  it('이메일 조회 실패 시 fallback(-)을 표시한다', async () => {
+    mockUseUserEmail.mockImplementation(() => ({
+      email: null,
+      isLoading: false,
+      isError: true,
+    }));
+
+    render(<OrderDetail orderId="o1" />, { wrapper: createWrapper() });
+
+    await screen.findByText('주문 o1');
+    expect(screen.getByText('-')).toBeInTheDocument();
+  });
+
+  it('이메일 로딩 중이면 "불러오는 중..."을 표시한다', async () => {
+    mockUseUserEmail.mockImplementation(() => ({
+      email: null,
+      isLoading: true,
+      isError: false,
+    }));
+
+    render(<OrderDetail orderId="o1" />, { wrapper: createWrapper() });
+
+    await screen.findByText('주문 o1');
+    expect(screen.getByText('불러오는 중...')).toBeInTheDocument();
   });
 });

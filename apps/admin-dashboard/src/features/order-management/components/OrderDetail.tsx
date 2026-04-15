@@ -5,6 +5,7 @@ import { ErrorMessage } from '@repo/ui';
 import { getErrorMessage } from '@repo/types/guards';
 import { useOrder } from '../hooks/use-order';
 import { useChangeOrderStatus } from '../hooks/use-change-order-status';
+import { useUserEmail } from '@/shared/hooks';
 import type { OrderStatus, OrderItem } from '@repo/types';
 
 interface Props {
@@ -116,6 +117,13 @@ function OrderItemsTable({ items }: { items: OrderItem[] }) {
 export function OrderDetail({ orderId }: Props) {
   const { data: order, isLoading, isError, refetch } = useOrder(orderId);
   const mutation = useChangeOrderStatus(orderId);
+  const { email, isLoading: isUserLoading, isError: isUserError } = useUserEmail(order?.userId ?? '');
+
+  const userEmail = isUserLoading
+    ? '불러오는 중...'
+    : isUserError || !email
+      ? '-'
+      : email;
 
   if (isLoading || !order) {
     return <PageLayout.Skeleton />;
@@ -132,6 +140,7 @@ export function OrderDetail({ orderId }: Props) {
           items={[
             { label: '상태', value: <StatusBadge status={order.status} /> },
             { label: '주문자 ID', value: order.userId },
+            { label: '주문자 이메일', value: userEmail },
             { label: '총액', value: `${order.totalPrice.toLocaleString()}원` },
             { label: '주문일', value: new Date(order.createdAt).toLocaleString('ko-KR') },
             { label: '수정일', value: new Date(order.updatedAt).toLocaleString('ko-KR') },

@@ -1,17 +1,33 @@
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
 import { render, screen, act, fireEvent } from '@testing-library/react';
-import { AddToCartButton } from '@/features/cart/ui/AddToCartButton';
 
 const mockAddItem = vi.fn();
+const mockPush = vi.fn();
+const mockAuthState = { isAuthenticated: true };
+const mockPathname = { value: '/products/p1' };
 
 vi.mock('@/features/cart/model/cart-context', () => ({
   useCart: () => ({ addItem: mockAddItem }),
 }));
 
+vi.mock('@/shared/lib/auth-context', () => ({
+  useAuth: () => mockAuthState,
+}));
+
+vi.mock('next/navigation', () => ({
+  useRouter: () => ({ push: mockPush }),
+  usePathname: () => mockPathname.value,
+}));
+
+import { AddToCartButton } from '@/features/cart/ui/AddToCartButton';
+
 describe('AddToCartButton', () => {
   beforeEach(() => {
     vi.useFakeTimers();
     mockAddItem.mockClear();
+    mockPush.mockClear();
+    mockAuthState.isAuthenticated = true;
+    mockPathname.value = '/products/p1';
   });
 
   afterEach(() => {
@@ -69,5 +85,17 @@ describe('AddToCartButton', () => {
     render(<AddToCartButton {...defaultProps} disabled />);
     expect(screen.getByRole('button')).toHaveTextContent('품절');
     expect(screen.getByRole('button')).toBeDisabled();
+  });
+
+  it('비로그인 상태에서 클릭 시 addItem을 호출하지 않고 로그인 페이지로 이동한다', () => {
+    mockAuthState.isAuthenticated = false;
+    mockPathname.value = '/products/p1';
+
+    render(<AddToCartButton {...defaultProps} />);
+    fireEvent.click(screen.getByRole('button'));
+
+    expect(mockAddItem).not.toHaveBeenCalled();
+    expect(mockPush).toHaveBeenCalledWith('/login?redirect=%2Fproducts%2Fp1');
+    expect(screen.queryByText('장바구니에 추가되었습니다.')).not.toBeInTheDocument();
   });
 });

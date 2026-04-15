@@ -1,5 +1,5 @@
 import { getProducts } from '@/entities/product';
-import { ProductListWithWishlist } from '@/widgets/ProductListWithWishlist';
+import { ProductListWithWishlist } from '@/widgets/product-list-with-wishlist';
 import { HeroBanner } from '@/widgets/hero';
 import Link from 'next/link';
 import type { ProductSummary } from '@repo/types';

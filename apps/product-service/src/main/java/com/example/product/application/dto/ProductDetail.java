@@ -13,8 +13,14 @@ public record ProductDetail(
         ProductStatus status,
         long price,
         UUID categoryId,
+        String thumbnailUrl,
         List<VariantDetail> variants
 ) {
+    public ProductDetail(UUID id, String name, String description, ProductStatus status, long price,
+                         UUID categoryId, List<VariantDetail> variants) {
+        this(id, name, description, status, price, categoryId, null, variants);
+    }
+
     public static ProductDetail from(Product product) {
         List<VariantDetail> variants = product.getVariants().stream()
                 .map(VariantDetail::from)
@@ -27,6 +33,7 @@ public record ProductDetail(
                 product.getStatus(),
                 product.getPrice().value(),
                 product.getCategoryId(),
+                product.getThumbnailUrl(),
                 variants);
     }
 }

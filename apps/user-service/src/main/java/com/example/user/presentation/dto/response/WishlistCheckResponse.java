@@ -6,9 +6,10 @@ import java.util.UUID;
 
 public record WishlistCheckResponse(
         UUID productId,
-        boolean inWishlist
+        boolean inWishlist,
+        UUID wishlistItemId
 ) {
     public static WishlistCheckResponse from(WishlistCheckResult result) {
-        return new WishlistCheckResponse(result.productId(), result.inWishlist());
+        return new WishlistCheckResponse(result.productId(), result.inWishlist(), result.wishlistItemId());
     }
 }

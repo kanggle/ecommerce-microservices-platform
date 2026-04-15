@@ -10,6 +10,7 @@ import {
 } from 'react';
 import type { CartItem } from './types';
 import { calculateTotal, calculateItemCount } from '../lib/calculate-total';
+import { useAuth } from '@/shared/lib/auth-context';
 
 const STORAGE_KEY = 'cart';
 
@@ -48,23 +49,40 @@ function saveCart(items: CartItem[]): void {
   }
 }
 
+function clearStoredCart(): void {
+  if (typeof window === 'undefined') return;
+  try {
+    localStorage.removeItem(STORAGE_KEY);
+  } catch (error) {
+    console.warn('Cart clear failed', error);
+  }
+}
+
 export function CartProvider({ children }: { children: React.ReactNode }) {
+  const { isAuthenticated, isLoading: authLoading } = useAuth();
   const [items, setItems] = useState<CartItem[]>([]);
   const [isLoaded, setIsLoaded] = useState(false);
 
   useEffect(() => {
-    setItems(loadCart());
+    if (authLoading) return;
+    if (isAuthenticated) {
+      setItems(loadCart());
+    } else {
+      setItems([]);
+      clearStoredCart();
+    }
     setIsLoaded(true);
-  }, []);
+  }, [isAuthenticated, authLoading]);
 
   useEffect(() => {
-    if (isLoaded) {
+    if (isLoaded && isAuthenticated) {
       saveCart(items);
     }
-  }, [items, isLoaded]);
+  }, [items, isLoaded, isAuthenticated]);
 
   const addItem = useCallback(
     (item: Omit<CartItem, 'quantity'>, quantity = 1) => {
+      if (!isAuthenticated) return;
       setItems((prev) => {
         const existing = prev.find(
           (i) => i.productId === item.productId && i.variantId === item.variantId,
@@ -79,7 +97,7 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
         return [...prev, { ...item, quantity }];
       });
     },
-    [],
+    [isAuthenticated],
   );
 
   const removeItem = useCallback(
@@ -112,6 +130,7 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
 
   const clearCart = useCallback(() => {
     setItems([]);
+    clearStoredCart();
   }, []);
 
   const totalAmount = calculateTotal(items);

@@ -12,6 +12,7 @@ public record ProductDetailResponse(
         String status,
         long price,
         String categoryId,
+        String thumbnailUrl,
         List<VariantDetailItem> variants
 ) {
     public record VariantDetailItem(
@@ -37,6 +38,7 @@ public record ProductDetailResponse(
                 detail.status().name(),
                 detail.price(),
                 UuidUtils.toString(detail.categoryId()),
+                detail.thumbnailUrl(),
                 variants);
     }
 }
