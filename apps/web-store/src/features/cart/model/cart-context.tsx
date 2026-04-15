@@ -133,12 +133,13 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
     clearStoredCart();
   }, []);
 
-  const totalAmount = calculateTotal(items);
-  const itemCount = calculateItemCount(items);
+  const visibleItems = isAuthenticated ? items : [];
+  const totalAmount = calculateTotal(visibleItems);
+  const itemCount = calculateItemCount(visibleItems);
 
   const value = useMemo(
-    () => ({ items, totalAmount, itemCount, addItem, removeItem, updateQuantity, clearCart }),
-    [items, totalAmount, itemCount, addItem, removeItem, updateQuantity, clearCart],
+    () => ({ items: visibleItems, totalAmount, itemCount, addItem, removeItem, updateQuantity, clearCart }),
+    [visibleItems, totalAmount, itemCount, addItem, removeItem, updateQuantity, clearCart],
   );
 
   return <CartContext.Provider value={value}>{children}</CartContext.Provider>;

@@ -7,50 +7,8 @@ import { useShippings } from '../hooks/use-shippings';
 import { useUpdateShippingStatus } from '../hooks/use-update-shipping-status';
 import { SHIPPING_STATUS_OPTIONS } from '@/shared/lib/status-options';
 import { ShipFormDialog } from './ShipFormDialog';
+import { StatusActionButton } from './StatusActionButton';
 import type { ShippingSummary, ShippingStatus } from '@repo/types';
-
-const NEXT_STATUS: Partial<Record<ShippingStatus, { label: string; target: ShippingStatus }>> = {
-  PREPARING: { label: '발송 처리', target: 'SHIPPED' },
-  SHIPPED: { label: '배송중 전환', target: 'IN_TRANSIT' },
-  IN_TRANSIT: { label: '배송완료 처리', target: 'DELIVERED' },
-};
-
-function StatusActionButton({
-  shipping,
-  isPending,
-  onAction,
-}: {
-  shipping: ShippingSummary;
-  isPending: boolean;
-  onAction: (shipping: ShippingSummary, target: ShippingStatus) => void;
-}) {
-  const next = NEXT_STATUS[shipping.status];
-  if (!next) return null;
-
-  return (
-    <button
-      onClick={(e) => {
-        e.stopPropagation();
-        onAction(shipping, next.target);
-      }}
-      disabled={isPending}
-      style={{
-        padding: '4px 12px',
-        borderRadius: '6px',
-        border: 'none',
-        backgroundColor: '#1A1A2E',
-        color: '#fff',
-        fontSize: '0.75rem',
-        fontWeight: 500,
-        cursor: isPending ? 'not-allowed' : 'pointer',
-        opacity: isPending ? 0.5 : 1,
-        whiteSpace: 'nowrap',
-      }}
-    >
-      {next.label}
-    </button>
-  );
-}
 
 export function ShippingList() {
   const { data, isLoading, isError, refetch, pagination, filters } = useShippings();

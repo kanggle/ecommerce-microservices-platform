@@ -5,10 +5,12 @@ import type {
   PaginatedResponse,
   ProductSummary,
   ProductDetail,
+  ProductVariant,
   ProductListParams,
   CreateProductRequest,
   CreateProductResponse,
   UpdateProductRequest,
+  UpdateProductResponse,
   StockAdjustmentRequest,
   StockAdjustmentResponse,
 } from '@repo/types';
@@ -36,7 +38,7 @@ export async function createProduct(
 export async function updateProduct(
   productId: string,
   data: UpdateProductRequest,
-): Promise<CreateProductResponse> {
+): Promise<UpdateProductResponse> {
   return productApi.updateProduct(productId, data);
 }
 
@@ -50,7 +52,7 @@ export async function adjustStock(
 export async function addVariant(
   productId: string,
   data: { optionName: string; stock: number; additionalPrice: number },
-) {
+): Promise<ProductVariant> {
   return productApi.addVariant(productId, data);
 }
 
@@ -58,10 +60,10 @@ export async function updateVariant(
   productId: string,
   variantId: string,
   data: { optionName: string; additionalPrice: number },
-) {
+): Promise<ProductVariant> {
   return productApi.updateVariant(productId, variantId, data);
 }
 
-export async function deleteVariant(productId: string, variantId: string) {
+export async function deleteVariant(productId: string, variantId: string): Promise<void> {
   return productApi.deleteVariant(productId, variantId);
 }

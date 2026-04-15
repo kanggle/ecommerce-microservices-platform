@@ -10,6 +10,8 @@ import { useWishlistCheck } from '../model/use-wishlist-check';
 import { addToWishlist, removeFromWishlist } from '../api/wishlist-api';
 import { wishlistKeys } from '../model/query-keys';
 
+const WISHLIST_ITEM_ID_MISSING_MESSAGE = '위시리스트 상태를 다시 불러오는 중입니다. 잠시 후 다시 시도해주세요.';
+
 interface WishlistButtonProps {
   productId: string;
   /** Optional wishlistItemId for removal (from wishlist list page) */
@@ -67,12 +69,21 @@ function WishlistButtonInner({ productId, wishlistItemId: externalItemId, size =
         const itemId = externalItemId ?? checkData?.wishlistItemId ?? addMutation.data?.wishlistItemId;
         if (itemId) {
           removeMutation.mutate(itemId);
+        } else {
+          if (process.env.NODE_ENV !== 'production') {
+            console.warn('[WishlistButton] inWishlist=true but wishlistItemId is missing', {
+              productId,
+              checkData,
+            });
+          }
+          window.alert(WISHLIST_ITEM_ID_MISSING_MESSAGE);
+          queryClient.invalidateQueries({ queryKey: wishlistKeys.check(productId) });
         }
       } else {
         addMutation.mutate();
       }
     },
-    [isPending, checkLoading, inWishlist, externalItemId, addMutation, removeMutation],
+    [isPending, checkLoading, inWishlist, externalItemId, checkData, addMutation, removeMutation, productId, queryClient],
   );
 
   return (

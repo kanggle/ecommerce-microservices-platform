@@ -1,20 +1,12 @@
-import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { issueCoupons } from '../api/promotion-api';
 import { promotionKeys } from './query-keys';
-import { alertError } from '@/shared/lib/alert-error';
+import { useInvalidatingMutation } from '@/shared/hooks';
 import type { IssueCouponsRequest } from '@repo/types';
 
 export function useIssueCoupons(promotionId: string) {
-  const queryClient = useQueryClient();
-
-  return useMutation({
+  return useInvalidatingMutation({
     mutationFn: (data: IssueCouponsRequest) => issueCoupons(promotionId, data),
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: promotionKeys.detail(promotionId) });
-      queryClient.invalidateQueries({ queryKey: promotionKeys.all });
-    },
-    onError: (error: unknown) => {
-      alertError(error, '쿠폰 발급에 실패했습니다.');
-    },
+    invalidate: [promotionKeys.detail(promotionId), promotionKeys.all],
+    errorMessage: '쿠폰 발급에 실패했습니다.',
   });
 }

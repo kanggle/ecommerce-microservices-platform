@@ -18,40 +18,40 @@ import type {
   IssueCouponsResponse,
 } from '@repo/types';
 
-const promotionApi = createAdminPromotionApi(apiClient);
+const adminPromotionApi = createAdminPromotionApi(apiClient);
 
 export async function getPromotions(
   params?: PromotionListParams,
 ): Promise<PaginatedResponse<PromotionSummary>> {
   if (isMock()) return mockGetPromotions(params);
-  return promotionApi.getPromotions(params);
+  return adminPromotionApi.getPromotions(params);
 }
 
 export async function getPromotion(promotionId: string): Promise<PromotionDetail> {
   if (isMock()) return mockGetPromotion(promotionId);
-  return promotionApi.getPromotion(promotionId);
+  return adminPromotionApi.getPromotion(promotionId);
 }
 
 export async function createPromotion(
   data: CreatePromotionRequest,
 ): Promise<CreatePromotionResponse> {
-  return promotionApi.createPromotion(data);
+  return adminPromotionApi.createPromotion(data);
 }
 
 export async function updatePromotion(
   promotionId: string,
   data: UpdatePromotionRequest,
 ): Promise<UpdatePromotionResponse> {
-  return promotionApi.updatePromotion(promotionId, data);
+  return adminPromotionApi.updatePromotion(promotionId, data);
 }
 
 export async function deletePromotion(promotionId: string): Promise<void> {
-  return promotionApi.deletePromotion(promotionId);
+  return adminPromotionApi.deletePromotion(promotionId);
 }
 
 export async function issueCoupons(
   promotionId: string,
   data: IssueCouponsRequest,
 ): Promise<IssueCouponsResponse> {
-  return promotionApi.issueCoupons(promotionId, data);
+  return adminPromotionApi.issueCoupons(promotionId, data);
 }

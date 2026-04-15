@@ -1,4 +1,4 @@
-import { render, screen } from '@testing-library/react';
+import { render, screen, fireEvent } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { PromotionForm } from '@/features/promotion-management/components/PromotionForm';
@@ -68,8 +68,8 @@ describe('PromotionForm', () => {
       await userEvent.type(screen.getByLabelText('할인값 *'), '5000');
       await userEvent.clear(screen.getByLabelText('최대 발급 수량 *'));
       await userEvent.type(screen.getByLabelText('최대 발급 수량 *'), '100');
-      await userEvent.type(screen.getByLabelText('시작일 *'), '2026-06-01');
-      await userEvent.type(screen.getByLabelText('종료일 *'), '2026-06-30');
+      fireEvent.change(screen.getByLabelText('시작일 *'), { target: { value: '2026-06-01' } });
+      fireEvent.change(screen.getByLabelText('종료일 *'), { target: { value: '2026-06-30' } });
 
       expect(screen.getByText('등록')).not.toBeDisabled();
     });
@@ -77,8 +77,8 @@ describe('PromotionForm', () => {
     it('종료일이 시작일 이전이면 검증 메시지를 표시한다', async () => {
       render(<PromotionForm />, { wrapper: createWrapper() });
 
-      await userEvent.type(screen.getByLabelText('시작일 *'), '2026-06-30');
-      await userEvent.type(screen.getByLabelText('종료일 *'), '2026-06-01');
+      fireEvent.change(screen.getByLabelText('시작일 *'), { target: { value: '2026-06-30' } });
+      fireEvent.change(screen.getByLabelText('종료일 *'), { target: { value: '2026-06-01' } });
 
       expect(screen.getByText('종료일은 시작일 이후여야 합니다.')).toBeInTheDocument();
     });

@@ -109,12 +109,10 @@ describe('useProductForm', () => {
       description: '기존 설명',
       price: 20000,
       categoryId: 'cat-2',
-      categoryName: '카테고리2',
       status: 'ON_SALE',
       variants: [
         { id: 'v-1', optionName: '기본', stock: 5, additionalPrice: 0 },
       ],
-      createdAt: '2026-01-01T00:00:00Z',
     };
 
     it('기존 상품 데이터로 초기화된다', () => {

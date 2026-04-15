@@ -48,15 +48,15 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
   const logout = useCallback(async () => {
     const refreshToken = getStoredRefreshToken();
+    clearTokens();
+    setState({ user: null, isAuthenticated: false, isLoading: false });
     if (refreshToken) {
       try {
         await authActions.logout({ refreshToken });
       } catch {
-        // 로그아웃 API 실패해도 로컬 토큰은 제거
+        // 로그아웃 API 실패해도 로컬 상태는 이미 정리됨
       }
     }
-    clearTokens();
-    setState({ user: null, isAuthenticated: false, isLoading: false });
   }, []);
 
   const value = useMemo(

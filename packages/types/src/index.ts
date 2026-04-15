@@ -26,6 +26,7 @@ export type {
   StockAdjustmentRequest,
   StockAdjustmentResponse,
   CreateProductResponse,
+  UpdateProductResponse,
 } from './product';
 
 // Order

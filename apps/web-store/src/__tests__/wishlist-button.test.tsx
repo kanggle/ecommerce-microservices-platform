@@ -260,4 +260,40 @@ describe('WishlistButton', () => {
 
     alertSpy.mockRestore();
   });
+
+  it('inWishlist=true인데 wishlistItemId가 없으면 사용자 안내 후 refetch한다', async () => {
+    mockUseAuth.mockReturnValue({
+      isAuthenticated: true,
+      isLoading: false,
+      user: { userId: 'user-1', email: 'test@test.com', name: 'Test' },
+      login: vi.fn(),
+      signup: vi.fn(),
+      logout: vi.fn(),
+    });
+    mockCheckWishlist.mockResolvedValue({ productId: 'product-1', inWishlist: true, wishlistItemId: null as unknown as string });
+
+    const alertSpy = vi.spyOn(window, 'alert').mockImplementation(() => {});
+
+    const user = userEvent.setup();
+    render(
+      <TestQueryProvider>
+        <WishlistButton productId="product-1" />
+      </TestQueryProvider>,
+    );
+
+    await waitFor(() => {
+      expect(screen.getByRole('button', { name: '위시리스트에서 제거' })).toBeInTheDocument();
+    });
+
+    mockCheckWishlist.mockClear();
+    await user.click(screen.getByRole('button', { name: '위시리스트에서 제거' }));
+
+    expect(alertSpy).toHaveBeenCalledWith('위시리스트 상태를 다시 불러오는 중입니다. 잠시 후 다시 시도해주세요.');
+    expect(mockRemoveFromWishlist).not.toHaveBeenCalled();
+    await waitFor(() => {
+      expect(mockCheckWishlist).toHaveBeenCalledWith('product-1');
+    });
+
+    alertSpy.mockRestore();
+  });
 });
