@@ -67,3 +67,7 @@ export interface StockAdjustmentResponse {
 export interface CreateProductResponse {
   id: string;
 }
+
+export interface UpdateProductResponse {
+  id: string;
+}

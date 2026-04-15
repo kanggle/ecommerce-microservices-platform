@@ -5,12 +5,11 @@ import type { PromotionDetail } from '@repo/types';
 import { usePromotionForm } from '../hooks/use-promotion-form';
 import { Section } from '@/shared/ui';
 import { formStyles } from '@/shared/lib/form-styles';
+import { PromotionPeriodFields } from './PromotionPeriodFields';
 
 interface Props {
   promotion?: PromotionDetail;
 }
-
-const today = () => new Date().toISOString().slice(0, 10);
 
 const styles = {
   ...formStyles,
@@ -130,48 +129,14 @@ export function PromotionForm({ promotion }: Props) {
       </Section>
 
       <Section title="기간 설정">
-        <div style={{ maxWidth: '320px' }}>
-          <div style={{ display: 'flex', alignItems: 'flex-end', gap: '8px' }}>
-            <div style={{ flex: 1 }}>
-              <label htmlFor="startDate" style={{
-                display: 'block', marginBottom: '6px', fontSize: '0.8125rem',
-                fontWeight: 600, color: '#374151',
-              }}>
-                시작일 *
-              </label>
-              <input id="startDate" type="date" value={startDate}
-                onChange={(e) => setStartDate(e.target.value)}
-                onClick={(e) => {
-                  const input = e.target as HTMLInputElement;
-                  if (typeof input.showPicker === 'function') input.showPicker();
-                }}
-                min={isEdit ? undefined : today()}
-                required style={styles.dateInput} />
-            </div>
-            <span style={{ color: '#9ca3af', fontSize: '1rem', userSelect: 'none', flexShrink: 0, paddingBottom: '10px' }}>~</span>
-            <div style={{ flex: 1 }}>
-              <label htmlFor="endDate" style={{
-                display: 'block', marginBottom: '6px', fontSize: '0.8125rem',
-                fontWeight: 600, color: '#374151',
-              }}>
-                종료일 *
-              </label>
-              <input id="endDate" type="date" value={endDate}
-                onChange={(e) => setEndDate(e.target.value)}
-                onClick={(e) => {
-                  const input = e.target as HTMLInputElement;
-                  if (typeof input.showPicker === 'function') input.showPicker();
-                }}
-                min={startDate || (isEdit ? undefined : today())}
-                required style={styles.dateInput} />
-            </div>
-          </div>
-          {dateError && (
-            <p style={{ color: '#dc2626', fontSize: '0.8125rem', marginTop: '8px' }}>
-              종료일은 시작일 이후여야 합니다.
-            </p>
-          )}
-        </div>
+        <PromotionPeriodFields
+          startDate={startDate}
+          endDate={endDate}
+          onStartDateChange={setStartDate}
+          onEndDateChange={setEndDate}
+          isEdit={isEdit}
+          dateError={!!dateError}
+        />
       </Section>
 
       <div style={{ display: 'flex', gap: '10px', paddingTop: '8px' }}>

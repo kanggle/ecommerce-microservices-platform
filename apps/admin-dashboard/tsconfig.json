@@ -1,6 +1,7 @@
 {
   "extends": "@repo/tsconfig/nextjs.json",
   "compilerOptions": {
+    "types": ["vitest/globals"],
     "paths": {
       "@/*": ["./src/*"],
       "@repo/ui": ["../../packages/ui/src"],

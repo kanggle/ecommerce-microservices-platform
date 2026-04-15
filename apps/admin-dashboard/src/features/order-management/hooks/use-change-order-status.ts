@@ -1,16 +1,11 @@
-import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { changeOrderStatus } from '../api/order-api';
 import { orderKeys } from './query-keys';
+import { useInvalidatingMutation } from '@/shared/hooks';
 import type { OrderStatus } from '@repo/types';
 
 export function useChangeOrderStatus(orderId: string) {
-  const queryClient = useQueryClient();
-
-  return useMutation({
+  return useInvalidatingMutation({
     mutationFn: (status: OrderStatus) => changeOrderStatus(orderId, status),
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: orderKeys.detail(orderId) });
-      queryClient.invalidateQueries({ queryKey: orderKeys.all });
-    },
+    invalidate: [orderKeys.detail(orderId), orderKeys.all],
   });
 }

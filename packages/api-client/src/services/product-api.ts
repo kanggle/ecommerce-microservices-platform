@@ -3,10 +3,12 @@ import type {
   PaginatedResponse,
   ProductSummary,
   ProductDetail,
+  ProductVariant,
   ProductListParams,
   CreateProductRequest,
   CreateProductResponse,
   UpdateProductRequest,
+  UpdateProductResponse,
   StockAdjustmentRequest,
   StockAdjustmentResponse,
 } from '@repo/types';
@@ -25,7 +27,7 @@ export function createProductApi(client: ApiClient) {
       client.post<CreateProductResponse>('/api/admin/products', data),
 
     updateProduct: (productId: string, data: UpdateProductRequest) =>
-      client.patch<CreateProductResponse>(
+      client.patch<UpdateProductResponse>(
         `/api/admin/products/${productId}`,
         data,
       ),
@@ -37,13 +39,13 @@ export function createProductApi(client: ApiClient) {
       ),
 
     addVariant: (productId: string, data: { optionName: string; stock: number; additionalPrice: number }) =>
-      client.post<{ id: string; optionName: string; stock: number; additionalPrice: number }>(
+      client.post<ProductVariant>(
         `/api/admin/products/${productId}/variants`,
         data,
       ),
 
     updateVariant: (productId: string, variantId: string, data: { optionName: string; additionalPrice: number }) =>
-      client.patch<{ id: string; optionName: string; stock: number; additionalPrice: number }>(
+      client.patch<ProductVariant>(
         `/api/admin/products/${productId}/variants/${variantId}`,
         data,
       ),
