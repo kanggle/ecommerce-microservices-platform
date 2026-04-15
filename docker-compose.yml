@@ -511,6 +511,7 @@ services:
       context: .
       dockerfile: apps/auth-service/Dockerfile
     container_name: auth-service
+    init: true
     restart: unless-stopped
     environment:
       - DB_URL=jdbc:postgresql://auth-postgres:5432/auth_db
@@ -564,6 +565,7 @@ services:
       context: .
       dockerfile: apps/product-service/Dockerfile
     container_name: product-service
+    init: true
     restart: unless-stopped
     environment:
       - DB_URL=jdbc:postgresql://product-postgres:5432/product_db
@@ -601,6 +603,7 @@ services:
       context: .
       dockerfile: apps/search-service/Dockerfile
     container_name: search-service
+    init: true
     restart: unless-stopped
     environment:
       - ELASTICSEARCH_URIS=http://elasticsearch:9200
@@ -636,6 +639,7 @@ services:
       context: .
       dockerfile: apps/user-service/Dockerfile
     container_name: user-service
+    init: true
     restart: unless-stopped
     environment:
       - DB_URL=jdbc:postgresql://user-postgres:5432/user_db
@@ -673,6 +677,7 @@ services:
       context: .
       dockerfile: apps/order-service/Dockerfile
     container_name: order-service
+    init: true
     restart: unless-stopped
     environment:
       - DB_URL=jdbc:postgresql://order-postgres:5432/order_db
@@ -710,6 +715,7 @@ services:
       context: .
       dockerfile: apps/payment-service/Dockerfile
     container_name: payment-service
+    init: true
     restart: unless-stopped
     environment:
       - DB_URL=jdbc:postgresql://payment-postgres:5432/payment_db
@@ -748,6 +754,7 @@ services:
       context: .
       dockerfile: apps/batch-worker/Dockerfile
     container_name: batch-worker
+    init: true
     restart: unless-stopped
     environment:
       - DB_URL=jdbc:postgresql://batch-postgres:5432/batch_db
@@ -785,6 +792,7 @@ services:
       context: .
       dockerfile: apps/shipping-service/Dockerfile
     container_name: shipping-service
+    init: true
     restart: unless-stopped
     environment:
       - DB_URL=jdbc:postgresql://shipping-postgres:5432/shipping_db
@@ -822,6 +830,7 @@ services:
       context: .
       dockerfile: apps/review-service/Dockerfile
     container_name: review-service
+    init: true
     restart: unless-stopped
     environment:
       - DB_URL=jdbc:postgresql://review-postgres:5432/review_db
@@ -860,6 +869,7 @@ services:
       context: .
       dockerfile: apps/promotion-service/Dockerfile
     container_name: promotion-service
+    init: true
     restart: unless-stopped
     environment:
       - DB_URL=jdbc:postgresql://promotion-postgres:5432/promotion_db
@@ -897,6 +907,7 @@ services:
       context: .
       dockerfile: apps/notification-service/Dockerfile
     container_name: notification-service
+    init: true
     restart: unless-stopped
     environment:
       - DB_URL=jdbc:postgresql://notification-postgres:5432/notification_db
@@ -934,6 +945,7 @@ services:
       context: .
       dockerfile: apps/gateway-service/Dockerfile
     container_name: gateway-service
+    init: true
     restart: unless-stopped
     environment:
       - REDIS_HOST=redis
