@@ -5,6 +5,10 @@
 
 > 원본 계약 파일 위치: `specs/contracts/http/`, `specs/contracts/events/`, `specs/contracts/schemas/`
 
+> **인터랙티브 탐색 (Swagger UI)**: 서비스 기동 후 각 백엔드의 `/swagger-ui.html`로 자동 생성된 OpenAPI 3.0 문서를 확인할 수 있습니다.
+> 적용 서비스: product(8082), auth(8081), user(8084), order(8086), payment(8087).
+> 단, **계약의 source of truth는 여전히 `specs/contracts/`** 입니다. Swagger는 보조 탐색 도구입니다.
+
 ---
 
 ## 1. 계약이란?
