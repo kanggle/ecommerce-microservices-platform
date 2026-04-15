@@ -42,6 +42,7 @@ public class SecurityConfig {
                 .requestMatchers("/api/auth/signup", "/api/auth/login", "/api/auth/refresh",
                     "/api/auth/oauth/**").permitAll()
                 .requestMatchers("/actuator/health", "/actuator/info", "/actuator/prometheus").permitAll()
+                .requestMatchers("/v3/api-docs/**", "/swagger-ui/**", "/swagger-ui.html").permitAll()
                 // /api/internal/** 접근 제어 정책:
                 // 1) gateway-service 라우팅 테이블에 등록되지 않아 외부 인터넷(공개 Ingress)에서는 도달 불가.
                 // 2) 접근 경로는 kubectl port-forward 또는 동일 Kubernetes 네트워크 내부의 운영자 도구 전용.
