@@ -8,7 +8,7 @@ TASK-FE-065 리뷰: 테스트 파일 3개의 widgets import 경로를 kebab-case
 
 # Status
 
-ready
+done
 
 # Owner
 

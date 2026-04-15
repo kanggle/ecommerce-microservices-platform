@@ -87,6 +87,8 @@ _(없음)_
 
 | ID | Title | Service | Tags |
 |---|---|---|---|
+| TASK-FE-065-fix-001 | TASK-FE-065 리뷰 fix: 테스트 파일 3개 widgets import 경로 kebab-case 갱신 | web-store | fix, naming, test |
+| TASK-FE-065 | web-store widgets 디렉토리 kebab-case 네이밍 적용 | web-store | code, naming |
 | TASK-BE-124-fix-001 | TASK-BE-124 리뷰 지적 수정 — wishlistItemId 미구현 전면 보완 | user-service | code, test |
 | TASK-BE-124 | GET /api/wishlists/me/check 응답에 wishlistItemId 추가 — 콘트랙트와 구현 불일치 수정 | user-service | code, test |
 | TASK-FE-064-fix-001 | TASK-FE-064 리뷰 이슈 수정: 로그아웃 카트 클리어 테스트 누락 및 토큰 만료 시 카트 즉시 삭제 | web-store | code, test |
