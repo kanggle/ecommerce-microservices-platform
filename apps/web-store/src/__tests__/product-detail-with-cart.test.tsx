@@ -1,7 +1,7 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { render, screen, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
-import { ProductDetailWithCart } from '@/widgets/ProductDetailWithCart';
+import { ProductDetailWithCart } from '@/widgets/product-detail-with-cart';
 import type { ProductDetail } from '@repo/types';
 
 const mockPush = vi.fn();
