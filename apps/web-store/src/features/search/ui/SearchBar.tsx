@@ -12,7 +12,13 @@ export function SearchBar() {
   function handleSubmit(e: FormEvent) {
     e.preventDefault();
     const trimmed = query.trim();
-    if (!trimmed) return;
+
+    // 공백만 입력된 경우 "검색 해제"로 해석해 전체 상품 목록으로 이동한다.
+    // (기존 쿼리로 머무르면 사용자가 검색창을 비웠는데도 검색 결과가 유지되어 혼란)
+    if (!trimmed) {
+      router.push('/products');
+      return;
+    }
 
     const params = new URLSearchParams();
     params.set('q', trimmed);
