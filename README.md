@@ -260,6 +260,27 @@ Order Service                  Kafka                    Downstream
 
 상세 분석: [docs/performance-benchmark.md](docs/performance-benchmark.md)
 
+### Frontend — web-store 홈페이지 (Lighthouse Desktop)
+
+홈페이지(`/`)에 ISR(`revalidate=60`) 적용 및 HeroBanner 이미지를 `next/image`(AVIF/WebP 자동 변환, `priority` preload)로 전환한 뒤 실측.
+
+| Metric | Score | Google 기준 |
+|--------|-------|------------|
+| **Performance Score** | **99/100** | 🟢 |
+| Largest Contentful Paint (LCP) | **1.0 s** | ≤ 2.5 s 🟢 |
+| First Contentful Paint (FCP) | **0.5 s** | ≤ 1.8 s 🟢 |
+| Cumulative Layout Shift (CLS) | **0** | ≤ 0.1 🟢 |
+| Total Blocking Time (TBT) | **0 ms** | ≤ 200 ms 🟢 |
+| Speed Index | **0.7 s** | ≤ 3.4 s 🟢 |
+| Time to Interactive (TTI) | **1.0 s** | ≤ 3.8 s 🟢 |
+
+개선 포인트 실측:
+
+| 변경 | Before | After | 효과 |
+|------|--------|-------|------|
+| 홈 `force-dynamic` → `revalidate=60` | 94–263 ms/req | 8–15 ms/req | **~15×** |
+| Hero 이미지 JPEG → WebP | 340 KB / 423 ms | 92 KB / 13 ms | **−73 %** / **~32×** |
+
 ---
 
 ## Code Quality: 리팩토링 사례
