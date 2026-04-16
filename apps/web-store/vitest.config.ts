@@ -9,6 +9,8 @@ export default defineConfig({
     globals: true,
     environment: 'jsdom',
     setupFiles: ['./src/__tests__/setup.ts'],
+    // Playwright E2E 스펙은 별도 러너(`pnpm e2e`)가 담당하므로 vitest 수집 대상에서 제외
+    exclude: ['node_modules/**', 'e2e/**', '.next/**'],
     coverage: {
       provider: 'v8',
       reporter: ['text', 'json-summary', 'html'],

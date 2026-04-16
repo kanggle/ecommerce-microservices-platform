@@ -237,6 +237,7 @@ Order Service                  Kafka                    Downstream
 | **Unit / Integration** | JUnit 5, Testcontainers | 백엔드 서비스 로직, DB 통합 |
 | **Contract** | Custom Contract Tests | API 계약 검증 |
 | **Component** | Vitest, React Testing Library | 프론트엔드 컴포넌트 |
+| **E2E** | Playwright (Chromium) | 브라우저 상에서 골든 플로우 검증 |
 | **Load** | k6 | 성능 (P95 < 500ms, Error < 1%) |
 
 ### Frontend Coverage (로컬 측정, v8 provider)
@@ -249,6 +250,27 @@ Order Service                  Kafka                    Downstream
 생성 방법: `pnpm --filter <app> test:coverage` — v8 provider 기반, `src/**/*.test.{ts,tsx}` 제외. HTML 리포트는 `apps/<app>/coverage/index.html`에서 확인.
 
 > 백엔드는 JaCoCo 플러그인이 루트 `build.gradle`에 전역 설정돼 있어 각 서비스별 `./gradlew :apps:<service>:jacocoTestReport`로 생성 가능. 집계 리포트는 Testcontainers DB 기동이 필요해 CI 연계로 분리.
+
+### E2E (Playwright)
+
+`apps/web-store/e2e/golden-flow.spec.ts` — 브라우저(Chromium)에서 실제 사용자 플로우를 검증한다.
+
+| 단계 | 검증 내용 |
+|------|----------|
+| 회원가입 | `/signup` 제출 → `/login` 리다이렉트 |
+| 로그인 | 자격 증명 검증 → 홈 리다이렉트 |
+| 상품 선택 | `/products`에서 첫 상품 상세 진입 |
+| 옵션 + 담기 | Variant 선택 → "장바구니 담기" → 토스트 노출 |
+| 장바구니 | `/cart` 에서 전체선택 → 주문하기 |
+| 결제 페이지 | `/checkout` 렌더링 + "결제하기" 버튼 노출까지 |
+
+실행 방법 (Docker 스택이 떠 있어야 함):
+```bash
+pnpm --filter web-store exec playwright install chromium   # 최초 1회
+pnpm --filter web-store e2e
+```
+
+> PG(Toss) 위젯은 외부 SDK 콜백이 필요하므로 결제 버튼 노출까지만 검증. 검색(search-service)은 Elasticsearch 인덱싱 상태에 민감해 별도 E2E로 분리 가능.
 
 ### Load Test Scenarios (k6)
 
