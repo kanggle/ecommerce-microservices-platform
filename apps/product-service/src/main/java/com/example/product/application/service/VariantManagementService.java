@@ -9,6 +9,8 @@ import com.example.product.domain.model.StockQuantity;
 import com.example.product.domain.repository.ProductRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.Caching;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -22,6 +24,10 @@ public class VariantManagementService {
     private final ProductRepository productRepository;
 
     @Transactional
+    @Caching(evict = {
+            @CacheEvict(value = "product-list", allEntries = true),
+            @CacheEvict(value = "product-detail", key = "#productId")
+    })
     public VariantDetail addVariant(UUID productId, String optionName, int stock, long additionalPrice) {
         Product product = productRepository.findById(productId)
                 .orElseThrow(() -> new ProductNotFoundException(productId));
@@ -35,6 +41,10 @@ public class VariantManagementService {
     }
 
     @Transactional
+    @Caching(evict = {
+            @CacheEvict(value = "product-list", allEntries = true),
+            @CacheEvict(value = "product-detail", key = "#productId")
+    })
     public VariantDetail updateVariant(UUID productId, UUID variantId, String optionName, long additionalPrice) {
         Product product = productRepository.findById(productId)
                 .orElseThrow(() -> new ProductNotFoundException(productId));
@@ -47,6 +57,10 @@ public class VariantManagementService {
     }
 
     @Transactional
+    @Caching(evict = {
+            @CacheEvict(value = "product-list", allEntries = true),
+            @CacheEvict(value = "product-detail", key = "#productId")
+    })
     public void removeVariant(UUID productId, UUID variantId) {
         Product product = productRepository.findById(productId)
                 .orElseThrow(() -> new ProductNotFoundException(productId));

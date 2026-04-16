@@ -29,8 +29,9 @@ dependencies {
     implementation 'org.flywaydb:flyway-core'
     implementation 'org.flywaydb:flyway-database-postgresql'
 
-    // Redis - TASK-BE-017+ 에서 캐싱 구현 시 추가
-    // implementation 'org.springframework.boot:spring-boot-starter-data-redis'
+    // Redis cache (상품 조회 캐싱)
+    implementation 'org.springframework.boot:spring-boot-starter-data-redis'
+    implementation 'org.springframework.boot:spring-boot-starter-cache'
 
     // Kafka
     implementation 'org.springframework.kafka:spring-kafka'

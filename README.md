@@ -272,6 +272,18 @@ Order Service                  Kafka                    Downstream
 
 상세 분석: [docs/performance-benchmark.md](docs/performance-benchmark.md)
 
+### Redis Cache (product-service)
+
+`QueryProductService.findAll/findById`에 `@Cacheable` + `RedisCacheConfiguration`(TTL 60s) 적용. 쓰기 경로(`Register`/`Update`/`Delete`/`AdjustStock`/`Variant*`) 5곳은 `@CacheEvict`로 일관성 보장. `read-heavy` trait의 물리적 증명.
+
+| 상황 | 샘플 수 | 중앙값 | 평균 |
+|---|---|---|---|
+| MISS (DB 조회 + 캐시 저장) | 5 | **122 ms** | 122 ms |
+| HIT (Redis 읽기) | 10 | **32 ms** | 38 ms |
+| 개선 | — | **~3.8×** | ~3.2× |
+
+로컬 host → port 8082 → container → Postgres 경로로 측정 (k6 수치는 docker 내부 네트워크 기준이라 별도). Redis 키 예: `product-list::all:all:0:8`.
+
 ### Frontend — web-store 홈페이지 (Lighthouse Desktop)
 
 홈페이지(`/`)에 ISR(`revalidate=60`) 적용 및 HeroBanner 이미지를 `next/image`(AVIF/WebP 자동 변환, `priority` preload)로 전환한 뒤 실측.

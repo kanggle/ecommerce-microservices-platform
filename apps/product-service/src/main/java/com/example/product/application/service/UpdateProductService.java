@@ -9,6 +9,8 @@ import com.example.product.domain.model.Product;
 import com.example.product.domain.repository.ProductRepository;
 import com.example.product.application.port.ProductMetricPort;
 import lombok.RequiredArgsConstructor;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.Caching;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -23,6 +25,10 @@ public class UpdateProductService {
     private final ProductMetricPort productMetrics;
 
     @Transactional
+    @Caching(evict = {
+            @CacheEvict(value = "product-list", allEntries = true),
+            @CacheEvict(value = "product-detail", key = "#command.productId()")
+    })
     public UUID update(UpdateProductCommand command) {
         Product product = productRepository.findById(command.productId())
                 .orElseThrow(() -> new ProductNotFoundException(command.productId()));
