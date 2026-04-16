@@ -10,7 +10,7 @@ import {
 } from 'react';
 import type { CartItem } from './types';
 import { calculateTotal, calculateItemCount } from '../lib/calculate-total';
-import { useAuth } from '@/shared/lib/auth-context';
+import { useAuth } from '@/features/auth';
 
 const STORAGE_KEY = 'cart';
 

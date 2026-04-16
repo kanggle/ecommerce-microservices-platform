@@ -25,6 +25,9 @@ vi.mock('@repo/api-client', () => ({
     getMyWishlist: vi.fn(),
     checkWishlist: vi.fn(),
   })),
+  createAuthApi: vi.fn(() => ({})),
+  getUserFromToken: vi.fn(() => null),
+  clearTokens: vi.fn(),
 }));
 
 vi.mock('@/features/wishlist/api/wishlist-api', () => ({

@@ -76,7 +76,7 @@ export function useProductVariantSelection(product: ProductDetail): ProductVaria
 
   const canAdd = selectedItems.length > 0;
 
-  const handleAddToCart = useCallback(() => {
+  const addSelectedItemsToCart = useCallback(() => {
     for (const item of selectedItems) {
       const v = variantMap.get(item.variantId);
       if (!v) continue;
@@ -91,28 +91,19 @@ export function useProductVariantSelection(product: ProductDetail): ProductVaria
         item.quantity,
       );
     }
-    setShowToast(true);
-    setSelectedItems([]);
   }, [selectedItems, variantMap, addItem, product]);
 
+  const handleAddToCart = useCallback(() => {
+    addSelectedItemsToCart();
+    setShowToast(true);
+    setSelectedItems([]);
+  }, [addSelectedItemsToCart]);
+
   const handleBuyNow = useCallback(() => {
-    for (const item of selectedItems) {
-      const v = variantMap.get(item.variantId);
-      if (!v) continue;
-      addItem(
-        {
-          productId: product.id,
-          variantId: item.variantId,
-          productName: product.name,
-          optionName: v.optionName,
-          price: product.price + v.additionalPrice,
-        },
-        item.quantity,
-      );
-    }
+    addSelectedItemsToCart();
     const keys = selectedItems.map((i) => `${product.id}:${i.variantId}`).join(',');
     router.push(`/checkout?items=${encodeURIComponent(keys)}`);
-  }, [selectedItems, variantMap, addItem, product, router]);
+  }, [addSelectedItemsToCart, selectedItems, product.id, router]);
 
   const clearToast = useCallback(() => setShowToast(false), []);
   const handleDropdownClose = useCallback(() => setDropdownOpen(false), []);
