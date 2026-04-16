@@ -34,7 +34,7 @@
     padding: 0;
     min-height: 250mm;
   }
-  .page:last-child { page-break-after: auto; }
+  .page:last-of-type { page-break-after: auto; }
 
   /* Cover */
   .cover {
@@ -244,6 +244,11 @@
     border: 1px solid var(--line);
     border-radius: 6px;
     box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+  }
+  .screenshot.compact img {
+    max-height: 95mm;
+    width: auto;
+    max-width: 100%;
   }
   .screenshot .caption {
     font-size: 10pt;
@@ -958,12 +963,12 @@ graph TB
   <span class="section-num">Section 10 · 계속</span>
   <h1 class="section">화면 — 결제 & 주문</h1>
 
-  <div class="screenshot">
+  <div class="screenshot compact">
     <img src="../screenshots/03-checkout.png" alt="체크아웃">
     <div class="caption">체크아웃 — 배송지 입력 · Toss Payments 결제 연동</div>
   </div>
 
-  <div class="screenshot">
+  <div class="screenshot compact">
     <img src="../screenshots/04-my-orders.png" alt="주문 내역">
     <div class="caption">주문 내역 — 상태 추적 (PENDING → CONFIRMED → SHIPPED → DELIVERED)</div>
   </div>
