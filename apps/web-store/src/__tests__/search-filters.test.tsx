@@ -89,4 +89,37 @@ describe('SearchFilters', () => {
 
     expect(screen.queryByText(/원 \(/)).not.toBeInTheDocument();
   });
+
+  it('min이 null인 버킷은 "X원 이하"로 렌더링하고, min 파라미터를 보내지 않는다', async () => {
+    const user = userEvent.setup();
+    render(<SearchFilters priceRanges={[{ min: null, max: 10000, count: 3 }]} />);
+
+    const button = screen.getByText('10,000원 이하 (3)');
+    expect(button).toBeInTheDocument();
+
+    await user.click(button);
+    const url = mockPush.mock.calls[0][0] as string;
+    expect(url).not.toContain('minPrice=');
+    expect(url).toContain('maxPrice=10000');
+  });
+
+  it('max가 null인 버킷은 "X원 이상"으로 렌더링하고, max 파라미터를 보내지 않는다', async () => {
+    const user = userEvent.setup();
+    render(<SearchFilters priceRanges={[{ min: 100000, max: null, count: 2 }]} />);
+
+    const button = screen.getByText('100,000원 이상 (2)');
+    expect(button).toBeInTheDocument();
+
+    await user.click(button);
+    const url = mockPush.mock.calls[0][0] as string;
+    expect(url).toContain('minPrice=100000');
+    expect(url).not.toContain('maxPrice=');
+  });
+
+  it('name이 null인 카테고리는 "기타"로 렌더링한다', () => {
+    const withNullName: CategoryFacet[] = [{ id: 'c-null', name: null, count: 1 }];
+    render(<SearchFilters categories={withNullName} />);
+
+    expect(screen.getByText('기타 (1)')).toBeInTheDocument();
+  });
 });
