@@ -3,7 +3,7 @@
 import { useState, useMemo } from 'react';
 import { LoadingSpinner } from '@repo/ui';
 import { EmptyState } from '@repo/ui';
-import { buildPageNumbers } from '@repo/utils';
+import { buildPageNumbers } from '@repo/utils/pagination';
 
 export interface ColumnDef<T> {
   key: string;
