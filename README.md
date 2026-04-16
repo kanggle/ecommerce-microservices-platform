@@ -253,21 +253,20 @@ Order Service                  Kafka                    Downstream
 
 ### E2E (Playwright)
 
-`apps/web-store/e2e/golden-flow.spec.ts` — 브라우저(Chromium)에서 실제 사용자 플로우를 검증한다.
+`apps/web-store/e2e/` — 브라우저(Chromium)에서 실제 사용자 플로우를 검증한다. 공통 로직은 `e2e/helpers/`에 추출.
 
-| 단계 | 검증 내용 |
-|------|----------|
-| 회원가입 | `/signup` 제출 → `/login` 리다이렉트 |
-| 로그인 | 자격 증명 검증 → 홈 리다이렉트 |
-| 상품 선택 | `/products`에서 첫 상품 상세 진입 |
-| 옵션 + 담기 | Variant 선택 → "장바구니 담기" → 토스트 노출 |
-| 장바구니 | `/cart` 에서 전체선택 → 주문하기 |
-| 결제 페이지 | `/checkout` 렌더링 + "결제하기" 버튼 노출까지 |
+| 스펙 | 시나리오 | 커버 |
+|------|----------|------|
+| `golden-flow.spec.ts` | 회원가입 → 로그인 → 상품 선택 → 옵션/담기 → 장바구니 → 결제 페이지 | 주문 전 구간 해피패스 |
+| `auth-redirect.spec.ts` | 비로그인 시 `/cart`, `/my/*`, `/checkout` → `/login` 리다이렉트 | 보호 라우트 6건 |
+| `wishlist.spec.ts` | 상품 상세에서 찜 추가 → `/my/wishlist` 목록 노출 → 목록에서 제거 | 위시리스트 토글 왕복 |
+| `cart-management.spec.ts` | 수량 +/− 조작 → 전체선택 → 선택 삭제 → 빈 장바구니 | 장바구니 핵심 조작 |
 
 실행 방법 (Docker 스택이 떠 있어야 함):
 ```bash
 pnpm --filter web-store exec playwright install chromium   # 최초 1회
-pnpm --filter web-store e2e
+pnpm --filter web-store e2e                                # 전체 스펙 실행
+pnpm --filter web-store e2e golden-flow                    # 특정 스펙만
 ```
 
 > PG(Toss) 위젯은 외부 SDK 콜백이 필요하므로 결제 버튼 노출까지만 검증. 검색(search-service)은 Elasticsearch 인덱싱 상태에 민감해 별도 E2E로 분리 가능.
