@@ -7,6 +7,9 @@ dependencies {
     // Shared Web
     implementation project(':libs:java-web')
 
+    // API Documentation
+    implementation 'org.springdoc:springdoc-openapi-starter-webmvc-ui:2.7.0'
+
     // Observability
     implementation project(':libs:java-observability')
 

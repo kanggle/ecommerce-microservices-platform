@@ -10,6 +10,9 @@ dependencies {
     // Web (common exception primitives)
     implementation project(':libs:java-web')
 
+    // API Documentation
+    implementation 'org.springdoc:springdoc-openapi-starter-webmvc-ui:2.7.0'
+
     // Messaging (Outbox pattern)
     implementation project(':libs:java-messaging')
 

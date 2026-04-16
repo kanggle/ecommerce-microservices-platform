@@ -321,15 +321,23 @@ Order Service                  Kafka                    Downstream
 
 각 서비스는 SpringDoc 기반 OpenAPI 3.0 스펙을 자동 생성하고 Swagger UI를 제공합니다.
 
+> **접속 방식**: Swagger UI는 게이트웨이(8080)가 아닌 **각 서비스 포트로 직접 접속**합니다. 게이트웨이는 `/api/**` 비즈니스 트래픽 라우팅 전용이며, 문서 어그리게이션은 의도적으로 분리해 로컬 개발·디버깅 시 대상 서비스를 명확히 구분합니다.
+
 | Service | Swagger UI | OpenAPI JSON |
 |---------|-----------|--------------|
+| Auth | http://localhost:8081/swagger-ui.html | http://localhost:8081/v3/api-docs |
 | Product | http://localhost:8082/swagger-ui.html | http://localhost:8082/v3/api-docs |
-| Auth    | http://localhost:8081/swagger-ui.html | http://localhost:8081/v3/api-docs |
-| User    | http://localhost:8084/swagger-ui.html | http://localhost:8084/v3/api-docs |
-| Order   | http://localhost:8086/swagger-ui.html | http://localhost:8086/v3/api-docs |
+| User | http://localhost:8084/swagger-ui.html | http://localhost:8084/v3/api-docs |
+| Search | http://localhost:8085/swagger-ui.html | http://localhost:8085/v3/api-docs |
+| Order | http://localhost:8086/swagger-ui.html | http://localhost:8086/v3/api-docs |
 | Payment | http://localhost:8087/swagger-ui.html | http://localhost:8087/v3/api-docs |
+| Batch Worker | http://localhost:8088/swagger-ui.html | http://localhost:8088/v3/api-docs |
+| Shipping | http://localhost:8090/swagger-ui.html | http://localhost:8090/v3/api-docs |
+| Review | http://localhost:8091/swagger-ui.html | http://localhost:8091/v3/api-docs |
+| Promotion | http://localhost:8092/swagger-ui.html | http://localhost:8092/v3/api-docs |
+| Notification | http://localhost:8093/swagger-ui.html | http://localhost:8093/v3/api-docs |
 
-- 컨트롤러의 @RestController + DTO에서 스키마/예시 자동 추론
+- 컨트롤러의 `@RestController` + DTO에서 스키마/예시 자동 추론
 - `/v3/api-docs` JSON 출력을 Postman/Insomnia 등으로 import 가능
 - 전체 계약은 여전히 `specs/contracts/http/*.md` 가 source of truth
 
