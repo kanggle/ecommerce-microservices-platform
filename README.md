@@ -473,5 +473,7 @@ Admin            Product          Kafka           Search
 | 문서 | 내용 |
 |------|------|
 | [Architecture Diagrams](docs/architecture-diagrams.md) | Mermaid 기반 시스템 아키텍처, 이벤트 흐름, 인프라 구성도 |
+| [**ADR (Architecture Decision Records)**](docs/adr/README.md) | MSA / Saga / 프론트 이원화 / Taxonomy 룰 시스템 — 결정 이유와 버린 대안 기록 |
 | [Demo Scenarios](docs/demo-scenarios.md) | 주요 비즈니스 흐름별 데모 시나리오 (화면 + API 매핑) |
 | [Development Process](docs/development-process.md) | 개발 방법론, 기술적 의사결정, 차별점 상세 |
+| [Performance Benchmark](docs/performance-benchmark.md) | k6 부하 테스트 결과 및 분석 |
