@@ -284,6 +284,26 @@ Order Service                  Kafka                    Downstream
 
 로컬 host → port 8082 → container → Postgres 경로로 측정 (k6 수치는 docker 내부 네트워크 기준이라 별도). Redis 키 예: `product-list::all:all:0:8`.
 
+### Gateway Rate Limiting (DoS / Abuse 방어)
+
+Spring Cloud Gateway의 `RequestRateLimiter` 필터 + Redis 토큰 버킷. IP 기반 `KeyResolver`로 경로별 개별 쿼터 운영.
+
+| 라우트 | Replenish Rate | Burst Capacity | 의도 |
+|---|---|---|---|
+| `/api/auth/**` | 10 req/s | 20 | 크리덴셜 스터핑·브루트포스 방어 — 가장 엄격 |
+| `/api/products/**`, `/api/users/**` 등 | 100 req/s | 200 | 일반 조회·쓰기 |
+
+`application.yml` 라우트별 필터 선언 + `RateLimiterConfig#ipKeyResolver` 빈.
+
+**실측 (burst test, N=30 rapid POST /api/auth/login)**:
+
+```
+처음 20개:   400 (게이트웨이 통과, 애플리케이션 400)
+21~30번째:  429 Too Many Requests (rate limit enforced)
+```
+
+→ `burstCapacity=20` 설정과 정확히 일치. Redis 컨테이너 재시작 없이 즉시 재충전 확인.
+
 ### Frontend — web-store 홈페이지 (Lighthouse Desktop)
 
 홈페이지(`/`)에 ISR(`revalidate=60`) 적용 및 HeroBanner 이미지를 `next/image`(AVIF/WebP 자동 변환, `priority` preload)로 전환한 뒤 실측.
