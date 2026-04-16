@@ -36,7 +36,7 @@ class ProductUpdatedConsumerTest {
     private ProductUpdatedEvent event(String productId, String name) {
         return new ProductUpdatedEvent(
                 "event-id", "ProductUpdated", "2026-03-23T00:00:00Z", "product-service",
-                new ProductUpdatedEvent.ProductUpdatedPayload(productId, name, "설명", 1000000L, "ON_SALE", "cat1")
+                new ProductUpdatedEvent.ProductUpdatedPayload(productId, name, "설명", 1000000L, "ON_SALE", "cat1", null)
         );
     }
 

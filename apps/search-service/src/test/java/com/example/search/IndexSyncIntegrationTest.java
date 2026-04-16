@@ -70,7 +70,7 @@ class IndexSyncIntegrationTest {
     private ProductCreatedEvent createdEvent(String productId, String name, List<ProductCreatedEvent.VariantPayload> variants) {
         return new ProductCreatedEvent(
                 "evt-id", "ProductCreated", "2026-03-23T00:00:00Z", "product-service",
-                new ProductCreatedEvent.ProductCreatedPayload(productId, name, "설명", 1500000L, "ON_SALE", "electronics", variants)
+                new ProductCreatedEvent.ProductCreatedPayload(productId, name, "설명", 1500000L, "ON_SALE", "electronics", null, variants)
         );
     }
 
@@ -102,7 +102,7 @@ class IndexSyncIntegrationTest {
 
         productUpdatedConsumer.handle(new ProductUpdatedEvent(
                 "evt-id", "ProductUpdated", "2026-03-23T00:00:00Z", "product-service",
-                new ProductUpdatedEvent.ProductUpdatedPayload(productId, "수정된상품", "새설명", 2000L, "ON_SALE", "cat2")
+                new ProductUpdatedEvent.ProductUpdatedPayload(productId, "수정된상품", "새설명", 2000L, "ON_SALE", "cat2", null)
         ));
         elasticsearchClient.indices().refresh(r -> r.index(indexProperties.name()));
 

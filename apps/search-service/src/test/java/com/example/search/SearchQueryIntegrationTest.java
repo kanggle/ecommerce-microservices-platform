@@ -61,7 +61,7 @@ class SearchQueryIntegrationTest {
                                              long price, List<ProductCreatedEvent.VariantPayload> variants) {
         return new ProductCreatedEvent(
                 "evt-id", "ProductCreated", "2026-03-23T00:00:00Z", "product-service",
-                new ProductCreatedEvent.ProductCreatedPayload(productId, name, "설명", price, "ON_SALE", categoryId, variants)
+                new ProductCreatedEvent.ProductCreatedPayload(productId, name, "설명", price, "ON_SALE", categoryId, null, variants)
         );
     }
 

@@ -68,13 +68,14 @@ public class IndexInitializer implements ApplicationRunner {
               },
               "mappings": {
                 "properties": {
-                  "productId":  { "type": "keyword" },
-                  "name":       { "type": "text", "analyzer": "nori_korean" },
-                  "description":{ "type": "text", "analyzer": "nori_korean" },
-                  "price":      { "type": "long" },
-                  "status":     { "type": "keyword" },
-                  "categoryId": { "type": "keyword" },
-                  "totalStock": { "type": "integer" }
+                  "productId":    { "type": "keyword" },
+                  "name":         { "type": "text", "analyzer": "nori_korean" },
+                  "description":  { "type": "text", "analyzer": "nori_korean" },
+                  "price":        { "type": "long" },
+                  "status":       { "type": "keyword" },
+                  "categoryId":   { "type": "keyword" },
+                  "totalStock":   { "type": "integer" },
+                  "thumbnailUrl": { "type": "keyword", "index": false }
                 }
               }
             }
@@ -90,8 +91,9 @@ public class IndexInitializer implements ApplicationRunner {
                 .exists(ExistsRequest.of(e -> e.index(indexName)))
                 .value();
 
-        if (exists && !hasKoreanAnalyzer(indexName)) {
-            log.warn("Index '{}' exists with legacy analyzer. Deleting for nori migration.", indexName);
+        if (exists && !hasCurrentSpec(indexName)) {
+            log.warn("Index '{}' exists with outdated spec (missing nori analyzer or thumbnailUrl field). "
+                    + "Deleting for migration.", indexName);
             elasticsearchClient.indices().delete(DeleteIndexRequest.of(d -> d.index(indexName)));
             exists = false;
         }
@@ -105,19 +107,26 @@ public class IndexInitializer implements ApplicationRunner {
         }
     }
 
-    private boolean hasKoreanAnalyzer(String indexName) throws Exception {
+    private boolean hasCurrentSpec(String indexName) throws Exception {
         GetMappingResponse resp = elasticsearchClient.indices()
                 .getMapping(g -> g.index(indexName));
         IndexMappingRecord record = resp.result().get(indexName);
         if (record == null) {
             return false;
         }
-        Property nameProp = record.mappings().properties().get("name");
+        var properties = record.mappings().properties();
+
+        // 1. name 필드가 nori_korean analyzer를 쓰는지
+        Property nameProp = properties.get("name");
         if (nameProp == null || !nameProp.isText()) {
             return false;
         }
-        String analyzer = nameProp.text().analyzer();
-        return KOREAN_ANALYZER.equals(analyzer);
+        if (!KOREAN_ANALYZER.equals(nameProp.text().analyzer())) {
+            return false;
+        }
+
+        // 2. thumbnailUrl 필드가 존재하는지
+        return properties.containsKey("thumbnailUrl");
     }
 
     private void createIndex(String indexName) throws Exception {

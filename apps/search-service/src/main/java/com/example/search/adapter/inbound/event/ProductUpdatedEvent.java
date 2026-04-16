@@ -20,6 +20,7 @@ public record ProductUpdatedEvent(
             String description,
             long price,
             String status,
-            String categoryId
+            String categoryId,
+            String thumbnailUrl
     ) {}
 }

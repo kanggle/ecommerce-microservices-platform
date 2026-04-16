@@ -47,7 +47,8 @@ public class IndexSyncService implements IndexSyncUseCase {
                     document.price(),
                     document.status(),
                     document.categoryId(),
-                    existingStock
+                    existingStock,
+                    document.thumbnailUrl()
             );
             searchIndexPort.upsert(withStock);
         });

@@ -55,7 +55,8 @@ public class ProductCatalogHttpAdapter implements ProductCatalogPort {
                         detail.price(),
                         detail.status(),
                         detail.categoryId(),
-                        totalStock
+                        totalStock,
+                        detail.thumbnailUrl()
                 ));
             }
             totalPages = listPage.totalPages();
@@ -103,6 +104,7 @@ public class ProductCatalogHttpAdapter implements ProductCatalogPort {
             long price,
             String status,
             String categoryId,
+            String thumbnailUrl,
             List<VariantResponse> variants
     ) {}
 
