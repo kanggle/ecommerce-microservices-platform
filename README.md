@@ -239,6 +239,17 @@ Order Service                  Kafka                    Downstream
 | **Component** | Vitest, React Testing Library | 프론트엔드 컴포넌트 |
 | **Load** | k6 | 성능 (P95 < 500ms, Error < 1%) |
 
+### Frontend Coverage (로컬 측정, v8 provider)
+
+| App | Lines | Statements | Functions | Branches | Tests |
+|-----|-------|-----------|-----------|----------|-------|
+| `admin-dashboard` | **84.33 %** | 80.89 % | 73.29 % | 79.09 % | 420 |
+| `web-store` | **81.15 %** | 80.07 % | 77.01 % | 81.38 % | — |
+
+생성 방법: `pnpm --filter <app> test:coverage` — v8 provider 기반, `src/**/*.test.{ts,tsx}` 제외. HTML 리포트는 `apps/<app>/coverage/index.html`에서 확인.
+
+> 백엔드는 JaCoCo 플러그인이 루트 `build.gradle`에 전역 설정돼 있어 각 서비스별 `./gradlew :apps:<service>:jacocoTestReport`로 생성 가능. 집계 리포트는 Testcontainers DB 기동이 필요해 CI 연계로 분리.
+
 ### Load Test Scenarios (k6)
 
 | 시나리오 | 내용 | VU (Stress) |

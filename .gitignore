@@ -42,3 +42,6 @@ apps/payment-service/data/
 # JVM crash logs
 hs_err_pid*.log
 replay_pid*.log
+
+# Test coverage reports
+apps/*/coverage/
