@@ -88,7 +88,10 @@ services:
   # 인프라 — Elasticsearch (search-service용)
   # ──────────────────────────────────────────────
   elasticsearch:
-    image: elasticsearch:8.15.0
+    build:
+      context: .
+      dockerfile: infra/elasticsearch/Dockerfile
+    image: first-project-elasticsearch:nori
     container_name: elasticsearch
     restart: unless-stopped
     environment:
