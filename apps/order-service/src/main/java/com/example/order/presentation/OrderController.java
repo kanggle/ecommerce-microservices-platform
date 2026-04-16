@@ -3,7 +3,6 @@ package com.example.order.presentation;
 import com.example.order.application.dto.CancelOrderResult;
 import com.example.order.application.dto.OrderDetail;
 import com.example.order.application.dto.OrderSummary;
-import com.example.order.application.dto.PlaceOrderCommand;
 import com.example.order.application.dto.PlaceOrderResult;
 import com.example.order.application.service.OrderCancellationService;
 import com.example.order.application.service.OrderPlacementService;
@@ -25,8 +24,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
-
 @Validated
 @RestController
 @RequiredArgsConstructor
@@ -42,20 +39,7 @@ public class OrderController {
             @RequestHeader("X-User-Id") @NotBlank(message = "X-User-Id header is required") String userId,
             @Valid @RequestBody PlaceOrderRequest request
     ) {
-        List<PlaceOrderCommand.OrderItemCommand> itemCommands = request.items().stream()
-                .map(i -> new PlaceOrderCommand.OrderItemCommand(
-                        i.productId(), i.variantId(), i.productName(), i.optionName(),
-                        i.quantity(), i.unitPrice()
-                ))
-                .toList();
-
-        PlaceOrderRequest.ShippingAddressRequest addr = request.shippingAddress();
-        PlaceOrderCommand.ShippingAddressCommand addrCommand = new PlaceOrderCommand.ShippingAddressCommand(
-                addr.recipient(), addr.phone(), addr.zipCode(), addr.address1(), addr.address2()
-        );
-
-        PlaceOrderCommand command = new PlaceOrderCommand(userId, itemCommands, addrCommand);
-        PlaceOrderResult result = orderPlacementService.placeOrder(command);
+        PlaceOrderResult result = orderPlacementService.placeOrder(request.toCommand(userId));
         return ResponseEntity.status(HttpStatus.CREATED).body(PlaceOrderResponse.from(result));
     }
 

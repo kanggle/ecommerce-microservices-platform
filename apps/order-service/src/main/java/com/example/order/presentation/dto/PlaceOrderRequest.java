@@ -1,5 +1,6 @@
 package com.example.order.presentation.dto;
 
+import com.example.order.application.dto.PlaceOrderCommand;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
@@ -16,6 +17,18 @@ public record PlaceOrderRequest(
         @Valid
         ShippingAddressRequest shippingAddress
 ) {
+    public PlaceOrderCommand toCommand(String userId) {
+        List<PlaceOrderCommand.OrderItemCommand> itemCommands = items.stream()
+                .map(i -> new PlaceOrderCommand.OrderItemCommand(
+                        i.productId(), i.variantId(), i.productName(), i.optionName(),
+                        i.quantity(), i.unitPrice()))
+                .toList();
+        PlaceOrderCommand.ShippingAddressCommand addrCommand = new PlaceOrderCommand.ShippingAddressCommand(
+                shippingAddress.recipient(), shippingAddress.phone(), shippingAddress.zipCode(),
+                shippingAddress.address1(), shippingAddress.address2());
+        return new PlaceOrderCommand(userId, itemCommands, addrCommand);
+    }
+
     public record OrderItemRequest(
             @NotNull(message = "productId is required")
             String productId,

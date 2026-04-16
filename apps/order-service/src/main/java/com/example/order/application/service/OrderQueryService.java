@@ -15,6 +15,8 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.function.Function;
+
 @Service
 @RequiredArgsConstructor
 public class OrderQueryService {
@@ -26,7 +28,7 @@ public class OrderQueryService {
         PageResult<Order> orders = (status != null)
                 ? orderRepository.findByUserIdAndStatus(userId, status, pageQuery)
                 : orderRepository.findByUserId(userId, pageQuery);
-        return mapToSummaryPageResult(orders);
+        return mapPageResult(orders, OrderSummary::from);
     }
 
     @Transactional(readOnly = true)
@@ -46,10 +48,7 @@ public class OrderQueryService {
         PageResult<Order> orders = (status != null)
                 ? orderRepository.findByStatusWithItems(status, pageQuery)
                 : orderRepository.findAllWithItems(pageQuery);
-        return new PageResult<>(
-                orders.content().stream().map(AdminOrderSummary::from).toList(),
-                orders.page(), orders.size(), orders.totalElements(), orders.totalPages()
-        );
+        return mapPageResult(orders, AdminOrderSummary::from);
     }
 
     @Transactional(readOnly = true)
@@ -64,13 +63,13 @@ public class OrderQueryService {
         return orderRepository.existsByUserIdAndProductIdAndStatus(userId, productId, OrderStatus.DELIVERED);
     }
 
-    private PageResult<OrderSummary> mapToSummaryPageResult(PageResult<Order> orders) {
+    private static <T> PageResult<T> mapPageResult(PageResult<Order> source, Function<Order, T> mapper) {
         return new PageResult<>(
-                orders.content().stream().map(OrderSummary::from).toList(),
-                orders.page(),
-                orders.size(),
-                orders.totalElements(),
-                orders.totalPages()
+                source.content().stream().map(mapper).toList(),
+                source.page(),
+                source.size(),
+                source.totalElements(),
+                source.totalPages()
         );
     }
 }
