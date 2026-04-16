@@ -43,9 +43,15 @@ export async function login(page: Page, user: Pick<TestUser, 'email' | 'password
 
 /**
  * 회원가입 + 로그인을 하나의 호출로 처리. 대부분의 E2E 시나리오에 필요한 선행 조건을 단축한다.
+ *
+ * signup → login 사이 300ms pacing을 둔다. Gateway의 auth route는 brute-force 방어용
+ * rate limit을 적용하는데, 9개 테스트가 연속 실행되며 signup/login이 burst window에
+ * 몰리면 429가 간헐적으로 발생한다. 300ms × 9 테스트 = 2.7초로 총 런타임에 영향은
+ * 최소화하면서 rate limit replenish 시간을 확보한다.
  */
 export async function signupAndLogin(page: Page, user: TestUser = uniqueUser()): Promise<TestUser> {
   await signup(page, user);
+  await page.waitForTimeout(300);
   await login(page, user);
   return user;
 }
