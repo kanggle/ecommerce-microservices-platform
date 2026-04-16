@@ -2,6 +2,7 @@
 
 import { useCallback, useState, useRef } from 'react';
 import Link from 'next/link';
+import Image from 'next/image';
 import { useProfileImage } from '@/shared/context/ProfileImageContext';
 import { useClickOutside } from '@/shared/hooks/use-click-outside';
 import styles from './Header.module.css';
@@ -27,8 +28,13 @@ export function ProfileDropdown({ userName, onLogout }: ProfileDropdownProps) {
       >
         <span className={styles.profileAvatar}>
           {profileImageUrl ? (
-            /* eslint-disable-next-line @next/next/no-img-element */
-            <img src={profileImageUrl} alt="프로필" style={{ width: '100%', height: '100%', borderRadius: '50%', objectFit: 'cover' }} />
+            <Image
+              src={profileImageUrl}
+              alt="프로필"
+              width={32}
+              height={32}
+              style={{ width: '100%', height: '100%', borderRadius: '50%', objectFit: 'cover' }}
+            />
           ) : (
             userName?.charAt(0).toUpperCase() ?? 'U'
           )}

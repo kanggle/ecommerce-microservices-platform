@@ -2,6 +2,7 @@
 
 import { useCallback, useEffect, useRef, useState } from 'react';
 import Link from 'next/link';
+import Image from 'next/image';
 import styles from './HeroBanner.module.css';
 
 interface Slide {
@@ -79,8 +80,14 @@ export function HeroBanner() {
   return (
     <section className={styles.banner}>
       <div className={styles.slide}>
-        {/* eslint-disable-next-line @next/next/no-img-element */}
-        <img src={slide.image} alt="" className={styles.image} />
+        <Image
+          src={slide.image}
+          alt=""
+          className={styles.image}
+          fill
+          priority={current === 0}
+          sizes="100vw"
+        />
         <div className={styles.overlay} style={{ background: slide.overlay }} />
         <div className={styles.inner}>
           <h1 className={styles.title}>{slide.title}</h1>
