@@ -7,10 +7,10 @@ import com.example.product.domain.exception.ImageNotFoundException;
 import com.example.product.domain.exception.MediaNotFoundException;
 import com.example.product.domain.exception.MediaValidationException;
 import com.example.product.domain.exception.ProductNotFoundException;
-import com.example.product.domain.exception.StorageUnavailableException;
 import com.example.product.domain.model.Product;
 import com.example.product.domain.model.ProductImage;
 import com.example.product.domain.port.MediaUrlResolver;
+import com.example.product.domain.port.PresignedUploadResult;
 import com.example.product.domain.port.StorageClient;
 import com.example.product.domain.repository.ProductImageRepository;
 import com.example.product.domain.repository.ProductRepository;
@@ -22,8 +22,6 @@ import org.springframework.cache.annotation.Caching;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.net.URL;
-import java.util.Comparator;
 import java.util.List;
 import java.util.Set;
 import java.util.UUID;
@@ -46,14 +44,14 @@ public class ProductImageService {
     private final StorageProperties storageProperties;
     private final EventPublishingHelper eventPublishingHelper;
 
-    public URL generateUploadUrl(UUID productId, String contentType, long contentLength) {
+    public PresignedUploadResult generateUploadUrl(UUID productId, String contentType, long contentLength) {
         validateProductExists(productId);
         validateContentType(contentType);
         validateContentLength(contentLength);
 
         String bucket = storageProperties.getBuckets().getProductImages();
         String ext = extensionFromContentType(contentType);
-        String objectKey = String.format("products/%s/%s.%s", productId, UUID.randomUUID(), ext);
+        String objectKey = String.format("products/%s/0-%s.%s", productId, UUID.randomUUID(), ext);
 
         return storageClient.generatePresignedPutUrl(bucket, objectKey, contentType, contentLength);
     }
@@ -96,7 +94,7 @@ public class ProductImageService {
         updateProductThumbnailUrl(product, productId);
 
         // Publish event
-        publishImagesUpdatedEvent(product);
+        publishImagesUpdatedEvent(product, productId);
 
         return image;
     }
@@ -116,10 +114,10 @@ public class ProductImageService {
             throw new ImageNotFoundException(imageId);
         }
 
-        if (isPrimary != null && isPrimary) {
+        if (isPrimary != null && isPrimary && !image.isPrimary()) {
             demoteExistingPrimary(productId);
             image.markPrimary();
-        } else if (isPrimary != null) {
+        } else if (isPrimary != null && !isPrimary && image.isPrimary()) {
             image.demotePrimary();
         }
 
@@ -132,7 +130,7 @@ public class ProductImageService {
         Product product = productRepository.findById(productId)
                 .orElseThrow(() -> new ProductNotFoundException(productId));
         updateProductThumbnailUrl(product, productId);
-        publishImagesUpdatedEvent(product);
+        publishImagesUpdatedEvent(product, productId);
 
         return image;
     }
@@ -172,7 +170,7 @@ public class ProductImageService {
         Product product = productRepository.findById(productId)
                 .orElseThrow(() -> new ProductNotFoundException(productId));
         updateProductThumbnailUrl(product, productId);
-        publishImagesUpdatedEvent(product);
+        publishImagesUpdatedEvent(product, productId);
     }
 
     @Transactional(readOnly = true)
@@ -223,9 +221,7 @@ public class ProductImageService {
     private void promoteLowestSortOrderImage(UUID productId) {
         List<ProductImage> remaining = productImageRepository.findByProductIdOrderBySortOrder(productId);
         if (!remaining.isEmpty()) {
-            ProductImage promoted = remaining.stream()
-                    .min(Comparator.comparingInt(ProductImage::getSortOrder))
-                    .orElse(remaining.get(0));
+            ProductImage promoted = remaining.get(0);
             promoted.markPrimary();
             productImageRepository.save(promoted);
         }
@@ -239,20 +235,25 @@ public class ProductImageService {
                 .map(img -> mediaUrlResolver.resolve(img.getObjectKey()))
                 .orElse(null);
 
-        // Only update if thumbnailUrl differs, or if there is a primary image to set
-        if (thumbnailUrl != null || !images.isEmpty()) {
-            product.updateThumbnailUrl(thumbnailUrl);
-            productRepository.save(product);
-        } else if (images.isEmpty() && product.getThumbnailUrl() != null) {
-            // Images all deleted but product had a manual thumbnailUrl — keep it (backward compat)
-            // Do nothing
-        }
+        product.updateThumbnailUrl(thumbnailUrl);
+        productRepository.save(product);
     }
 
-    private void publishImagesUpdatedEvent(Product product) {
+    private void publishImagesUpdatedEvent(Product product, UUID productId) {
+        List<ProductImage> allImages = productImageRepository.findByProductIdOrderBySortOrder(productId);
+        List<ProductImagesUpdatedPayload.ImageSnapshot> imageSnapshots = allImages.stream()
+                .map(img -> new ProductImagesUpdatedPayload.ImageSnapshot(
+                        img.getId().toString(),
+                        img.getObjectKey(),
+                        mediaUrlResolver.resolve(img.getObjectKey()),
+                        img.getSortOrder(),
+                        img.isPrimary()
+                ))
+                .toList();
+
         String thumbnailUrl = product.getThumbnailUrl();
         ProductImagesUpdatedPayload payload = ProductImagesUpdatedPayload.of(
-                product.getId().toString(), thumbnailUrl);
+                product.getId().toString(), thumbnailUrl, imageSnapshots);
         eventPublishingHelper.publishSafely(
                 ProductEvent.imagesUpdated(payload),
                 "product-image", product.getId());

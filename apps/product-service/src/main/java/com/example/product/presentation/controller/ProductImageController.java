@@ -3,6 +3,7 @@ package com.example.product.presentation.controller;
 import com.example.product.application.service.ProductImageService;
 import com.example.product.domain.model.ProductImage;
 import com.example.product.domain.port.MediaUrlResolver;
+import com.example.product.presentation.dto.ImageListResponse;
 import com.example.product.presentation.dto.ImageResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -22,10 +23,11 @@ public class ProductImageController {
     private final MediaUrlResolver mediaUrlResolver;
 
     @GetMapping
-    public List<ImageResponse> listImages(@PathVariable UUID productId) {
+    public ImageListResponse listImages(@PathVariable UUID productId) {
         List<ProductImage> images = productImageService.getImages(productId);
-        return images.stream()
+        List<ImageResponse> responseList = images.stream()
                 .map(img -> ImageResponse.from(img, mediaUrlResolver.resolve(img.getObjectKey())))
                 .toList();
+        return new ImageListResponse(responseList);
     }
 }

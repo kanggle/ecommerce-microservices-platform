@@ -10,6 +10,7 @@ import com.example.product.domain.exception.ProductNotFoundException;
 import com.example.product.domain.exception.StorageUnavailableException;
 import com.example.product.domain.model.ProductImage;
 import com.example.product.domain.port.MediaUrlResolver;
+import com.example.product.domain.port.PresignedUploadResult;
 import com.example.product.presentation.advice.GlobalExceptionHandler;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -21,7 +22,7 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
 
-import java.net.URL;
+import java.time.Instant;
 import java.util.UUID;
 
 import static org.mockito.ArgumentMatchers.any;
@@ -57,10 +58,12 @@ class AdminProductImageControllerTest {
     private final UUID productId = UUID.randomUUID();
 
     @Test
-    @DisplayName("POST /upload-url - 성공 시 200과 uploadUrl 반환")
+    @DisplayName("POST /upload-url - 성공 시 200과 uploadUrl, objectKey, expiresAt 반환")
     void generateUploadUrl_success() throws Exception {
+        String objectKey = "products/" + productId + "/0-abc.jpg";
+        Instant expiresAt = Instant.now().plusSeconds(900);
         given(productImageService.generateUploadUrl(eq(productId), eq("image/jpeg"), eq(1024L)))
-                .willReturn(new URL("https://s3.example.com/presigned"));
+                .willReturn(new PresignedUploadResult("https://s3.example.com/presigned", objectKey, expiresAt));
 
         mockMvc.perform(post("/api/admin/products/{productId}/images/upload-url", productId)
                         .contentType(MediaType.APPLICATION_JSON)
@@ -68,7 +71,9 @@ class AdminProductImageControllerTest {
                                 { "contentType": "image/jpeg", "contentLength": 1024 }
                                 """))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.uploadUrl").value("https://s3.example.com/presigned"));
+                .andExpect(jsonPath("$.uploadUrl").value("https://s3.example.com/presigned"))
+                .andExpect(jsonPath("$.objectKey").value(objectKey))
+                .andExpect(jsonPath("$.expiresAt").isNotEmpty());
     }
 
     @Test
@@ -117,7 +122,8 @@ class AdminProductImageControllerTest {
                                 """.formatted(objectKey)))
                 .andExpect(status().isCreated())
                 .andExpect(jsonPath("$.imageId").isNotEmpty())
-                .andExpect(jsonPath("$.url").value("http://cdn/img.jpg"));
+                .andExpect(jsonPath("$.url").value("http://cdn/img.jpg"))
+                .andExpect(jsonPath("$.uploadedAt").isNotEmpty());
     }
 
     @Test

@@ -20,13 +20,14 @@ class ProductImageRepositoryAdapter implements ProductImageRepository {
 
     @Override
     public ProductImage save(ProductImage image) {
-        Optional<ProductImageJpaEntity> existing = jpaRepository.findById(image.getId());
-        if (existing.isPresent()) {
-            existing.get().update(image);
-            jpaRepository.save(existing.get());
-        } else {
-            jpaRepository.save(ProductImageJpaEntity.from(image));
-        }
+        jpaRepository.findById(image.getId())
+                .ifPresentOrElse(
+                        existing -> {
+                            existing.update(image);
+                            jpaRepository.save(existing);
+                        },
+                        () -> jpaRepository.save(ProductImageJpaEntity.from(image))
+                );
         return image;
     }
 

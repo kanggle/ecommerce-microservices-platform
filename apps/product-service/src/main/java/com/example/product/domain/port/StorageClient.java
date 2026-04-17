@@ -1,7 +1,5 @@
 package com.example.product.domain.port;
 
-import java.net.URL;
-
 /**
  * Port interface for object storage operations.
  * Adapters must implement this to integrate with S3-compatible storage.
@@ -15,9 +13,9 @@ public interface StorageClient {
      * @param objectKey the object key
      * @param contentType the MIME type of the object
      * @param contentLength the size of the object in bytes
-     * @return a presigned PUT URL
+     * @return a presigned upload result containing uploadUrl, objectKey, and expiresAt
      */
-    URL generatePresignedPutUrl(String bucket, String objectKey, String contentType, long contentLength);
+    PresignedUploadResult generatePresignedPutUrl(String bucket, String objectKey, String contentType, long contentLength);
 
     /**
      * Checks if an object exists in the storage.

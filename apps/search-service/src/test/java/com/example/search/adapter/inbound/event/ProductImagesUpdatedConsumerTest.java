@@ -10,6 +10,8 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
+import java.util.List;
+
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
@@ -32,9 +34,14 @@ class ProductImagesUpdatedConsumerTest {
     private ObjectMapper objectMapper;
 
     private ProductImagesUpdatedEvent event(String productId, String thumbnailUrl) {
+        List<ProductImagesUpdatedEvent.ImageSnapshot> images = List.of(
+                new ProductImagesUpdatedEvent.ImageSnapshot(
+                        "img-1", "products/p1/0-abc.jpg", "http://cdn/img.jpg", 0, true
+                )
+        );
         return new ProductImagesUpdatedEvent(
                 "event-id", "ProductImagesUpdated", "2026-04-16T00:00:00Z", "product-service",
-                new ProductImagesUpdatedEvent.ProductImagesUpdatedPayload(productId, thumbnailUrl)
+                new ProductImagesUpdatedEvent.ProductImagesUpdatedPayload(productId, thumbnailUrl, images)
         );
     }
 
@@ -61,7 +68,10 @@ class ProductImagesUpdatedConsumerTest {
     @Test
     @DisplayName("productId가 null인 이벤트는 무시된다")
     void handle_nullProductId_skips() {
-        ProductImagesUpdatedEvent e = event(null, "http://cdn.example.com/img.jpg");
+        ProductImagesUpdatedEvent e = new ProductImagesUpdatedEvent(
+                "event-id", "ProductImagesUpdated", "2026-04-16T00:00:00Z", "product-service",
+                new ProductImagesUpdatedEvent.ProductImagesUpdatedPayload(null, "http://cdn.example.com/img.jpg", List.of())
+        );
 
         consumer.handle(e);
 

@@ -21,7 +21,8 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import java.net.URL;
+import com.example.product.domain.port.PresignedUploadResult;
+
 import java.util.UUID;
 
 @RestController
@@ -36,8 +37,9 @@ public class AdminProductImageController {
     public ResponseEntity<PresignedUrlResponse> generateUploadUrl(
             @PathVariable UUID productId,
             @Valid @RequestBody PresignedUrlRequest request) {
-        URL url = productImageService.generateUploadUrl(productId, request.contentType(), request.contentLength());
-        return ResponseEntity.ok(PresignedUrlResponse.from(url.toString()));
+        PresignedUploadResult result = productImageService.generateUploadUrl(
+                productId, request.contentType(), request.contentLength());
+        return ResponseEntity.ok(PresignedUrlResponse.from(result));
     }
 
     @PostMapping
@@ -55,7 +57,7 @@ public class AdminProductImageController {
     public ResponseEntity<ImageResponse> updateImage(
             @PathVariable UUID productId,
             @PathVariable UUID imageId,
-            @RequestBody UpdateImageRequest request) {
+            @Valid @RequestBody UpdateImageRequest request) {
         ProductImage image = productImageService.updateImage(
                 productId, imageId, request.sortOrder(), request.isPrimary());
         String resolvedUrl = mediaUrlResolver.resolve(image.getObjectKey());
