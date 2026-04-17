@@ -21,15 +21,19 @@ public class S3Config {
     private final StorageProperties storageProperties;
 
     @Bean
-    public S3Client s3Client() {
+    public StaticCredentialsProvider s3CredentialsProvider() {
         var props = storageProperties.getS3();
-        var credentials = StaticCredentialsProvider.create(
+        return StaticCredentialsProvider.create(
                 AwsBasicCredentials.create(props.getAccessKey(), props.getSecretKey()));
+    }
 
+    @Bean
+    public S3Client s3Client(StaticCredentialsProvider s3CredentialsProvider) {
+        var props = storageProperties.getS3();
         return S3Client.builder()
                 .endpointOverride(URI.create(props.getEndpoint()))
                 .region(Region.of(props.getRegion()))
-                .credentialsProvider(credentials)
+                .credentialsProvider(s3CredentialsProvider)
                 .serviceConfiguration(S3Configuration.builder()
                         .pathStyleAccessEnabled(props.isPathStyleAccess())
                         .build())
@@ -37,15 +41,12 @@ public class S3Config {
     }
 
     @Bean
-    public S3Presigner s3Presigner() {
+    public S3Presigner s3Presigner(StaticCredentialsProvider s3CredentialsProvider) {
         var props = storageProperties.getS3();
-        var credentials = StaticCredentialsProvider.create(
-                AwsBasicCredentials.create(props.getAccessKey(), props.getSecretKey()));
-
         return S3Presigner.builder()
                 .endpointOverride(URI.create(props.getEndpoint()))
                 .region(Region.of(props.getRegion()))
-                .credentialsProvider(credentials)
+                .credentialsProvider(s3CredentialsProvider)
                 .serviceConfiguration(S3Configuration.builder()
                         .pathStyleAccessEnabled(props.isPathStyleAccess())
                         .build())

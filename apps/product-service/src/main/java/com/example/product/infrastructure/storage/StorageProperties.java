@@ -20,8 +20,8 @@ public class StorageProperties {
     public static class S3Properties {
         private String endpoint = "http://localhost:9000";
         private String region = "us-east-1";
-        private String accessKey = "minioadmin";
-        private String secretKey = "minioadmin";
+        private String accessKey;
+        private String secretKey;
         private boolean pathStyleAccess = true;
         private int presignedUrlExpirationMinutes = 15;
     }

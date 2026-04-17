@@ -19,7 +19,15 @@ public class ProductImagesUpdatedConsumer {
 
     @KafkaListener(topics = "product.product.images-updated", groupId = "search-service")
     public void onMessage(@Payload String payload) throws JsonProcessingException {
-        handle(objectMapper.readValue(payload, ProductImagesUpdatedEvent.class));
+        try {
+            handle(objectMapper.readValue(payload, ProductImagesUpdatedEvent.class));
+        } catch (JsonProcessingException e) {
+            log.error("Failed to deserialize ProductImagesUpdatedEvent: {}", payload, e);
+            throw e;
+        } catch (Exception e) {
+            log.error("Failed to process ProductImagesUpdatedEvent: {}", payload, e);
+            throw e;
+        }
     }
 
     public void handle(ProductImagesUpdatedEvent event) {

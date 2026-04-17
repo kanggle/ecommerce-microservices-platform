@@ -2,6 +2,7 @@ package com.example.product.application.service;
 
 import com.example.product.domain.event.ProductEvent;
 import com.example.product.domain.event.ProductEventPublisher;
+import com.example.product.domain.event.ProductImagesUpdatedPayload;
 import com.example.product.domain.exception.ImageLimitExceededException;
 import com.example.product.domain.exception.ImageNotFoundException;
 import com.example.product.domain.exception.MediaNotFoundException;
@@ -13,6 +14,7 @@ import com.example.product.domain.model.ProductImage;
 import com.example.product.domain.model.ProductVariant;
 import com.example.product.domain.model.StockQuantity;
 import com.example.product.domain.port.MediaUrlResolver;
+import com.example.product.domain.port.PresignedUploadResult;
 import com.example.product.domain.port.StorageClient;
 import com.example.product.domain.repository.ProductImageRepository;
 import com.example.product.domain.repository.ProductRepository;
@@ -25,7 +27,7 @@ import org.mockito.ArgumentCaptor;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
-import java.net.URL;
+import java.time.Instant;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
@@ -36,7 +38,6 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.BDDMockito.given;
-import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 
 @ExtendWith(MockitoExtension.class)
@@ -82,15 +83,18 @@ class ProductImageServiceTest {
 
     @Test
     @DisplayName("유효한 요청으로 presigned URL 발급 성공")
-    void generateUploadUrl_validRequest_returnsUrl() throws Exception {
+    void generateUploadUrl_validRequest_returnsResult() {
         given(productRepository.existsById(productId)).willReturn(true);
-        URL expectedUrl = new URL("https://s3.example.com/presigned");
+        PresignedUploadResult expectedResult = new PresignedUploadResult(
+                "https://s3.example.com/presigned", "products/" + productId + "/0-abc.jpg", Instant.now().plusSeconds(900));
         given(storageClient.generatePresignedPutUrl(anyString(), anyString(), eq("image/jpeg"), eq(1024L)))
-                .willReturn(expectedUrl);
+                .willReturn(expectedResult);
 
-        URL result = productImageService.generateUploadUrl(productId, "image/jpeg", 1024L);
+        PresignedUploadResult result = productImageService.generateUploadUrl(productId, "image/jpeg", 1024L);
 
-        assertThat(result).isEqualTo(expectedUrl);
+        assertThat(result.uploadUrl()).isEqualTo("https://s3.example.com/presigned");
+        assertThat(result.objectKey()).isNotNull();
+        assertThat(result.expiresAt()).isNotNull();
     }
 
     @Test
@@ -187,7 +191,8 @@ class ProductImageServiceTest {
         given(storageClient.headObject(anyString(), eq(objectKey))).willReturn(true);
         given(productImageRepository.findByProductIdOrderBySortOrder(productId))
                 .willReturn(List.of(existingPrimary))  // demoteExistingPrimary
-                .willReturn(List.of(newImage));         // updateProductThumbnailUrl
+                .willReturn(List.of(newImage))          // updateProductThumbnailUrl
+                .willReturn(List.of(newImage));          // publishImagesUpdatedEvent
         given(productImageRepository.save(any(ProductImage.class))).willAnswer(inv -> inv.getArgument(0));
         given(productRepository.save(any(Product.class))).willAnswer(inv -> inv.getArgument(0));
         given(mediaUrlResolver.resolve(objectKey)).willReturn("http://cdn/img.jpg");
@@ -198,8 +203,8 @@ class ProductImageServiceTest {
     }
 
     @Test
-    @DisplayName("이미지 등록 시 ProductImagesUpdated 이벤트가 발행된다")
-    void registerImage_success_publishesEvent() {
+    @DisplayName("이미지 등록 시 ProductImagesUpdated 이벤트가 images 배열을 포함한다")
+    void registerImage_success_publishesEventWithImages() {
         String objectKey = "products/" + productId + "/0-abc.jpg";
         ProductImage createdImage = ProductImage.create(productId, objectKey, 0, false);
         given(productRepository.findById(productId)).willReturn(Optional.of(product));
@@ -208,13 +213,19 @@ class ProductImageServiceTest {
         given(productImageRepository.save(any(ProductImage.class))).willAnswer(inv -> inv.getArgument(0));
         given(productRepository.save(any(Product.class))).willAnswer(inv -> inv.getArgument(0));
         given(productImageRepository.findByProductIdOrderBySortOrder(productId))
-                .willReturn(List.of(createdImage));
+                .willReturn(List.of(createdImage))   // updateProductThumbnailUrl
+                .willReturn(List.of(createdImage));   // publishImagesUpdatedEvent
+        given(mediaUrlResolver.resolve(objectKey)).willReturn("http://cdn/img.jpg");
 
         productImageService.registerImage(productId, objectKey, 0, false);
 
         ArgumentCaptor<ProductEvent> captor = ArgumentCaptor.forClass(ProductEvent.class);
         verify(productEventPublisher).publish(captor.capture());
-        assertThat(captor.getValue().eventType()).isEqualTo("ProductImagesUpdated");
+        ProductEvent event = captor.getValue();
+        assertThat(event.eventType()).isEqualTo("ProductImagesUpdated");
+        ProductImagesUpdatedPayload payload = (ProductImagesUpdatedPayload) event.payload();
+        assertThat(payload.images()).hasSize(1);
+        assertThat(payload.images().get(0).objectKey()).isEqualTo(objectKey);
     }
 
     // --- deleteImage ---
@@ -228,6 +239,7 @@ class ProductImageServiceTest {
         given(productImageRepository.findById(imageId)).willReturn(Optional.of(image));
         given(productRepository.findById(productId)).willReturn(Optional.of(product));
         given(productImageRepository.findByProductIdOrderBySortOrder(productId)).willReturn(List.of());
+        given(productRepository.save(any(Product.class))).willAnswer(inv -> inv.getArgument(0));
 
         productImageService.deleteImage(productId, imageId);
 
@@ -257,7 +269,8 @@ class ProductImageServiceTest {
         given(productImageRepository.findById(imageId)).willReturn(Optional.of(primaryImage));
         given(productImageRepository.findByProductIdOrderBySortOrder(productId))
                 .willReturn(List.of(secondImage)) // after delete, for promote
-                .willReturn(List.of(secondImage)); // for thumbnailUrl update
+                .willReturn(List.of(secondImage)) // for thumbnailUrl update
+                .willReturn(List.of(secondImage)); // for publishImagesUpdatedEvent
         given(productImageRepository.save(any(ProductImage.class))).willAnswer(inv -> inv.getArgument(0));
         given(productRepository.findById(productId)).willReturn(Optional.of(product));
         given(productRepository.save(any(Product.class))).willAnswer(inv -> inv.getArgument(0));
@@ -301,6 +314,25 @@ class ProductImageServiceTest {
         ProductImage result = productImageService.updateImage(productId, imageId, 5, true);
 
         assertThat(result.getSortOrder()).isEqualTo(5);
+        assertThat(result.isPrimary()).isTrue();
+    }
+
+    @Test
+    @DisplayName("이미 primary인 이미지에 isPrimary=true 요청 시 demote를 호출하지 않는다")
+    void updateImage_alreadyPrimary_skipsDemote() {
+        UUID imageId = UUID.randomUUID();
+        ProductImage image = ProductImage.create(productId, "products/" + productId + "/0-abc.jpg", 0, true);
+        given(productRepository.existsById(productId)).willReturn(true);
+        given(productImageRepository.findById(imageId)).willReturn(Optional.of(image));
+        given(productImageRepository.save(any(ProductImage.class))).willAnswer(inv -> inv.getArgument(0));
+        given(productRepository.findById(productId)).willReturn(Optional.of(product));
+        given(productRepository.save(any(Product.class))).willAnswer(inv -> inv.getArgument(0));
+        given(productImageRepository.findByProductIdOrderBySortOrder(productId)).willReturn(List.of(image));
+        given(mediaUrlResolver.resolve(image.getObjectKey())).willReturn("http://cdn/img");
+
+        ProductImage result = productImageService.updateImage(productId, imageId, null, true);
+
+        // Should still be primary, no demote happened
         assertThat(result.isPrimary()).isTrue();
     }
 }

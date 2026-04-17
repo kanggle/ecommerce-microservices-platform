@@ -84,7 +84,7 @@ public class ElasticsearchIndexAdapter implements SearchIndexPort {
     public void updateThumbnailUrl(String productId, String thumbnailUrl) {
         try {
             Map<String, Object> partial = new java.util.HashMap<>();
-            partial.put("thumbnailUrl", thumbnailUrl != null ? thumbnailUrl : "");
+            partial.put("thumbnailUrl", thumbnailUrl);
             elasticsearchClient.update(UpdateRequest.of(u -> u
                     .index(indexProperties.name())
                     .id(productId)
