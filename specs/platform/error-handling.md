@@ -112,6 +112,16 @@ All services must return errors in the following JSON format:
 | INTERNAL_ERROR | 500 | Unexpected server-side error |
 | SERVICE_UNAVAILABLE | 503 | A required upstream service is unavailable |
 
+## Object Storage
+
+See [`specs/platform/object-storage-policy.md`](object-storage-policy.md).
+
+| Code | HTTP | Description |
+|---|---|---|
+| STORAGE_UNAVAILABLE | 503 | Object storage backend is unreachable or failed to issue a presigned URL |
+| MEDIA_NOT_FOUND | 404 | Announced upload object was not found in the bucket at registration time |
+| MEDIA_VALIDATION_FAILED | 400 | Uploaded object size or content-type does not match the allow-list |
+
 ---
 
 # Domain-Specific Error Codes
@@ -127,6 +137,8 @@ All services must return errors in the following JSON format:
 | VARIANT_NOT_FOUND | 404 | Variant with given ID does not exist |
 | INSUFFICIENT_STOCK | 400 | Stock adjustment would result in negative stock |
 | CONFLICT | 409 | Optimistic locking conflict on concurrent update |
+| IMAGE_NOT_FOUND | 404 | Image with given ID does not exist for this product |
+| IMAGE_LIMIT_EXCEEDED | 422 | Product already has the maximum number of images (10) |
 
 ## Search  `[domain: ecommerce]`
 

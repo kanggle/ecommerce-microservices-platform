@@ -12,3 +12,7 @@ data:
   OTEL_TRACES_EXPORTER: "otlp"
   OTEL_METRICS_EXPORTER: "none"
   OTEL_LOGS_EXPORTER: "none"
+  STORAGE_S3_ENDPOINT: "http://minio.infra.svc.cluster.local:9000"
+  STORAGE_S3_REGION: "us-east-1"
+  STORAGE_S3_PATH_STYLE_ACCESS: "true"
+  STORAGE_CDN_BASE_URL: "http://minio.infra.svc.cluster.local:9000"

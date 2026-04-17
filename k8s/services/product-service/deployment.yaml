@@ -60,6 +60,16 @@ spec:
                 secretKeyRef:
                   name: product-db-secret
                   key: DB_PASSWORD
+            - name: STORAGE_S3_ACCESS_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: storage-credentials
+                  key: STORAGE_S3_ACCESS_KEY
+            - name: STORAGE_S3_SECRET_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: storage-credentials
+                  key: STORAGE_S3_SECRET_KEY
           volumeMounts:
             - name: tmp
               mountPath: /tmp

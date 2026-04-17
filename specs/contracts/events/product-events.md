@@ -109,6 +109,40 @@ Published when inventory stock is adjusted for any variant.
 
 ---
 
+## ProductImagesUpdated
+
+Published when images are added to, removed from, or reordered on a product.
+This includes changes to `isPrimary` and `sortOrder`.
+
+**Topic:** `product-images-updated`
+
+**Consumers:** search-service
+
+**Payload**
+```json
+{
+  "productId": "string (UUID)",
+  "thumbnailUrl": "string (nullable — resolved URL of primary image)",
+  "images": [
+    {
+      "imageId": "string (UUID)",
+      "objectKey": "string",
+      "url": "string (resolved CDN/storage URL)",
+      "sortOrder": 0,
+      "isPrimary": true
+    }
+  ]
+}
+```
+
+`thumbnailUrl` is a convenience field: it equals the `url` of the image with
+`isPrimary=true`. If no images remain after deletion, it is `null`.
+
+`images` contains the **full current list** (snapshot, not delta) sorted by
+`sortOrder` ascending. Consumers must replace their stored image list entirely.
+
+---
+
 ## Consumer Rules
 
 - Consumers must handle duplicate events idempotently.
