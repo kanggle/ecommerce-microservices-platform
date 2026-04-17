@@ -7,7 +7,34 @@ import { useProducts } from '../hooks/use-products';
 import { PRODUCT_STATUS_OPTIONS } from '@/shared/lib/status-options';
 import type { ProductSummary } from '@repo/types';
 
+const thumbnailStyle: React.CSSProperties = {
+  width: 40,
+  height: 40,
+  objectFit: 'cover',
+  borderRadius: 4,
+  backgroundColor: '#f3f4f6',
+};
+
+const placeholderStyle: React.CSSProperties = {
+  ...thumbnailStyle,
+  display: 'flex',
+  alignItems: 'center',
+  justifyContent: 'center',
+  color: '#9ca3af',
+  fontSize: 12,
+};
+
 const columns: ColumnDef<ProductSummary>[] = [
+  {
+    key: 'thumbnailUrl',
+    header: '',
+    render: (product: ProductSummary) =>
+      product.thumbnailUrl ? (
+        <img src={product.thumbnailUrl} alt={product.name} style={thumbnailStyle} />
+      ) : (
+        <div style={placeholderStyle}>-</div>
+      ),
+  },
   { key: 'name', header: '상품명', sortable: true },
   {
     key: 'price',

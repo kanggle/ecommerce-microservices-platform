@@ -13,6 +13,7 @@ public record ProductDetailResponse(
         long price,
         String categoryId,
         String thumbnailUrl,
+        List<ImageItem> images,
         List<VariantDetailItem> variants
 ) {
     public record VariantDetailItem(
@@ -22,13 +23,24 @@ public record ProductDetailResponse(
             long additionalPrice
     ) {}
 
-    public static ProductDetailResponse from(ProductDetail detail) {
+    public record ImageItem(
+            String imageId,
+            String url,
+            int sortOrder,
+            boolean isPrimary
+    ) {}
+
+    public static ProductDetailResponse from(ProductDetail detail, List<ImageResponse> images) {
         List<VariantDetailItem> variants = detail.variants().stream()
                 .map(v -> new VariantDetailItem(
                         v.id().toString(),
                         v.optionName(),
                         v.stock(),
                         v.additionalPrice()))
+                .toList();
+
+        List<ImageItem> imageItems = images.stream()
+                .map(img -> new ImageItem(img.imageId(), img.url(), img.sortOrder(), img.isPrimary()))
                 .toList();
 
         return new ProductDetailResponse(
@@ -39,6 +51,7 @@ public record ProductDetailResponse(
                 detail.price(),
                 UuidUtils.toString(detail.categoryId()),
                 detail.thumbnailUrl(),
+                imageItems,
                 variants);
     }
 }

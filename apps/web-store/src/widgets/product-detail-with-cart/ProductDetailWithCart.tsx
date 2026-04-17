@@ -36,7 +36,10 @@ export function ProductDetailWithCart({ product }: ProductDetailWithCartProps) {
   } = useProductVariantSelection(product);
 
   const images = useMemo(
-    () => (product.images?.length ? product.images : [`/images/products/${product.id}.jpg`]),
+    () => {
+      if (!product.images?.length) return [`/images/products/${product.id}.jpg`];
+      return product.images.map((img: any) => (typeof img === 'string' ? img : img.url));
+    },
     [product.images, product.id],
   );
 

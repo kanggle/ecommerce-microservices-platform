@@ -76,9 +76,7 @@ _(없음)_
 
 ## in-progress
 
-| ID | Title | Service | Tags |
-|---|---|---|---|
-| TASK-FE-066 | admin-dashboard 상품 등록/수정 폼 이미지 업로드 UI — 다중 업로드, 미리보기, 순서 변경, 삭제 | admin-dashboard | code, api |
+_(없음)_
 
 ## review
 
@@ -88,6 +86,7 @@ _(없음)_
 
 | ID | Title | Service | Tags |
 |---|---|---|---|
+| TASK-FE-066 | admin-dashboard 상품 등록/수정 폼 이미지 업로드 UI — 다중 업로드, 미리보기, 순서 변경, 삭제 | admin-dashboard | code, api |
 | TASK-BE-125-fix-001 | TASK-BE-125 리뷰 수정 — 계약 위반 13건 + 최적화 4건 | product-service, search-service | code, api, event |
 | TASK-BE-125 | product-service 상품 이미지 업로드/삭제 API + ProductImagesUpdated 이벤트 | product-service, search-service | code, api, event |
 | TASK-INT-022-fix-001 | TASK-INT-022 리뷰 수정 — MinIO /tmp 마운트, .env.example, infra NSP PSA, minio-init 리소스 제한 | infra | deploy, code |

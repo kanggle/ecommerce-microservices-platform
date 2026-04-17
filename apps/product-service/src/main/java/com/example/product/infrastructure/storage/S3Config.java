@@ -43,8 +43,12 @@ public class S3Config {
     @Bean
     public S3Presigner s3Presigner(StaticCredentialsProvider s3CredentialsProvider) {
         var props = storageProperties.getS3();
+        // Presigned URLs are consumed by the browser, so use the CDN/public
+        // endpoint (localhost:9000) instead of the Docker-internal endpoint
+        // (minio:9000) that s3Client uses.
+        String presignerEndpoint = storageProperties.getCdn().getBaseUrl();
         return S3Presigner.builder()
-                .endpointOverride(URI.create(props.getEndpoint()))
+                .endpointOverride(URI.create(presignerEndpoint))
                 .region(Region.of(props.getRegion()))
                 .credentialsProvider(s3CredentialsProvider)
                 .serviceConfiguration(S3Configuration.builder()

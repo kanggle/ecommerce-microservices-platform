@@ -18,6 +18,13 @@ export interface ProductVariant {
   additionalPrice: number;
 }
 
+export interface ProductImageSummary {
+  imageId: string;
+  url: string;
+  sortOrder: number;
+  isPrimary: boolean;
+}
+
 export interface ProductDetail {
   id: string;
   name: string;
@@ -26,7 +33,7 @@ export interface ProductDetail {
   price: number;
   categoryId: string;
   thumbnailUrl?: string;
-  images?: string[];
+  images?: ProductImageSummary[];
   variants: ProductVariant[];
 }
 

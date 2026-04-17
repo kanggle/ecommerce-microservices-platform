@@ -31,7 +31,7 @@ export const ProductCard = memo(function ProductCard({ product, action }: Produc
             sizes="(max-width: 768px) 50vw, 25vw"
             className={styles.image}
             onError={() => setImgError(true)}
-            unoptimized={product.thumbnailUrl.includes('placehold.co')}
+            unoptimized={product.thumbnailUrl.includes('placehold.co') || product.thumbnailUrl.startsWith('http://localhost')}
           />
           {action && <div className={styles.action}>{action}</div>}
         </div>

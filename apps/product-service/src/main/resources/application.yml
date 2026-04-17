@@ -68,7 +68,7 @@ storage:
   cdn:
     base-url: ${CDN_BASE_URL:http://localhost:9000}
   buckets:
-    product-images: ${S3_BUCKET_PRODUCT_IMAGES:product-images}
+    product-images: ${S3_BUCKET_PRODUCT_IMAGES:firstproject-local-product-images}
 
 server:
   port: ${SERVER_PORT:8082}

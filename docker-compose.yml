@@ -637,6 +637,9 @@ services:
       - OTEL_METRICS_EXPORTER=none
       - OTEL_LOGS_EXPORTER=none
       - SPRING_PROFILES_ACTIVE=prod
+      - S3_ENDPOINT=http://minio:9000
+      - S3_BUCKET_PRODUCT_IMAGES=firstproject-local-product-images
+      - CDN_BASE_URL=http://localhost:9000
     ports:
       - "8082:8082"
     deploy:
@@ -650,6 +653,8 @@ services:
       kafka:
         condition: service_healthy
       redis:
+        condition: service_healthy
+      minio:
         condition: service_healthy
     healthcheck:
       test: ["CMD-SHELL", "wget -qO- http://localhost:8082/actuator/health || exit 1"]

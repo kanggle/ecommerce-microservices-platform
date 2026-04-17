@@ -4,12 +4,7 @@ const nextConfig: NextConfig = {
   output: 'standalone',
   transpilePackages: ['@repo/ui', '@repo/types', '@repo/api-client', '@repo/utils'],
   images: {
-    remotePatterns: [
-      {
-        protocol: 'https',
-        hostname: '**',
-      },
-    ],
+    unoptimized: true,
   },
   eslint: {
     ignoreDuringBuilds: true,

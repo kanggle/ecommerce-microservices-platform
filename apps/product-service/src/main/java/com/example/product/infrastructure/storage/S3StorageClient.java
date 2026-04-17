@@ -39,7 +39,6 @@ public class S3StorageClient implements StorageClient {
                     .bucket(bucket)
                     .key(objectKey)
                     .contentType(contentType)
-                    .contentLength(contentLength)
                     .build();
 
             PutObjectPresignRequest presignRequest = PutObjectPresignRequest.builder()
