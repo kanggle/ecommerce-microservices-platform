@@ -70,26 +70,26 @@ Tasks must not be implemented from `backlog/`, `in-progress/`, `review/`, `done/
 | TASK-BE-079 | 리뷰/평점 시스템 — 상품 리뷰 작성, 평점 관리, 평균 평점 집계 | review-service (신규) | code, api, event |
 | TASK-BE-080 | 위시리스트/찜 기능 — 사용자별 관심 상품 목록 관리 | user-service | code, api |
 | TASK-BE-081 | 배송 추적 서비스 — 주문 배송 상태 관리 및 추적 | shipping-service (신규) | code, api, event |
-| TASK-FE-066 | admin-dashboard 상품 등록/수정 폼 이미지 업로드 UI — 다중 업로드, 미리보기, 순서 변경, 삭제 | admin-dashboard | code, api |
-
 ## ready
 
 _(없음)_
 
 ## in-progress
 
-_(없음)_
+| ID | Title | Service | Tags |
+|---|---|---|---|
+| TASK-FE-066 | admin-dashboard 상품 등록/수정 폼 이미지 업로드 UI — 다중 업로드, 미리보기, 순서 변경, 삭제 | admin-dashboard | code, api |
 
 ## review
 
-| ID | Title | Service | Tags |
-|---|---|---|---|
-| TASK-BE-125 | product-service 상품 이미지 업로드/삭제 API + ProductImagesUpdated 이벤트 — 다중 이미지, 정렬 순서, 대표 이미지 지정 | product-service | code, api, event |
+_(없음)_
 
 ## done
 
 | ID | Title | Service | Tags |
 |---|---|---|---|
+| TASK-BE-125-fix-001 | TASK-BE-125 리뷰 수정 — 계약 위반 13건 + 최적화 4건 | product-service, search-service | code, api, event |
+| TASK-BE-125 | product-service 상품 이미지 업로드/삭제 API + ProductImagesUpdated 이벤트 | product-service, search-service | code, api, event |
 | TASK-INT-022-fix-001 | TASK-INT-022 리뷰 수정 — MinIO /tmp 마운트, .env.example, infra NSP PSA, minio-init 리소스 제한 | infra | deploy, code |
 | TASK-INT-022 | 상품 이미지 객체 스토리지 인프라 구성 — MinIO(local/dev) + S3(staging/prod) 배선 | infra | deploy, code |
 | TASK-FE-065-fix-001 | TASK-FE-065 리뷰 fix: 테스트 파일 3개 widgets import 경로 kebab-case 갱신 | web-store | fix, naming, test |
