@@ -11,4 +11,6 @@ public interface IndexSyncUseCase {
     void upsertPreservingStock(SearchDocument document);
 
     void updateStock(String productId, int currentStock);
+
+    void updateThumbnailUrl(String productId, String thumbnailUrl);
 }

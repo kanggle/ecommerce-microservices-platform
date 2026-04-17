@@ -28,6 +28,10 @@ public record ProductEvent(
         return of("StockChanged", payload);
     }
 
+    public static ProductEvent imagesUpdated(ProductImagesUpdatedPayload payload) {
+        return of("ProductImagesUpdated", payload);
+    }
+
     private static ProductEvent of(String eventType, EventPayload payload) {
         return new ProductEvent(UUID.randomUUID(), eventType, Instant.now(), "product-service", payload);
     }
