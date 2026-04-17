@@ -36,6 +36,10 @@ dependencies {
     // Kafka
     implementation 'org.springframework.kafka:spring-kafka'
 
+    // AWS S3 SDK v2
+    implementation platform('software.amazon.awssdk:bom:2.25.60')
+    implementation 'software.amazon.awssdk:s3'
+
     // PostgreSQL driver
     runtimeOnly 'org.postgresql:postgresql'
 

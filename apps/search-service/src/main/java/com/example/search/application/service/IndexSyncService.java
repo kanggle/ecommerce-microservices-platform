@@ -53,6 +53,11 @@ public class IndexSyncService implements IndexSyncUseCase {
         });
     }
 
+    public void updateThumbnailUrl(String productId, String thumbnailUrl) {
+        log.info("Updating thumbnailUrl for productId={}", productId);
+        executeWithMetrics("images-updated", () -> searchIndexPort.updateThumbnailUrl(productId, thumbnailUrl));
+    }
+
     public void updateStock(String productId, int currentStock) {
         String status = currentStock == 0 ? ProductStatus.SOLD_OUT.name() : ProductStatus.ON_SALE.name();
         log.info("Updating stock for productId={}, currentStock={}, status={}", productId, currentStock, status);

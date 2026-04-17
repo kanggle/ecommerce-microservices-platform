@@ -78,6 +78,23 @@ public class ElasticsearchIndexAdapter implements SearchIndexPort {
     }
 
     @Override
+    public void updateThumbnailUrl(String productId, String thumbnailUrl) {
+        try {
+            Map<String, Object> partial = new java.util.HashMap<>();
+            partial.put("thumbnailUrl", thumbnailUrl != null ? thumbnailUrl : "");
+            elasticsearchClient.update(UpdateRequest.of(u -> u
+                    .index(indexProperties.name())
+                    .id(productId)
+                    .docAsUpsert(false)
+                    .doc(partial)
+            ), Map.class);
+        } catch (Exception e) {
+            log.error("Failed to update thumbnailUrl for productId={}", productId, e);
+            throw new SearchException("Failed to update thumbnailUrl for productId=" + productId, e);
+        }
+    }
+
+    @Override
     @SuppressWarnings("unchecked")
     public Optional<SearchDocument> findById(String productId) {
         try {

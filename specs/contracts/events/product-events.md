@@ -109,6 +109,24 @@ Published when inventory stock is adjusted for any variant.
 
 ---
 
+## ProductImagesUpdated
+
+Published when product images are added, updated, or deleted.
+
+**Topic:** `product.product.images-updated`
+
+**Consumers:** search-service
+
+**Payload**
+```json
+{
+  "productId": "string (UUID)",
+  "thumbnailUrl": "string (nullable)"
+}
+```
+
+---
+
 ## Consumer Rules
 
 - Consumers must handle duplicate events idempotently.

@@ -127,6 +127,16 @@ All services must return errors in the following JSON format:
 | VARIANT_NOT_FOUND | 404 | Variant with given ID does not exist |
 | INSUFFICIENT_STOCK | 400 | Stock adjustment would result in negative stock |
 | CONFLICT | 409 | Optimistic locking conflict on concurrent update |
+| IMAGE_NOT_FOUND | 404 | Image with given ID does not exist |
+| IMAGE_LIMIT_EXCEEDED | 422 | Maximum number of images per product reached (10) |
+
+## Object Storage  `[domain: ecommerce]`
+
+| Code | HTTP | Description |
+|---|---|---|
+| STORAGE_UNAVAILABLE | 503 | Object storage service is unavailable |
+| MEDIA_NOT_FOUND | 404 | Object does not exist in storage |
+| MEDIA_VALIDATION_FAILED | 400 | Media validation failed (invalid content type or size) |
 
 ## Search  `[domain: ecommerce]`
 
