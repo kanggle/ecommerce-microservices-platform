@@ -4,6 +4,7 @@ import { useRouter } from 'next/navigation';
 import type { ProductDetail, ProductStatus } from '@repo/types';
 import { useProductForm } from '../hooks/use-product-form';
 import { VariantEditor } from './VariantEditor';
+import { ProductImageSection } from './ProductImageSection';
 import { Section } from '@/shared/ui';
 import { formStyles } from '@/shared/lib/form-styles';
 
@@ -76,6 +77,8 @@ export function ProductForm({ product }: Props) {
       {!isEdit && (
         <VariantEditor variants={variants} onChange={setVariants} initialKeyCount={variants.length} />
       )}
+
+      <ProductImageSection productId={product?.id} />
 
       <div style={styles.buttonRow}>
         <button type="submit" disabled={!isValid || isSubmitting}
