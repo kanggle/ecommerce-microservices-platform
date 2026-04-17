@@ -114,7 +114,7 @@ Published when inventory stock is adjusted for any variant.
 Published when images are added to, removed from, or reordered on a product.
 This includes changes to `isPrimary` and `sortOrder`.
 
-**Topic:** `product-images-updated`
+**Topic:** `product.product.images-updated`
 
 **Consumers:** search-service
 

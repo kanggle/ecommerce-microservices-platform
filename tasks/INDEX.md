@@ -78,13 +78,13 @@ _(없음)_
 
 ## in-progress
 
-| ID | Title | Service | Tags |
-|---|---|---|---|
-| TASK-BE-125 | product-service 상품 이미지 업로드/삭제 API + ProductImagesUpdated 이벤트 — 다중 이미지, 정렬 순서, 대표 이미지 지정 | product-service | code, api, event |
+_(없음)_
 
 ## review
 
-_(없음)_
+| ID | Title | Service | Tags |
+|---|---|---|---|
+| TASK-BE-125 | product-service 상품 이미지 업로드/삭제 API + ProductImagesUpdated 이벤트 — 다중 이미지, 정렬 순서, 대표 이미지 지정 | product-service | code, api, event |
 
 ## done
 
