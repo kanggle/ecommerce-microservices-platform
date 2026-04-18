@@ -16,8 +16,8 @@
       "Edit(/.claude/skills/service-types/**)"
     ],
     "additionalDirectories": [
-      "c:\\Users\\kangdow\\dev\\project\\ai-project\\first-project\\apps\\web-store\\src\\app\\(store)\\products",
-      "C:\\Users\\kangdow\\dev\\project\\ai-project\\first-project\\.claude\\agents"
+      "c:\\Users\\kangdow\\dev\\project\\ai-project\\ecommerce-microservices-platform\\apps\\web-store\\src\\app\\(store)\\products",
+      "C:\\Users\\kangdow\\dev\\project\\ai-project\\ecommerce-microservices-platform\\.claude\\agents"
     ]
   },
   "hooks": {

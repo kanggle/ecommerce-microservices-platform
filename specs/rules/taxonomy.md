@@ -318,7 +318,7 @@
 
 현실 프로젝트에서 자주 등장하는 조합:
 
-- **ecommerce + transactional + content-heavy + read-heavy + integration-heavy** → 일반적인 B2C 이커머스 (first-project 자체)
+- **ecommerce + transactional + content-heavy + read-heavy + integration-heavy** → 일반적인 B2C 이커머스 (ecommerce-microservices-platform 자체)
 - **fintech + transactional + regulated + audit-heavy** → 송금/지갑 앱
 - **pg + transactional + regulated + audit-heavy + integration-heavy** → PG 사업자
 - **banking + regulated + audit-heavy + transactional + internal-system** → 은행 기간계

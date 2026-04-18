@@ -1,5 +1,5 @@
 ---
-name: first-project
+name: ecommerce-microservices-platform
 domain: ecommerce
 traits: [transactional, content-heavy, read-heavy, integration-heavy]
 service_types: [rest-api, event-consumer, batch-job, frontend-app]
@@ -9,7 +9,7 @@ scale_tier: startup
 taxonomy_version: 0.1
 ---
 
-# first-project
+# ecommerce-microservices-platform
 
 ## Purpose
 

@@ -2,7 +2,7 @@
 
 This directory holds agents that are bound to a specific `domain` declared in [`PROJECT.md`](../../../PROJECT.md).
 
-Currently empty — first-project's domain (`ecommerce`) has no domain-specific agents yet; the 13 agents under [`../common/`](../common/) cover its needs. This directory exists so the layout is ready when specialized agents become necessary.
+Currently empty — ecommerce-microservices-platform's domain (`ecommerce`) has no domain-specific agents yet; the 13 agents under [`../common/`](../common/) cover its needs. This directory exists so the layout is ready when specialized agents become necessary.
 
 ---
 

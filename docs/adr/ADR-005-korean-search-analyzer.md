@@ -51,7 +51,7 @@ FROM elasticsearch:8.15.0
 RUN elasticsearch-plugin install --batch analysis-nori
 ```
 
-[docker-compose.yml](../../docker-compose.yml)은 `image:` 대신 `build:`로 이 Dockerfile을 빌드해 `first-project-elasticsearch:nori`로 태깅. 공식 이미지 업그레이드 시 한 줄만 갱신하면 됨.
+[docker-compose.yml](../../docker-compose.yml)은 `image:` 대신 `build:`로 이 Dockerfile을 빌드해 `ecommerce-microservices-platform-elasticsearch:nori`로 태깅. 공식 이미지 업그레이드 시 한 줄만 갱신하면 됨.
 
 ### 2. 인덱스 매핑
 

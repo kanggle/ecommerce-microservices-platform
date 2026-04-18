@@ -1,7 +1,7 @@
 # Taxonomy-Based Rules System — Onboarding Guide
 
 > **Audience**: Developers joining this repository, or anyone bootstrapping a new project from this template.
-> **Status**: v0.1 (dogfood phase on first-project).
+> **Status**: v0.1 (dogfood phase on ecommerce-microservices-platform).
 
 This guide explains how the **taxonomy-based rules system** works, why it exists, and how to use it when starting a new project or working on an existing one.
 
@@ -25,7 +25,7 @@ At the repository root. YAML frontmatter declares the project's classification:
 
 ```yaml
 ---
-name: first-project
+name: ecommerce-microservices-platform
 domain: ecommerce
 traits: [transactional, content-heavy, read-heavy, integration-heavy]
 service_types: [rest-api, event-consumer, batch-job, frontend-app]
@@ -106,9 +106,9 @@ For trait-vs-trait conflicts (e.g., `real-time` + `batch-heavy`), check the Inco
 
 ---
 
-## Worked example — first-project
+## Worked example — ecommerce-microservices-platform
 
-`first-project` is classified as:
+`ecommerce-microservices-platform` is classified as:
 
 - **domain**: `ecommerce`
 - **traits**: `transactional`, `content-heavy`, `read-heavy`, `integration-heavy`
@@ -129,7 +129,7 @@ What gets loaded:
 
 Suppose you want to start a **fintech** project with `transactional`, `regulated`, and `audit-heavy` traits.
 
-1. **Copy** `first-project/` to a new directory (exclude `node_modules`, `build`, `.git`).
+1. **Copy** `ecommerce-microservices-platform/` to a new directory (exclude `node_modules`, `build`, `.git`).
 2. **Edit `PROJECT.md`** at the new root:
    - Change `name`
    - Change `domain: fintech`

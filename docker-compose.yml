@@ -91,7 +91,7 @@ services:
     build:
       context: .
       dockerfile: infra/elasticsearch/Dockerfile
-    image: first-project-elasticsearch:nori
+    image: ecommerce-microservices-platform-elasticsearch:nori
     container_name: elasticsearch
     restart: unless-stopped
     environment:

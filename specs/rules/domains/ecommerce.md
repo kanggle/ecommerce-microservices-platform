@@ -49,7 +49,7 @@
 
 bounded context 간 상호 참조는 **ID와 이벤트로만** 이뤄져야 하며, 직접 엔티티를 공유하지 않는다. (cross-context domain 모델 공유 금지)
 
-> 현재 first-project의 구현은 이 맵과 일치한다. 참고:
+> 현재 ecommerce-microservices-platform의 구현은 이 맵과 일치한다. 참고:
 > [apps/product-service/](../../../apps/product-service/), [apps/order-service/](../../../apps/order-service/), [apps/payment-service/](../../../apps/payment-service/), [apps/promotion-service/](../../../apps/promotion-service/), [apps/shipping-service/](../../../apps/shipping-service/), [apps/review-service/](../../../apps/review-service/), [apps/notification-service/](../../../apps/notification-service/), [apps/user-service/](../../../apps/user-service/).
 
 ---

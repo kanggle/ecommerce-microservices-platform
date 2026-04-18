@@ -445,7 +445,7 @@ k8s/
 ## Project Structure
 
 ```
-first-project/
+ecommerce-microservices-platform/
 ├── apps/
 │   ├── gateway-service/        # API Gateway (Spring Cloud Gateway)
 │   ├── auth-service/           # 인증 서비스

@@ -8,7 +8,7 @@
 
 콘텐츠(상품 정보, 기사, 미디어, 리뷰, 프로모션 배너 등)가 제품 가치의 핵심 자산이고, 그 생산·큐레이션·배포·검색이 시스템 설계를 좌우하는 서비스에 적용된다.
 
-first-project 기준 적용 범위:
+ecommerce-microservices-platform 기준 적용 범위:
 
 - 필수: [apps/product-service/](../../../apps/product-service/) (상품 카탈로그), [apps/review-service/](../../../apps/review-service/) (리뷰 콘텐츠), [apps/search-service/](../../../apps/search-service/) (검색 인덱스), [apps/promotion-service/](../../../apps/promotion-service/) (배너·캠페인 콘텐츠)
 - 조건부: 프론트엔드 렌더러([apps/web-store/](../../../apps/web-store/), [apps/admin-dashboard/](../../../apps/admin-dashboard/))
