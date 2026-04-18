@@ -12,6 +12,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 
+import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
 
@@ -26,15 +27,17 @@ public class ElasticsearchIndexAdapter implements SearchIndexPort {
     @Override
     public void upsert(SearchDocument document) {
         try {
-            Map<String, Object> doc = Map.of(
-                    "productId", document.productId(),
-                    "name", document.name() != null ? document.name() : "",
-                    "description", document.description() != null ? document.description() : "",
-                    "price", document.price(),
-                    "status", document.status() != null ? document.status() : "",
-                    "categoryId", document.categoryId() != null ? document.categoryId() : "",
-                    "totalStock", document.totalStock()
-            );
+            Map<String, Object> doc = new HashMap<>();
+            doc.put("productId", document.productId());
+            doc.put("name", document.name() != null ? document.name() : "");
+            doc.put("description", document.description() != null ? document.description() : "");
+            doc.put("price", document.price());
+            doc.put("status", document.status() != null ? document.status() : "");
+            doc.put("categoryId", document.categoryId() != null ? document.categoryId() : "");
+            doc.put("totalStock", document.totalStock());
+            if (document.thumbnailUrl() != null) {
+                doc.put("thumbnailUrl", document.thumbnailUrl());
+            }
             elasticsearchClient.index(IndexRequest.of(i -> i
                     .index(indexProperties.name())
                     .id(document.productId())
@@ -74,6 +77,23 @@ public class ElasticsearchIndexAdapter implements SearchIndexPort {
         } catch (Exception e) {
             log.error("Failed to update stock for productId={}", productId, e);
             throw new SearchException("Failed to update stock for productId=" + productId, e);
+        }
+    }
+
+    @Override
+    public void updateThumbnailUrl(String productId, String thumbnailUrl) {
+        try {
+            Map<String, Object> partial = new java.util.HashMap<>();
+            partial.put("thumbnailUrl", thumbnailUrl);
+            elasticsearchClient.update(UpdateRequest.of(u -> u
+                    .index(indexProperties.name())
+                    .id(productId)
+                    .docAsUpsert(false)
+                    .doc(partial)
+            ), Map.class);
+        } catch (Exception e) {
+            log.error("Failed to update thumbnailUrl for productId={}", productId, e);
+            throw new SearchException("Failed to update thumbnailUrl for productId=" + productId, e);
         }
     }
 

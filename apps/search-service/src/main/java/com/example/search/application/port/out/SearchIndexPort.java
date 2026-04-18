@@ -13,4 +13,6 @@ public interface SearchIndexPort {
     void updateStock(String productId, int totalStock, String status);
 
     Optional<SearchDocument> findById(String productId);
+
+    void updateThumbnailUrl(String productId, String thumbnailUrl);
 }

@@ -8,3 +8,7 @@ data:
   SERVER_PORT: "8082"
   OTEL_SERVICE_NAME: "product-service"
   DB_URL: "jdbc:postgresql://product-postgres.infra.svc.cluster.local:5432/product_db"
+  STORAGE_BUCKETS_PRODUCT_IMAGES: "firstproject-dev-product-images"
+  STORAGE_PRESIGNED_URL_TTL_SECONDS: "300"
+  STORAGE_MAX_IMAGE_SIZE_BYTES: "5242880"
+  STORAGE_MAX_IMAGES_PER_PRODUCT: "10"

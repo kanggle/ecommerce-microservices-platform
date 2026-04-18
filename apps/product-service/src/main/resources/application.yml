@@ -57,6 +57,19 @@ spring:
       properties:
         spring.json.add.type.headers: false
 
+storage:
+  s3:
+    endpoint: ${S3_ENDPOINT:http://localhost:9000}
+    region: ${S3_REGION:us-east-1}
+    access-key: ${S3_ACCESS_KEY:minioadmin}
+    secret-key: ${S3_SECRET_KEY:minioadmin}
+    path-style-access: ${S3_PATH_STYLE_ACCESS:true}
+    presigned-url-expiration-minutes: ${S3_PRESIGNED_URL_EXPIRATION_MINUTES:15}
+  cdn:
+    base-url: ${CDN_BASE_URL:http://localhost:9000}
+  buckets:
+    product-images: ${S3_BUCKET_PRODUCT_IMAGES:firstproject-local-product-images}
+
 server:
   port: ${SERVER_PORT:8082}
   forward-headers-strategy: native

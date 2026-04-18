@@ -237,6 +237,7 @@ Order Service                  Kafka                    Downstream
 | **Unit / Integration** | JUnit 5, Testcontainers | 백엔드 서비스 로직, DB 통합 |
 | **Contract** | Custom Contract Tests | API 계약 검증 |
 | **Component** | Vitest, React Testing Library | 프론트엔드 컴포넌트 |
+| **E2E** | Playwright (Chromium) | 브라우저 상에서 골든 플로우 검증 |
 | **Load** | k6 | 성능 (P95 < 500ms, Error < 1%) |
 
 ### Frontend Coverage (로컬 측정, v8 provider)
@@ -249,6 +250,26 @@ Order Service                  Kafka                    Downstream
 생성 방법: `pnpm --filter <app> test:coverage` — v8 provider 기반, `src/**/*.test.{ts,tsx}` 제외. HTML 리포트는 `apps/<app>/coverage/index.html`에서 확인.
 
 > 백엔드는 JaCoCo 플러그인이 루트 `build.gradle`에 전역 설정돼 있어 각 서비스별 `./gradlew :apps:<service>:jacocoTestReport`로 생성 가능. 집계 리포트는 Testcontainers DB 기동이 필요해 CI 연계로 분리.
+
+### E2E (Playwright)
+
+`apps/web-store/e2e/` — 브라우저(Chromium)에서 실제 사용자 플로우를 검증한다. 공통 로직은 `e2e/helpers/`에 추출.
+
+| 스펙 | 시나리오 | 커버 |
+|------|----------|------|
+| `golden-flow.spec.ts` | 회원가입 → 로그인 → 상품 선택 → 옵션/담기 → 장바구니 → 결제 페이지 | 주문 전 구간 해피패스 |
+| `auth-redirect.spec.ts` | 비로그인 시 `/cart`, `/my/*`, `/checkout` → `/login` 리다이렉트 | 보호 라우트 6건 |
+| `wishlist.spec.ts` | 상품 상세에서 찜 추가 → `/my/wishlist` 목록 노출 → 목록에서 제거 | 위시리스트 토글 왕복 |
+| `cart-management.spec.ts` | 수량 +/− 조작 → 전체선택 → 선택 삭제 → 빈 장바구니 | 장바구니 핵심 조작 |
+
+실행 방법 (Docker 스택이 떠 있어야 함):
+```bash
+pnpm --filter web-store exec playwright install chromium   # 최초 1회
+pnpm --filter web-store e2e                                # 전체 스펙 실행
+pnpm --filter web-store e2e golden-flow                    # 특정 스펙만
+```
+
+> PG(Toss) 위젯은 외부 SDK 콜백이 필요하므로 결제 버튼 노출까지만 검증. 검색(search-service)은 Elasticsearch 인덱싱 상태에 민감해 별도 E2E로 분리 가능.
 
 ### Load Test Scenarios (k6)
 
@@ -424,7 +445,7 @@ k8s/
 ## Project Structure
 
 ```
-first-project/
+ecommerce-microservices-platform/
 ├── apps/
 │   ├── gateway-service/        # API Gateway (Spring Cloud Gateway)
 │   ├── auth-service/           # 인증 서비스

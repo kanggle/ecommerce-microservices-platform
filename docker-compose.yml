@@ -88,7 +88,10 @@ services:
   # 인프라 — Elasticsearch (search-service용)
   # ──────────────────────────────────────────────
   elasticsearch:
-    image: elasticsearch:8.15.0
+    build:
+      context: .
+      dockerfile: infra/elasticsearch/Dockerfile
+    image: ecommerce-microservices-platform-elasticsearch:nori
     container_name: elasticsearch
     restart: unless-stopped
     environment:
@@ -111,6 +114,59 @@ services:
       timeout: 10s
       retries: 10
       start_period: 30s
+
+  # ──────────────────────────────────────────────
+  # 인프라 — MinIO (S3 호환 객체 스토리지 — product-images)
+  # specs/platform/object-storage-policy.md
+  # ──────────────────────────────────────────────
+  minio:
+    image: minio/minio:RELEASE.2024-10-13T13-34-11Z
+    container_name: minio
+    restart: unless-stopped
+    command: server /data --console-address ":9001"
+    environment:
+      - MINIO_ROOT_USER=${MINIO_ROOT_USER:-minioadmin}
+      - MINIO_ROOT_PASSWORD=${MINIO_ROOT_PASSWORD:-minioadmin}
+    ports:
+      - "9000:9000"
+      - "9001:9001"
+    volumes:
+      - minio-data:/data
+    deploy:
+      resources:
+        limits:
+          memory: 512M
+          cpus: '0.5'
+    healthcheck:
+      test: ["CMD-SHELL", "curl -sf http://localhost:9000/minio/health/live || exit 1"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+      start_period: 20s
+
+  # ──────────────────────────────────────────────
+  # MinIO 부트스트랩 — 버킷 생성 + 익명 읽기 정책
+  # 1회 실행 후 종료(oneshot). restart 정책 "no" 유지.
+  # ──────────────────────────────────────────────
+  minio-init:
+    image: minio/mc:RELEASE.2024-10-08T09-37-26Z
+    container_name: minio-init
+    restart: "no"
+    depends_on:
+      minio:
+        condition: service_healthy
+    environment:
+      - MINIO_ROOT_USER=${MINIO_ROOT_USER:-minioadmin}
+      - MINIO_ROOT_PASSWORD=${MINIO_ROOT_PASSWORD:-minioadmin}
+      - PRODUCT_IMAGES_BUCKET=${PRODUCT_IMAGES_BUCKET:-firstproject-local-product-images}
+    volumes:
+      - ./infra/minio/init.sh:/usr/local/bin/init.sh:ro
+    entrypoint: ["/bin/sh", "/usr/local/bin/init.sh"]
+    deploy:
+      resources:
+        limits:
+          memory: 64M
+          cpus: '0.1'
 
   # ──────────────────────────────────────────────
   # 인프라 — Jaeger (분산 트레이싱)
@@ -581,6 +637,9 @@ services:
       - OTEL_METRICS_EXPORTER=none
       - OTEL_LOGS_EXPORTER=none
       - SPRING_PROFILES_ACTIVE=prod
+      - S3_ENDPOINT=http://minio:9000
+      - S3_BUCKET_PRODUCT_IMAGES=firstproject-local-product-images
+      - CDN_BASE_URL=http://localhost:9000
     ports:
       - "8082:8082"
     deploy:
@@ -594,6 +653,8 @@ services:
       kafka:
         condition: service_healthy
       redis:
+        condition: service_healthy
+      minio:
         condition: service_healthy
     healthcheck:
       test: ["CMD-SHELL", "wget -qO- http://localhost:8082/actuator/health || exit 1"]
@@ -1081,3 +1142,4 @@ volumes:
   elasticsearch-data:
   loki-data:
   promtail-data:
+  minio-data:

@@ -8,6 +8,7 @@
 | [ADR-002](ADR-002-saga-over-distributed-transaction.md) | Order + Payment + Inventory에 Saga + Outbox를 택한 이유 | Accepted |
 | [ADR-003](ADR-003-frontend-architecture-dual-strategy.md) | web-store(FSD) / admin-dashboard(Layered-by-Feature) 이원화 | Accepted |
 | [ADR-004](ADR-004-taxonomy-based-rule-system.md) | 분류(domain/trait) 기반 규칙 시스템을 도입한 이유 | Accepted |
+| [ADR-005](ADR-005-korean-search-analyzer.md) | Elasticsearch 한국어 analyzer로 nori 채택 | Accepted |
 
 ## ADR 작성 원칙
 

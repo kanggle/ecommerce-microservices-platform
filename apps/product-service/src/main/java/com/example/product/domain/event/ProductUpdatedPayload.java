@@ -8,7 +8,8 @@ public record ProductUpdatedPayload(
         String description,
         long price,
         String status,
-        String categoryId
+        String categoryId,
+        String thumbnailUrl
 ) implements EventPayload {
 
     public static ProductUpdatedPayload from(Product product) {
@@ -18,6 +19,7 @@ public record ProductUpdatedPayload(
                 product.getDescription(),
                 product.getPrice().value(),
                 product.getStatus().name(),
-                product.getCategoryId() != null ? product.getCategoryId().toString() : null);
+                product.getCategoryId() != null ? product.getCategoryId().toString() : null,
+                product.getThumbnailUrl());
     }
 }

@@ -31,6 +31,7 @@ class ProductEventContractTest {
     void productCreated_envelope_matchesSpec() throws Exception {
         ProductCreatedPayload payload = new ProductCreatedPayload(
                 "prod-1", "노트북", "설명", 1000000L, "ON_SALE", "cat-1",
+                "https://example.com/thumb.jpg",
                 List.of(new ProductCreatedPayload.VariantPayload("var-1", "기본", 100, 0L)));
         ProductEvent event = ProductEvent.created(payload);
 
@@ -42,13 +43,14 @@ class ProductEventContractTest {
     void productCreated_payload_matchesSpec() throws Exception {
         ProductCreatedPayload payload = new ProductCreatedPayload(
                 "prod-1", "노트북", "설명", 1000000L, "ON_SALE", "cat-1",
+                "https://example.com/thumb.jpg",
                 List.of(new ProductCreatedPayload.VariantPayload("var-1", "기본", 100, 0L)));
         ProductEvent event = ProductEvent.created(payload);
 
         JsonNode root = objectMapper.readTree(objectMapper.writeValueAsString(event));
         JsonNode payloadNode = root.get("payload");
 
-        assertFieldsMatch(payloadNode, Set.of("productId", "name", "description", "price", "status", "categoryId", "variants"),
+        assertFieldsMatch(payloadNode, Set.of("productId", "name", "description", "price", "status", "categoryId", "thumbnailUrl", "variants"),
                 SPEC_REF + " ProductCreated payload");
 
         JsonNode variant = payloadNode.get("variants").get(0);
@@ -59,13 +61,13 @@ class ProductEventContractTest {
     // ─── ProductUpdated ─────────────────────────────────────────────────
 
     @Test
-    @DisplayName("ProductUpdated payload는 {productId, name, description, price, status, categoryId}만 포함한다")
+    @DisplayName("ProductUpdated payload는 {productId, name, description, price, status, categoryId, thumbnailUrl}만 포함한다")
     void productUpdated_payload_matchesSpec() throws Exception {
-        ProductUpdatedPayload payload = new ProductUpdatedPayload("prod-1", "노트북 v2", "새 설명", 1200000L, "ON_SALE", "cat-1");
+        ProductUpdatedPayload payload = new ProductUpdatedPayload("prod-1", "노트북 v2", "새 설명", 1200000L, "ON_SALE", "cat-1", "https://example.com/thumb.jpg");
         ProductEvent event = ProductEvent.updated(payload);
 
         JsonNode payloadNode = objectMapper.readTree(objectMapper.writeValueAsString(event)).get("payload");
-        assertFieldsMatch(payloadNode, Set.of("productId", "name", "description", "price", "status", "categoryId"),
+        assertFieldsMatch(payloadNode, Set.of("productId", "name", "description", "price", "status", "categoryId", "thumbnailUrl"),
                 SPEC_REF + " ProductUpdated payload");
     }
 

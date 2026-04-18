@@ -8,7 +8,7 @@
 
 쓰기 경로가 "두 번 실행되면 안 되는" 연산을 포함하는 모든 서비스에 적용된다. 특히 **금전·재고·권한 변경** 같이 비즈니스적으로 되돌리기 어려운 연산.
 
-first-project 기준 적용 범위:
+ecommerce-microservices-platform 기준 적용 범위:
 
 - 필수: [apps/order-service/](../../../apps/order-service/), [apps/payment-service/](../../../apps/payment-service/), [apps/promotion-service/](../../../apps/promotion-service/) (coupon redemption)
 - 조건부: [apps/product-service/](../../../apps/product-service/) (inventory 차감 경로), [apps/shipping-service/](../../../apps/shipping-service/) (배송 요청 생성)

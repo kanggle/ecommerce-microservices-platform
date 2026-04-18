@@ -121,6 +121,7 @@ All events must follow this JSON envelope:
 | product-service | ProductUpdated | search-service |
 | product-service | ProductDeleted | search-service |
 | product-service | StockChanged | search-service, order-service |
+| product-service | ProductImagesUpdated | search-service |
 
 > **Future/external services**: `audit-service`, `analytics`, `security-monitoring` appear as consumers in event contracts but do not have service specs yet. They are planned services. Implementations consuming events for these services should not be built until their service specs are created under `specs/services/`. Event contracts mark these consumers as `(future)`.
 

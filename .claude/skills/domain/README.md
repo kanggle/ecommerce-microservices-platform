@@ -2,7 +2,7 @@
 
 This directory holds skills that are bound to a specific `domain` declared in [`PROJECT.md`](../../../PROJECT.md).
 
-Currently empty — first-project's domain (`ecommerce`) is served by the existing technology-axis skill tree ([`../backend/`](../backend/), [`../cross-cutting/`](../cross-cutting/), [`../database/`](../database/), [`../frontend/`](../frontend/), [`../infra/`](../infra/), [`../messaging/`](../messaging/), [`../review-checklist/`](../review-checklist/), [`../search/`](../search/), [`../service-types/`](../service-types/), [`../testing/`](../testing/)). This directory exists so domain-specific implementation guides can be added when they appear.
+Currently empty — ecommerce-microservices-platform's domain (`ecommerce`) is served by the existing technology-axis skill tree ([`../backend/`](../backend/), [`../cross-cutting/`](../cross-cutting/), [`../database/`](../database/), [`../frontend/`](../frontend/), [`../infra/`](../infra/), [`../messaging/`](../messaging/), [`../review-checklist/`](../review-checklist/), [`../search/`](../search/), [`../service-types/`](../service-types/), [`../testing/`](../testing/)). This directory exists so domain-specific implementation guides can be added when they appear.
 
 ---
 

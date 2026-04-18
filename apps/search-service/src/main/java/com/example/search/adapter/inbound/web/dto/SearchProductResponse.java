@@ -30,7 +30,7 @@ public record SearchProductResponse(
                     doc.name(),
                     doc.price(),
                     doc.status(),
-                    null,
+                    doc.thumbnailUrl(),
                     doc.categoryId(),
                     doc.score()
             );

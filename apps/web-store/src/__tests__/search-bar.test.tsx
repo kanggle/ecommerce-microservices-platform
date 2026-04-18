@@ -39,16 +39,16 @@ describe('SearchBar', () => {
     expect(mockPush).toHaveBeenCalledWith('/products?q=%EB%85%B8%ED%8A%B8%EB%B6%81');
   });
 
-  it('빈 검색어로는 이동하지 않는다', async () => {
+  it('빈 검색어로 제출하면 전체 상품 목록(/products)으로 이동한다', async () => {
     const user = userEvent.setup();
     render(<SearchBar />);
 
     await user.click(screen.getByText('검색'));
 
-    expect(mockPush).not.toHaveBeenCalled();
+    expect(mockPush).toHaveBeenCalledWith('/products');
   });
 
-  it('공백만 있는 검색어로는 이동하지 않는다', async () => {
+  it('공백만 있는 검색어로 제출하면 전체 상품 목록(/products)으로 이동한다', async () => {
     const user = userEvent.setup();
     render(<SearchBar />);
 
@@ -56,7 +56,7 @@ describe('SearchBar', () => {
     await user.type(input, '   ');
     await user.click(screen.getByText('검색'));
 
-    expect(mockPush).not.toHaveBeenCalled();
+    expect(mockPush).toHaveBeenCalledWith('/products');
   });
 
   it('URL에 기존 검색어가 있으면 입력 필드에 표시한다', () => {

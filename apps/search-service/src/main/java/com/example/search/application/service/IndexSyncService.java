@@ -47,10 +47,16 @@ public class IndexSyncService implements IndexSyncUseCase {
                     document.price(),
                     document.status(),
                     document.categoryId(),
-                    existingStock
+                    existingStock,
+                    document.thumbnailUrl()
             );
             searchIndexPort.upsert(withStock);
         });
+    }
+
+    public void updateThumbnailUrl(String productId, String thumbnailUrl) {
+        log.info("Updating thumbnailUrl for productId={}", productId);
+        executeWithMetrics("images-updated", () -> searchIndexPort.updateThumbnailUrl(productId, thumbnailUrl));
     }
 
     public void updateStock(String productId, int currentStock) {

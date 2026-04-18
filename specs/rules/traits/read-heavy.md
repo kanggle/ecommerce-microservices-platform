@@ -8,7 +8,7 @@
 
 읽기(조회) 트래픽이 쓰기의 수십~수백 배에 달하고, 읽기 성능이 사용자 경험을 직접 좌우하는 서비스에 적용된다.
 
-first-project 기준 적용 범위:
+ecommerce-microservices-platform 기준 적용 범위:
 
 - 필수: [apps/product-service/](../../../apps/product-service/), [apps/search-service/](../../../apps/search-service/), [apps/review-service/](../../../apps/review-service/), [apps/web-store/](../../../apps/web-store/) (상품 조회·검색 경로)
 - 조건부: [apps/promotion-service/](../../../apps/promotion-service/) (프로모션 조회 많은 경우), [apps/user-service/](../../../apps/user-service/) (프로필 조회)

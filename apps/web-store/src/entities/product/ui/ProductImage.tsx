@@ -42,7 +42,7 @@ export function ProductImage({ images, alt }: ProductImageProps) {
             className={styles.imageEl}
             onError={() => handleError(current)}
             priority={current === 0}
-            unoptimized={images[current].includes('placehold.co')}
+            unoptimized={images[current].includes('placehold.co') || images[current].startsWith('http://localhost')}
           />
         )}
 

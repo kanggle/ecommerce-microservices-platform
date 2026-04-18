@@ -8,6 +8,21 @@ interface SearchFiltersProps {
   priceRanges?: PriceRangeFacet[];
 }
 
+/**
+ * 개방 구간(null)까지 커버하는 가격 버킷 라벨.
+ *
+ * - min=null, max=X → "X원 이하"
+ * - min=X,    max=null → "X원 이상"
+ * - 둘 다 null → "전체" (비정상 입력 방어)
+ * - 둘 다 있음 → "X~Y원"
+ */
+function formatPriceRange(min: number | null, max: number | null): string {
+  if (min == null && max == null) return '전체';
+  if (min == null) return `${max!.toLocaleString()}원 이하`;
+  if (max == null) return `${min.toLocaleString()}원 이상`;
+  return `${min.toLocaleString()}~${max.toLocaleString()}원`;
+}
+
 export function SearchFilters({ categories, priceRanges }: SearchFiltersProps) {
   const router = useRouter();
   const searchParams = useSearchParams();
@@ -39,7 +54,7 @@ export function SearchFilters({ categories, priceRanges }: SearchFiltersProps) {
           <option value="">전체 카테고리</option>
           {categories.map((cat) => (
             <option key={cat.id} value={cat.id}>
-              {cat.name} ({cat.count})
+              {cat.name ?? '기타'} ({cat.count})
             </option>
           ))}
         </select>
@@ -49,18 +64,20 @@ export function SearchFilters({ categories, priceRanges }: SearchFiltersProps) {
         <div style={{ display: 'flex', gap: 'var(--space-2)', alignItems: 'center' }}>
           {priceRanges.map((range) => (
             <button
-              key={`${range.min}-${range.max}`}
+              key={`${range.min ?? 'min'}-${range.max ?? 'max'}`}
               onClick={() => {
                 const params = new URLSearchParams(searchParams.toString());
-                params.set('minPrice', String(range.min));
-                params.set('maxPrice', String(range.max));
+                if (range.min != null) params.set('minPrice', String(range.min));
+                else params.delete('minPrice');
+                if (range.max != null) params.set('maxPrice', String(range.max));
+                else params.delete('maxPrice');
                 params.delete('page');
                 router.push(`/products?${params.toString()}`);
               }}
               className="btn"
               style={{ fontSize: 'var(--font-size-xs)', padding: 'var(--space-1) var(--space-2)' }}
             >
-              {range.min.toLocaleString()}~{range.max.toLocaleString()}원 ({range.count})
+              {formatPriceRange(range.min, range.max)} ({range.count})
             </button>
           ))}
         </div>

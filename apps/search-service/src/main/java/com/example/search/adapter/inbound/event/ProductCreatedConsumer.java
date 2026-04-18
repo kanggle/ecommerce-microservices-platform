@@ -40,7 +40,8 @@ public class ProductCreatedConsumer {
                 p.price(),
                 p.status(),
                 p.categoryId(),
-                totalStock
+                totalStock,
+                p.thumbnailUrl()
         );
         indexSyncService.upsert(document);
     }

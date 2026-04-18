@@ -51,6 +51,8 @@ spec:
           port: 6379
         - protocol: TCP
           port: 9092
+        - protocol: TCP
+          port: 9000  # minio / S3 object storage
     - to:
         - namespaceSelector:
             matchLabels:

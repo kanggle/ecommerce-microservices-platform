@@ -16,7 +16,12 @@ const productApi = createProductApi(apiClient);
 export async function getProduct(id: string): Promise<ProductDetail | null> {
   const product = await productApi.getProduct(id);
   if (!product) return null;
-  if (!product.images?.length) {
+  if (product.images?.length) {
+    // API returns image objects {imageId, url, sortOrder, isPrimary} — extract URLs
+    product.images = (product.images as any[]).map((img: any) =>
+      typeof img === 'string' ? img : img.url
+    );
+  } else {
     product.images = product.thumbnailUrl
       ? [product.thumbnailUrl]
       : fallbackImages(product.name);

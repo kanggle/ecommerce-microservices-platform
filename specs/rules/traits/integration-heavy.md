@@ -8,7 +8,7 @@
 
 외부 시스템(써드파티 API, 웹훅, 파일 교환, 메시지 브로커)과의 연동이 다수이며, 연동 안정성이 시스템 품질을 좌우하는 서비스에 적용된다.
 
-first-project 기준 적용 범위:
+ecommerce-microservices-platform 기준 적용 범위:
 
 - 필수: [apps/payment-service/](../../../apps/payment-service/) (PG 연동), [apps/notification-service/](../../../apps/notification-service/) (SMS/Email/Push/Kakao), [apps/shipping-service/](../../../apps/shipping-service/) (택배사 API), [apps/auth-service/](../../../apps/auth-service/) (소셜 로그인), [apps/search-service/](../../../apps/search-service/) (검색 엔진)
 - 조건부: 외부 API 2개 이상과 연동하는 모든 서비스

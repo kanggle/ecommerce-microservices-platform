@@ -23,6 +23,7 @@ public record ProductCreatedEvent(
             long price,
             String status,
             String categoryId,
+            String thumbnailUrl,
             List<VariantPayload> variants
     ) {}
 

@@ -1,8 +1,13 @@
 package com.example.product.presentation.advice;
 
+import com.example.product.domain.exception.ImageLimitExceededException;
+import com.example.product.domain.exception.ImageNotFoundException;
 import com.example.product.domain.exception.InsufficientStockException;
 import com.example.product.domain.exception.InvalidCategoryException;
+import com.example.product.domain.exception.MediaNotFoundException;
+import com.example.product.domain.exception.MediaValidationException;
 import com.example.product.domain.exception.ProductNotFoundException;
+import com.example.product.domain.exception.StorageUnavailableException;
 import com.example.product.domain.exception.VariantNotFoundException;
 import com.example.web.dto.ErrorResponse;
 import lombok.extern.slf4j.Slf4j;
@@ -64,6 +69,37 @@ public class GlobalExceptionHandler {
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     public ErrorResponse handleInsufficientStock(InsufficientStockException ex) {
         return ErrorResponse.of("INSUFFICIENT_STOCK", ex.getMessage());
+    }
+
+    @ExceptionHandler(ImageNotFoundException.class)
+    @ResponseStatus(HttpStatus.NOT_FOUND)
+    public ErrorResponse handleImageNotFound(ImageNotFoundException ex) {
+        return ErrorResponse.of("IMAGE_NOT_FOUND", ex.getMessage());
+    }
+
+    @ExceptionHandler(ImageLimitExceededException.class)
+    @ResponseStatus(HttpStatus.UNPROCESSABLE_ENTITY)
+    public ErrorResponse handleImageLimitExceeded(ImageLimitExceededException ex) {
+        return ErrorResponse.of("IMAGE_LIMIT_EXCEEDED", ex.getMessage());
+    }
+
+    @ExceptionHandler(MediaNotFoundException.class)
+    @ResponseStatus(HttpStatus.NOT_FOUND)
+    public ErrorResponse handleMediaNotFound(MediaNotFoundException ex) {
+        return ErrorResponse.of("MEDIA_NOT_FOUND", ex.getMessage());
+    }
+
+    @ExceptionHandler(MediaValidationException.class)
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    public ErrorResponse handleMediaValidation(MediaValidationException ex) {
+        return ErrorResponse.of("MEDIA_VALIDATION_FAILED", ex.getMessage());
+    }
+
+    @ExceptionHandler(StorageUnavailableException.class)
+    @ResponseStatus(HttpStatus.SERVICE_UNAVAILABLE)
+    public ErrorResponse handleStorageUnavailable(StorageUnavailableException ex) {
+        log.error("Storage unavailable: {}", ex.getMessage(), ex);
+        return ErrorResponse.of("STORAGE_UNAVAILABLE", "Object storage service is unavailable");
     }
 
     @ExceptionHandler(OptimisticLockingFailureException.class)

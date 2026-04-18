@@ -20,6 +20,7 @@ final class ElasticsearchFieldMapper {
                 getString(source, "status"),
                 getString(source, "categoryId"),
                 toInt(source.get("totalStock")),
+                getString(source, "thumbnailUrl"),
                 score
         );
     }

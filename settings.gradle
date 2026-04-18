@@ -1,4 +1,4 @@
-rootProject.name = 'first-project'
+rootProject.name = 'ecommerce-microservices-platform'
 
 include(
     'apps:auth-service',

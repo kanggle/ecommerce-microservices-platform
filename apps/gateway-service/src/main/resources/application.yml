@@ -25,10 +25,14 @@ spring:
           predicates:
             - Path=/api/auth/**
           filters:
+            # auth는 brute-force 방어를 위해 타이트하게. 단 burst는 합법적 SPA 트래픽
+            # (login → /me → /refresh 연쇄 호출, 자동화된 헬스체크·스모크 테스트,
+            # E2E 배치 실행)과 배포 직후 재인증 러시를 흡수해야 한다.
+            # 20 req/s 지속 공격은 여전히 스로틀링되므로 방어 유효.
             - name: RequestRateLimiter
               args:
-                redis-rate-limiter.replenishRate: 10
-                redis-rate-limiter.burstCapacity: 20
+                redis-rate-limiter.replenishRate: 20
+                redis-rate-limiter.burstCapacity: 100
                 key-resolver: "#{@ipKeyResolver}"
 
         - id: product-service

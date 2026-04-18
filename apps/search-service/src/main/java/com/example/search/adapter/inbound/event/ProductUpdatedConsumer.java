@@ -37,7 +37,8 @@ public class ProductUpdatedConsumer {
                 p.price(),
                 p.status(),
                 p.categoryId(),
-                0
+                0,
+                p.thumbnailUrl()
         );
         indexSyncService.upsertPreservingStock(document);
     }
