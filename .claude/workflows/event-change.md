@@ -30,7 +30,7 @@ Workflow for adding or modifying domain events.
 
 - Implement domain event publishing logic
 - Store events in Outbox within the transaction
-- Messaging skills (`.claude/skills/messaging/`) are not yet written. Use `platform/event-driven-policy.md` and the relevant event contract in `specs/contracts/events/` as primary guidance.
+- Messaging skills (`.claude/skills/messaging/`) are not yet written. Use `specs/platform/event-driven-policy.md` and the relevant event contract in `specs/contracts/events/` as primary guidance.
 
 ### 5. Implement Consumer
 

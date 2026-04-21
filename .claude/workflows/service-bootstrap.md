@@ -11,7 +11,7 @@ Workflow for creating a new service from scratch.
 ### 1. Architecture Decision
 
 - Select an architecture pattern based on the service's domain complexity
-- Follow `platform/architecture-decision-rule.md`
+- Follow `specs/platform/architecture-decision-rule.md`
 - Document the rationale as an ADR (`.claude/templates/adr-template.md`)
 
 ### 2. Write Service Spec

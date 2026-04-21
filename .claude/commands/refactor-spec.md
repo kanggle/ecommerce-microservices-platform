@@ -20,7 +20,7 @@ Scope values:
 
 | Scope | Target |
 |---|---|
-| `platform` | `platform/` |
+| `platform` | `specs/platform/` |
 | `contracts` | `specs/contracts/` |
 | `<service>` | `specs/services/<service>/` |
 | `features` | `specs/features/` |
@@ -32,9 +32,9 @@ Examples:
 ```
 /refactor-spec platform
 /refactor-spec contracts --focus=consistency
-/refactor-spec <service-name> architecture.md structure
+/refactor-spec order-service architecture.md structure
 /refactor-spec all --dry-run
-/refactor-spec features <feature-file>.md missing-section
+/refactor-spec features order-processing.md missing-section
 /refactor-spec use-cases --focus=formatting
 ```
 
@@ -82,8 +82,8 @@ Direct refactoring of a specific spec file.
 ### Procedure
 
 1. Read `CLAUDE.md`
-2. Read `platform/entrypoint.md`
-3. Read `platform/naming-conventions.md` (if exists)
+2. Read `specs/platform/entrypoint.md`
+3. Read `specs/platform/naming-conventions.md` (if exists)
 4. Read the target spec file
 5. Read sibling specs of the same type to establish the expected format and structure
 6. Identify the specific refactoring to apply
@@ -113,9 +113,9 @@ Spec refactoring executes in the main context (no worktree needed — no tests t
 ### Phase 1: Discovery & Analysis
 
 1. Read `CLAUDE.md`
-2. Read `platform/entrypoint.md`
-3. Read `platform/naming-conventions.md` (if exists)
-4. Read `platform/glossary.md` (if exists)
+2. Read `specs/platform/entrypoint.md`
+3. Read `specs/platform/naming-conventions.md` (if exists)
+4. Read `specs/platform/glossary.md` (if exists)
 5. Collect all spec files in the target scope
 6. For each file:
    - Check section structure against sibling specs of the same type

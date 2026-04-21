@@ -19,11 +19,11 @@ Refactor code safely without changing behavior. Scope depends on arguments.
 Examples:
 
 ```
-/refactor-code <service-name>
-/refactor-code <service-name> <AggregateClass> method extraction
-/refactor-code <service-name> presentation layer cleanup
-/refactor-code <service-name> --dry-run
-/refactor-code <service-name> --focus=duplication
+/refactor-code order-service
+/refactor-code order-service OrderAggregate method extraction
+/refactor-code order-service presentation layer cleanup
+/refactor-code order-service --dry-run
+/refactor-code order-service --focus=duplication
 ```
 
 ## Mode Selection
@@ -42,7 +42,7 @@ Examples:
 | **duplication** / `reduce duplication` | Duplicated logic across classes or methods |
 | **long-method** / `method extraction` | Methods exceeding ~30 lines or doing multiple things |
 | **layer-violation** / `layer cleanup` | Wrong dependency direction or logic in wrong layer |
-| **naming** / `rename` | Names not matching `platform/naming-conventions.md` |
+| **naming** / `rename` | Names not matching `specs/platform/naming-conventions.md` |
 | **dead-code** / `dead code removal` | Unused classes, methods, or imports |
 | **complexity** / `simplify conditional` | Deeply nested conditionals, god classes, excessive parameters |
 | **pattern-mismatch** / `pattern replacement` | Code not following patterns declared in service architecture |
@@ -58,8 +58,8 @@ Direct refactoring of a specific target. No analysis phase.
 
 ### Procedure
 
-1. Read `CLAUDE.md` — including its "Project Classification (Read First)" section, which requires loading `PROJECT.md` and the applicable `rules/common.md`, `rules/domains/<domain>.md`, and `rules/traits/<trait>.md` files per `platform/entrypoint.md` Step 0 before touching any code.
-2. Read `platform/refactoring-policy.md`
+1. Read `CLAUDE.md` — including its "Project Classification (Read First)" section, which requires loading `PROJECT.md` and the applicable `specs/rules/common.md`, `specs/rules/domains/<domain>.md`, and `specs/rules/traits/<trait>.md` files per `specs/platform/entrypoint.md` Step 0 before touching any code.
+2. Read `specs/platform/refactoring-policy.md`
 3. Read `specs/services/<service>/architecture.md`
 4. Read `.claude/skills/INDEX.md` → read matched architecture skill and `backend/refactoring/SKILL.md`
 5. Read the target code and all related code
@@ -93,11 +93,11 @@ Main context reads service code for analysis but does NOT perform refactoring di
 
 ### Phase 1: Discovery & Analysis (main context)
 
-1. Read `CLAUDE.md` — including its "Project Classification (Read First)" section, which requires loading `PROJECT.md` and the applicable `rules/common.md`, `rules/domains/<domain>.md`, and `rules/traits/<trait>.md` files per `platform/entrypoint.md` Step 0 before analysis. Active traits can dictate refactoring constraints (e.g., `transactional` may forbid changes to state-transition paths without saga review).
-2. Read `platform/refactoring-policy.md`
+1. Read `CLAUDE.md` — including its "Project Classification (Read First)" section, which requires loading `PROJECT.md` and the applicable `specs/rules/common.md`, `specs/rules/domains/<domain>.md`, and `specs/rules/traits/<trait>.md` files per `specs/platform/entrypoint.md` Step 0 before analysis. Active traits can dictate refactoring constraints (e.g., `transactional` may forbid changes to state-transition paths without saga review).
+2. Read `specs/platform/refactoring-policy.md`
 3. Read `specs/services/<service>/architecture.md` to understand the declared architecture
-4. Read `platform/coding-rules.md` (if exists)
-5. Read `platform/naming-conventions.md` (if exists)
+4. Read `specs/platform/coding-rules.md` (if exists)
+5. Read `specs/platform/naming-conventions.md` (if exists)
 6. Read `.claude/skills/INDEX.md` → read matched architecture skill and `backend/refactoring/SKILL.md`
 7. Scan all source files in the target service (backend: `apps/<service>/src/`, frontend: `apps/<service>/src/`)
 8. Determine test command based on service type:
@@ -165,11 +165,11 @@ You are performing a safe refactoring in this project. Follow these steps exactl
 - Description: {description}
 
 ## Steps
-1. Read `CLAUDE.md` — including its "Project Classification (Read First)" section, which requires loading `PROJECT.md` and the applicable `rules/common.md`, `rules/domains/<domain>.md`, and `rules/traits/<trait>.md` files per `platform/entrypoint.md` Step 0 before touching any code.
-2. Read `platform/refactoring-policy.md`
+1. Read `CLAUDE.md` — including its "Project Classification (Read First)" section, which requires loading `PROJECT.md` and the applicable `specs/rules/common.md`, `specs/rules/domains/<domain>.md`, and `specs/rules/traits/<trait>.md` files per `specs/platform/entrypoint.md` Step 0 before touching any code.
+2. Read `specs/platform/refactoring-policy.md`
 3. Read `specs/services/{service}/architecture.md`
-4. Read `platform/coding-rules.md` (if exists)
-5. Read `platform/naming-conventions.md` (if exists)
+4. Read `specs/platform/coding-rules.md` (if exists)
+5. Read `specs/platform/naming-conventions.md` (if exists)
 6. Read `.claude/skills/INDEX.md` and matched architecture skill and `backend/refactoring/SKILL.md`
 7. Read the target files and all related code
 8. Run existing tests: {testCommand} — verify all pass (baseline)
@@ -219,7 +219,7 @@ Skipped: [list with dependency reason]
 ## Rules
 
 - Follow CLAUDE.md Hard Stop Rules at every step
-- Follow `platform/refactoring-policy.md` for all constraints
+- Follow `specs/platform/refactoring-policy.md` for all constraints
 - No behavior change — this is refactoring, not feature work
 - Tests must pass before and after every refactoring
 - One refactoring at a time — do not mix multiple changes

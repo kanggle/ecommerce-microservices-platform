@@ -8,7 +8,7 @@ category: backend
 
 Refactoring patterns for Java 21 / Spring Boot backend services in this repository.
 
-Prerequisite: read `platform/refactoring-policy.md` before using this skill.
+Prerequisite: read `specs/platform/refactoring-policy.md` before using this skill.
 
 ---
 
@@ -135,7 +135,7 @@ private void requireUserId(String userId) {
 }
 ```
 
-**Warning**: Do not extract to `libs/` unless the logic is genuinely shared across multiple services. See `platform/shared-library-policy.md`.
+**Warning**: Do not extract to `libs/` unless the logic is genuinely shared across multiple services. See `specs/platform/shared-library-policy.md`.
 
 ---
 

@@ -2,7 +2,7 @@
 
 This directory holds skills that are bound to a specific `domain` declared in [`PROJECT.md`](../../../PROJECT.md).
 
-Currently empty — first-project's domain (`ecommerce`) is served by the existing technology-axis skill tree ([`../backend/`](../backend/), [`../cross-cutting/`](../cross-cutting/), [`../database/`](../database/), [`../frontend/`](../frontend/), [`../infra/`](../infra/), [`../messaging/`](../messaging/), [`../review-checklist/`](../review-checklist/), [`../search/`](../search/), [`../service-types/`](../service-types/), [`../testing/`](../testing/)). This directory exists so domain-specific implementation guides can be added when they appear.
+Currently empty — ecommerce-microservices-platform's domain (`ecommerce`) is served by the existing technology-axis skill tree ([`../backend/`](../backend/), [`../cross-cutting/`](../cross-cutting/), [`../database/`](../database/), [`../frontend/`](../frontend/), [`../infra/`](../infra/), [`../messaging/`](../messaging/), [`../review-checklist/`](../review-checklist/), [`../search/`](../search/), [`../service-types/`](../service-types/), [`../testing/`](../testing/)). This directory exists so domain-specific implementation guides can be added when they appear.
 
 ---
 
@@ -23,12 +23,12 @@ This `domain/` directory is the **business axis**. Add a skill here only when th
 
 Add a skill under `domain/<domain>/<skill-name>/SKILL.md` only when **all** of the following are true:
 
-- The skill encodes **how to implement** (not **what to enforce**) a concrete, reusable pattern specific to the declared domain. Domain **rules** live in [`../../../rules/domains/<domain>.md`](../../../rules/domains/), not here.
+- The skill encodes **how to implement** (not **what to enforce**) a concrete, reusable pattern specific to the declared domain. Domain **rules** live in [`../../../specs/rules/domains/<domain>.md`](../../../specs/rules/domains/), not here.
 - The skill would be irrelevant or misleading in a project with a different domain.
 - The same guidance is not already available in a technology-axis skill under [`../`](..).
 
 Example split:
-- `rules/domains/ecommerce.md` → **Rule**: "Order state transitions must be modeled as an immutable state machine" (WHAT)
+- `specs/rules/domains/ecommerce.md` → **Rule**: "Order state transitions must be modeled as an immutable state machine" (WHAT)
 - `.claude/skills/domain/ecommerce/order-lifecycle/SKILL.md` → **Skill**: Step-by-step guide to implementing that state machine with Spring State Machine (HOW)
 
 ---

@@ -20,7 +20,7 @@ Write tests, run test suites, and verify quality.
 
 ## Test Strategy
 
-Follow `platform/testing-strategy.md`.
+Follow `specs/platform/testing-strategy.md`.
 
 ### Backend Tests
 - **Unit tests**: `@ExtendWith(MockitoExtension.class)`, STRICT_STUBS rules

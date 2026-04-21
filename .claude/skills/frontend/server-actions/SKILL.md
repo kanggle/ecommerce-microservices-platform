@@ -8,7 +8,7 @@ category: frontend
 
 Patterns for Next.js App Router server actions with revalidation and error handling.
 
-Prerequisite: read `platform/coding-rules.md` (TypeScript Rules) and `frontend/api-client/SKILL.md` before using this skill. For HTTP-based APIs prefer `frontend/api-client/SKILL.md` + React Query; use server actions only when the action is colocated with a server component or page.
+Prerequisite: read `specs/platform/coding-rules.md` (TypeScript Rules) and `frontend/api-client/SKILL.md` before using this skill. For HTTP-based APIs prefer `frontend/api-client/SKILL.md` + React Query; use server actions only when the action is colocated with a server component or page.
 
 ---
 

@@ -12,14 +12,14 @@ Review the implementation of tasks in `tasks/review/`.
 ```
 /review-task TASK-BE-024        # review a single task
 /review-task                    # review all tasks in tasks/review/
-/review-task <service-name>     # review tasks for a specific service only
+/review-task order-service      # review tasks for a specific service only
 /review-task --dry-run          # list tasks to review only, do not execute
 ```
 
 ## Argument Parsing
 
 1. If argument matches `TASK-*` pattern → **single task mode**
-2. If argument is a service name (as declared in `PROJECT.md`) → **batch mode filtered by service**
+2. If argument is a service name (e.g., `order-service`) → **batch mode filtered by service**
 3. If argument is `--dry-run` → **batch mode, list only**
 4. If no argument → **batch mode for all tasks**
 
@@ -31,7 +31,7 @@ When a specific task ID is given:
 
 1. Find and read the task file matching the given ID in `tasks/review/`
 2. If the task is not in `tasks/review/`, **stop immediately**
-3. Read `platform/entrypoint.md` and follow the spec reading order
+3. Read `specs/platform/entrypoint.md` and follow the spec reading order
 4. Read all Related Specs and Related Contracts listed in the task
 5. Read `.claude/skills/INDEX.md` and matched skill files
 6. Read the implementation code in the target service
@@ -90,7 +90,7 @@ You are reviewing a completed task in this project. Follow these steps exactly:
 1. Read `CLAUDE.md`
 2. Read the task file at `tasks/review/{taskFileName}`
 3. If the task is not in `tasks/review/`, **stop immediately** and return result: not_found
-4. Read `platform/entrypoint.md` and follow the spec reading order (Core specs)
+4. Read `specs/platform/entrypoint.md` and follow the spec reading order (Core specs)
 5. Read all Related Specs listed in the task
 6. Read all Related Contracts listed in the task
 7. Read `.claude/skills/INDEX.md` and matched skill files

@@ -8,7 +8,7 @@ category: search
 
 Patterns for synchronizing Elasticsearch indexes with source data via events.
 
-Prerequisite: read `platform/event-driven-policy.md` before using this skill.
+Prerequisite: read `specs/platform/event-driven-policy.md` before using this skill.
 
 ---
 

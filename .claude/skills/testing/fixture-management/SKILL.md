@@ -8,7 +8,7 @@ category: testing
 
 Patterns for managing test data and fixtures.
 
-Prerequisite: read `platform/testing-strategy.md` before using this skill.
+Prerequisite: read `specs/platform/testing-strategy.md` before using this skill.
 
 ---
 

@@ -22,9 +22,9 @@ End-to-end workflow for implementing a task.
 
 ### 3. Read Specs
 
-Follow the reading order from `platform/entrypoint.md`:
+Follow the reading order from `specs/platform/entrypoint.md`:
 
-1. `platform/` — platform policies (core specs first, then tag-matched auxiliary specs)
+1. `specs/platform/` — platform policies (core specs first, then tag-matched auxiliary specs)
 2. `specs/contracts/` — related API/event contracts
 3. `specs/services/<service>/` — service architecture
 4. `specs/features/` — feature specs
@@ -54,7 +54,7 @@ Follow the reading order from `platform/entrypoint.md`:
 
 ### 8. Write Tests
 
-- Follow Required Tests Per Task in `platform/testing-strategy.md`
+- Follow Required Tests Per Task in `specs/platform/testing-strategy.md`
 - Cover all acceptance criteria items with tests
 - Test edge cases and failure scenarios
 

@@ -21,7 +21,7 @@ Design database schemas, plan migrations, and optimize index strategies.
 
 1. Identify the domain model from `specs/services/<service>/architecture.md`
 2. Review existing schemas and migration history
-3. Follow DB-related policies in `platform/`
+3. Follow DB-related policies in `specs/platform/`
 4. Read matching skills from `.claude/skills/database/`:
    - `schema-change-workflow.md` — Flyway-based schema change flow
    - `migration-strategy.md` — migration management patterns

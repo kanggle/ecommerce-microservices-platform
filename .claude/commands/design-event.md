@@ -23,10 +23,10 @@ Examples:
 
 ## Procedure
 
-1. Follow `platform/entrypoint.md` Step 0 — read `PROJECT.md` then load `rules/common.md` plus any `rules/domains/<domain>.md` and `rules/traits/<trait>.md` that match the declared classification. Trait files such as `transactional.md`, `integration-heavy.md`, or `real-time.md` contain event-specific mandates (idempotency, DLQ, ordering) that must be honored in the contract design.
-2. Read `platform/event-driven-policy.md` (envelope, naming, consumer rules)
-3. Read `platform/naming-conventions.md` (event topic naming)
-4. Read `platform/versioning-policy.md` (event versioning)
+1. Follow `specs/platform/entrypoint.md` Step 0 — read `PROJECT.md` then load `specs/rules/common.md` plus any `specs/rules/domains/<domain>.md` and `specs/rules/traits/<trait>.md` that match the declared classification. Trait files such as `transactional.md`, `integration-heavy.md`, or `real-time.md` contain event-specific mandates (idempotency, DLQ, ordering) that must be honored in the contract design.
+2. Read `specs/platform/event-driven-policy.md` (envelope, naming, consumer rules)
+3. Read `specs/platform/naming-conventions.md` (event topic naming)
+4. Read `specs/platform/versioning-policy.md` (event versioning)
 5. Read existing `specs/contracts/events/` contract files to understand current patterns
 6. Read `specs/services/<service>/overview.md` for the related service (ownership check)
 7. Design the event contract following the format below

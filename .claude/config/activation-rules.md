@@ -3,8 +3,8 @@
 > **Role**: Tells agents "when trait/domain X is declared in [`PROJECT.md`](../../PROJECT.md), activate the following rule categories and skill bundles". This is a **short dispatch table**, not a rule definition.
 >
 > **Detailed rule content** lives in:
-> - [`rules/traits/<trait>.md`](../../rules/traits/) — trait Mandatory Rules, Forbidden Patterns, Required Artifacts, Checklists
-> - [`rules/domains/<domain>.md`](../../rules/domains/) — domain bounded contexts, ubiquitous language, mandatory rules, checklists
+> - [`specs/rules/traits/<trait>.md`](../../specs/rules/traits/) — trait Mandatory Rules, Forbidden Patterns, Required Artifacts, Checklists
+> - [`specs/rules/domains/<domain>.md`](../../specs/rules/domains/) — domain bounded contexts, ubiquitous language, mandatory rules, checklists
 >
 > Each trait and domain entry below MUST link to its detailed rule file if that file exists. On-demand principle: if a trait/domain is listed in the catalog but no rule file exists yet, show `(file to be created when a project declares this trait/domain)` instead of a broken link.
 
@@ -14,8 +14,8 @@
 
 Apply all **common rules, common skills, and common agents** regardless of `PROJECT.md` classification:
 
-- [`rules/common.md`](../../rules/common.md) — index of 14 canonical platform rule files
-- [`platform/`](../../platform/) — technology baseline (architecture, coding, security, testing, observability, etc.)
+- [`specs/rules/common.md`](../../specs/rules/common.md) — index of 14 canonical platform rule files
+- [`specs/platform/`](../../specs/platform/) — technology baseline (architecture, coding, security, testing, observability, etc.)
 - [`.claude/agents/common/`](../agents/common/) — domain-agnostic agents
 - [`.claude/skills/`](../skills/) — technical skill tree (backend, cross-cutting, database, frontend, infra, messaging, service-types, testing, etc.)
 - [`.claude/commands/`](../commands/) — slash commands (design-api, design-event, implement-task, refactor-code, etc.)
@@ -33,7 +33,7 @@ Activate rules for:
 - duplicate prevention
 - state machine modeling
 
-→ Detailed rules: [`rules/traits/transactional.md`](../../rules/traits/transactional.md)
+→ Detailed rules: [`specs/rules/traits/transactional.md`](../../specs/rules/traits/transactional.md)
 
 ---
 
@@ -81,7 +81,7 @@ Activate rules for:
 - pagination / search optimization
 - read replica routing
 
-→ Detailed rules: [`rules/traits/read-heavy.md`](../../rules/traits/read-heavy.md)
+→ Detailed rules: [`specs/rules/traits/read-heavy.md`](../../specs/rules/traits/read-heavy.md)
 
 ---
 
@@ -95,7 +95,7 @@ Activate rules for:
 - webhook signature / replay protection
 - DLQ and reprocessing
 
-→ Detailed rules: [`rules/traits/integration-heavy.md`](../../rules/traits/integration-heavy.md)
+→ Detailed rules: [`specs/rules/traits/integration-heavy.md`](../../specs/rules/traits/integration-heavy.md)
 
 ---
 
@@ -158,7 +158,7 @@ Activate rules for:
 - i18n at the model level
 - moderation pipeline
 
-→ Detailed rules: [`rules/traits/content-heavy.md`](../../rules/traits/content-heavy.md)
+→ Detailed rules: [`specs/rules/traits/content-heavy.md`](../../specs/rules/traits/content-heavy.md)
 
 ---
 
@@ -172,7 +172,7 @@ Activate:
 - promotion and coupon redemption rules
 - review-purchase verification
 
-→ Detailed rules: [`rules/domains/ecommerce.md`](../../rules/domains/ecommerce.md)
+→ Detailed rules: [`specs/rules/domains/ecommerce.md`](../../specs/rules/domains/ecommerce.md)
 
 ---
 
@@ -254,7 +254,7 @@ When adding a new trait or domain:
 
 1. Add entry to [`domains.md`](domains.md) or [`traits.md`](traits.md)
 2. Add section to this file with activated rule categories and detailed-rule link
-3. Add narrative definition to [`rules/taxonomy.md`](../../rules/taxonomy.md)
-4. Create the detailed rule file at [`rules/domains/<domain>.md`](../../rules/domains/) or [`rules/traits/<trait>.md`](../../rules/traits/) **if the project needs it** (otherwise leave as "file to be created when...")
+3. Add narrative definition to [`specs/rules/taxonomy.md`](../../specs/rules/taxonomy.md)
+4. Create the detailed rule file at [`specs/rules/domains/<domain>.md`](../../specs/rules/domains/) or [`specs/rules/traits/<trait>.md`](../../specs/rules/traits/) **if the project needs it** (otherwise leave as "file to be created when...")
 
 All four steps must happen in the same PR to prevent drift.

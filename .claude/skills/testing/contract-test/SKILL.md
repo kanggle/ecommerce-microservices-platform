@@ -8,7 +8,7 @@ category: testing
 
 Patterns for verifying API and event contracts between services.
 
-Prerequisite: read `platform/testing-strategy.md` before using this skill.
+Prerequisite: read `specs/platform/testing-strategy.md` before using this skill.
 
 ---
 

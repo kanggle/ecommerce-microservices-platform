@@ -17,13 +17,13 @@ Write tests for the specified service or class.
 Examples:
 
 ```
-/write-tests <service-name>
-/write-tests <service-name> <ServiceClass>
+/write-tests auth-service
+/write-tests order-service OrderPlacementService
 ```
 
 ## Procedure
 
-1. Read `platform/testing-strategy.md`
+1. Read `specs/platform/testing-strategy.md`
 2. Read `.claude/skills/backend/testing-backend/SKILL.md`
 3. Read `specs/services/<service>/architecture.md` for the target service
 4. Check whether test files already exist for the target code

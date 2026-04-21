@@ -8,7 +8,7 @@ category: testing
 
 Patterns for end-to-end integration tests across services.
 
-Prerequisite: read `platform/testing-strategy.md` before using this skill.
+Prerequisite: read `specs/platform/testing-strategy.md` before using this skill.
 
 ---
 

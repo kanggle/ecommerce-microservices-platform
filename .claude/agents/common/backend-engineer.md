@@ -36,7 +36,7 @@ Implement Spring Boot backend services.
 ### Naming
 - Command/Result pattern: `{UseCase}Command`, `{UseCase}Result`
 - Request/Response pattern: `{UseCase}Request`, `{UseCase}Response`
-- See `platform/naming-conventions.md` for details
+- See `specs/platform/naming-conventions.md` for details
 
 ### Testing
 - Unit tests: `@ExtendWith(MockitoExtension.class)`, STRICT_STUBS

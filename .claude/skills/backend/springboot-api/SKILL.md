@@ -88,10 +88,10 @@ Follow the allowed dependency directions declared in `specs/services/<service>/a
 | Request (HTTP body) | `{UseCase}Request` | `LoginRequest` |
 | Response (HTTP body) | `{UseCase}Response` | `LoginResponse` |
 
-For other naming conventions, follow `platform/naming-conventions.md`.
+For other naming conventions, follow `specs/platform/naming-conventions.md`.
 
 ---
 
 ## Response HTTP Status
 
-Follow `platform/error-handling.md` for HTTP status codes and error response format.
+Follow `specs/platform/error-handling.md` for HTTP status codes and error response format.

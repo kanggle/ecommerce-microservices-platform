@@ -17,7 +17,7 @@ Workflow for adding or modifying specs.
 
 Analyze downstream impact according to spec priority:
 
-1. `platform/` change → affects all services
+1. `specs/platform/` change → affects all services
 2. `specs/contracts/` change → affects services using that contract
 3. `specs/services/` change → affects that service
 4. `specs/features/` change → affects related tasks

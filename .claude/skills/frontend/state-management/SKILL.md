@@ -8,7 +8,7 @@ category: frontend
 
 Patterns for state management in Next.js applications using TanStack React Query.
 
-Prerequisite: read `platform/coding-rules.md` (TypeScript Rules section) before using this skill.
+Prerequisite: read `specs/platform/coding-rules.md` (TypeScript Rules section) before using this skill.
 
 ---
 

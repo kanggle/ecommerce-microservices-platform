@@ -8,7 +8,7 @@ category: database
 
 Patterns for safe database schema changes using Flyway migrations.
 
-Prerequisite: read `platform/coding-rules.md` (Database section) before using this skill.
+Prerequisite: read `specs/platform/coding-rules.md` (Database section) before using this skill.
 
 ---
 

@@ -21,8 +21,8 @@ Design REST API contracts and document them in `specs/contracts/`.
 
 1. Identify requirements from `specs/features/` or `specs/use-cases/`
 2. Check consistency with existing `specs/contracts/` patterns
-3. Follow `platform/naming-conventions.md` for naming
-4. Follow `platform/error-handling.md` for error responses
+3. Follow `specs/platform/naming-conventions.md` for naming
+4. Follow `specs/platform/error-handling.md` for error responses
 5. Write the contract and add references to related service specs
 
 ## Design Rules
@@ -30,7 +30,7 @@ Design REST API contracts and document them in `specs/contracts/`.
 ### Endpoints
 - RESTful resource-oriented URLs
 - HTTP methods: GET (read), POST (create), PUT (full update), PATCH (partial update), DELETE (delete)
-- Versioning policy per `platform/versioning-policy.md`
+- Versioning policy per `specs/platform/versioning-policy.md`
 
 ### Request/Response
 - Request: `{UseCase}Request`
@@ -38,7 +38,7 @@ Design REST API contracts and document them in `specs/contracts/`.
 - Field names defined exactly in the contract — implementation must match
 
 ### Error Responses
-- Follow format defined in `platform/error-handling.md`
+- Follow format defined in `specs/platform/error-handling.md`
 - Map HTTP status codes accurately
 
 ## Does NOT

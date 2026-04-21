@@ -8,7 +8,7 @@ category: messaging
 
 Patterns for implementing domain events with Kafka in this repository.
 
-Prerequisite: read `platform/event-driven-policy.md` and `specs/contracts/events/` for event schemas before using this skill.
+Prerequisite: read `specs/platform/event-driven-policy.md` and `specs/contracts/events/` for event schemas before using this skill.
 
 ---
 

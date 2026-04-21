@@ -8,7 +8,7 @@ category: testing
 
 Guidance for choosing test types and coverage targets.
 
-Prerequisite: read `platform/testing-strategy.md` for the full specification.
+Prerequisite: read `specs/platform/testing-strategy.md` for the full specification.
 
 ---
 

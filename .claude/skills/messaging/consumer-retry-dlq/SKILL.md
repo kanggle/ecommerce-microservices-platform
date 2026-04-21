@@ -8,13 +8,13 @@ category: messaging
 
 Patterns for Kafka consumer retry and dead-letter queue handling.
 
-Prerequisite: read `platform/event-driven-policy.md` before using this skill.
+Prerequisite: read `specs/platform/event-driven-policy.md` before using this skill.
 
 ---
 
 ## Retry Configuration
 
-Use Spring Kafka's `DefaultErrorHandler` with `ExponentialBackOff`, matching `platform/event-driven-policy.md` Retry Policy (Base 1s, multiplier 2.0, max 30s, max 3 attempts).
+Use Spring Kafka's `DefaultErrorHandler` with `ExponentialBackOff`, matching `specs/platform/event-driven-policy.md` Retry Policy (Base 1s, multiplier 2.0, max 30s, max 3 attempts).
 
 ```java
 import org.springframework.util.backoff.ExponentialBackOff;
@@ -47,7 +47,7 @@ public class KafkaConsumerConfig {
 
 Pattern: `{original-topic}.dlq`
 
-Per `platform/event-driven-policy.md`, DLQ topics use the `.dlq` suffix — **not** Spring Kafka's default `.DLT`. A custom destination resolver must be passed to `DeadLetterPublishingRecoverer` (see the configuration example above).
+Per `specs/platform/event-driven-policy.md`, DLQ topics use the `.dlq` suffix — **not** Spring Kafka's default `.DLT`. A custom destination resolver must be passed to `DeadLetterPublishingRecoverer` (see the configuration example above).
 
 Examples:
 - `order.order.placed` → `order.order.placed.dlq`

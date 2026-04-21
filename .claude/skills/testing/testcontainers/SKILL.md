@@ -8,7 +8,7 @@ category: testing
 
 Patterns for using Testcontainers in Spring Boot integration tests.
 
-Prerequisite: read `platform/testing-strategy.md` before using this skill.
+Prerequisite: read `specs/platform/testing-strategy.md` before using this skill.
 
 ---
 
@@ -47,12 +47,12 @@ class AuthIntegrationTest {
 
 ## Container Types Used
 
-| Container | Image | Typical Use |
+| Container | Image | Used By |
 |---|---|---|
-| PostgreSQL | `postgres:16-alpine` | Backend services persisting relational state |
-| Redis | `redis:7-alpine` | Services using Redis for sessions, cache, idempotency keys, rate limits |
+| PostgreSQL | `postgres:16-alpine` | All backend services |
+| Redis | `redis:7-alpine` | auth-service (sessions, tokens) |
 | Kafka | `apache/kafka:3.7.0` | Event producer/consumer tests |
-| Elasticsearch | `elasticsearch:8.15.0` | Search-index services |
+| Elasticsearch | `elasticsearch:8.15.0` | search-service |
 
 ---
 

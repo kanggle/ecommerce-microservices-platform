@@ -8,13 +8,13 @@ category: backend
 
 Testing patterns for Spring Boot backend services in this repository.
 
-Prerequisite: read `platform/testing-strategy.md` before using this skill.
+Prerequisite: read `specs/platform/testing-strategy.md` before using this skill.
 
 ---
 
 ## Test Types
 
-For test type definitions and required coverage, see `platform/testing-strategy.md`.
+For test type definitions and required coverage, see `specs/platform/testing-strategy.md`.
 
 ---
 

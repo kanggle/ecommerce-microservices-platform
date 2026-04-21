@@ -8,7 +8,7 @@ category: frontend
 
 Patterns for form implementation in Next.js applications.
 
-Prerequisite: read `platform/coding-rules.md` (TypeScript Rules section) before using this skill.
+Prerequisite: read `specs/platform/coding-rules.md` (TypeScript Rules section) before using this skill.
 
 ---
 

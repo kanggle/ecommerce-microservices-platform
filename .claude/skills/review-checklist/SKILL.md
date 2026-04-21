@@ -11,11 +11,11 @@ All review commands (`review-task`) must use this checklist as the single source
 
 ## Prerequisite Specs
 
-- `platform/coding-rules.md`
-- `platform/naming-conventions.md`
-- `platform/error-handling.md`
-- `platform/security-rules.md`
-- `platform/testing-strategy.md`
+- `specs/platform/coding-rules.md`
+- `specs/platform/naming-conventions.md`
+- `specs/platform/error-handling.md`
+- `specs/platform/security-rules.md`
+- `specs/platform/testing-strategy.md`
 
 ---
 
@@ -33,14 +33,14 @@ All review commands (`review-task`) must use this checklist as the single source
 - [ ] Controller does not call repositories directly
 
 ## Code Quality
-- [ ] `platform/coding-rules.md` followed
-- [ ] `platform/naming-conventions.md` followed (Command/Result, Request/Response patterns, test method naming)
-- [ ] Error response format matches `platform/error-handling.md`
+- [ ] `specs/platform/coding-rules.md` followed
+- [ ] `specs/platform/naming-conventions.md` followed (Command/Result, Request/Response patterns, test method naming)
+- [ ] Error response format matches `specs/platform/error-handling.md`
 - [ ] No duplicate code or excessive complexity
 - [ ] No resource leak risk
 
 ## Security
-- [ ] No `platform/security-rules.md` violations
+- [ ] No `specs/platform/security-rules.md` violations
 - [ ] No SQL injection or XSS risk
 - [ ] No missing authentication/authorization
 - [ ] No hardcoded secrets
@@ -53,6 +53,6 @@ All review commands (`review-task`) must use this checklist as the single source
 - [ ] Transaction scope is appropriate
 
 ## Testing
-- [ ] Required test levels from `platform/testing-strategy.md` are covered
+- [ ] Required test levels from `specs/platform/testing-strategy.md` are covered
 - [ ] All tests pass
 - [ ] Tests cover Edge Cases and Failure Scenarios listed in the task

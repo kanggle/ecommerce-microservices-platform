@@ -18,7 +18,7 @@ PLACEHOLDER. This agent is declared so that the coordinator's frontmatter scorin
 
 ## Role (when activated)
 
-Design and implement ML pipelines following `platform/service-types/ml-pipeline.md`. Specifically:
+Design and implement ML pipelines following `specs/platform/service-types/ml-pipeline.md`. Specifically:
 
 - Split training and serving into separate deployment units
 - Use a model registry (MLflow / S3 with versioning) for artifact management
@@ -30,9 +30,9 @@ Design and implement ML pipelines following `platform/service-types/ml-pipeline.
 
 > Prerequisite: follow CLAUDE.md Required Workflow steps 1–3 (read CLAUDE.md → read task → read specs per entrypoint.md) before starting design or implementation.
 
-1. Read `platform/service-types/ml-pipeline.md`
+1. Read `specs/platform/service-types/ml-pipeline.md`
 2. Read `.claude/skills/service-types/ml-pipeline-setup/SKILL.md`
-3. For training: also read `platform/service-types/batch-job.md` and the batch-job setup skill
+3. For training: also read `specs/platform/service-types/batch-job.md` and the batch-job setup skill
 4. For inference: also read the matching `rest-api.md` or `grpc-service.md` spec
 5. Define feature store or inline feature definitions
 6. Implement training pipeline with reproducible runs

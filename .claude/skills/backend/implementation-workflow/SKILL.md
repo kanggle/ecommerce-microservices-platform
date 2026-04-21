@@ -8,7 +8,7 @@ category: backend
 
 Full workflow for implementing a backend task in this repository.
 
-Prerequisite: read `platform/coding-rules.md` and follow `platform/entrypoint.md` before using this skill.
+Prerequisite: read `specs/platform/coding-rules.md` and follow `specs/platform/entrypoint.md` before using this skill.
 
 ---
 
@@ -31,7 +31,7 @@ Follow the layer structure declared in `specs/services/<service>/architecture.md
 
 ## Step 8: Write tests
 
-Follow `platform/testing-strategy.md` (Required Tests Per Task) and the `testing-backend` skill for implementation patterns.
+Follow `specs/platform/testing-strategy.md` (Required Tests Per Task) and the `testing-backend` skill for implementation patterns.
 
 ---
 

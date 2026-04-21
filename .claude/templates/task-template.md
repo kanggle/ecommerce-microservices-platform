@@ -69,7 +69,7 @@ This must explain what should become true after the task is complete.
 
 # Related Specs
 
-- `platform/...`
+- `specs/platform/...`
 - `specs/services/<service>/...`
 - `specs/features/...`
 

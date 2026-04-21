@@ -8,7 +8,7 @@ category: database
 
 Patterns for Flyway migration management across services.
 
-Prerequisite: read `platform/coding-rules.md` (Database section) before using this skill.
+Prerequisite: read `specs/platform/coding-rules.md` (Database section) before using this skill.
 
 ---
 
@@ -41,17 +41,19 @@ spring:
 
 ## Migration Structure Per Service
 
-Each service owns its own migration directory. In a monorepo the path includes the project:
-
 ```
-projects/<project-name>/apps/<service-name>/src/main/resources/db/migration/
-├── V1__create_<primary_entity>_table.sql
-├── V2__add_<column_or_index>.sql
-├── V3__create_<related_entity>_table.sql
-└── V4__create_outbox_table.sql      (if the service emits events)
-```
+apps/auth-service/src/main/resources/db/migration/
+├── V1__create_users_table.sql
+├── V2__add_email_index.sql
+├── V3__create_refresh_tokens_table.sql
+└── V4__create_audit_log_table.sql
 
-Each service's migrations are independent — never cross-reference another service's tables. Shared data flows through events/contracts instead.
+apps/order-service/src/main/resources/db/migration/
+├── V1__create_orders_table.sql
+├── V2__create_order_items_table.sql
+├── V3__add_shipping_address.sql
+└── V5__create_outbox_table.sql
+```
 
 ---
 

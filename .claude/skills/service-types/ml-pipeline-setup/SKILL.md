@@ -8,7 +8,7 @@ category: service-types
 
 Implementation orchestration for an `ml-pipeline` service. Use when training, hosting, or serving ML models.
 
-Prerequisite: read `platform/service-types/ml-pipeline.md` before using this skill. No ML services in this monorepo yet — this skill activates with the first one.
+Prerequisite: read `specs/platform/service-types/ml-pipeline.md` before using this skill. No ML services in this monorepo yet — this skill activates with the first one.
 
 ---
 
@@ -145,7 +145,7 @@ def detect_drift() -> None:
 
 ## Self-Review Checklist
 
-Verify against `platform/service-types/ml-pipeline.md` Acceptance section. Specifically:
+Verify against `specs/platform/service-types/ml-pipeline.md` Acceptance section. Specifically:
 
 - [ ] Train and serve are separate deployment units
 - [ ] Every artifact in the registry has full metadata

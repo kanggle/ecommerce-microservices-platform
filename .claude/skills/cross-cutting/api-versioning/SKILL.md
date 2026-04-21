@@ -8,7 +8,7 @@ category: cross-cutting
 
 Cross-cutting policy for evolving HTTP and event contracts without breaking consumers.
 
-Prerequisite: read `platform/versioning-policy.md` and `platform/api-gateway-policy.md` before using this skill. Concrete contract files live in `specs/contracts/`.
+Prerequisite: read `specs/platform/versioning-policy.md` and `specs/platform/api-gateway-policy.md` before using this skill. Concrete contract files live in `specs/contracts/`.
 
 ---
 
