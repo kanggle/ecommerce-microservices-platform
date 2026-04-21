@@ -8,7 +8,7 @@ category: backend
 
 Patterns for API gateway JWT validation, routing, and request enrichment using Spring Cloud Gateway.
 
-Prerequisite: read `platform/security-rules.md` and `platform/api-gateway-policy.md` before using this skill.
+Prerequisite: read `specs/platform/security-rules.md` and `specs/platform/api-gateway-policy.md` before using this skill.
 
 ---
 
@@ -104,9 +104,9 @@ public class RouteService {
     }
 
     public String resolveTargetService(String path) {
-        if (path.startsWith("/api/auth")) return "example-service";
-        if (path.startsWith("/api/products")) return "example-service";
-        if (path.startsWith("/api/orders")) return "example-service";
+        if (path.startsWith("/api/auth")) return "auth-service";
+        if (path.startsWith("/api/products")) return "product-service";
+        if (path.startsWith("/api/orders")) return "order-service";
         // ...
         return "unknown";
     }

@@ -12,14 +12,14 @@ Implement tasks in `tasks/ready/` end-to-end.
 ```
 /implement-task TASK-BE-113       # implement a single task
 /implement-task                   # implement all tasks in tasks/ready/
-/implement-task <service-name>    # implement tasks for a specific service only
+/implement-task order-service     # implement tasks for a specific service only
 /implement-task --dry-run         # show execution plan only, do not implement
 ```
 
 ## Argument Parsing
 
 1. If argument matches `TASK-*` pattern → **single task mode**
-2. If argument is a service name (as declared in `PROJECT.md`) → **batch mode filtered by service**
+2. If argument is a service name (e.g., `order-service`) → **batch mode filtered by service**
 3. If argument is `--dry-run` → **batch mode, plan only**
 4. If no argument → **batch mode for all tasks**
 
@@ -33,7 +33,7 @@ When a specific task ID is given:
 2. Find and read the task file matching the given ID in `tasks/ready/`
 3. If the task is not in `tasks/ready/`, **stop immediately** — do not implement tasks from other directories
 4. Verify all required sections exist (Goal, Scope, Acceptance Criteria, Related Specs, Related Contracts, Edge Cases, Failure Scenarios) — stop if any is missing
-5. Read Related Specs in the order defined by `platform/entrypoint.md`
+5. Read Related Specs in the order defined by `specs/platform/entrypoint.md`
 6. Read Related Contracts
 7. Read `.claude/skills/INDEX.md` → read skill files matching Related Skills
 8. Read existing code in the target service to understand current patterns and structure
@@ -172,7 +172,7 @@ You are implementing a task in this project. Follow these steps exactly:
 1. Read `CLAUDE.md`
 2. Read the task file at `tasks/ready/{taskFileName}`
 3. Move task from `tasks/ready/` to `tasks/in-progress/`
-4. Read `platform/entrypoint.md` and follow the spec reading order
+4. Read `specs/platform/entrypoint.md` and follow the spec reading order
 5. Read all Related Specs listed in the task
 6. Read all Related Contracts listed in the task
 7. Read `.claude/skills/INDEX.md` and matched skill files
@@ -214,7 +214,7 @@ Standard implementation. No special handling needed.
 - Read event contracts before implementation
 - Implement event publishing logic
 - Test event publishing in integration tests
-- Follow platform/event-driven-policy.md (outbox pattern, idempotency)
+- Follow specs/platform/event-driven-policy.md (outbox pattern, idempotency)
 ```
 
 **contract-change**:

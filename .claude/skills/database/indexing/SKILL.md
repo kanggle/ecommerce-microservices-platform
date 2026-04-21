@@ -8,7 +8,7 @@ category: database
 
 Patterns for index design and optimization in PostgreSQL.
 
-Prerequisite: read `platform/coding-rules.md` (Database section) before using this skill.
+Prerequisite: read `specs/platform/coding-rules.md` (Database section) before using this skill.
 
 ---
 
@@ -54,17 +54,15 @@ CREATE INDEX idx_orders_status_user ON orders (status, user_id);
 
 ---
 
-## Common Index Patterns (Generic Examples)
+## Indexes This Project Uses
 
-| Pattern | Example | Purpose |
-|---|---|---|
-| Unique on natural key | `uq_<table>_<column>` (e.g., `uq_users_email`) | Enforce business uniqueness |
-| FK lookup | `idx_<child>_<parent>_id` (e.g., `idx_refresh_tokens_user_id`) | Reverse navigation + join |
-| Compound query | `idx_<table>_<col1>_<col2>` (e.g., `idx_orders_user_status`) | Multi-column WHERE/ORDER BY |
-| Outbox polling | `idx_<outbox>_status_created` | Poll pending events in FIFO order |
-| Idempotency | `uq_<table>_<request-id>` | Dedup on repeated writes |
-
-Per-project indexes should be declared in that project's `specs/services/<service>/` or migration files, not in this shared skill file.
+| Service | Table | Index | Purpose |
+|---|---|---|---|
+| auth-service | users | `uq_users_email` | Email uniqueness |
+| auth-service | refresh_tokens | `idx_refresh_tokens_user_id` | Token lookup by user |
+| order-service | orders | `idx_orders_user_status` | Order list query |
+| order-service | outbox | `idx_outbox_status_created` | Outbox polling |
+| payment-service | payments | `uq_payments_order_id` | Idempotency |
 
 ---
 

@@ -8,7 +8,7 @@ category: service-types
 
 Implementation orchestration for a `frontend-app` service (Next.js).
 
-Prerequisite: read `platform/service-types/frontend-app.md` before using this skill.
+Prerequisite: read `specs/platform/service-types/frontend-app.md` before using this skill.
 
 ---
 
@@ -33,7 +33,7 @@ Prerequisite: read `platform/service-types/frontend-app.md` before using this sk
 ## Repository Layout (Feature-Sliced Design example)
 
 ```
-apps/example-frontend/
+apps/web-store/
   app/                     # Next.js routes
   src/
     features/              # business features
@@ -65,13 +65,13 @@ module.exports = {
 };
 ```
 
-`.github/workflows/example-frontend.yml` includes:
+`.github/workflows/web-store.yml` includes:
 
 ```yaml
 - name: Check bundle budget
   run: |
-    pnpm --filter example-frontend build
-    pnpm --filter example-frontend check-bundle-budget
+    pnpm --filter web-store build
+    pnpm --filter web-store check-bundle-budget
 ```
 
 Where `check-bundle-budget` is a script that fails if first-load JS exceeds the per-route budget declared in `architecture.md`.
@@ -81,7 +81,7 @@ Where `check-bundle-budget` is a script that fails if first-load JS exceeds the 
 ## API Client Skeleton
 
 ```ts
-// apps/example-frontend/src/shared/api/client.ts
+// apps/web-store/src/shared/api/client.ts
 import { z } from 'zod';
 
 const API_BASE = process.env.NEXT_PUBLIC_API_BASE!;
@@ -111,7 +111,7 @@ Every feature wraps this with typed methods and never calls `fetch` directly.
 
 ## a11y in CI
 
-`.github/workflows/example-frontend.yml`:
+`.github/workflows/web-store.yml`:
 
 ```yaml
 - name: Run Lighthouse a11y
@@ -144,7 +144,7 @@ The `/api/vitals` route forwards to the observability backend.
 
 ## Self-Review Checklist
 
-Verify against `platform/service-types/frontend-app.md` Acceptance section. Specifically:
+Verify against `specs/platform/service-types/frontend-app.md` Acceptance section. Specifically:
 
 - [ ] Architecture pattern declared and followed
 - [ ] Typed API client wraps every backend call

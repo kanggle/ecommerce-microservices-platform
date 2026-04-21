@@ -8,7 +8,7 @@ category: backend
 
 Patterns for recording audit logs with separate transaction handling.
 
-Prerequisite: read `platform/security-rules.md` before using this skill.
+Prerequisite: read `specs/platform/security-rules.md` before using this skill.
 
 ---
 

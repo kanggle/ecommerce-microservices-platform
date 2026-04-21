@@ -18,7 +18,7 @@ Analyze existing code for refactoring opportunities and perform safe refactoring
 
 ## Workflow
 
-1. Read `platform/refactoring-policy.md` for rules and constraints
+1. Read `specs/platform/refactoring-policy.md` for rules and constraints
 2. Read `specs/services/<service>/architecture.md` for the target service
 3. Read `.claude/skills/backend/refactoring/SKILL.md` for patterns
 4. Read the target code and understand its current structure
@@ -76,7 +76,7 @@ Analyze existing code for refactoring opportunities and perform safe refactoring
 
 ## CLAUDE.md Compliance
 
-All refactoring follows CLAUDE.md Source of Truth Priority and `platform/refactoring-policy.md`.
+All refactoring follows CLAUDE.md Source of Truth Priority and `specs/platform/refactoring-policy.md`.
 
 ## Does NOT
 

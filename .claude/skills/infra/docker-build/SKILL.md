@@ -8,7 +8,7 @@ category: infra
 
 Patterns for building Docker images in this repository.
 
-Prerequisite: read `platform/deployment-policy.md` before using this skill.
+Prerequisite: read `specs/platform/deployment-policy.md` before using this skill.
 
 ---
 
@@ -66,10 +66,10 @@ Uses 75% of container memory limit. Set memory limits in Docker Compose or Kuber
 
 ```yaml
 services:
-  example-service:
+  auth-service:
     build:
       context: .
-      dockerfile: apps/example-service/Dockerfile
+      dockerfile: apps/auth-service/Dockerfile
     deploy:
       resources:
         limits:

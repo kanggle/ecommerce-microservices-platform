@@ -8,7 +8,7 @@ category: cross-cutting
 
 Cross-cutting checklist for hardening any service against common attack classes.
 
-Prerequisite: read `platform/security-rules.md` before using this skill. Auth-specific patterns live in `backend/jwt-auth/SKILL.md`, `backend/oauth-provider/SKILL.md`, `backend/gateway-security/SKILL.md`.
+Prerequisite: read `specs/platform/security-rules.md` before using this skill. Auth-specific patterns live in `backend/jwt-auth/SKILL.md`, `backend/oauth-provider/SKILL.md`, `backend/gateway-security/SKILL.md`.
 
 ---
 

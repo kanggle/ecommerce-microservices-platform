@@ -10,7 +10,7 @@ Next.js (App Router) implementation patterns for applications using Feature-Slic
 
 Prerequisite: read `specs/services/<app>/architecture.md` before using this skill.
 
-> `@repo/api-client`, `@repo/types` are monorepo shared libraries defined in `libs/`. See `platform/shared-library-policy.md` for ownership rules.
+> `@repo/api-client`, `@repo/types` are monorepo shared libraries defined in `libs/`. See `specs/platform/shared-library-policy.md` for ownership rules.
 
 ---
 

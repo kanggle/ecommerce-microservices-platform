@@ -20,7 +20,7 @@ Configure infrastructure, containerization, CI/CD pipelines, and deployment stra
 ### Docker
 - Write and optimize Dockerfiles
 - Multi-stage builds
-- Follow `platform/deployment-policy.md`
+- Follow `specs/platform/deployment-policy.md`
 
 ### Kubernetes
 - Write manifests (Deployment, Service, ConfigMap, Secret)

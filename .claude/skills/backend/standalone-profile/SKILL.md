@@ -8,7 +8,7 @@ category: backend
 
 Patterns for `@Profile("standalone")` in-memory implementations for local development without Docker.
 
-Prerequisite: read `platform/deployment-policy.md` before using this skill.
+Prerequisite: read `specs/platform/deployment-policy.md` before using this skill.
 
 ---
 
@@ -74,7 +74,7 @@ public class StandaloneConfig {
 
 ## Application Configuration
 
-> **Note:** H2 is used here for standalone local development only. This does NOT apply to integration tests — see `platform/testing-strategy.md` which requires Testcontainers with real PostgreSQL.
+> **Note:** H2 is used here for standalone local development only. This does NOT apply to integration tests — see `specs/platform/testing-strategy.md` which requires Testcontainers with real PostgreSQL.
 
 ```yaml
 # application-standalone.yml
@@ -97,10 +97,10 @@ spring:
 
 ```bash
 # Via environment variable
-SPRING_PROFILES_ACTIVE=standalone ./gradlew :projects:<project-name>:apps:<service-name>:bootRun
+SPRING_PROFILES_ACTIVE=standalone ./gradlew :apps:auth-service:bootRun
 
 # Via Gradle property
-./gradlew :projects:<project-name>:apps:<service-name>:bootRun --args='--spring.profiles.active=standalone'
+./gradlew :apps:auth-service:bootRun --args='--spring.profiles.active=standalone'
 ```
 
 ---
@@ -127,21 +127,15 @@ public RefreshTokenStore refreshTokenStore() {
 
 ---
 
-## Typical Beans Served by StandaloneConfig
+## Services with StandaloneConfig
 
-A service's `StandaloneConfig` typically substitutes beans that would normally require external infrastructure. Common categories:
-
-| Category | Example Bean Names |
+| Service | Standalone Beans |
 |---|---|
-| Rate limiting / throttling | `RateLimiter`, `RequestQuotaTracker` |
-| Session / token storage | `RefreshTokenStore`, `SessionRegistry`, `AccessTokenBlocklist` |
-| OAuth / external identity state | `OAuthStateStore` |
-| Event publishers (Kafka → in-memory) | `<Aggregate>EventPublisher` |
-| External gateway adapters | `<Vendor>GatewayPort` implementations |
-| Inter-service clients | `<OtherService>InfoProvider` (backed by stubs) |
-| Seed data | test user/tenant/entity initialization |
-
-Each service declares its standalone bean set in its own `StandaloneConfig` class. This shared skill does not enumerate per-service beans — see the target service's `specs/services/<service>/architecture.md` or the class itself.
+| auth-service | RateLimiter, RefreshTokenStore, UserSessionRegistry, OAuthStateStore, AccessTokenBlocklist, AuthEventPublisher |
+| order-service | OrderEventPublisher (+ RestClient for payment) |
+| product-service | ProductEventPublisher |
+| payment-service | PaymentEventPublisher, PaymentGatewayPort |
+| user-service | ProductInfoProvider, test user initialization |
 
 ---
 

@@ -8,7 +8,7 @@ category: backend
 
 Patterns for recurring scheduled tasks and batch processing.
 
-Prerequisite: read `platform/event-driven-policy.md` before using this skill.
+Prerequisite: read `specs/platform/event-driven-policy.md` before using this skill.
 
 ---
 

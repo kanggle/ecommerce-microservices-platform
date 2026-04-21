@@ -8,7 +8,7 @@ category: backend
 
 Patterns for JWT token generation, validation, and refresh token management.
 
-Prerequisite: read `platform/security-rules.md` before using this skill.
+Prerequisite: read `specs/platform/security-rules.md` before using this skill.
 
 ---
 

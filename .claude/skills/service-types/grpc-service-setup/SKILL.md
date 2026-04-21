@@ -8,7 +8,7 @@ category: service-types
 
 Implementation orchestration for a `grpc-service`. Use only when `rest-api` is demonstrably insufficient.
 
-Prerequisite: read `platform/service-types/grpc-service.md` before using this skill. No services in this monorepo currently use gRPC — this skill activates with the first one.
+Prerequisite: read `specs/platform/service-types/grpc-service.md` before using this skill. No services in this monorepo currently use gRPC — this skill activates with the first one.
 
 ---
 
@@ -32,7 +32,7 @@ Prerequisite: read `platform/service-types/grpc-service.md` before using this sk
 
 ```
 specs/contracts/grpc/
-  example-service/
+  order-service/
     v1/
       order_service.proto
       order_messages.proto
@@ -44,7 +44,7 @@ buf.gen.yaml
 ```
 
 ```protobuf
-// specs/contracts/grpc/example-service/v1/order_service.proto
+// specs/contracts/grpc/order-service/v1/order_service.proto
 syntax = "proto3";
 package orderservice.v1;
 option java_package = "com.example.order.grpc.v1";
@@ -136,7 +136,7 @@ jobs:
 
 ## Self-Review Checklist
 
-Verify against `platform/service-types/grpc-service.md` Acceptance section. Specifically:
+Verify against `specs/platform/service-types/grpc-service.md` Acceptance section. Specifically:
 
 - [ ] Justification documented
 - [ ] Proto under `specs/contracts/grpc/`, generated code excluded from git

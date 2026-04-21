@@ -8,7 +8,7 @@ category: backend
 
 Patterns for exception classes and global error handling in Spring Boot services.
 
-Prerequisite: read `platform/error-handling.md` before using this skill.
+Prerequisite: read `specs/platform/error-handling.md` before using this skill.
 
 ---
 

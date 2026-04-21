@@ -2,7 +2,7 @@
 
 This directory holds agents that are bound to a specific `domain` declared in [`PROJECT.md`](../../../PROJECT.md).
 
-Currently empty — first-project's domain (`ecommerce`) has no domain-specific agents yet; the 13 agents under [`../common/`](../common/) cover its needs. This directory exists so the layout is ready when specialized agents become necessary.
+Currently empty — ecommerce-microservices-platform's domain (`ecommerce`) has no domain-specific agents yet; the 13 agents under [`../common/`](../common/) cover its needs. This directory exists so the layout is ready when specialized agents become necessary.
 
 ---
 
@@ -41,7 +41,7 @@ Domain-agnostic agents (architect, backend-engineer, api-designer, database-desi
 
 Domain-specific agents are activated when the declared `domain` in [`PROJECT.md`](../../../PROJECT.md) matches the subdirectory name. When bootstrapping a new project with `domain: fintech`, the `ecommerce/` subdirectory contents become dead weight and should be removed from the new project copy.
 
-See [`../../config/activation-rules.md`](../../config/activation-rules.md) for the routing table and [`../../../rules/README.md`](../../../rules/README.md) for the overall rule resolution order.
+See [`../../config/activation-rules.md`](../../config/activation-rules.md) for the routing table and [`../../../specs/rules/README.md`](../../../specs/rules/README.md) for the overall rule resolution order.
 
 ---
 

@@ -8,7 +8,7 @@ category: infra
 
 Patterns for enabling mTLS, traffic policy, and observability via a service mesh (Istio or Linkerd).
 
-Prerequisite: read `platform/architecture.md`, `platform/security-rules.md`, and `cross-cutting/security-hardening/SKILL.md` before using this skill. Service-mesh adoption is **optional** — use this skill only when zero-trust mTLS or advanced traffic shaping is required.
+Prerequisite: read `specs/platform/architecture.md`, `specs/platform/security-rules.md`, and `cross-cutting/security-hardening/SKILL.md` before using this skill. Service-mesh adoption is **optional** — use this skill only when zero-trust mTLS or advanced traffic shaping is required.
 
 ---
 
@@ -86,13 +86,13 @@ spec:
 apiVersion: split.smi-spec.io/v1alpha1
 kind: TrafficSplit
 metadata:
-  name: example-service-canary
+  name: order-service-canary
 spec:
-  service: example-service
+  service: order-service
   backends:
-    - service: example-service-stable
+    - service: order-service-stable
       weight: 90
-    - service: example-service-canary
+    - service: order-service-canary
       weight: 10
 ```
 
@@ -102,14 +102,14 @@ spec:
 apiVersion: networking.istio.io/v1beta1
 kind: VirtualService
 metadata:
-  name: example-service
+  name: order-service
 spec:
-  hosts: [example-service]
+  hosts: [order-service]
   http:
     - route:
-        - destination: { host: example-service, subset: stable }
+        - destination: { host: order-service, subset: stable }
           weight: 90
-        - destination: { host: example-service, subset: canary }
+        - destination: { host: order-service, subset: canary }
           weight: 10
 ```
 
@@ -124,10 +124,10 @@ Default deny, explicit allow per service-to-service edge:
 apiVersion: security.istio.io/v1beta1
 kind: AuthorizationPolicy
 metadata:
-  name: example-service-allow
+  name: order-service-allow
 spec:
   selector:
-    matchLabels: { app.kubernetes.io/name: example-service }
+    matchLabels: { app.kubernetes.io/name: order-service }
   action: ALLOW
   rules:
     - from:

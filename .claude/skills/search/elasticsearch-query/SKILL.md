@@ -8,7 +8,7 @@ category: search
 
 Patterns for building search queries in the search service.
 
-Prerequisite: read `platform/coding-rules.md` before using this skill.
+Prerequisite: read `specs/platform/coding-rules.md` before using this skill.
 
 ---
 

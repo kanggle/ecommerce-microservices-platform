@@ -8,7 +8,7 @@ category: frontend
 
 Patterns for keeping Next.js bundles small and Core Web Vitals green.
 
-Prerequisite: read `platform/observability.md` and `cross-cutting/performance-tuning/SKILL.md` before using this skill.
+Prerequisite: read `specs/platform/observability.md` and `cross-cutting/performance-tuning/SKILL.md` before using this skill.
 
 ---
 
@@ -36,7 +36,7 @@ module.exports = withBundleAnalyzer({ /* ... */ });
 ```
 
 ```bash
-ANALYZE=true pnpm build --filter=example-frontend
+ANALYZE=true pnpm build --filter=web-store
 ```
 
 CI fails if first-load JS exceeds the per-route budget (default: 180 KB gzipped for landing routes, 250 KB for app routes).

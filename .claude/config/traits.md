@@ -2,12 +2,12 @@
 
 > **Role**: Routing catalog for agent runtime dispatch. This file lists every valid `trait` value used in [`PROJECT.md`](../../PROJECT.md) `traits:` declarations.
 >
-> **Detailed definitions** (each trait's meaning, when to select it, and cross-trait compatibility) live in [`rules/taxonomy.md`](../../rules/taxonomy.md). When adding a new trait, update **both** files in the same change.
+> **Detailed definitions** (each trait's meaning, when to select it, and cross-trait compatibility) live in [`specs/rules/taxonomy.md`](../../specs/rules/taxonomy.md). When adding a new trait, update **both** files in the same change.
 >
 > **Source of truth**:
 > - Catalog membership ("is `X` a valid trait?") — this file
-> - Narrative definition ("what does `X` mean?") — [`rules/taxonomy.md`](../../rules/taxonomy.md)
-> - Mandatory rules/forbidden patterns ("what must I do if `X` is active?") — [`rules/traits/<trait>.md`](../../rules/traits/)
+> - Narrative definition ("what does `X` mean?") — [`specs/rules/taxonomy.md`](../../specs/rules/taxonomy.md)
+> - Mandatory rules/forbidden patterns ("what must I do if `X` is active?") — [`specs/rules/traits/<trait>.md`](../../specs/rules/traits/)
 > - Activation mapping ("what rule categories activate?") — [`activation-rules.md`](activation-rules.md)
 
 Multiple traits may be assigned to a project. Traits activate **additional** rules and skills on top of the common baseline. Traits do not replace domain rules.
@@ -39,13 +39,13 @@ Values not listed above are a **Hard Stop** — see [`CLAUDE.md`](../../CLAUDE.m
 
 ---
 
-## Example (typical trait combinations per domain)
+## Example
 
-- `ecommerce` (order-handling service)
+- ecommerce order-service
   - `transactional`
   - `integration-heavy`
 
-- `fintech` (payment-handling service)
+- fintech payment-service
   - `transactional`
   - `regulated`
   - `audit-heavy`
@@ -60,4 +60,4 @@ Values not listed above are a **Hard Stop** — see [`CLAUDE.md`](../../CLAUDE.m
 
 ## Change Protocol
 
-New trait → add here **and** to [`rules/taxonomy.md`](../../rules/taxonomy.md) **and** to [`activation-rules.md`](activation-rules.md) in the same change. If the new trait needs a detailed rules file, create [`rules/traits/<trait>.md`](../../rules/traits/) in the same change (on-demand principle).
+New trait → add here **and** to [`specs/rules/taxonomy.md`](../../specs/rules/taxonomy.md) **and** to [`activation-rules.md`](activation-rules.md) in the same change. If the new trait needs a detailed rules file, create [`specs/rules/traits/<trait>.md`](../../specs/rules/traits/) in the same change (on-demand principle).

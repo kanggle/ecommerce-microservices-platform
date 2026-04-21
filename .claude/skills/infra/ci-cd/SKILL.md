@@ -8,7 +8,7 @@ category: infra
 
 Patterns for GitHub Actions CI/CD pipelines in this repository.
 
-Prerequisite: read `platform/deployment-policy.md` before using this skill.
+Prerequisite: read `specs/platform/deployment-policy.md` before using this skill.
 
 ---
 
@@ -43,10 +43,10 @@ jobs:
           files_yaml: |
             libs:
               - 'libs/**'
-            example-service:
-              - 'apps/example-service/**'
-            example-service:
-              - 'apps/example-service/**'
+            auth-service:
+              - 'apps/auth-service/**'
+            order-service:
+              - 'apps/order-service/**'
 ```
 
 ### Build & Test Matrix
@@ -133,7 +133,7 @@ If `libs/` changes, all services that depend on it must be rebuilt:
 - id: set-matrix
   run: |
     if [ "${{ steps.changed-files.outputs.libs_any_changed }}" == "true" ]; then
-      echo "services=[\"example-service\",\"example-service\",\"example-service\"]" >> $GITHUB_OUTPUT
+      echo "services=[\"auth-service\",\"order-service\",\"product-service\"]" >> $GITHUB_OUTPUT
     else
       # build only changed services
     fi

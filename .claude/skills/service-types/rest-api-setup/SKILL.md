@@ -8,7 +8,7 @@ category: service-types
 
 Implementation orchestration for a `rest-api` service. Composes existing skills into a setup workflow.
 
-Prerequisite: read `platform/service-types/rest-api.md` before using this skill. This skill is the orchestration layer; concrete patterns live in the referenced skills.
+Prerequisite: read `specs/platform/service-types/rest-api.md` before using this skill. This skill is the orchestration layer; concrete patterns live in the referenced skills.
 
 ---
 
@@ -62,8 +62,8 @@ spring:
   cloud:
     gateway:
       routes:
-        - id: example-service
-          uri: lb://example-service
+        - id: order-service
+          uri: lb://order-service
           predicates:
             - Path=/v1/orders/**
           filters:
@@ -78,7 +78,7 @@ The service must NEVER be reachable from outside the cluster except through the 
 
 ## Self-Review Checklist
 
-Before submitting for review, verify against `platform/service-types/rest-api.md` Acceptance section. Specifically:
+Before submitting for review, verify against `specs/platform/service-types/rest-api.md` Acceptance section. Specifically:
 
 - [ ] Every endpoint matches the HTTP contract exactly (no extra fields, no missing fields)
 - [ ] Every list endpoint paginates

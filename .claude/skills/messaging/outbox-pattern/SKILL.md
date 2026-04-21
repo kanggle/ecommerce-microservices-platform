@@ -8,7 +8,7 @@ category: messaging
 
 Patterns for reliable event publishing using the transactional outbox.
 
-Prerequisite: read `platform/event-driven-policy.md` before using this skill.
+Prerequisite: read `specs/platform/event-driven-policy.md` before using this skill.
 
 ---
 

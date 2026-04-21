@@ -18,7 +18,7 @@ PLACEHOLDER. Declared so the coordinator can target analytics-oriented batch wor
 
 ## Role (when activated)
 
-Design and implement data pipelines following `platform/service-types/batch-job.md` with analytics-specific concerns layered on top:
+Design and implement data pipelines following `specs/platform/service-types/batch-job.md` with analytics-specific concerns layered on top:
 
 - Source-of-truth data modeling (raw, staging, mart layers)
 - ETL job idempotency and replayability from any point
@@ -30,7 +30,7 @@ Design and implement data pipelines following `platform/service-types/batch-job.
 
 > Prerequisite: follow CLAUDE.md Required Workflow steps 1–3 (read CLAUDE.md → read task → read specs per entrypoint.md) before starting design or implementation.
 
-1. Read `platform/service-types/batch-job.md`
+1. Read `specs/platform/service-types/batch-job.md`
 2. Read `.claude/skills/service-types/batch-job-setup/SKILL.md`
 3. Define source and sink schemas; document in service spec
 4. Implement chunked, checkpointed ETL with restart safety

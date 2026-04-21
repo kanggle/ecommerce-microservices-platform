@@ -8,7 +8,7 @@ category: infra
 
 Patterns for Kubernetes manifests in this repository.
 
-Prerequisite: read `platform/deployment-policy.md` before using this skill.
+Prerequisite: read `specs/platform/deployment-policy.md` before using this skill.
 
 ---
 
@@ -17,7 +17,7 @@ Prerequisite: read `platform/deployment-policy.md` before using this skill.
 Each service has manifests in `k8s/services/{service}/`:
 
 ```
-k8s/services/example-service/
+k8s/services/auth-service/
 ├── deployment.yaml
 ├── service.yaml
 └── configmap.yaml
@@ -31,22 +31,22 @@ k8s/services/example-service/
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: example-service
+  name: auth-service
   labels:
-    app: example-service
+    app: auth-service
 spec:
   replicas: 2
   selector:
     matchLabels:
-      app: example-service
+      app: auth-service
   template:
     metadata:
       labels:
-        app: example-service
+        app: auth-service
     spec:
       containers:
-        - name: example-service
-          image: example-service:latest
+        - name: auth-service
+          image: auth-service:latest
           ports:
             - containerPort: 8081
           env:
@@ -54,7 +54,7 @@ spec:
               value: "prod"
           envFrom:
             - configMapRef:
-                name: example-service-config
+                name: auth-service-config
           resources:
             requests:
               cpu: 250m
@@ -84,10 +84,10 @@ spec:
 apiVersion: v1
 kind: Service
 metadata:
-  name: example-service
+  name: auth-service
 spec:
   selector:
-    app: example-service
+    app: auth-service
   ports:
     - port: 8081
       targetPort: 8081
@@ -102,7 +102,7 @@ spec:
 apiVersion: v1
 kind: ConfigMap
 metadata:
-  name: example-service-config
+  name: auth-service-config
 data:
   SPRING_DATASOURCE_URL: "jdbc:postgresql://postgres:5432/auth_db"
   SPRING_DATA_REDIS_HOST: "redis"

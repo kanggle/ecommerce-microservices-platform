@@ -8,7 +8,7 @@ category: backend
 
 Patterns for mapping between layers in Spring Boot services.
 
-Prerequisite: read `platform/coding-rules.md` before using this skill.
+Prerequisite: read `specs/platform/coding-rules.md` before using this skill.
 
 ---
 

@@ -2,11 +2,11 @@
 
 > **Role**: Routing catalog for agent runtime dispatch. This file lists every valid `domain` value and provides short examples of which service maps to which domain.
 >
-> **Detailed definitions** (each domain's sub-systems, selection criteria, and narrative) live in [`rules/taxonomy.md`](../../rules/taxonomy.md). When adding a new domain, update **both** files in the same change.
+> **Detailed definitions** (each domain's sub-systems, selection criteria, and narrative) live in [`specs/rules/taxonomy.md`](../../specs/rules/taxonomy.md). When adding a new domain, update **both** files in the same change.
 >
 > **Source of truth**:
 > - Catalog membership ("is `X` a valid domain?") — this file
-> - Narrative definition ("what does `X` mean?") — [`rules/taxonomy.md`](../../rules/taxonomy.md)
+> - Narrative definition ("what does `X` mean?") — [`specs/rules/taxonomy.md`](../../specs/rules/taxonomy.md)
 > - Activation mapping ("what rules does `X` activate?") — [`activation-rules.md`](activation-rules.md)
 
 Choose one primary domain for each service.
@@ -83,15 +83,15 @@ Values not listed above are a **Hard Stop** — see [`CLAUDE.md`](../../CLAUDE.m
 
 ---
 
-## Example (service → domain mapping in a hypothetical project)
+## Example
 
-- `<order-service-name>` → `ecommerce`
-- `<settlement-service-name>` → `fintech`
-- `<report-worker-name>` → `data-platform`
-- `<factory-ops-service-name>` → `mes`
+- order-service → `ecommerce`
+- settlement-service → `fintech`
+- report-worker → `data-platform`
+- factory-ops-service → `mes`
 
 ---
 
 ## Change Protocol
 
-New domain → add here **and** to [`rules/taxonomy.md`](../../rules/taxonomy.md) **and** to [`activation-rules.md`](activation-rules.md) in the same change. If the new domain needs a detailed rules file, create [`rules/domains/<domain>.md`](../../rules/domains/) in the same change (on-demand principle).
+New domain → add here **and** to [`specs/rules/taxonomy.md`](../../specs/rules/taxonomy.md) **and** to [`activation-rules.md`](activation-rules.md) in the same change. If the new domain needs a detailed rules file, create [`specs/rules/domains/<domain>.md`](../../specs/rules/domains/) in the same change (on-demand principle).

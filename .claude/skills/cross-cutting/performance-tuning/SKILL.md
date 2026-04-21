@@ -8,7 +8,7 @@ category: cross-cutting
 
 Cross-cutting policy for measuring and improving service performance.
 
-Prerequisite: read `platform/testing-strategy.md` and `platform/observability.md` before using this skill. Use `cross-cutting/observability-setup/SKILL.md` for instrumentation and `cross-cutting/caching/SKILL.md` for cache strategy.
+Prerequisite: read `specs/platform/testing-strategy.md` and `specs/platform/observability.md` before using this skill. Use `cross-cutting/observability-setup/SKILL.md` for instrumentation and `cross-cutting/caching/SKILL.md` for cache strategy.
 
 ---
 

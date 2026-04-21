@@ -8,7 +8,7 @@ category: infra
 
 Patterns for sizing Kubernetes resources, choosing instance types, and reducing cloud spend without hurting reliability.
 
-Prerequisite: read `platform/deployment-policy.md` and `cross-cutting/performance-tuning/SKILL.md` before using this skill. Monitoring of saturation lives in `infra/monitoring-stack/SKILL.md`.
+Prerequisite: read `specs/platform/deployment-policy.md` and `cross-cutting/performance-tuning/SKILL.md` before using this skill. Monitoring of saturation lives in `infra/monitoring-stack/SKILL.md`.
 
 ---
 
@@ -40,8 +40,8 @@ CPU limits cause throttling that masquerades as latency bugs. Use only for batch
 2. Run for at least 1 week with realistic traffic
 3. Query Prometheus for p95 and p99 of CPU/memory:
    ```promql
-   quantile_over_time(0.95, container_cpu_usage_seconds_total{pod=~"example-service-.*"}[7d])
-   quantile_over_time(0.95, container_memory_working_set_bytes{pod=~"example-service-.*"}[7d])
+   quantile_over_time(0.95, container_cpu_usage_seconds_total{pod=~"order-service-.*"}[7d])
+   quantile_over_time(0.95, container_memory_working_set_bytes{pod=~"order-service-.*"}[7d])
    ```
 4. Set `requests` to p95 + 20% headroom
 5. Repeat quarterly
@@ -56,12 +56,12 @@ Use Vertical Pod Autoscaler (VPA) in `recommend` mode for automation, but apply 
 apiVersion: autoscaling/v2
 kind: HorizontalPodAutoscaler
 metadata:
-  name: example-service
+  name: order-service
 spec:
   scaleTargetRef:
     apiVersion: apps/v1
     kind: Deployment
-    name: example-service
+    name: order-service
   minReplicas: 3
   maxReplicas: 20
   metrics:
@@ -85,12 +85,12 @@ spec:
 apiVersion: policy/v1
 kind: PodDisruptionBudget
 metadata:
-  name: example-service
+  name: order-service
 spec:
   minAvailable: 2
   selector:
     matchLabels:
-      app.kubernetes.io/name: example-service
+      app.kubernetes.io/name: order-service
 ```
 
 Prevents cluster autoscaler from killing too many pods at once during scale-down.

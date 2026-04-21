@@ -8,7 +8,7 @@ category: backend
 
 Patterns for user session management using Redis Sorted Sets with concurrent session limits.
 
-Prerequisite: read `platform/security-rules.md` before using this skill.
+Prerequisite: read `specs/platform/security-rules.md` before using this skill.
 
 ---
 

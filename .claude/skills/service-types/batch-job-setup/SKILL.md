@@ -8,7 +8,7 @@ category: service-types
 
 Implementation orchestration for a `batch-job` service. Composes existing skills into a setup workflow.
 
-Prerequisite: read `platform/service-types/batch-job.md` before using this skill.
+Prerequisite: read `specs/platform/service-types/batch-job.md` before using this skill.
 
 ---
 
@@ -139,7 +139,7 @@ Alert: `time() - job_last_success_timestamp_seconds > 2 * scheduled_interval`.
 
 ## Self-Review Checklist
 
-Verify against `platform/service-types/batch-job.md` Acceptance section. Specifically:
+Verify against `specs/platform/service-types/batch-job.md` Acceptance section. Specifically:
 
 - [ ] Every job listed in `architecture.md` "Scheduled Jobs" table
 - [ ] Distributed lock prevents concurrent execution (tested with two instances)

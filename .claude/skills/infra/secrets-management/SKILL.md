@@ -8,7 +8,7 @@ category: infra
 
 Patterns for storing, injecting, and rotating secrets across environments.
 
-Prerequisite: read `platform/security-rules.md` and `cross-cutting/security-hardening/SKILL.md` before using this skill. CI/CD-side secret usage lives in `infra/ci-cd/SKILL.md`.
+Prerequisite: read `specs/platform/security-rules.md` and `cross-cutting/security-hardening/SKILL.md` before using this skill. CI/CD-side secret usage lives in `infra/ci-cd/SKILL.md`.
 
 ---
 
@@ -71,9 +71,9 @@ spec:
     name: db-credentials
   data:
     - secretKey: username
-      remoteRef: { key: secret/data/example-service/db, property: username }
+      remoteRef: { key: secret/data/order-service/db, property: username }
     - secretKey: password
-      remoteRef: { key: secret/data/example-service/db, property: password }
+      remoteRef: { key: secret/data/order-service/db, property: password }
 ```
 
 Refresh interval triggers automatic re-sync when the source rotates.

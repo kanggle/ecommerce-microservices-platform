@@ -23,7 +23,7 @@ try {
     if ($filePath -match 'specs[\\/]platform[\\/]') {
         $result = @{
             decision = "ask"
-            reason   = "Platform specs (platform/) are the highest priority source of truth. Confirm this change is intentional and not a task-driven modification."
+            reason   = "Platform specs (specs/platform/) are the highest priority source of truth. Confirm this change is intentional and not a task-driven modification."
         }
         $result | ConvertTo-Json -Compress
         exit 0

@@ -8,7 +8,7 @@ category: cross-cutting
 
 Cross-cutting policy for choosing, applying, and invalidating caches.
 
-Prerequisite: read `platform/architecture.md` and `platform/observability.md` before using this skill. This skill is the policy/checklist layer; concrete Redis usage patterns live in `backend/redis-session/SKILL.md` and `backend/rate-limiting/SKILL.md`.
+Prerequisite: read `specs/platform/architecture.md` and `specs/platform/observability.md` before using this skill. This skill is the policy/checklist layer; concrete Redis usage patterns live in `backend/redis-session/SKILL.md` and `backend/rate-limiting/SKILL.md`.
 
 ---
 

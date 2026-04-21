@@ -8,7 +8,7 @@ category: service-types
 
 Implementation orchestration for an `event-consumer` service. Composes existing messaging skills into a setup workflow.
 
-Prerequisite: read `platform/service-types/event-consumer.md` before using this skill.
+Prerequisite: read `specs/platform/service-types/event-consumer.md` before using this skill.
 
 ---
 
@@ -31,9 +31,9 @@ Prerequisite: read `platform/service-types/event-consumer.md` before using this 
 Format: `<service>-<purpose>`
 
 ```
-example-consumer-order-events
-example-consumer-user-events
-example-indexer-product-catalog
+notification-service-order-events
+notification-service-user-events
+search-service-product-catalog
 ```
 
 One consumer group per (service, purpose) pair. Never share a group across services.
@@ -57,7 +57,7 @@ Choose the cheapest sufficient strategy:
 ```java
 @KafkaListener(
     topics = "order.events.v1",
-    groupId = "example-consumer-order-events",
+    groupId = "notification-service-order-events",
     containerFactory = "retryableKafkaListenerContainerFactory"
 )
 public void onOrderEvent(OrderEvent event, Acknowledgment ack) {
@@ -132,7 +132,7 @@ class OrderEventConsumerIntegrationTest {
 
 ## Self-Review Checklist
 
-Verify against `platform/service-types/event-consumer.md` Acceptance section. Specifically:
+Verify against `specs/platform/service-types/event-consumer.md` Acceptance section. Specifically:
 
 - [ ] Every subscribed topic listed in architecture.md with consumer group name
 - [ ] Idempotency strategy implemented and tested with duplicate delivery

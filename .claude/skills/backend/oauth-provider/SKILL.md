@@ -8,7 +8,7 @@ category: backend
 
 Patterns for multi-provider OAuth 2.0 integration.
 
-Prerequisite: read `platform/security-rules.md` and `platform/error-handling.md` before using this skill.
+Prerequisite: read `specs/platform/security-rules.md` and `specs/platform/error-handling.md` before using this skill.
 
 ---
 

@@ -21,7 +21,7 @@ Responsible for service architecture decisions, design reviews, and technical tr
 
 Follow CLAUDE.md Source of Truth Priority. Architecture-relevant sources:
 
-1. `platform/` (especially `architecture-decision-rule.md`)
+1. `specs/platform/` (especially `architecture-decision-rule.md`)
 2. `specs/contracts/`
 3. `specs/services/<service>/architecture.md`
 4. `specs/features/`
@@ -34,7 +34,7 @@ Follow CLAUDE.md Source of Truth Priority. Architecture-relevant sources:
 ### Architecture Review
 - Verify services follow their declared pattern (layered, hexagonal, clean, DDD)
 - Detect layer dependency direction violations
-- Confirm domain logic has not leaked into `libs/` (`platform/shared-library-policy.md`)
+- Confirm domain logic has not leaked into `libs/` (`specs/platform/shared-library-policy.md`)
 
 ### Design Decisions
 - Provide rationale for architecture pattern selection on new services

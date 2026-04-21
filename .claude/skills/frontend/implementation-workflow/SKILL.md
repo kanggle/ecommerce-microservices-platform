@@ -8,7 +8,7 @@ category: frontend
 
 Step-by-step workflow for implementing frontend tasks in Next.js applications.
 
-Prerequisite: read `platform/coding-rules.md` (TypeScript Rules section) and follow `platform/entrypoint.md` before using this skill.
+Prerequisite: read `specs/platform/coding-rules.md` (TypeScript Rules section) and follow `specs/platform/entrypoint.md` before using this skill.
 
 ---
 
@@ -18,7 +18,7 @@ Prerequisite: read `platform/coding-rules.md` (TypeScript Rules section) and fol
 
 1. Read `CLAUDE.md`
 2. Read the target task in `tasks/ready/`
-3. Read `platform/entrypoint.md` → follow spec reading order
+3. Read `specs/platform/entrypoint.md` → follow spec reading order
 4. Read `.claude/skills/INDEX.md` → identify matched frontend skills
 5. Read the app's architecture skill (`feature-sliced-design.md` or `layered-by-feature.md`)
 

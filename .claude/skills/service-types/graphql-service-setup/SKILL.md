@@ -8,7 +8,7 @@ category: service-types
 
 Implementation orchestration for a `graphql-service`. Use only when REST round-trip pain is documented.
 
-Prerequisite: read `platform/service-types/graphql-service.md` before using this skill. No services in this monorepo currently use GraphQL.
+Prerequisite: read `specs/platform/service-types/graphql-service.md` before using this skill. No services in this monorepo currently use GraphQL.
 
 ---
 
@@ -149,7 +149,7 @@ Trace each resolver as a child span of the operation root span.
 
 ## Self-Review Checklist
 
-Verify against `platform/service-types/graphql-service.md` Acceptance section. Specifically:
+Verify against `specs/platform/service-types/graphql-service.md` Acceptance section. Specifically:
 
 - [ ] Schema reviewed and committed
 - [ ] DataLoader covers every list field with nested resolvers

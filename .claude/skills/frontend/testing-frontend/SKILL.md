@@ -8,7 +8,7 @@ category: frontend
 
 Patterns for testing Next.js applications with Vitest and Testing Library.
 
-Prerequisite: read `platform/testing-strategy.md` before using this skill.
+Prerequisite: read `specs/platform/testing-strategy.md` before using this skill.
 
 ---
 

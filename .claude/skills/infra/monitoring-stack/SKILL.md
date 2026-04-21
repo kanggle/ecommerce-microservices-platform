@@ -8,7 +8,7 @@ category: infra
 
 Patterns for deploying Prometheus, Grafana, Loki, and alert routing for the monorepo's services.
 
-Prerequisite: read `platform/observability.md` and `cross-cutting/observability-setup/SKILL.md` before using this skill. Service-side instrumentation lives in `backend/observability-metrics/SKILL.md`.
+Prerequisite: read `specs/platform/observability.md` and `cross-cutting/observability-setup/SKILL.md` before using this skill. Service-side instrumentation lives in `backend/observability-metrics/SKILL.md`.
 
 ---
 
@@ -30,18 +30,18 @@ All configuration lives **as code** under `infra/` and is deployed via the same 
 ## Prometheus ServiceMonitor
 
 ```yaml
-# infra/prometheus/service-monitors/example-service.yaml
+# infra/prometheus/service-monitors/order-service.yaml
 apiVersion: monitoring.coreos.com/v1
 kind: ServiceMonitor
 metadata:
-  name: example-service
+  name: order-service
   namespace: monitoring
   labels:
     release: kube-prometheus-stack
 spec:
   selector:
     matchLabels:
-      app.kubernetes.io/name: example-service
+      app.kubernetes.io/name: order-service
   endpoints:
     - port: actuator
       path: /actuator/prometheus
@@ -61,18 +61,18 @@ Every service Helm chart must expose an `actuator` port and have a matching Serv
 Pre-aggregate hot queries to reduce dashboard load:
 
 ```yaml
-# infra/prometheus/rules/example-service.yaml
+# infra/prometheus/rules/order-service.yaml
 groups:
-  - name: example-service-recording
+  - name: order-service-recording
     interval: 30s
     rules:
       - record: order_service:http_request_rate:5m
-        expr: sum(rate(http_server_requests_seconds_count{service="example-service"}[5m])) by (uri, status)
+        expr: sum(rate(http_server_requests_seconds_count{service="order-service"}[5m])) by (uri, status)
       - record: order_service:http_error_ratio:5m
         expr: |
-          sum(rate(http_server_requests_seconds_count{service="example-service",status=~"5.."}[5m]))
+          sum(rate(http_server_requests_seconds_count{service="order-service",status=~"5.."}[5m]))
           /
-          sum(rate(http_server_requests_seconds_count{service="example-service"}[5m]))
+          sum(rate(http_server_requests_seconds_count{service="order-service"}[5m]))
 ```
 
 ---
@@ -80,9 +80,9 @@ groups:
 ## Alert Rules
 
 ```yaml
-# infra/prometheus/rules/example-service-alerts.yaml
+# infra/prometheus/rules/order-service-alerts.yaml
 groups:
-  - name: example-service-alerts
+  - name: order-service-alerts
     rules:
       - alert: OrderServiceHighErrorRate
         expr: order_service:http_error_ratio:5m > 0.05
@@ -91,10 +91,10 @@ groups:
           severity: critical
           team: orders
         annotations:
-          summary: example-service 5xx ratio above 5%
-          runbook: https://runbooks.example.com/example-service/high-error-rate
+          summary: order-service 5xx ratio above 5%
+          runbook: https://runbooks.example.com/order-service/high-error-rate
       - alert: OrderServiceHighLatencyP99
-        expr: histogram_quantile(0.99, sum by (le) (rate(http_server_requests_seconds_bucket{service="example-service"}[5m]))) > 1.2
+        expr: histogram_quantile(0.99, sum by (le) (rate(http_server_requests_seconds_bucket{service="order-service"}[5m]))) > 1.2
         for: 10m
         labels:
           severity: warning
@@ -144,11 +144,11 @@ receivers:
 ## Loki Log Querying
 
 ```logql
-# All errors for example-service in last 1h
-{service="example-service"} |= "ERROR" | json | level="ERROR"
+# All errors for order-service in last 1h
+{service="order-service"} |= "ERROR" | json | level="ERROR"
 
 # Trace correlation
-{service="example-service"} | json | traceId="abc123def456"
+{service="order-service"} | json | traceId="abc123def456"
 ```
 
 Logs must include `service`, `traceId`, `level` labels for query.

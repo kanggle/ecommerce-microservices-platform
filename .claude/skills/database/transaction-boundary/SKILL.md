@@ -8,7 +8,7 @@ category: database
 
 Patterns for defining transaction boundaries in the persistence layer.
 
-Prerequisite: read `platform/coding-rules.md` before using this skill. See also `backend/transaction-handling/SKILL.md` for code-level `@Transactional` patterns.
+Prerequisite: read `specs/platform/coding-rules.md` before using this skill. See also `backend/transaction-handling/SKILL.md` for code-level `@Transactional` patterns.
 
 ---
 

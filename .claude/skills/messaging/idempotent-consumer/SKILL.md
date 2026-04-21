@@ -8,7 +8,7 @@ category: messaging
 
 Patterns for ensuring Kafka consumers process each event exactly once.
 
-Prerequisite: read `platform/event-driven-policy.md` before using this skill.
+Prerequisite: read `specs/platform/event-driven-policy.md` before using this skill.
 
 ---
 

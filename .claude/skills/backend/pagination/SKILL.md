@@ -8,7 +8,7 @@ category: backend
 
 Patterns for the shared pagination DTOs used across all services.
 
-Prerequisite: read `platform/coding-rules.md` before using this skill.
+Prerequisite: read `specs/platform/coding-rules.md` before using this skill.
 
 ---
 
