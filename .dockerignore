@@ -2,17 +2,9 @@
 **/.next
 **/.turbo
 **/.gradle
-**/build
-!apps/*/build/libs
 .git
 .claude
 docs
 specs
 tasks
 knowledge
-load-tests
-infra
-scripts
-*.log
-replay_pid*.log
-hs_err_pid*.log
