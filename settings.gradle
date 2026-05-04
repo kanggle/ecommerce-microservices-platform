@@ -1,4 +1,4 @@
-rootProject.name = 'monorepo-lab'
+rootProject.name = 'ecommerce-microservices-platform'
 
 // Shared libraries (at repo root)
 include(
@@ -26,17 +26,17 @@ include(
 // Note: apps:auth-service excluded from build by TASK-BE-132 (decommissioned).
 // Source code preserved in apps/auth-service/ for history. Replaced by GAP OIDC.
 include(
-    'projects:ecommerce-microservices-platform:apps:batch-worker',
-    'projects:ecommerce-microservices-platform:apps:gateway-service',
-    'projects:ecommerce-microservices-platform:apps:notification-service',
-    'projects:ecommerce-microservices-platform:apps:order-service',
-    'projects:ecommerce-microservices-platform:apps:promotion-service',
-    'projects:ecommerce-microservices-platform:apps:payment-service',
-    'projects:ecommerce-microservices-platform:apps:product-service',
-    'projects:ecommerce-microservices-platform:apps:review-service',
-    'projects:ecommerce-microservices-platform:apps:search-service',
-    'projects:ecommerce-microservices-platform:apps:shipping-service',
-    'projects:ecommerce-microservices-platform:apps:user-service'
+    'apps:batch-worker',
+    'apps:gateway-service',
+    'apps:notification-service',
+    'apps:order-service',
+    'apps:promotion-service',
+    'apps:payment-service',
+    'apps:product-service',
+    'apps:review-service',
+    'apps:search-service',
+    'apps:shipping-service',
+    'apps:user-service'
 )
 
 // Project: global-account-platform
