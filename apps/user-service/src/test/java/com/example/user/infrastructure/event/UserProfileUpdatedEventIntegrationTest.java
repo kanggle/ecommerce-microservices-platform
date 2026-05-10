@@ -82,7 +82,7 @@ class UserProfileUpdatedEventIntegrationTest {
                 ConsumerConfig.KEY_DESERIALIZER_CLASS_CONFIG, StringDeserializer.class.getName(),
                 ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG, StringDeserializer.class.getName()
         ))) {
-            consumer.subscribe(List.of("user.user-profile.updated"));
+            consumer.subscribe(List.of("user.user.profile-updated"));
 
             mockMvc.perform(patch("/api/users/me")
                             .header("X-User-Id", userId.toString())
