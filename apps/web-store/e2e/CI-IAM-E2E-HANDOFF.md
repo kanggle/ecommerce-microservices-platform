@@ -16,12 +16,12 @@ bootJar, the lean GAP stack, the consumer seed, and the `/etc/hosts` issuer entr
 `auth-service`).
 
 ```yaml
-  web-store-gap-logout-e2e:
+  web-store-iam-logout-e2e:
     name: Web-store GAP logout e2e (RP-initiated end_session, real GAP)
     runs-on: ubuntu-latest
     needs: changes            # reuse the existing path-filter gate
     timeout-minutes: 30
-    # if: needs.changes.outputs.<ecommerce-or-gap-filter> == 'true'
+    # if: needs.changes.outputs.<ecommerce-or-iam-filter> == 'true'
     defaults:
       run:
         working-directory: projects/ecommerce-microservices-platform
@@ -31,33 +31,33 @@ bootJar, the lean GAP stack, the consumer seed, and the `/etc/hosts` issuer entr
       - uses: actions/setup-java@v4
         with: { distribution: temurin, java-version: '21' }
 
-      # Build the GAP auth-service bootJar (the gap-e2e Dockerfile COPYs it).
+      # Build the GAP auth-service bootJar (the iam-e2e Dockerfile COPYs it).
       - name: Build auth-service bootJar
-        working-directory: projects/global-account-platform
+        working-directory: projects/iam-platform
         run: ./gradlew :apps:auth-service:bootJar --no-daemon
 
       - name: Issuer hostname resolves on the host (browser + Next.js server)
         run: echo "127.0.0.1 auth-service" | sudo tee -a /etc/hosts
 
       - name: Boot lean GAP stack
-        run: docker compose -f docker-compose.gap-e2e.yml up -d --build
+        run: docker compose -f docker-compose.iam-e2e.yml up -d --build
 
       - name: Wait for auth-service healthy
         run: |
           for i in $(seq 1 40); do
             s=$(docker inspect -f '{{.State.Health.Status}}' \
-                 $(docker compose -f docker-compose.gap-e2e.yml ps -q auth-service))
+                 $(docker compose -f docker-compose.iam-e2e.yml ps -q auth-service))
             [ "$s" = "healthy" ] && exit 0
             sleep 5
           done
-          docker compose -f docker-compose.gap-e2e.yml logs auth-service
+          docker compose -f docker-compose.iam-e2e.yml logs auth-service
           exit 1
 
       - name: Seed CONSUMER credential
         run: |
-          docker compose -f docker-compose.gap-e2e.yml exec -T mysql \
+          docker compose -f docker-compose.iam-e2e.yml exec -T mysql \
             mysql -uroot -prootpass \
-            < apps/web-store/e2e/fixtures/gap-consumer-seed.sql
+            < apps/web-store/e2e/fixtures/iam-consumer-seed.sql
 
       - uses: pnpm/action-setup@v4
       - uses: actions/setup-node@v4
@@ -73,7 +73,7 @@ bootJar, the lean GAP stack, the consumer seed, and the `/etc/hosts` issuer entr
           OIDC_ISSUER_URL: http://auth-service:8081
           ECOMMERCE_WEB_STORE_CLIENT_ID: ecommerce-web-store-client
           ECOMMERCE_WEB_STORE_CLIENT_SECRET: ecommerce-dev
-          NEXTAUTH_SECRET: ci-gap-e2e-secret
+          NEXTAUTH_SECRET: ci-iam-e2e-secret
           NEXTAUTH_URL: http://localhost:3000
           AUTH_TRUST_HOST: 'true'
         # NOTE: playwright.config webServer runs `pnpm start` (needs a build).
@@ -85,7 +85,7 @@ bootJar, the lean GAP stack, the consumer seed, and the `/etc/hosts` issuer entr
 
       - name: Tear down
         if: always()
-        run: docker compose -f docker-compose.gap-e2e.yml down -v
+        run: docker compose -f docker-compose.iam-e2e.yml down -v
 ```
 
 ## Notes

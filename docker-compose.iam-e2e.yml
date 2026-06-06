@@ -1,7 +1,7 @@
 # =============================================================================
 # web-store GAP OIDC e2e stack (TASK-INT-023)
 # =============================================================================
-# A LEAN GAP (global-account-platform) auth stack — JUST enough to let the
+# A LEAN GAP (iam) auth stack — JUST enough to let the
 # web-store Playwright suite log in / log out against a REAL OIDC provider, so
 # the RP-initiated logout (end_session) AC-1 can be verified end-to-end.
 #
@@ -11,24 +11,24 @@
 #     account-service / admin-service / the 5 producers are all omitted.
 #   - The issued OIDC token carries tenant_id (no account_type claim is emitted),
 #     which web-store's NextAuth signIn callback accepts → a single seeded
-#     credential row (fixtures/gap-consumer-seed.sql) is all that is needed.
+#     credential row (fixtures/iam-consumer-seed.sql) is all that is needed.
 #
 # Services: mysql (auth_db) + redis + a DNS-only kafka placeholder (auth-service
 # only needs the hostname to resolve at boot) + auth-service.
 #
 # Usage (local or CI):
-#   1. ./gradlew :apps:auth-service:bootJar   (from projects/global-account-platform)
-#   2. docker compose -f docker-compose.gap-e2e.yml up -d --build
+#   1. ./gradlew :apps:auth-service:bootJar   (from projects/iam-platform)
+#   2. docker compose -f docker-compose.iam-e2e.yml up -d --build
 #   3. wait for auth-service healthy, then apply the consumer seed:
-#      docker compose -f docker-compose.gap-e2e.yml exec -T mysql \
-#        mysql -uroot -prootpass auth_db < apps/web-store/e2e/fixtures/gap-consumer-seed.sql
+#      docker compose -f docker-compose.iam-e2e.yml exec -T mysql \
+#        mysql -uroot -prootpass auth_db < apps/web-store/e2e/fixtures/iam-consumer-seed.sql
 #   4. run web-store with OIDC_ISSUER_URL=http://auth-service:8081 + SKIP_GAP_E2E=0
 #      and the Playwright `rp-initiated-logout.spec.ts` (needs /etc/hosts:
 #      127.0.0.1 auth-service so the browser + Next.js server both resolve the
 #      issuer host — same constraint as the platform-console e2e, PC-FE-028).
 # =============================================================================
 
-x-gap-service-env: &gap-service-env
+x-iam-service-env: &iam-service-env
   SPRING_PROFILES_ACTIVE: e2e
   DB_HOST: mysql
   DB_PORT: "3306"
@@ -52,14 +52,14 @@ services:
       COMMUNITY_DB_PASSWORD: community_pass
       MEMBERSHIP_DB_PASSWORD: membership_pass
     volumes:
-      - ../global-account-platform/docker/mysql/init.sh:/docker-entrypoint-initdb.d/01-init.sh:ro
+      - ../iam/docker/mysql/init.sh:/docker-entrypoint-initdb.d/01-init.sh:ro
     healthcheck:
       test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-u", "root", "-prootpass"]
       interval: 10s
       timeout: 5s
       retries: 10
       start_period: 30s
-    networks: [gap-e2e]
+    networks: [iam-e2e]
 
   redis:
     image: redis:7-alpine
@@ -68,34 +68,34 @@ services:
       interval: 10s
       timeout: 5s
       retries: 10
-    networks: [gap-e2e]
+    networks: [iam-e2e]
 
   # DNS-only kafka placeholder — auth-service blocks at boot until the `kafka`
   # hostname resolves, but never produces/consumes in this lean stack.
   kafka:
     image: alpine:3.19
     command: ["sleep", "infinity"]
-    networks: [gap-e2e]
+    networks: [iam-e2e]
 
   auth-service:
     build:
-      context: ../global-account-platform
+      context: ../iam
       dockerfile: apps/auth-service/Dockerfile
     environment:
-      <<: *gap-service-env
+      <<: *iam-service-env
       DB_NAME: auth_db
       DB_USERNAME: auth_user
       DB_PASSWORD: auth_pass
       JWT_PRIVATE_KEY_PATH: file:/app/keys/private.pem
       JWT_PUBLIC_KEY_PATH: file:/app/keys/public.pem
     volumes:
-      - ../global-account-platform/apps/auth-service/src/test/resources/keys:/app/keys:ro
+      - ../iam/apps/auth-service/src/test/resources/keys:/app/keys:ro
     depends_on:
       mysql: { condition: service_healthy }
       redis: { condition: service_healthy }
       kafka: { condition: service_started }
     ports: ["8081:8081"]
-    networks: [gap-e2e]
+    networks: [iam-e2e]
     healthcheck:
       test: ["CMD-SHELL", "curl -fsS http://localhost:8081/actuator/health || exit 1"]
       interval: 15s
@@ -104,5 +104,5 @@ services:
       start_period: 60s
 
 networks:
-  gap-e2e:
+  iam-e2e:
     driver: bridge
