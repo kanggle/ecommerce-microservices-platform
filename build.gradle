@@ -6,6 +6,7 @@ plugins {
 
 subprojects {
     apply plugin: 'java'
+    apply plugin: 'jacoco'
 
     java {
         toolchain {
@@ -30,36 +31,31 @@ subprojects {
         testAnnotationProcessor 'org.projectlombok:lombok:1.18.36'
     }
 
+    // Default `test` task runs unit + slice tests only — Testcontainers /
+    // @SpringBootTest-with-container classes carry @Tag("integration") and
+    // are excluded so root CI's `./gradlew check` stays Docker-free. The
+    // integration-tagged classes still run locally with `-PrunIntegration`
+    // (e.g. `./gradlew :…:product-service:test --tests "*IT" -PrunIntegration`),
+    // which re-includes them; CI never sets the flag so it stays Docker-free.
     test {
-        useJUnitPlatform()
-        jvmArgs '-XX:+EnableDynamicAgentLoading'
-    }
-
-    // Forward Docker / Testcontainers env into every Test task (test, integrationTest,
-    // e2eTest, etc.). docker-java's default API version (1.32) is rejected by modern
-    // dockerd implementations — Rancher Desktop's dockerd requires minimum API 1.41,
-    // and Docker Desktop 4.36+ has a CLI proxy that intercepts docker-java probes.
-    // DOCKER_API_VERSION + system property 'api.version' force docker-java to skip
-    // the stale default. DOCKER_HOST forwarding handles Windows named-pipe / WSL2
-    // socket override scenarios.
-    // Defensive future-proof — when `-Xlint:all` or `-Xlint:serial` is ever
-    // enabled (currently neither is set), silently skip the cosmetic `[serial]`
-    // warning category. This codebase uses exceptions only for control flow
-    // (Spring `@RestControllerAdvice` converts to JSON ErrorResponse before
-    // serialization), so the missing `serialVersionUID` warnings on ~200
-    // exception classes are pure noise. Per TASK-MONO-131.
-    tasks.withType(JavaCompile).configureEach {
-        options.compilerArgs.add('-Xlint:-serial')
-    }
-
-    tasks.withType(Test).configureEach {
-        def dockerHost = System.getenv('DOCKER_HOST') ?: System.getProperty('docker.host')
-        if (dockerHost) {
-            environment 'DOCKER_HOST', dockerHost
-            systemProperty 'docker.host', dockerHost
+        useJUnitPlatform {
+            if (!project.hasProperty('runIntegration')) {
+                excludeTags 'integration'
+            }
         }
-        def apiVersion = System.getenv('DOCKER_API_VERSION') ?: '1.45'
-        environment 'DOCKER_API_VERSION', apiVersion
-        systemProperty 'api.version', apiVersion
+        jvmArgs '-XX:+EnableDynamicAgentLoading'
+        finalizedBy jacocoTestReport
+    }
+
+    jacoco {
+        toolVersion = '0.8.12'
+    }
+
+    jacocoTestReport {
+        dependsOn test
+        reports {
+            xml.required = true
+            html.required = true
+        }
     }
 }
