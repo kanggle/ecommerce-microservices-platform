@@ -1,4 +1,4 @@
-package com.example.gateway.security;
+package com.example.apigateway.security;
 
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -11,11 +11,11 @@ import java.util.List;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
-@DisplayName("AllowedIssuersValidator 단위 테스트 (gateway)")
+@DisplayName("AllowedIssuersValidator 단위 테스트 (shared gateway library)")
 class AllowedIssuersValidatorTest {
 
     private final AllowedIssuersValidator validator = new AllowedIssuersValidator(
-            List.of("http://localhost:8081", "iam"));
+            List.of("http://iam.local", "iam"));
 
     private static Jwt jwt(String issuer) {
         return Jwt.withTokenValue("token")
@@ -24,24 +24,21 @@ class AllowedIssuersValidatorTest {
                 .subject("user-1")
                 .issuedAt(Instant.now())
                 .expiresAt(Instant.now().plusSeconds(60))
-                .claim("tenant_id", "ecommerce")
+                .claim("tenant_id", "some-tenant")
                 .build();
     }
 
     @Test
-    @DisplayName("SAS issuer (configured URL) → success")
     void sasIssuerPasses() {
-        assertThat(validator.validate(jwt("http://localhost:8081")).hasErrors()).isFalse();
+        assertThat(validator.validate(jwt("http://iam.local")).hasErrors()).isFalse();
     }
 
     @Test
-    @DisplayName("legacy 'iam' issuer → success")
     void legacyIssuerPasses() {
         assertThat(validator.validate(jwt("iam")).hasErrors()).isFalse();
     }
 
     @Test
-    @DisplayName("unknown issuer → invalid_issuer")
     void unknownIssuerRejected() {
         OAuth2TokenValidatorResult r = validator.validate(jwt("https://attacker.example.com"));
         assertThat(r.hasErrors()).isTrue();
@@ -49,7 +46,6 @@ class AllowedIssuersValidatorTest {
     }
 
     @Test
-    @DisplayName("empty allowlist → IllegalArgumentException")
     void emptyAllowlistRejected() {
         assertThatThrownBy(() -> new AllowedIssuersValidator(List.of()))
                 .isInstanceOf(IllegalArgumentException.class);
