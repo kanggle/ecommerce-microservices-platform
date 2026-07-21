@@ -34,7 +34,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @WebMvcTest(SettlementController.class)
 @ContextConfiguration(classes = TestSettlementServiceApplication.class)
 @Import(GlobalExceptionHandler.class)
-class SettlementControllerTest {
+class SettlementControllerSliceTest {
 
     @Autowired
     private MockMvc mockMvc;

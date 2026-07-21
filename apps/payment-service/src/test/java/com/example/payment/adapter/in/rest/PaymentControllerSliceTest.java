@@ -37,7 +37,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @WebMvcTest(PaymentController.class)
 @Import(GlobalExceptionHandler.class)
 @DisplayName("PaymentController 슬라이스 테스트")
-class PaymentControllerTest {
+class PaymentControllerSliceTest {
 
     @Autowired
     private MockMvc mockMvc;

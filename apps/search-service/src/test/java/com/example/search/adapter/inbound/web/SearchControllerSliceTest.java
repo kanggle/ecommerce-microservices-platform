@@ -23,7 +23,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @WebMvcTest(SearchController.class)
 @Import(GlobalExceptionHandler.class)
 @DisplayName("SearchController 슬라이스 테스트")
-class SearchControllerTest {
+class SearchControllerSliceTest {
 
     @Autowired
     private MockMvc mockMvc;

@@ -31,7 +31,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @WebMvcTest(AddressController.class)
 @Import(GlobalExceptionHandler.class)
 @DisplayName("AddressController 슬라이스 테스트")
-class AddressControllerTest {
+class AddressControllerSliceTest {
 
     @Autowired
     private MockMvc mockMvc;

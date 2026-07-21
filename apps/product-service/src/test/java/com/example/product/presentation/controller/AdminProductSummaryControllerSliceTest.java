@@ -29,7 +29,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @ContextConfiguration(classes = TestProductServiceApplication.class)
 @Import(GlobalExceptionHandler.class)
 @DisplayName("GET /api/admin/products/summary 슬라이스 테스트")
-class AdminProductSummaryControllerTest {
+class AdminProductSummaryControllerSliceTest {
 
     @Autowired
     private MockMvc mockMvc;

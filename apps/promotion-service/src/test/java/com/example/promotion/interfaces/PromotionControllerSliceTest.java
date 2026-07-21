@@ -34,7 +34,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @WebMvcTest(controllers = {PromotionController.class, GlobalExceptionHandler.class})
 @ContextConfiguration(classes = TestPromotionServiceApplication.class)
 @DisplayName("PromotionController 슬라이스 테스트")
-class PromotionControllerTest {
+class PromotionControllerSliceTest {
 
     @Autowired
     private MockMvc mockMvc;

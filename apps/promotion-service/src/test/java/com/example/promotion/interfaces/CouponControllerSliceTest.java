@@ -34,7 +34,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @WebMvcTest(controllers = {CouponController.class, GlobalExceptionHandler.class})
 @ContextConfiguration(classes = TestPromotionServiceApplication.class)
 @DisplayName("CouponController 슬라이스 테스트")
-class CouponControllerTest {
+class CouponControllerSliceTest {
 
     @Autowired
     private MockMvc mockMvc;

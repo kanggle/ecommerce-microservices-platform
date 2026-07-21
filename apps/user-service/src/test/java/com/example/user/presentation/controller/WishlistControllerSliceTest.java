@@ -38,7 +38,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @WebMvcTest(WishlistController.class)
 @Import(GlobalExceptionHandler.class)
 @DisplayName("WishlistController 슬라이스 테스트")
-class WishlistControllerTest {
+class WishlistControllerSliceTest {
 
     @Autowired
     private MockMvc mockMvc;

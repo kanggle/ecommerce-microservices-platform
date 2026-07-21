@@ -35,7 +35,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @Import({SecurityConfig.class, GlobalExceptionHandler.class, JwtAuthenticationFilter.class,
     JsonAuthenticationEntryPoint.class, AuthRateLimitFilter.class, ClientIpResolver.class})
 @DisplayName("OAuthController 슬라이스 테스트")
-class OAuthControllerTest {
+class OAuthControllerSliceTest {
 
     @Autowired
     private MockMvc mockMvc;

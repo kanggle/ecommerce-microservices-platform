@@ -41,7 +41,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @WebMvcTest(AuthController.class)
 @Import({SecurityConfig.class, GlobalExceptionHandler.class, JwtAuthenticationFilter.class, JsonAuthenticationEntryPoint.class, AuthRateLimitFilter.class, ClientIpResolver.class})
 @DisplayName("AuthController refresh/logout 슬라이스 테스트")
-class AuthRefreshLogoutControllerTest {
+class AuthRefreshLogoutControllerSliceTest {
 
     @Autowired
     private MockMvc mockMvc;

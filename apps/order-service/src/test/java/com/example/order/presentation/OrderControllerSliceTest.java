@@ -41,7 +41,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @ContextConfiguration(classes = TestOrderServiceApplication.class)
 @Import(GlobalExceptionHandler.class)
 @DisplayName("OrderController 슬라이스 테스트")
-class OrderControllerTest {
+class OrderControllerSliceTest {
 
     @Autowired
     private MockMvc mockMvc;

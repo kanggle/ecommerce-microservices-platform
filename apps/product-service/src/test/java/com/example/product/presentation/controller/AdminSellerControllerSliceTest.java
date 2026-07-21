@@ -34,7 +34,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @ContextConfiguration(classes = TestProductServiceApplication.class)
 @Import(GlobalExceptionHandler.class)
 @DisplayName("AdminSellerController 읽기 표면(list + detail) 슬라이스 테스트")
-class AdminSellerControllerTest {
+class AdminSellerControllerSliceTest {
 
     private static final String ROLE_HEADER = "X-User-Role";
 

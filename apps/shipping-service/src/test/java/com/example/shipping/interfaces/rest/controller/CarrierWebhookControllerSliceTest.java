@@ -30,7 +30,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @ContextConfiguration(classes = TestShippingServiceApplication.class)
 @Import(GlobalExceptionHandler.class)
 @DisplayName("CarrierWebhookController 슬라이스 테스트")
-class CarrierWebhookControllerTest {
+class CarrierWebhookControllerSliceTest {
 
     @Autowired
     private MockMvc mockMvc;

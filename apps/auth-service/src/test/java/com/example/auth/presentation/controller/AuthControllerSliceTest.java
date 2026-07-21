@@ -41,7 +41,7 @@ import com.example.auth.presentation.advice.GlobalExceptionHandler;
 @WebMvcTest(AuthController.class)
 @Import({SecurityConfig.class, GlobalExceptionHandler.class, JwtAuthenticationFilter.class, JsonAuthenticationEntryPoint.class, AuthRateLimitFilter.class, ClientIpResolver.class})
 @DisplayName("AuthController 슬라이스 테스트")
-class AuthControllerTest {
+class AuthControllerSliceTest {
 
     @Autowired
     private MockMvc mockMvc;

@@ -18,7 +18,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @WebMvcTest(SearchAdminController.class)
 @Import(GlobalExceptionHandler.class)
 @DisplayName("SearchAdminController 슬라이스 테스트")
-class SearchAdminControllerTest {
+class SearchAdminControllerSliceTest {
 
     @Autowired
     private MockMvc mockMvc;

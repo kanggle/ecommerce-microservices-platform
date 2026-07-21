@@ -30,7 +30,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 @WebMvcTest(PushSubscriptionController.class)
 @DisplayName("PushSubscriptionController 슬라이스 테스트")
-class PushSubscriptionControllerTest {
+class PushSubscriptionControllerSliceTest {
 
     @Autowired
     private MockMvc mockMvc;

@@ -26,7 +26,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 @WebMvcTest(TemplateController.class)
 @DisplayName("TemplateController 슬라이스 테스트")
-class TemplateControllerTest {
+class TemplateControllerSliceTest {
 
     @Autowired
     private MockMvc mockMvc;

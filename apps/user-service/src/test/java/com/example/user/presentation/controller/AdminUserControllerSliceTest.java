@@ -29,7 +29,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @WebMvcTest(AdminUserController.class)
 @Import(GlobalExceptionHandler.class)
 @DisplayName("AdminUserController 슬라이스 테스트")
-class AdminUserControllerTest {
+class AdminUserControllerSliceTest {
 
     @Autowired
     private MockMvc mockMvc;

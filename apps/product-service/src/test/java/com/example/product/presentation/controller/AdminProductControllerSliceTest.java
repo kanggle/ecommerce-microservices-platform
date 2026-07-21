@@ -53,7 +53,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @ContextConfiguration(classes = TestProductServiceApplication.class)
 @Import(GlobalExceptionHandler.class)
 @DisplayName("AdminProductController PATCH/DELETE 슬라이스 테스트")
-class AdminProductControllerTest {
+class AdminProductControllerSliceTest {
 
     @Autowired
     private MockMvc mockMvc;

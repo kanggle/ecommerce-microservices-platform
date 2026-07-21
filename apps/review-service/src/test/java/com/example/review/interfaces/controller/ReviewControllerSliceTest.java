@@ -42,7 +42,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @ContextConfiguration(classes = TestReviewServiceApplication.class)
 @Import(GlobalExceptionHandler.class)
 @DisplayName("ReviewController 슬라이스 테스트")
-class ReviewControllerTest {
+class ReviewControllerSliceTest {
 
     @Autowired
     private MockMvc mockMvc;
