@@ -1,5 +1,6 @@
 package com.example.order.infrastructure.event;
 
+import com.example.messaging.dedupe.EventDedupePort;
 import com.example.order.infrastructure.persistence.ProcessedEventJpaEntity;
 import com.example.order.infrastructure.persistence.ProcessedEventJpaRepository;
 import org.junit.jupiter.api.DisplayName;
@@ -9,12 +10,21 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
+import java.util.UUID;
+import java.util.concurrent.atomic.AtomicInteger;
+
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.*;
 
+/**
+ * Unit tests for {@link EventDeduplicationChecker} as an {@link EventDedupePort} adapter
+ * (ADR-MONO-058 D7, TASK-BE-569). Pins the {@code process(...)} contract over the locally
+ * owned {@code String}-keyed {@code processed_events} table.
+ */
 @ExtendWith(MockitoExtension.class)
-@DisplayName("EventDeduplicationChecker 단위 테스트")
+@DisplayName("EventDeduplicationChecker (EventDedupePort 어댑터) 단위 테스트")
 class EventDeduplicationCheckerUnitTest {
 
     @InjectMocks
@@ -24,24 +34,30 @@ class EventDeduplicationCheckerUnitTest {
     private ProcessedEventJpaRepository processedEventJpaRepository;
 
     @Test
-    @DisplayName("새로운 event_id인 경우 중복이 아니다")
-    void isDuplicate_newEventId_returnsFalse() {
-        when(processedEventJpaRepository.existsByEventId("evt-1")).thenReturn(false);
+    @DisplayName("새로운 eventId는 work를 실행하고 APPLIED를 반환한다")
+    void process_newEventId_runsWorkAndReturnsApplied() {
+        UUID eventId = UUID.randomUUID();
+        when(processedEventJpaRepository.existsByEventId(eventId.toString())).thenReturn(false);
+        AtomicInteger counter = new AtomicInteger();
 
-        boolean result = checker.isDuplicate("evt-1", "PaymentCompleted");
+        EventDedupePort.Outcome outcome = checker.process(eventId, "PaymentCompleted", counter::incrementAndGet);
 
-        assertThat(result).isFalse();
+        assertThat(outcome).isEqualTo(EventDedupePort.Outcome.APPLIED);
+        assertThat(counter.get()).isEqualTo(1);
         verify(processedEventJpaRepository).save(any(ProcessedEventJpaEntity.class));
     }
 
     @Test
-    @DisplayName("이미 처리된 event_id인 경우 중복이다")
-    void isDuplicate_existingEventId_returnsTrue() {
-        when(processedEventJpaRepository.existsByEventId("evt-1")).thenReturn(true);
+    @DisplayName("이미 처리된 eventId는 work를 재실행하지 않고 IGNORED_DUPLICATE를 반환한다")
+    void process_existingEventId_skipsWorkAndReturnsIgnored() {
+        UUID eventId = UUID.randomUUID();
+        when(processedEventJpaRepository.existsByEventId(eventId.toString())).thenReturn(true);
+        AtomicInteger counter = new AtomicInteger();
 
-        boolean result = checker.isDuplicate("evt-1", "PaymentCompleted");
+        EventDedupePort.Outcome outcome = checker.process(eventId, "PaymentCompleted", counter::incrementAndGet);
 
-        assertThat(result).isTrue();
+        assertThat(outcome).isEqualTo(EventDedupePort.Outcome.IGNORED_DUPLICATE);
+        assertThat(counter.get()).isZero();
         verify(processedEventJpaRepository, never()).save(any());
     }
 
@@ -51,7 +67,7 @@ class EventDeduplicationCheckerUnitTest {
      * processedEventJpaRepository.save(...) to throw DataIntegrityViolationException and
      * asserted the checker returned true — but the real repository never throws from
      * save(): ProcessedEventJpaEntity has an assigned @Id, so the INSERT is queued until
-     * the commit-time flush, which runs after isDuplicate() returns. The production catch
+     * the commit-time flush, which runs after process() returns. The production catch
      * it exercised was unreachable, and this test is the reason nobody noticed.
      *
      * The catch is gone (see EventDeduplicationChecker). The concurrent-duplicate case is
@@ -62,32 +78,14 @@ class EventDeduplicationCheckerUnitTest {
      */
 
     @Test
-    @DisplayName("새 event_id는 중복이 아니고 처리 기록을 남긴다")
-    void isDuplicate_newEventId_returnsFalseAndRecords() {
-        when(processedEventJpaRepository.existsByEventId("evt-1")).thenReturn(false);
+    @DisplayName("eventId가 null이면 중복 체크를 건너뛰고 work를 실행한다")
+    void process_nullEventId_skipsDedupeButRunsWork() {
+        AtomicInteger counter = new AtomicInteger();
 
-        boolean result = checker.isDuplicate("evt-1", "PaymentCompleted");
+        EventDedupePort.Outcome outcome = checker.process(null, "PaymentCompleted", counter::incrementAndGet);
 
-        assertThat(result).isFalse();
-        verify(processedEventJpaRepository).save(any());
-    }
-
-    @Test
-    @DisplayName("event_id가 null이면 중복 체크를 스킵한다")
-    void isDuplicate_nullEventId_returnsFalse() {
-        boolean result = checker.isDuplicate(null, "PaymentCompleted");
-
-        assertThat(result).isFalse();
-        verify(processedEventJpaRepository, never()).existsByEventId(any());
-        verify(processedEventJpaRepository, never()).save(any());
-    }
-
-    @Test
-    @DisplayName("event_id가 blank이면 중복 체크를 스킵한다")
-    void isDuplicate_blankEventId_returnsFalse() {
-        boolean result = checker.isDuplicate("  ", "PaymentCompleted");
-
-        assertThat(result).isFalse();
+        assertThat(outcome).isEqualTo(EventDedupePort.Outcome.APPLIED);
+        assertThat(counter.get()).isEqualTo(1);
         verify(processedEventJpaRepository, never()).existsByEventId(any());
         verify(processedEventJpaRepository, never()).save(any());
     }
