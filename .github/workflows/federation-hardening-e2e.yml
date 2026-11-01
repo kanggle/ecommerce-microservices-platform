@@ -31,8 +31,6 @@ name: Federation Hardening E2E (Phase 8 cross-product, nightly)
 # existing producer read endpoints (ADR-018 § 3.3 zero-retrofit sixth confirmation).
 
 on:
-  schedule:
-    - cron: '0 19 * * *'  # UTC 19:00 = KST 04:00 (1h after nightly-e2e.yml)
   workflow_dispatch:
 
 # Scoped to the monorepo (extracted portfolio repos have no backend stack).
